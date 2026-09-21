@@ -44,3 +44,27 @@ button{font:inherit}
 #reviewNotes:focus{border-color:#50657b}
 .review-actions{display:flex;align-items:center;justify-content:space-between;margin-top:9px}
 .review-actions span{font:8px "DM Mono",monospace;color:#657181}
+
+/* Behavioral Intelligence */
+.behavior-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:9px}
+.behavior-grid .panel{min-height:210px}
+.behavior-list{margin-top:12px}
+.behavior-row{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid #18212b;padding:12px 0}
+.behavior-row:first-child{border-top:0}
+.behavior-row b{font-size:10px}
+.behavior-row small{display:block;color:#657181;font-size:8px;margin-top:5px;line-height:1.5}
+.behavior-row strong{font:11px "DM Mono",monospace;white-space:nowrap}
+.flag-list{margin-top:12px;display:grid;gap:7px}
+.flag{display:flex;gap:10px;padding:11px;background:#10161d;border:1px solid #202a34;border-radius:8px}
+.flag>span{width:22px;height:22px;border-radius:6px;background:#15202a;display:grid;place-items:center;color:#b9c9da;font-size:10px;flex:none}
+.flag.risk>span{color:#e5bd72;background:#292318}
+.flag.behavior>span{color:#e3a0a8;background:#281b1e}
+.flag.streak>span{color:#f0808a;background:#291a1d}
+.flag b{font-size:9px}
+.flag p{margin:4px 0 0;color:#748092;font-size:8px;line-height:1.55}
+.coach-feed{margin:22px auto;max-width:620px;text-align:left;display:grid;gap:8px}
+.coach-item{display:flex;gap:10px;padding:12px;background:#10161d;border:1px solid #202a34;border-radius:8px}
+.coach-item>span{color:#dbe7f4}
+.coach-item b{font-size:9px}
+.coach-item p{margin:4px 0 0;color:#748092;font-size:8px;line-height:1.55}
+@media(max-width:800px){.behavior-grid{grid-template-columns:1fr}.analytics-grid{grid-template-columns:1fr}.analyst{padding:30px 20px}}
