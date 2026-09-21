@@ -68,3 +68,20 @@ button{font:inherit}
 .coach-item b{font-size:9px}
 .coach-item p{margin:4px 0 0;color:#748092;font-size:8px;line-height:1.55}
 @media(max-width:800px){.behavior-grid{grid-template-columns:1fr}.analytics-grid{grid-template-columns:1fr}.analyst{padding:30px 20px}}
+
+/* Ask Trading Hub */
+.coach-shell{max-width:980px;background:radial-gradient(circle at 50% 0,#182432,#0b1016 58%);border:1px solid #202b36;border-radius:14px;padding:30px}
+.coach-header{display:flex;align-items:center;gap:18px;padding-bottom:24px;border-bottom:1px solid #1d2731}
+.coach-header .analyst-orb{font-size:32px}
+.coach-header h2{font-size:22px;margin:7px 0}
+.coach-prompts{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
+.coach-prompts button{background:#101820;border:1px solid #263340;color:#9eabba;border-radius:20px;padding:8px 11px;font-size:9px}
+.coach-prompts button:hover{border-color:#4c6073;color:#e1e8ef}
+.coach-ask{display:flex;gap:8px}
+.coach-ask input{flex:1;background:#080d13;border:1px solid #293541;color:#e5ebf2;border-radius:8px;padding:12px;font-size:10px;outline:none}
+.coach-ask input:focus{border-color:#597086}
+.coach-answer{margin-top:14px;background:#10171f;border:1px solid #273440;border-radius:10px;padding:18px}
+.coach-answer h3{font-size:15px;margin:8px 0}
+.coach-answer p{color:#8c98a8;font-size:10px;line-height:1.7;margin:0}
+.coach-answer ul{margin:12px 0 0;padding-left:18px;color:#9ca8b7;font-size:9px;line-height:1.8}
+.coach-shell>.coach-feed{max-width:none;margin:18px 0}
