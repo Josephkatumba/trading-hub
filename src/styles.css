@@ -329,3 +329,11 @@ button{font:inherit}
 .score-row strong{text-align:right;color:#cbd6e1;font-size:8px}
 .radar-checks{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
 .radar-checks>div{min-width:0}
+
+.radar-fundamentals{margin-top:9px}
+.macro-list{display:grid;gap:6px}
+.macro-event{display:grid;grid-template-columns:150px 1fr auto;gap:10px;align-items:center;padding:9px 10px;border:1px solid #202a33;border-radius:8px;background:#0b1117;font:8px "DM Mono",monospace}
+.macro-event span{color:#718092}.macro-event b{color:#d6e0ea;font-weight:500}.macro-event em{font-style:normal;color:#e6b45d;text-transform:uppercase}
+.macro-empty{display:flex;flex-direction:column;gap:5px;padding:12px;border:1px dashed #28343f;border-radius:8px;color:#7f8c9c;font:9px "DM Mono",monospace}
+.macro-empty b{color:#cbd6e1;font-size:10px}
+@media(max-width:700px){.macro-event{grid-template-columns:1fr auto}.macro-event span{grid-column:1/-1}}
