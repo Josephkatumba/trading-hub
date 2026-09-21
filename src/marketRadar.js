@@ -1,3 +1,4 @@
+import {engineFetch} from "./engine.js";
 const DEMO_MARKETS = [
   {symbol:"XAUUSD",price:3348.20,change:0.42,state:"WATCHING",score:74,setup:"Trendline reversal",reason:"Bearish structure with repeated trendline tests. Waiting for rejection + retest.",session:"New York",updated:"Demo feed"},
   {symbol:"NAS100",price:22792.4,change:-0.31,state:"DEVELOPING",score:81,setup:"S/R retest",reason:"Price is returning to a prior reaction zone while structure remains directional.",session:"New York",updated:"Demo feed"},
@@ -31,9 +32,7 @@ function demoData(){
 
 async function getRadar(){
   try{
-    const response=await fetch("/api/market/radar",{headers:{"Accept":"application/json"}});
-    if(!response.ok) throw new Error("Backend unavailable");
-    const data=await response.json();
+    const data=await engineFetch("/api/market/radar");
     if(Array.isArray(data?.markets) && data.markets.length) return {markets:data.markets,live:true,source:data.source||"MT5"};
   }catch(_){}
   return {markets:demoData(),live:false,source:"Demo feed"};
