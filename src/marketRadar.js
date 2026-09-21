@@ -45,7 +45,7 @@ function renderDetail(m){
     : "";
   return '<div class="radar-detail">'
     +'<div class="radar-detail-top"><div><span class="kicker">MARKET INTELLIGENCE</span><h2>'+esc(m.symbol)+'</h2><p>'+esc(m.stage||"NO SETUP")+' · '+esc(m.session||"Session unknown")+'</p></div><div class="radar-big-score">'+Number(m.score||0)+'<small>/100</small></div></div>'
-    +'<div class="radar-insight-card"><span>WHAT THE ENGINE SEES</span><p>'+esc(m.insight||m.reason||"Waiting for more market structure.")+'</p></div>'
+    +'<div class="radar-action-card '+String(m.action||"WAIT").toLowerCase().replace(/\s+/g,"-")+'"><span>SCANNER DIRECTION</span><b>'+esc(m.action||"WAIT")+'</b><small>'+esc(m.trigger||"Wait for a clean setup.")+'</small></div><div class="radar-insight-card"><span>WHAT THE ENGINE SEES</span><p>'+esc(m.insight||m.reason||"Waiting for more market structure.")+'</p></div>'
     +'<div class="radar-checks"><div><span>BIAS</span><b>'+esc(m.market_bias||"—")+'</b></div><div><span>MOMENTUM</span><b>'+esc(m.momentum||"—")+' · RSI '+(m.rsi!=null?Number(m.rsi).toFixed(0):"—")+'</b></div><div><span>H1 BIAS</span><b>'+esc(m.higher_timeframe_bias||"—")+'</b></div><div><span>STRUCTURE</span><b>'+esc(m.structure||"—")+'</b></div><div><span>PRICE</span><b>'+fmt(m.price)+'</b></div><div><span>SPREAD</span><b>'+fmt(m.spread,3)+'</b></div>'+london+key+'</div>'
     +'<div class="radar-reason"><span>ENGINE REASONING</span><p>'+esc(m.reason||"No clean sequence detected.")+'</p></div>'
     +'<div class="score-breakdown"><div class="kicker">100-POINT SETUP MODEL</div>'+scoreBars(m)+'</div>'
