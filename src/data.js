@@ -1,3 +1,4 @@
+import {IMPORTED_TRADES} from "./importedData.js";
 const DEMO_TRADES = [
   { id:"TH-001", account:"Goldimus Funded", symbol:"XAUUSD", side:"BUY", entry:3342.2, exit:3356.8, volume:0.3, pnl:620, r:1.84, risk:337, time:"2026-09-21 14:32", session:"New York" },
   { id:"TH-002", account:"Personal Futures", symbol:"NAS100", side:"SELL", entry:22780, exit:22690, volume:1, pnl:410, r:1.35, risk:303, time:"2026-09-21 11:08", session:"London" },
@@ -12,8 +13,8 @@ const DEMO_TRADES = [
 export function getTrades() {
   try {
     const saved=localStorage.getItem("th_trades");
-    return saved ? JSON.parse(saved) : DEMO_TRADES;
-  } catch { return DEMO_TRADES; }
+    return saved ? JSON.parse(saved) : IMPORTED_TRADES;
+  } catch { return IMPORTED_TRADES; }
 }
 export function saveTrades(trades){ localStorage.setItem("th_trades",JSON.stringify(trades)); }
 export function resetTrades(){ localStorage.removeItem("th_trades"); }
