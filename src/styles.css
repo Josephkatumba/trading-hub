@@ -113,3 +113,115 @@ button{font:inherit}
 .coach-shell{box-shadow:0 25px 70px rgba(0,0,0,.2)}
 @media(max-width:900px){.chart-grid-2{grid-template-columns:1fr}.pie-wrap{justify-content:flex-start}}
 @media(max-width:600px){.bar-row{grid-template-columns:75px 1fr 58px}.pie-wrap{flex-direction:column;gap:18px}.pie-legend{width:100%}}
+
+
+/* Mobile responsive navigation */
+.mobile-menu-btn,.mobile-nav-backdrop{display:none}
+
+@media(max-width:800px){
+  html,body,#root{width:100%;max-width:100%;overflow-x:hidden}
+  body.nav-open{overflow:hidden}
+  .app{display:block;min-height:100vh;width:100%;overflow-x:hidden}
+  aside{
+    width:min(280px,84vw);
+    transform:translateX(-105%);
+    transition:transform .25s ease;
+    box-shadow:20px 0 60px rgba(0,0,0,.45);
+  }
+  aside.mobile-open{transform:translateX(0)}
+  .mobile-menu-btn{
+    display:grid;
+    place-items:center;
+    position:fixed;
+    top:12px;
+    left:12px;
+    width:42px;
+    height:42px;
+    z-index:70;
+    border:1px solid #293541;
+    border-radius:10px;
+    background:rgba(12,17,23,.94);
+    color:#e9eef5;
+    font-size:20px;
+    box-shadow:0 8px 25px rgba(0,0,0,.3);
+  }
+  .mobile-menu-btn:active{transform:scale(.96)}
+  .mobile-nav-backdrop{
+    display:block;
+    position:fixed;
+    inset:0;
+    z-index:40;
+    background:rgba(2,4,8,.62);
+    backdrop-filter:blur(4px);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease;
+  }
+  .mobile-nav-backdrop.show{opacity:1;pointer-events:auto}
+  main{
+    margin-left:0;
+    width:100%;
+    max-width:none;
+    padding:0 15px 50px;
+  }
+  .topline{
+    height:auto;
+    min-height:48px;
+    padding:10px 4px 10px 55px;
+    gap:10px;
+    flex-wrap:wrap;
+    line-height:1.5;
+  }
+  .command,.page-title{
+    padding:28px 0 20px;
+    align-items:flex-start;
+    gap:18px;
+    flex-direction:column;
+  }
+  .command h1,.page-title h1{font-size:25px;letter-spacing:-.8px}
+  .command-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}
+  .command-actions button{width:100%}
+  .portfolio-card{
+    grid-template-columns:1fr;
+    min-height:0;
+    padding:20px;
+    gap:20px;
+  }
+  .portfolio-spark{height:105px}
+  .portfolio-side{display:none}
+  .equity{font-size:34px}
+  .equity-meta{flex-wrap:wrap;line-height:1.5}
+  .metric-grid{grid-template-columns:repeat(2,1fr);gap:7px}
+  .metric{padding:13px}
+  .metric strong{font-size:15px}
+  .dashboard-grid,.dashboard-grid.lower{grid-template-columns:1fr}
+  .panel{min-width:0;padding:15px}
+  .big-chart{height:220px}
+  .big-chart svg{height:195px}
+  .account-cards{grid-template-columns:1fr}
+  .table-panel{overflow-x:auto}
+  .table-head,.table-row{min-width:520px}
+  .analytics-grid,.behavior-grid,.chart-grid-2{grid-template-columns:1fr}
+  .coach-shell{padding:20px}
+  .analyst{padding:28px 18px}
+  .analyst-grid{grid-template-columns:1fr}
+  .analyst-grid div{border-right:0;border-bottom:1px solid #1c2630}
+  .analyst-grid div:last-child{border-bottom:0}
+  .pie-wrap{flex-direction:column}
+  .trade-drawer{width:100%;padding:25px 18px}
+  .drawer-hero h2{font-size:30px}
+}
+
+@media(max-width:430px){
+  main{padding-left:12px;padding-right:12px}
+  .metric-grid{grid-template-columns:1fr 1fr}
+  .metric{padding:11px}
+  .metric span{font-size:7px}
+  .metric strong{font-size:14px}
+  .command-actions{grid-template-columns:1fr}
+  .topline{font-size:7px}
+  .filter-bar{display:grid;grid-template-columns:1fr 1fr}
+  .filter{min-width:0}
+  .filter select{min-width:0;width:100%;padding-right:8px}
+  .filter-bar .ghost{width:100%}
+}
