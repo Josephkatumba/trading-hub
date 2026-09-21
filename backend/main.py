@@ -6,6 +6,8 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from scanner import analyze_symbol
+
 try:
     import MetaTrader5 as mt5
 except ImportError:
@@ -50,12 +52,14 @@ def market_snapshot() -> list[dict[str, Any]]:
                 continue
             tick = mt5.symbol_info_tick(actual)
             info = mt5.symbol_info(actual)
-            if not tick or not info:
+            rates = mt5.copy_rates_from_pos(actual, mt5.TIMEFRAME_M15, 0, 250)
+            if not tick or not info or rates is None:
                 continue
 
             bid = float(tick.bid or 0)
             ask = float(tick.ask or 0)
             price = (bid + ask) / 2 if bid and ask else float(info.last or bid or ask or 0)
+            scan = analyze_symbol(actual, rates.tolist())
             markets.append({
                 "symbol": normalize_symbol(requested),
                 "broker_symbol": actual,
@@ -63,10 +67,7 @@ def market_snapshot() -> list[dict[str, Any]]:
                 "bid": bid,
                 "ask": ask,
                 "spread": abs(ask - bid) if ask and bid else 0,
-                "state": "WATCHING",
-                "score": 0,
-                "setup": "Scanner initializing",
-                "reason": "Live quote received. Strategy engine is the next layer.",
+                **scan,
                 "session": "Live",
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             })
