@@ -1,5 +1,6 @@
 import "./styles.css";
 import {getTrades,saveTrades,resetTrades,parseCSV,calculateMetrics,getAccounts,getTradeContext} from "./data.js";
+import {getReview,saveReview,reviewedCount,DEFAULT_RULES} from "./journal.js";
 
 const initialAccounts={
  "Goldimus Funded":{platform:"FundedNext",balance:52140,status:"LIVE"},
@@ -26,7 +27,7 @@ function filterSelect(key,label){
 }
 
 function render(){
- const all=state.trades, trades=filteredTrades(), m=calculateMetrics(trades);
+ const all=state.trades, trades=filteredTrades(), m=calculateMetrics(trades), reviews=reviewedCount();
  const accounts=getAccounts(all).map(a=>({...a,...(initialAccounts[a.name]||{})}));
  document.querySelector("#root").innerHTML=`
  <div class="app">
@@ -38,7 +39,7 @@ function render(){
    <div class="side-bottom"><a><span>⚙</span>Settings</a><div class="profile"><div class="avatar">JK</div><div><b>Joseph Katumba</b><small>Pro workspace</small></div><span>•••</span></div></div>
   </aside>
   <main>
-   <div class="topline"><span><i class="live-dot"></i> DATA ENGINE ACTIVE · ${all.length} TRADES</span><span>FILTERED P&L <b>${signed(m.pnl)}</b></span></div>
+   <div class="topline"><span><i class="live-dot"></i> DATA ENGINE ACTIVE · ${all.length} TRADES · ${reviews} REVIEWS</span><span>FILTERED P&L <b>${signed(m.pnl)}</b></span></div>
    ${views[state.view](trades,m,accounts)}
   </main>
  </div>
@@ -57,17 +58,28 @@ function importModal(){return `
 function tradeDrawer(t,trades){
  const c=getTradeContext(t,trades),similar=trades.filter(x=>x.id!==t.id&&x.symbol===t.symbol).slice(0,3);
  const checks=[["Matched preferred session",c.sessionPnl>=0],["Matched strongest instrument",t.symbol===calculateMetrics(trades).bestInstrument],["Risk within observed range",(Number(t.risk)||0)<=c.avgRisk*1.25]];
+ const review=getReview(t.id);
  return `
  <div class="drawer-backdrop" id="drawer"><section class="trade-drawer">
   <button class="modal-close" id="closeDrawer">×</button><div class="kicker">TRADE INTELLIGENCE · ${esc(t.id||"EXECUTION")}</div>
   <div class="drawer-hero"><div><span class="direction ${t.side==="BUY"?"buy":"sell"}">${t.side}</span><h2>${esc(t.symbol)}</h2><small>${esc(t.time)} · ${esc(t.session)} · ${esc(t.account)}</small></div><strong class="${t.pnl>=0?"up":"down"}">${signed(t.pnl)}</strong></div>
   <div class="trade-facts"><div><span>ENTRY</span><b>${t.entry||"—"}</b></div><div><span>EXIT</span><b>${t.exit||"—"}</b></div><div><span>R MULTIPLE</span><b>${t.r>=0?"+":""}${Number(t.r||0).toFixed(2)}R</b></div><div><span>RISK</span><b>${money(t.risk||0)}</b></div></div>
-  <div class="drawer-section"><div class="kicker">YOUR HISTORY · ${esc(t.symbol)}</div><div class="history-strip"><div><b>${c.symbolTrades}</b><span>TRADES</span></div><div><b>${pct(c.symbolWinRate)}</b><span>WIN RATE</span></div><div><b>+${c.symbolAvgR.toFixed(2)}R</b><span>AVG R</span></div></div></div>
+  <div class="drawer-section"><div class="kicker">YOUR HISTORY · ${esc(t.symbol)}</div><div class="history-strip"><div><b>${c.symbolTrades}</b><span>TRADES</span></div><div><b>${pct(c.symbolWinRate)}</b><span>WIN RATE</span></div><div><b>${c.symbolAvgR>=0?"+":""}${c.symbolAvgR.toFixed(2)}R</b><span>AVG R</span></div></div></div>
   <div class="drawer-section"><div class="kicker">WHY THIS TRADE MATTERED</div><div class="check-list">${checks.map(x=>`<div><i class="${x[1]?"good":"warn"}">${x[1]?"✓":"!"}</i><span>${x[0]}</span></div>`).join("")}</div></div>
+  <div class="drawer-section review-section">
+   <div class="kicker">POST-TRADE REVIEW</div><h3>Turn this execution into memory.</h3>
+   <div class="review-grid">
+    <label><span>SETUP</span><select id="reviewSetup"><option value="">Choose setup</option><option value="Trendline reversal" ${review.setup==="Trendline reversal"?"selected":""}>Trendline reversal</option><option value="Breakout" ${review.setup==="Breakout"?"selected":""}>Breakout</option><option value="Retest" ${review.setup==="Retest"?"selected":""}>Retest</option><option value="Range reversal" ${review.setup==="Range reversal"?"selected":""}>Range reversal</option><option value="Other" ${review.setup==="Other"?"selected":""}>Other</option></select></label>
+    <label><span>EXECUTION GRADE</span><select id="reviewGrade"><option value="">Grade</option><option ${review.grade==="A"?"selected":""}>A</option><option ${review.grade==="B"?"selected":""}>B</option><option ${review.grade==="C"?"selected":""}>C</option><option ${review.grade==="D"?"selected":""}>D</option></select></label>
+   </div>
+   <div class="rule-review">${DEFAULT_RULES.map((rule,i)=>`<label><input type="checkbox" data-rule="${i}" ${review.rules?.includes(i)?"checked":""}><span>${esc(rule)}</span></label>`).join("")}</div>
+   <textarea id="reviewNotes" placeholder="What did you see? What would you repeat or change?">${esc(review.notes||"")}</textarea>
+   <div class="review-actions"><span id="reviewSaved">${review.updatedAt?"Saved locally":"Not reviewed yet"}</span><button class="primary" id="saveReview">Save review</button></div>
+  </div>
   <div class="drawer-section"><div class="kicker">SIMILAR TRADES</div><div class="similar-list">${similar.length?similar.map(x=>`<button data-trade="${esc(x.id)}"><span>${x.symbol} · ${x.side}</span><b class="${x.pnl>=0?"up":"down"}">${signed(x.pnl)}</b></button>`).join(""):"<p class='sub'>More history will unlock comparable setups.</p>"}</div></div>
   <button class="ai-button drawer-ai" id="askTrade">Ask Trading Hub <span>↗</span></button>
- </section></div>`;}
-
+ </section></div>`;
+}
 const views={
 overview:(trades,m,accounts)=>`
 <section class="command"><div><div class="kicker">PORTFOLIO / LIVE INTELLIGENCE</div><h1>Good evening, Joseph.</h1><p class="sub">Your trading account is becoming the journal. Trading Hub is turning executions into intelligence.</p></div><div class="command-actions"><button class="ghost" id="importTop">Import trades</button><button class="primary" id="connectTop">+ Connect account</button></div></section>
@@ -105,6 +117,17 @@ function bind(){
  if(drop){drop.ondragover=e=>{e.preventDefault();drop.classList.add("dragging")};drop.ondragleave=()=>drop.classList.remove("dragging");drop.ondrop=e=>{e.preventDefault();drop.classList.remove("dragging");const f=e.dataTransfer.files[0];if(f)handleFile(f);}}
  if(file)file.onchange=e=>{if(e.target.files[0])handleFile(e.target.files[0]);};
  const demo=document.getElementById("importDemo");if(demo)demo.onclick=()=>{resetTrades();state.trades=getTrades();state.importOpen=false;render();};
+ const save=document.getElementById("saveReview");
+ if(save)save.onclick=()=>{
+   const rules=[...document.querySelectorAll("[data-rule]:checked")].map(x=>Number(x.dataset.rule));
+   saveReview(state.selectedTrade.id,{
+     setup:document.getElementById("reviewSetup")?.value||"",
+     grade:document.getElementById("reviewGrade")?.value||"",
+     rules,
+     notes:document.getElementById("reviewNotes")?.value||""
+   });
+   render();
+ };
  const ask=document.getElementById("askTrade");if(ask)ask.onclick=()=>{state.selectedTrade=null;state.view="insights";render();};
 }
 async function handleFile(file){
