@@ -1,4 +1,5 @@
 import {analyzeBehavior,behaviorSummary} from "./behavior.js";
+import {answerQuestion} from "./coach.js";
 const money=n=>(n<0?"-$":"$")+Math.abs(Number(n)||0).toLocaleString(undefined,{maximumFractionDigits:0});
 const signed=n=>n>=0?"+"+money(n):money(n);
 const pct=n=>Number(n||0).toFixed(1)+"%";
@@ -21,9 +22,13 @@ export function renderAnalytics(trades,m){
 }
 export function renderInsights(trades,m){
  const b=analyzeBehavior(trades),s=behaviorSummary(b);
+ const initial=answerQuestion("overview",trades);
  const flags=b.flags.slice(0,3).map(x=>"<div class=\"coach-item\"><span>✦</span><div><b>"+esc(x.title)+"</b><p>"+esc(x.text)+"</p></div></div>").join("");
- return "<div class=\"page-title\"><div><div class=\"kicker\">TRADING INTELLIGENCE</div><h1>Trading Coach</h1><p class=\"sub\">A deterministic intelligence layer today. The model layer can plug in later.</p></div></div>"+
- "<div class=\"analyst\"><div class=\"analyst-orb\">✦</div><h2>Show me what I keep doing.</h2><p>Trading Hub has <b>"+trades.length+" trades</b> and <b>"+b.reviewedCount+" reviewed trades</b>. Observed edge: <b>"+esc(m.bestInstrument)+"</b> in <b>"+esc(m.bestSession)+"</b>.</p>"+
- "<div class=\"analyst-grid\"><div><span>REVIEW COVERAGE</span><b>"+s.coverage+"</b></div><div><span>STRONGEST SETUP</span><b>"+esc(s.strongestSetup)+"</b></div><div><span>RISK CONSISTENCY</span><b>"+s.riskConsistency+"</b></div></div>"+
- "<div class=\"coach-feed\">"+flags+"</div><button class=\"ai-button\" data-view=\"analytics\">Open behavioral dashboard <span>↗</span></button></div>";
+ return "<div class=\"page-title\"><div><div class=\"kicker\">TRADING INTELLIGENCE</div><h1>Trading Coach</h1><p class=\"sub\">Ask questions about your own trading history.</p></div></div>"+
+ "<div class=\"coach-shell\"><div class=\"coach-header\"><div class=\"analyst-orb\">✦</div><div><span class=\"kicker\">ASK TRADING HUB</span><h2>What do you want to understand?</h2><p class=\"sub\">Answers are calculated from the executions and reviews stored in this browser.</p></div></div>"+
+ "<div class=\"coach-prompts\"><button data-question=\"Why have I been losing?\">Why have I been losing?</button><button data-question=\"What happens after I take a loss?\">After a loss?</button><button data-question=\"Which setups make me money?\">Which setups work?</button><button data-question=\"Am I risking consistently?\">Is my risk consistent?</button></div>"+
+ "<form class=\"coach-ask\" id=\"coachForm\"><input id=\"coachInput\" placeholder=\"Ask: what is my biggest recurring mistake?\" autocomplete=\"off\"/><button class=\"primary\">Ask</button></form>"+
+ "<div class=\"coach-answer\" id=\"coachAnswer\"><div class=\"kicker\">DATA ANSWER</div><h3>"+esc(initial.title)+"</h3><p>"+esc(initial.body)+"</p>"+(initial.facts.length?"<ul>"+initial.facts.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul>":"")+"</div>"+
+ "<div class=\"coach-feed\">"+flags+"</div>"+
+ "<div class=\"analyst-grid\"><div><span>REVIEW COVERAGE</span><b>"+s.coverage+"</b></div><div><span>STRONGEST SETUP</span><b>"+esc(s.strongestSetup)+"</b></div><div><span>RISK CONSISTENCY</span><b>"+s.riskConsistency+"</b></div></div></div>";
 }
