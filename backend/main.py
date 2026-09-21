@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone, time
+from datetime import datetime, timezone, time, timedelta
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -69,24 +69,44 @@ def session_context(rows: list[dict[str, Any]], price: float) -> dict[str, Any]:
     london_now = now_utc.astimezone(LONDON)
     ny_now = now_utc.astimezone(NEW_YORK)
 
-    if time(8, 0) <= london_now.time() < time(13, 30):
-        session = "London"
-    elif time(13, 30) <= ny_now.time() < time(21, 0):
+    # Treat London and New York as independent local sessions. The important
+    # strategy window is the period after London's close while New York is active.
+    london_active = time(8, 0) <= london_now.time() < time(16, 30)
+    ny_active = time(8, 0) <= ny_now.time() < time(17, 0)
+
+    if ny_active and not london_active:
         session = "New York"
+    elif london_active and ny_active:
+        session = "London / New York Overlap"
+    elif london_active:
+        session = "London"
     elif time(0, 0) <= london_now.time() < time(8, 0):
         session = "Asia"
     else:
         session = "Off-hours"
 
+    # Find the most recent London session represented in the M15 history.
+    # Before London's open, this deliberately falls back to the previous
+    # completed session instead of looking for bars on the new London date.
     london_bars = []
-    for row in rows:
-        dt = _bar_dt(row).astimezone(LONDON)
-        if dt.date() == london_now.date() and time(8, 0) <= dt.time() < time(16, 30):
-            london_bars.append(row)
+    london_date = None
+    for days_back in range(8):
+        candidate_date = london_now.date() - timedelta(days=days_back)
+        candidate = []
+        for row in rows:
+            dt = _bar_dt(row).astimezone(LONDON)
+            if dt.date() == candidate_date and time(8, 0) <= dt.time() < time(16, 30):
+                candidate.append(row)
+        if candidate:
+            london_bars = candidate
+            london_date = candidate_date
+            break
 
     london_high = max((float(r["high"]) for r in london_bars), default=0.0)
     london_low = min((float(r["low"]) for r in london_bars), default=0.0)
-    london_complete = london_now.time() >= time(16, 30)
+    london_complete = bool(london_date) and (
+        london_date < london_now.date() or london_now.time() >= time(16, 30)
+    )
 
     alignment = None
     if london_complete and session == "New York" and london_high and london_low:
@@ -106,7 +126,7 @@ def session_context(rows: list[dict[str, Any]], price: float) -> dict[str, Any]:
         "london_low": london_low,
         "london_complete": london_complete,
         "session_alignment": alignment,
-        "london_date": london_now.date().isoformat(),
+        "london_date": london_date.isoformat() if london_date else None,
         "new_york_time": ny_now.isoformat(),
     }
 
