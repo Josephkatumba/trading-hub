@@ -154,9 +154,12 @@ def market_snapshot() -> list[dict[str, Any]]:
             h1_rates = mt5.copy_rates_from_pos(actual, mt5.TIMEFRAME_H1, 0, 160)
             if not tick or not info or rates is None or h1_rates is None:
                 continue
-
             bid = float(tick.bid or 0)
             ask = float(tick.ask or 0)
+            raw_last = float(info.last or 0)
+            if (bid <= 0 and ask <= 0 and raw_last <= 0):
+                continue
+
             price = (bid + ask) / 2 if bid and ask else float(info.last or bid or ask or 0)
             rows = [{
                 "time": float(r["time"]),
