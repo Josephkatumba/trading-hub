@@ -2,6 +2,7 @@ import "./styles.css";
 import {getTrades,saveTrades,resetTrades,parseCSV,calculateMetrics,getAccounts,getTradeContext} from "./data.js";
 import {getReview,saveReview,reviewedCount,DEFAULT_RULES} from "./journal.js";
 import {renderAnalytics,renderInsights} from "./behaviorView.js";
+import {renderMarketRadar,initMarketRadar} from "./marketRadar.js";
 
 const initialAccounts={
  "Goldimus Funded":{platform:"FundedNext",balance:52140,status:"LIVE"},
@@ -10,7 +11,7 @@ const initialAccounts={
 };
 let state={view:"overview",trades:getTrades(),importOpen:false,selectedTrade:null,filters:{account:"ALL",symbol:"ALL",session:"ALL"}};
 
-const nav=[["overview","Overview","⌂"],["accounts","Accounts","◈"],["trades","Trades","↗"],["analytics","Analytics","◒"],["insights","AI Intelligence","✦"]];
+const nav=[["overview","Overview","⌂"],["radar","Market Radar","◉"],["accounts","Accounts","◈"],["trades","Trades","↗"],["analytics","Analytics","◒"],["insights","AI Intelligence","✦"]];
 const money=n=>(n<0?"-$":"$")+Math.abs(Number(n)||0).toLocaleString(undefined,{maximumFractionDigits:0});
 const signed=n=>n>=0?"+"+money(n):money(n);
 const pct=n=>Number(n||0).toFixed(1)+"%";
@@ -48,6 +49,7 @@ function render(){
  </div>
  ${state.importOpen?importModal():""}${state.selectedTrade?tradeDrawer(state.selectedTrade,all):""}`;
  bind();
+ if(state.view==="radar") initMarketRadar();
 }
 
 function importModal(){return `
@@ -94,6 +96,7 @@ overview:(trades,m,accounts)=>`
 <div class="panel"><div class="panel-head"><div><span class="kicker">EXECUTION FEED</span><h2>Recent trades</h2></div><button class="text-btn" data-view="trades">View all →</button></div><div class="trade-list">${trades.slice(0,5).map(t=>`<button class="trade-row clickable" data-trade="${esc(t.id)}"><div><b>${esc(t.symbol)}</b><small><span class="${t.side==="BUY"?"up":"down"}">${t.side}</span> · ${esc(t.time)} · ${esc(t.session)}</small></div><strong class="${t.pnl>=0?"up":"down"}">${signed(t.pnl)}</strong></button>`).join("")}</div></div></section>`,
 accounts:(trades,m,accounts)=>`<div class="page-title"><div><div class="kicker">CAPITAL MAP</div><h1>All accounts</h1><p class="sub">One portfolio view across your trading activity.</p></div><button class="primary" id="importAccounts">+ Import trades</button></div><div class="account-cards">${accounts.map(a=>`<div class="account-card"><div class="account-top"><span class="account-icon big">${(a.platform||"I")[0]}</span><span class="status">${a.status||"IMPORTED"}</span></div><h3>${esc(a.name)}</h3><small>${esc(a.platform||"Imported account")}</small><div class="card-balance">${a.balance?money(a.balance):"Activity linked"}</div><div class="account-bottom"><span>P&L <b class="${a.pnl>=0?"up":"down"}">${signed(a.pnl)}</b></span><span>Trades <b>${a.trades}</b></span></div></div>`).join("")}</div>`,
 trades:(trades,m)=>`<div class="page-title"><div><div class="kicker">EXECUTION LEDGER</div><h1>Trade intelligence</h1><p class="sub">${trades.length} executions · click a trade to inspect the context behind it.</p></div><div><button class="ghost" id="importTrades">Import CSV</button></div></div><div class="filter-bar">${filterSelect("account","ACCOUNT")}${filterSelect("symbol","SYMBOL")}${filterSelect("session","SESSION")}<button class="ghost" id="clearFilters">Clear</button></div><div class="panel table-panel"><div class="table-head"><span>SYMBOL</span><span>SIDE</span><span>SESSION</span><span>TIME</span><span>P&L</span></div>${trades.map(t=>`<button class="table-row clickable" data-trade="${esc(t.id)}"><b>${esc(t.symbol)}</b><span class="${t.side==="BUY"?"up":"down"}">${t.side}</span><span>${esc(t.session)}</span><span>${esc(t.time)}</span><strong class="${t.pnl>=0?"up":"down"}">${signed(t.pnl)}</strong></button>`).join("")||"<div class='empty-state'>No trades match these filters.</div>"}</div>`,
+radar:renderMarketRadar,
 analytics:renderAnalytics,
 insights:renderInsights
 };
