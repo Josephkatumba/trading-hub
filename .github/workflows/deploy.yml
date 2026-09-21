@@ -1,8 +1,8 @@
-name: Deploy Trading Hub
+name: Deploy Trading Hub to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -20,22 +20,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 24
-
-      - name: Install dependencies
+          node-version: 20
+          cache: npm
+      - name: Install
         run: npm install
-
       - name: Build
         run: npm run build
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
@@ -44,9 +38,8 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
     runs-on: ubuntu-latest
-    name: Deploy to GitHub Pages
+    needs: build
     steps:
       - name: Deploy
         id: deployment
