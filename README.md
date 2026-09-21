@@ -1,0 +1,2 @@
+# trading-hub
+Trading platform
