@@ -5,6 +5,9 @@ from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from scanner import analyze_symbol
 from macro import fundamentals_snapshot
