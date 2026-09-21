@@ -130,6 +130,12 @@ function bind(){
    render();
  };
  const ask=document.getElementById("askTrade");if(ask)ask.onclick=()=>{state.selectedTrade=null;state.view="insights";render();};
+ const coachForm=document.getElementById("coachForm");
+ const coachInput=document.getElementById("coachInput");
+ const coachAnswer=document.getElementById("coachAnswer");
+ const runQuestion=q=>{if(!coachAnswer)return;import("./coach.js").then(({answerQuestion})=>{const a=answerQuestion(q,state.trades);coachAnswer.innerHTML="<div class=\"kicker\">DATA ANSWER</div><h3>"+esc(a.title)+"</h3><p>"+esc(a.body)+"</p>"+(a.facts.length?"<ul>"+a.facts.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul>":"");});};
+ if(coachForm)coachForm.onsubmit=e=>{e.preventDefault();const q=coachInput?.value.trim();if(q)runQuestion(q);};
+ document.querySelectorAll("[data-question]").forEach(el=>el.onclick=()=>{if(coachInput){coachInput.value=el.dataset.question;runQuestion(el.dataset.question);}});
 }
 async function handleFile(file){
  const status=document.getElementById("importStatus");if(status)status.innerHTML='<div class="import-loading">Reading '+esc(file.name)+'…</div>';
