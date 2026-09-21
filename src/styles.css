@@ -31,3 +31,16 @@ button{font:inherit}
 .similar-list{display:grid;gap:7px;margin-top:12px}.similar-list button{display:flex;justify-content:space-between;background:#11161e;border:1px solid #202733;color:#dce2ea;padding:12px;border-radius:8px;cursor:pointer}.similar-list button:hover{border-color:#3b4654}
 .drawer-ai{width:100%;margin-top:5px}
 @media(max-width:800px){.trade-facts{grid-template-columns:repeat(2,1fr)}.trade-drawer{padding:28px 20px}.drawer-hero h2{font-size:30px}}
+
+.review-section h3{font-size:16px;margin:8px 0 16px}
+.review-grid{display:grid;grid-template-columns:1fr 110px;gap:9px}
+.review-grid label{display:flex;flex-direction:column;gap:6px}
+.review-grid span,.rule-review+textarea+* span{font:8px "DM Mono",monospace;letter-spacing:.08em;color:#737e8e}
+.review-grid select{background:#11161e;border:1px solid #28313d;color:#e7edf4;border-radius:7px;padding:10px}
+.rule-review{display:grid;gap:8px;margin:12px 0}
+.rule-review label{display:flex;gap:9px;align-items:flex-start;background:#10161d;border:1px solid #202a34;border-radius:7px;padding:9px;color:#aeb8c6;font-size:9px;line-height:1.45}
+.rule-review input{accent-color:#79e2b3;margin-top:1px}
+#reviewNotes{width:100%;min-height:85px;resize:vertical;background:#0a0f15;border:1px solid #28313d;border-radius:8px;color:#dce4ed;padding:11px;font:10px Inter,sans-serif;line-height:1.6;outline:none}
+#reviewNotes:focus{border-color:#50657b}
+.review-actions{display:flex;align-items:center;justify-content:space-between;margin-top:9px}
+.review-actions span{font:8px "DM Mono",monospace;color:#657181}
