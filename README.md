@@ -1,77 +1,32 @@
 # Trading Hub
 
-A unified trading intelligence platform designed to bring a trader's accounts, performance analytics, AI insights, community, challenges, and trading-company discovery into one place.
+Trading Hub is being built as a trading intelligence platform: one workspace for accounts, execution data, analytics, AI insights, social trading, and eventually a marketplace.
 
-## Product vision
+## Product direction
 
-**The trading account becomes the journal.**
+Account connection → trade normalization → analytics → trading fingerprint → AI analyst → integrations → social network → marketplace.
 
-Users will eventually be able to connect multiple trading accounts, automatically import trades, analyze performance, receive AI-generated reports and coaching, compare performance across accounts, participate in a trader community, and discover relevant brokers and prop firms.
+## Current prototype
 
-## Build roadmap
+- Sophisticated trading command center UI
+- Multi-account workspace concept
+- Structured trade data engine
+- CSV trade-history importer
+- Browser persistence with localStorage
+- Calculated P&L, win rate, profit factor, average R, drawdown, best instrument and session
+- Analytics and AI-intelligence views
 
-### V0.1
-- Product shell and visual design
-- Multi-account data model
-- Demo/imported trading data
-- Performance dashboard
-- Trade history
-- Core analytics
+## Next build targets
 
-### V0.2
-- Automated trade ingestion
-- AI performance reports
-- Daily and weekly summaries
-- Strategy and discipline insights
+1. Trade detail / Trade Intelligence drawer
+2. Real equity curve from imported trades
+3. Filters by account, instrument, session and date
+4. Trading fingerprint
+5. AI analyst based on real trade history
+6. MT5 / cTrader / futures account integrations
+7. Trader profiles and verified social features
+8. Prop-firm and broker marketplace
 
-### V0.3
-- AI trading coach
-- Ask questions about trading data
-- Personal rules and behavior tracking
+The long-term principle is simple:
 
-### V0.4
-- Public/private trader profiles
-- Community feed
-- Challenges and leaderboards
-
-### V0.5
-- Prop-firm and broker discovery
-- Offers and clearly labeled sponsored placements
-- Affiliate integrations
-
-### Future
-- MT5 / cTrader / futures integrations
-- TradingView intelligence
-- Advanced risk analytics
-- Order-flow data
-- Goldimus integration
-- Experimental AI strategy research
-
-## Architecture direction
-
-```
-                       PLATFORM
-                           |
-          +----------------+----------------+
-          |                |                |
-        DATA              AI             SOCIAL
-          |                |                |
-    Accounts/Trades    Reports/Coach    Profiles/Feed
-          |                |                |
-          +----------------+----------------+
-                           |
-                       DASHBOARD
-                           |
-                     MARKETPLACE
-                  Brokers / Prop Firms
-```
-
-## First magic moment
-
-> **Connect your accounts → instantly understand your trading.**
-
-## Principle
-
-Build the smallest useful version first.
-
-Status: early prototype / product laboratory.
+**The trading account becomes the journal. The data becomes the coach.**
