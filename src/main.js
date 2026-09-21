@@ -10,7 +10,7 @@ let state={view:"overview",trades:getTrades(),importOpen:false,selectedTrade:nul
 
 const nav=[["overview","Overview","⌂"],["accounts","Accounts","◈"],["trades","Trades","↗"],["analytics","Analytics","◒"],["insights","AI Intelligence","✦"]];
 const money=n=>(n<0?"-$":"$")+Math.abs(Number(n)||0).toLocaleString(undefined,{maximumFractionDigits:0});
-const signed=n=>(n>=0?"+":"")+money(n);
+const signed=n=>n>=0?"+"+money(n):money(n);
 const pct=n=>Number(n||0).toFixed(1)+"%";
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 
