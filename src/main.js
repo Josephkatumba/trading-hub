@@ -1,7 +1,7 @@
 import "./styles.css";
 import {getTrades,saveTrades,resetTrades,parseCSV,calculateMetrics,getAccounts,getTradeContext} from "./data.js";
 import {getReview,saveReview,reviewedCount,DEFAULT_RULES} from "./journal.js";
-import {renderAnalytics,renderInsights} from "./behaviorView.js";
+import {renderAnalytics,renderInsights,initInsights} from "./behaviorView.js";
 import {renderMarketRadar,initMarketRadar} from "./marketRadar.js";
 
 const initialAccounts={
@@ -50,6 +50,7 @@ function render(){
  ${state.importOpen?importModal():""}${state.selectedTrade?tradeDrawer(state.selectedTrade,all):""}`;
  bind();
  if(state.view==="radar") initMarketRadar();
+ if(state.view==="insights") initInsights();
 }
 
 function importModal(){return `
