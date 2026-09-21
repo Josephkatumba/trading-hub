@@ -59,7 +59,8 @@ def market_snapshot() -> list[dict[str, Any]]:
             bid = float(tick.bid or 0)
             ask = float(tick.ask or 0)
             price = (bid + ask) / 2 if bid and ask else float(info.last or bid or ask or 0)
-            scan = analyze_symbol(actual, rates.tolist())
+            rows = [{"open": r["open"], "high": r["high"], "low": r["low"], "close": r["close"]} for r in rates]
+            scan = analyze_symbol(actual, rows)
             markets.append({
                 "symbol": normalize_symbol(requested),
                 "broker_symbol": actual,
