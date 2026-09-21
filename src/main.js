@@ -32,6 +32,8 @@ function render(){
  const accounts=getAccounts(all).map(a=>({...a,...(initialAccounts[a.name]||{})}));
  document.querySelector("#root").innerHTML=`
  <div class="app">
+  <button class="mobile-menu-btn" id="mobileMenu" aria-label="Open navigation">☰</button>
+  <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
   <aside>
    <div class="brand"><span class="logo-mark">TH</span><div>Trading Hub<small>INTELLIGENCE PLATFORM</small></div></div>
    <div class="workspace"><span>WORKSPACE</span><b>Joseph's Portfolio</b><i>⌄</i></div>
@@ -111,6 +113,13 @@ function bind(){
  ["importTop","importAccounts","importTrades","importAI","connectTop"].forEach(id=>{const el=document.getElementById(id);if(el)el.onclick=openImport;});
  document.querySelectorAll("[data-filter]").forEach(el=>el.onchange=()=>{state.filters[el.dataset.filter]=el.value;render();});
  const clear=document.getElementById("clearFilters");if(clear)clear.onclick=()=>{state.filters={account:"ALL",symbol:"ALL",session:"ALL"};render();};
+ const mobileMenu=document.getElementById("mobileMenu");
+ const mobileBackdrop=document.getElementById("mobileNavBackdrop");
+ const aside=document.querySelector("aside");
+ const closeMobileNav=()=>{aside?.classList.remove("mobile-open");mobileBackdrop?.classList.remove("show");document.body.classList.remove("nav-open");};
+ if(mobileMenu)mobileMenu.onclick=()=>{aside?.classList.toggle("mobile-open");mobileBackdrop?.classList.toggle("show");document.body.classList.toggle("nav-open");};
+ if(mobileBackdrop)mobileBackdrop.onclick=closeMobileNav;
+ document.querySelectorAll("aside [data-view]").forEach(el=>el.addEventListener("click",closeMobileNav));
  const close=document.getElementById("closeModal"),cancel=document.getElementById("cancelImport");if(close)close.onclick=cancel.onclick=()=>{state.importOpen=false;render();};
  const closeD=document.getElementById("closeDrawer"),back=document.getElementById("drawer");if(closeD)closeD.onclick=()=>{state.selectedTrade=null;render();};if(back)back.onclick=e=>{if(e.target===back){state.selectedTrade=null;render();}};
  const file=document.getElementById("csvFile");
