@@ -254,14 +254,21 @@ def analyze_symbol(
         f"{'Waiting for rejection confirmation.' if direction and breakdown['rejection'] < 15 else 'Rejection condition is present.' if direction else 'Waiting for a directional trendline sequence.'}"
     )
 
+    action = "BUY SETUP" if direction == "LONG" else "SELL SETUP" if direction == "SHORT" else "WAIT"
+    trigger = "Wait for bullish rejection/close confirmation" if direction == "LONG" else "Wait for bearish rejection/close confirmation" if direction == "SHORT" else "Wait for clean trendline structure"
+    invalidation = close - atr if direction == "LONG" and atr else close + atr if direction == "SHORT" and atr else None
+
     return {
         "state": state,
+        "action": action,
         "score": score,
         "setup": setup,
         "direction": direction,
         "reason": reason,
         "insight": insight,
         "stage": stage,
+        "trigger": trigger,
+        "invalidation_hint": invalidation,
         "market_bias": "BULLISH" if ema20 > ema50 and rsi >= 52 else "BEARISH" if ema20 < ema50 and rsi <= 48 else "RANGE / NEUTRAL",
         "momentum": momentum,
         "rsi": rsi,
