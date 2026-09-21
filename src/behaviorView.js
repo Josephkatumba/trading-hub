@@ -63,4 +63,5 @@ async function paintAI(){
    queue.innerHTML='<div class="empty-state">Live market context is unavailable. Your journal intelligence remains active.</div>';
  }
 }
-setTimeout(paintAI,0);
+export function initInsights(){ paintAI(); }
+
