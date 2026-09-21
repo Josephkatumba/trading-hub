@@ -85,3 +85,31 @@ button{font:inherit}
 .coach-answer p{color:#8c98a8;font-size:10px;line-height:1.7;margin:0}
 .coach-answer ul{margin:12px 0 0;padding-left:18px;color:#9ca8b7;font-size:9px;line-height:1.8}
 .coach-shell>.coach-feed{max-width:none;margin:18px 0}
+
+/* Visual Intelligence */
+:root{--cyan:#67d7d1;--blue:#78a8ff;--violet:#d5a6ff;--gold:#f6c56b}
+.chart-grid-2{display:grid;grid-template-columns:1.35fr 1fr;gap:9px;margin-top:9px}
+.chart-grid-2 .panel{min-height:260px}
+.bar-chart{display:grid;gap:13px;margin-top:20px}
+.bar-row{display:grid;grid-template-columns:100px 1fr 72px;align-items:center;gap:10px;font-size:9px}
+.bar-row>span{color:#aab4c1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{height:9px;background:#151e28;border-radius:8px;overflow:hidden}
+.bar-track i{display:block;height:100%;border-radius:8px;transition:width .4s ease}
+.bar-track .positive{background:linear-gradient(90deg,#4fbf91,#6fe0a3);box-shadow:0 0 12px rgba(111,224,163,.16)}
+.bar-track .negative{background:linear-gradient(90deg,#d76572,#f0808a);box-shadow:0 0 12px rgba(240,128,138,.13)}
+.bar-row>b{text-align:right;font:9px "DM Mono",monospace}
+.pie-wrap{display:flex;align-items:center;justify-content:center;gap:28px;min-height:185px;margin-top:10px}
+.pie{width:150px;height:150px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 12px 30px rgba(0,0,0,.22)}
+.pie-legend{display:grid;gap:9px;min-width:120px}
+.pie-legend div{display:grid;grid-template-columns:9px 1fr 25px;gap:7px;align-items:center;font-size:8px}
+.pie-legend i{width:8px;height:8px;border-radius:2px}
+.pie-legend span{color:#8d99a9;overflow:hidden;text-overflow:ellipsis}
+.pie-legend b{font:8px "DM Mono",monospace;text-align:right;color:#d6dde6}
+.metric strong{transition:color .2s}
+.analytics-grid .panel:first-child{background:linear-gradient(145deg,#0d1716,#0c1117)}
+.analytics-grid .panel:nth-child(2){background:linear-gradient(145deg,#101421,#0c1117)}
+.flag.edge>span{color:#6fe0a3;background:#10281e}
+.flag.sample>span{color:#78a8ff;background:#101d31}
+.coach-shell{box-shadow:0 25px 70px rgba(0,0,0,.2)}
+@media(max-width:900px){.chart-grid-2{grid-template-columns:1fr}.pie-wrap{justify-content:flex-start}}
+@media(max-width:600px){.bar-row{grid-template-columns:75px 1fr 58px}.pie-wrap{flex-direction:column;gap:18px}.pie-legend{width:100%}}
