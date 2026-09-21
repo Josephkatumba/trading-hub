@@ -37,6 +37,13 @@ SYMBOL_ALIASES = {
     "EURUSD": ["EURUSD"],
     "GBPUSD": ["GBPUSD"],
     "USDJPY": ["USDJPY"],
+    "USDCHF": ["USDCHF"],
+    "USDCAD": ["USDCAD"],
+    "AUDUSD": ["AUDUSD"],
+    "NZDUSD": ["NZDUSD"],
+    "XAGUSD": ["XAGUSD", "SILVER"],
+    "EURJPY": ["EURJPY"],
+    "GBPJPY": ["GBPJPY"],
 }
 WATCHLIST = list(SYMBOL_ALIASES)
 ENGINE_STARTED = datetime.now(timezone.utc)
@@ -143,8 +150,9 @@ def market_snapshot() -> list[dict[str, Any]]:
                 continue
             tick = mt5.symbol_info_tick(actual)
             info = mt5.symbol_info(actual)
-            rates = mt5.copy_rates_from_pos(actual, mt5.TIMEFRAME_M15, 0, 250)
-            if not tick or not info or rates is None:
+            rates = mt5.copy_rates_from_pos(actual, mt5.TIMEFRAME_M15, 0, 300)
+            h1_rates = mt5.copy_rates_from_pos(actual, mt5.TIMEFRAME_H1, 0, 160)
+            if not tick or not info or rates is None or h1_rates is None:
                 continue
 
             bid = float(tick.bid or 0)
@@ -157,15 +165,32 @@ def market_snapshot() -> list[dict[str, Any]]:
                 "low": float(r["low"]),
                 "close": float(r["close"]),
             } for r in rates]
+            higher_rows = [{
+                "time": float(r["time"]),
+                "open": float(r["open"]),
+                "high": float(r["high"]),
+                "low": float(r["low"]),
+                "close": float(r["close"]),
+            } for r in h1_rates]
             context = session_context(rows, price)
-            scan = analyze_symbol(actual, rows, spread=abs(ask - bid) if ask and bid else 0, session_context=context)
+            current_spread = abs(ask - bid) if ask and bid else 0
+            scan = analyze_symbol(
+                actual,
+                rows,
+                spread=current_spread,
+                session_context=context,
+                higher_rows=higher_rows,
+            )
+            reference = float(rows[-97]["close"]) if len(rows) >= 97 else float(rows[0]["close"])
+            change_pct = ((price - reference) / reference * 100) if reference else 0.0
             markets.append({
                 "symbol": normalize_symbol(requested),
                 "broker_symbol": actual,
                 "price": price,
                 "bid": bid,
                 "ask": ask,
-                "spread": abs(ask - bid) if ask and bid else 0,
+                "spread": current_spread,
+                "change_pct": change_pct,
                 **scan,
                 **context,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
