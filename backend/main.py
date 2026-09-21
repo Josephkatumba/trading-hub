@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from scanner import analyze_symbol
+from macro import fundamentals_snapshot
 
 try:
     import MetaTrader5 as mt5
@@ -24,6 +25,7 @@ app.add_middleware(
 )
 
 WATCHLIST = ["XAUUSD", "NAS100", "US500", "BTCUSD", "ETHUSD", "EURUSD", "GBPUSD", "USDJPY"]
+ENGINE_STARTED = datetime.now(timezone.utc)
 
 
 def normalize_symbol(symbol: str) -> str:
@@ -79,7 +81,46 @@ def market_snapshot() -> list[dict[str, Any]]:
 
 @app.get("/api/health")
 def health():
-    return {"ok": True, "service": "trading-hub-market-engine", "mt5_available": mt5 is not None}
+    connected = False
+    terminal = None
+    account = None
+    symbols = 0
+    error = None
+
+    if mt5 is not None:
+        try:
+            connected = bool(mt5.initialize())
+            if connected:
+                info = mt5.terminal_info()
+                acct = mt5.account_info()
+                terminal = {
+                    "connected": bool(info),
+                    "version": ".".join(map(str, mt5.version() or [])) if mt5.version() else None,
+                }
+                account = {
+                    "login": int(acct.login) if acct else None,
+                    "server": str(acct.server) if acct else None,
+                }
+                symbols = int(mt5.symbols_total() or 0)
+        except Exception as exc:
+            error = str(exc)
+        finally:
+            try:
+                mt5.shutdown()
+            except Exception:
+                pass
+
+    return {
+        "ok": True,
+        "service": "trading-hub-market-engine",
+        "mt5_available": mt5 is not None,
+        "mt5_connected": connected,
+        "terminal": terminal,
+        "account": account,
+        "symbols": symbols,
+        "uptime_started": ENGINE_STARTED.isoformat(),
+        "error": error,
+    }
 
 
 @app.get("/api/market/radar")
@@ -89,5 +130,34 @@ def radar():
         "source": "MT5",
         "live": bool(markets),
         "markets": markets,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@app.get("/api/market/fundamentals")
+def fundamentals():
+    return fundamentals_snapshot()
+
+
+@app.get("/api/market/context")
+def context():
+    markets = market_snapshot()
+    return {
+        "live": bool(markets),
+        "markets": [
+            {
+                "symbol": m["symbol"],
+                "price": m["price"],
+                "bid": m["bid"],
+                "ask": m["ask"],
+                "spread": m["spread"],
+                "state": m.get("state"),
+                "score": m.get("score"),
+                "reason": m.get("reason"),
+                "timestamp": m.get("timestamp"),
+            }
+            for m in markets
+        ],
+        "fundamentals": fundamentals_snapshot(),
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
