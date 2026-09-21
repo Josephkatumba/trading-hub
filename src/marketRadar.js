@@ -50,12 +50,17 @@ function renderDetail(m){
 }
 
 export function renderMarketRadar(){
-  return '<section class="page-title radar-title"><div><div class="kicker">LIVE MARKET INTELLIGENCE</div><h1>Market Radar</h1><p class="sub">Scan multiple instruments and surface potential setups before you open every chart yourself.</p></div><div class="radar-engine"><i class="live-dot"></i><span id="radarEngineStatus">CONNECTING ENGINE</span></div></section><section class="radar-hero"><div><span class="kicker">TRADING HUB SCANNER</span><h2>Find the market worth looking at.</h2><p>Trendline structure, support/resistance, session context and volatility will eventually feed one transparent setup score.</p></div><div class="radar-hero-stats"><div><b id="radarWatching">0</b><span>WATCHING</span></div><div><b id="radarDeveloping">0</b><span>DEVELOPING</span></div><div><b id="radarConfirming">0</b><span>CONFIRMING</span></div></div></section><section class="radar-grid"><div class="panel"><div class="panel-head"><div><span class="kicker">MARKET QUEUE</span><h2>What deserves attention</h2></div><span class="radar-refresh" id="radarUpdated">Waiting…</span></div><div class="radar-table" id="radarTable"></div></div><div class="panel" id="radarDetail"></div></section><section class="radar-method"><div class="kicker">SCANNER LOGIC · V1</div><div class="radar-steps"><span>01 Structure</span><i>→</i><span>02 Trendline</span><i>→</i><span>03 S/R</span><i>→</i><span>04 Session</span><i>→</i><span>05 Confirmation</span><i>→</i><b>Potential setup</b></div><p>V1 is intentionally rule-based. The AI layer can learn from your journal after the scanner proves that its detections match the strategy.</p></section>';
+  return '<section class="page-title radar-title"><div><div class="kicker">LIVE MARKET INTELLIGENCE</div><h1>Market Radar</h1><p class="sub">Scan multiple instruments and surface potential setups before you open every chart yourself.</p></div><div class="radar-engine"><i class="live-dot"></i><span id="radarEngineStatus">CONNECTING ENGINE</span></div></section><section class="radar-hero"><div><span class="kicker">TRADING HUB SCANNER</span><h2>Find the market worth looking at.</h2><p>Trendline structure, support/resistance, session context and volatility will eventually feed one transparent setup score.</p></div><div class="radar-hero-stats"><div><b id="radarWatching">0</b><span>WATCHING</span></div><div><b id="radarDeveloping">0</b><span>DEVELOPING</span></div><div><b id="radarConfirming">0</b><span>CONFIRMING</span></div></div></section><section class="radar-grid"><div class="panel"><div class="panel-head"><div><span class="kicker">MARKET QUEUE</span><h2>What deserves attention</h2></div><span class="radar-refresh" id="radarUpdated">Waiting…</span></div><div class="radar-table" id="radarTable"></div></div><div class="panel" id="radarDetail"></div></section><section class="panel radar-fundamentals"><div class="panel-head"><div><span class="kicker">MACRO / FUNDAMENTALS</span><h2>What can move the market</h2></div><span class="radar-refresh">US EVENTS</span></div><div id="radarFundamentals" class="macro-list"><div class="macro-empty"><b>Loading macro context</b></div></div></section><section class="radar-method"><div class="kicker">SCANNER LOGIC · V1</div><div class="radar-steps"><span>01 Structure</span><i>→</i><span>02 Trendline</span><i>→</i><span>03 S/R</span><i>→</i><span>04 Session</span><i>→</i><span>05 Confirmation</span><i>→</i><b>Potential setup</b></div><p>V1 is intentionally rule-based. The AI layer can learn from your journal after the scanner proves that its detections match the strategy.</p></section>';
 }
 
 function demoData(){
   const now = new Date();
   return DEMO_MARKETS.map((m,i)=>({...m, price:m.price + Math.sin(now.getTime()/60000+i)*0.8, updated:"Demo feed"}));
+}
+
+async function getFundamentals(){
+  try{return await engineFetch("/api/market/fundamentals");}
+  catch(_){return {configured:false,events:[],status:"ENGINE OFFLINE"};}
 }
 
 async function getRadar(){
@@ -83,9 +88,22 @@ function paint(result){
   if(status) status.textContent=result.live?"LIVE MT5 ENGINE":"DEMO FEED · BACKEND NOT CONNECTED";
 }
 
+function paintFundamentals(data){
+  const el=document.getElementById("radarFundamentals");
+  if(!el) return;
+  if(!data.configured){
+    el.innerHTML='<div class="macro-empty"><b>Macro layer ready</b><span>Connect a Trading Economics API key on the engine to bring live US economic events into the scanner.</span></div>';
+    return;
+  }
+  const events=(data.events||[]).filter(e=>String(e.importance||"").toLowerCase()!=="low").slice(0,8);
+  el.innerHTML=events.length?events.map(e=>'<div class="macro-event"><span>'+esc(e.date||"")+'</span><b>'+esc(e.event||"Economic event")+'</b><em>'+esc(String(e.importance||""))+'</em></div>').join(""):'<div class="macro-empty"><b>No major events returned</b><span>'+esc(data.status||"LIVE")+'</span></div>';
+}
+
 export async function initMarketRadar(){
   if(refreshTimer) clearInterval(refreshTimer);
   const refresh=async()=>paint(await getRadar());
+  const macro=await getFundamentals();
+  paintFundamentals(macro);
   await refresh();
   refreshTimer=setInterval(refresh,10000);
 }
