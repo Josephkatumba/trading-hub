@@ -13,13 +13,33 @@ function bucket(trades,key){
   return [...map.entries()].map(([name,items])=>{
     const pnl=items.reduce((s,t)=>s+(Number(t.pnl)||0),0);
     const wins=items.filter(t=>Number(t.pnl)>0).length;
-    return {name,trades:items.length,pnl,winRate:items.length?wins/items.length*100:0,avgR:avg(items.map(t=>Number(t.r)||0))};
+    return {name,trades:items.length,pnl,winRate:items.length?wins/items.length*100:0,avgR:avg(items.map(t=>Number(t.r)||0)),expectancy:avg(items.map(t=>Number(t.pnl)||0))};
   }).sort((a,b)=>b.pnl-a.pnl);
 }
 
 function pairBuckets(trades,a,b){
   return bucket(trades.map(t=>({...t,__pair:(t[a]||"Unknown")+" · "+(t[b]||"Unknown")})),"__pair");
 }
+
+function equityStats(trades){
+  const ordered=[...trades].sort((a,b)=>String(a.time).localeCompare(String(b.time)));
+  let equity=0,peak=0,maxDrawdown=0,maxDrawdownPct=0;
+  const curve=[];
+  ordered.forEach(t=>{
+    equity+=Number(t.pnl)||0;
+    peak=Math.max(peak,equity);
+    const dd=peak-equity;
+    maxDrawdown=Math.max(maxDrawdown,dd);
+    const denom=Math.max(1,Math.abs(peak));
+    maxDrawdownPct=Math.max(maxDrawdownPct,dd/denom*100);
+    curve.push(equity);
+  });
+  const wins=ordered.filter(t=>Number(t.pnl)>0).map(t=>Number(t.pnl));
+  const losses=ordered.filter(t=>Number(t.pnl)<0).map(t=>Math.abs(Number(t.pnl)));
+  const grossProfit=wins.reduce((s,x)=>s+x,0),grossLoss=losses.reduce((s,x)=>s+x,0);
+  return {net:equalitySafe(curve.at(-1)),maxDrawdown,maxDrawdownPct,grossProfit,grossLoss,profitFactor:grossLoss?grossProfit/grossLoss:null,equityCurve:curve};
+}
+function equalitySafe(n){return Number.isFinite(Number(n))?Number(n):0;}
 
 export function analyzeBehavior(trades){
   const journal=getJournal();
@@ -51,6 +71,12 @@ export function analyzeBehavior(trades){
   const bySide=bucket(trades,"side");
   const byAccount=bucket(trades,"account");
   const pair=pairBuckets(trades,"symbol","session").filter(x=>x.trades>=2);
+  const equity=equityStats(trades);
+  const wins=trades.filter(t=>Number(t.pnl)>0).map(t=>Number(t.pnl));
+  const losses=trades.filter(t=>Number(t.pnl)<0).map(t=>Math.abs(Number(t.pnl)));
+  const winAvg=avg(wins),lossAvg=avg(losses);
+  const expectancy=avg(trades.map(t=>Number(t.pnl)||0));
+  const payoff=lossAvg?winAvg/lossAvg:null;
 
   const largestLosses=[...trades].sort((a,b)=>a.pnl-b.pnl).slice(0,5);
   const largestWins=[...trades].sort((a,b)=>b.pnl-a.pnl).slice(0,5);
@@ -61,13 +87,16 @@ export function analyzeBehavior(trades){
   if(risk.length>=3&&riskCv>.35)flags.push({type:"risk",title:"Risk variability",text:"Recorded position risk varies materially. Standardizing risk can make performance comparisons cleaner."});
   if(afterLoss.length>=3&&avg(afterLoss.map(t=>Number(t.pnl)||0))<0)flags.push({type:"behavior",title:"Post-loss pattern",text:"Trades immediately following losses are negative on average in this sample. This is an observation, not proof of causation."});
   if(maxLoss>=3)flags.push({type:"streak",title:"Loss sequence",text:"The dataset contains a "+maxLoss+"-trade losing streak. Review those executions as one sequence."});
-  if(largestLosses[0]&&Math.abs(largestLosses[0].pnl)>Math.abs(avg(trades.map(t=>t.pnl))))flags.push({type:"risk",title:"Loss concentration",text:"The largest loss is materially larger than the average trade outcome. Inspect its execution context."});
+  if(largestLosses[0]&&Math.abs(largestLosses[0].pnl)>Math.abs(expectancy))flags.push({type:"risk",title:"Loss concentration",text:"The largest loss is materially larger than the average trade outcome. Inspect its execution context."});
+  if(equity.maxDrawdown>0)flags.push({type:"risk",title:"Drawdown fingerprint",text:"Peak-to-trough drawdown in the current sample is "+"$"+Math.round(equity.maxDrawdown).toLocaleString()+". Use it as a risk-control reference, not a prediction."});
+  if(expectancy>0&&trades.length>=10)flags.push({type:"edge",title:"Positive expectancy",text:"The current sample averages "+(expectancy>=0?"+":"")+"$"+expectancy.toFixed(2)+" per execution. Keep validating as the sample grows."});
   if(!flags.length)flags.push({type:"sample",title:"Machine is learning",text:"Add more executions and post-trade reviews. Trading Hub will have more evidence to compare behavior against outcomes."});
 
   return {reviewedCount:reviewed.length,reviewCoverage:trades.length?reviewed.length/trades.length*100:0,setups,grades,rules,riskAvg,riskCv,
     afterWin:{count:afterWin.length,avgPnl:avg(afterWin.map(t=>Number(t.pnl)||0))},
     afterLoss:{count:afterLoss.length,avgPnl:avg(afterLoss.map(t=>Number(t.pnl)||0))},
-    maxWin,maxLoss,bySymbol,bySession,bySide,byAccount,pair,largestLosses,largestWins,flags};
+    maxWin,maxLoss,bySymbol,bySession,bySide,byAccount,pair,largestLosses,largestWins,
+    expectancy,winAvg,lossAvg,payoff,tradeCount:trades.length,wins:wins.length,losses:losses.length,equity,...equity};
 }
 
 export function behaviorSummary(b){
