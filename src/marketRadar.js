@@ -10,7 +10,9 @@ let refreshTimer = null;
 let latestMarkets = [];
 let observatoryMarkets = null;
 let observatoryUpdatedAt = 0;
+let expandedObservatorySymbol = null;
 const OBSERVATORY_HOLD_MS = 120000;
+const OBSERVATORY_SIZE = 10;
 const esc = s => String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 const stateClass = s => String(s||"").toLowerCase().replace(/\s+/g,"-");
 const biasClass = s => String(s||"").toLowerCase().replace(/\s+/g,"-").replace(/\//g,"-");
@@ -154,7 +156,7 @@ export function renderMarketRadar(){
   return '<section class="page-title radar-title"><div><div class="kicker">TRADING HUB · MARKET COMMAND CENTER</div><h1>Market Radar</h1><p class="sub">One screen for top-down context, price action, trendline breaks/reversals, support/resistance and confirmation.</p></div><div class="radar-engine"><i class="live-dot"></i><span id="radarEngineStatus">CONNECTING ENGINE</span></div></section>'
     +'<section class="radar-hero"><div class="radar-hero-copy"><div class="radar-eyebrow"><span class="live-dot"></span> LIVE SCANNING NETWORK</div><h2>See the market before you touch the button.</h2><p>Trading Hub continuously ranks the instruments it can observe, explains the setup state and separates <b>watching</b> from <b>confirmation</b>. The radar combines top-down analysis, price action, trendline breaks/reversals and support/resistance into one confirmation workflow.</p><div class="radar-hero-tags"><span>H1 / H4 CONTEXT</span><span>PRICE ACTION</span><span>TRENDLINE</span><span>S/R</span><span>CRT CONTEXT</span></div></div><div class="radar-hero-stats"><div><b id="radarWatching">0</b><span>WATCHING</span></div><div><b id="radarDeveloping">0</b><span>DEVELOPING</span></div><div><b id="radarConfirming">0</b><span>CONFIRMING</span></div><div><b id="radarBullish">0</b><span>BULLISH</span></div></div></section>'
     +'<section class="radar-command-strip"><div><span class="kicker">SCANNER STATUS</span><b>MARKET COVERAGE</b><small>Forex · Gold · Indices · Crypto</small></div><div><span class="kicker">REFRESH</span><b>10 SEC</b><small>Engine snapshots update automatically</small></div><div><span class="kicker">MODEL</span><b>TRENDLINE V3</b><small>Trendline event is the strategy gate</small></div><div><span class="kicker">EXECUTION</span><b>MANUAL</b><small>No orders are sent by Trading Hub</small></div></section>'
-    +'<section class="panel developing-command"><div class="developing-head"><div><span class="kicker">SETUP OBSERVATORY</span><h2>Three setups worth watching</h2><p>Keep the developing opportunities visible. Click any card to open its full intelligence feed below.</p></div><span class="observatory-count">TOP 3 · LIVE QUEUE</span></div><div id="developingCards" class="developing-grid"></div></section>'
+    +'<section class="panel developing-command"><div class="developing-head"><div><span class="kicker">SETUP OBSERVATORY</span><h2>Ten setups worth watching</h2><p>Keep ten opportunities visible. Click a card to expand the setup explanation, then open the full intelligence feed below.</p></div><span class="observatory-count">10 PAIRS · CLICK TO EXPAND</span></div><div id="developingCards" class="developing-grid"></div></section>'
     +'<section class="panel live-intelligence-stage"><div class="live-stage-head"><div><span class="kicker">PRIMARY SYSTEM VIEW</span><h2>Live Market Intelligence</h2><p>Trading Hub turns raw market data into a readable setup thesis, reaction map and confirmation state.</p></div><div class="stage-status"><i class="live-dot"></i><span id="radarUpdated">Waiting…</span></div></div><div class="radar-detail-panel" id="radarDetail"></div></section>'
     +'<section class="radar-grid"><div class="panel radar-market-panel"><div class="panel-head"><div><span class="kicker">OPPORTUNITY MATRIX</span><h2>Where attention belongs</h2></div><span class="radar-refresh">LIVE QUEUE</span></div><div class="radar-legend"><span>PAIR</span><span>PRICE / 24H</span><span>BIAS</span><span>STATE</span><span>SCORE</span></div><div class="radar-table" id="radarTable"></div></div></section>'
     +'<section class="radar-bottom-grid"><div class="panel radar-fundamentals"><div class="panel-head"><div><span class="kicker">MACRO RADAR</span><h2>Events that can change the tape</h2></div><span class="radar-refresh">US EVENTS</span></div><div id="radarFundamentals" class="macro-list"><div class="macro-empty"><b>Loading macro context</b></div></div></div><div class="panel radar-philosophy"><div class="kicker">TRADING HUB PHILOSOPHY</div><div class="philosophy-orb">✦</div><h2>Wait for the market to earn the trade.</h2><p>The radar is intentionally allowed to say <b>WAIT</b>. Every observation becomes structured data that can later train the learning layer.</p><div class="philosophy-flow"><span>OBSERVE</span><i>→</i><span>CONFIRM</span><i>→</i><span>EXECUTE</span><i>→</i><span>LEARN</span></div></div></section>'
@@ -188,8 +190,8 @@ function triggerRead(m){
 }
 function opportunityCards(markets, lockedSymbols=null){
   const candidates=[...markets].filter(m=>["DEVELOPING","CONFIRMING"].includes(String(m.state||"").toUpperCase()))
-    .sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,3);
-  const fallback=[...markets].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,3);
+    .sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,OBSERVATORY_SIZE);
+  const fallback=[...markets].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,OBSERVATORY_SIZE);
   const picks=Array.isArray(lockedSymbols)&&lockedSymbols.length
     ? lockedSymbols.map(symbol=>markets.find(m=>m.symbol===symbol)).filter(Boolean).slice(0,3)
     : (candidates.length?candidates:fallback);
@@ -227,8 +229,8 @@ function paint(result){
     const now=Date.now();
     if(!observatoryMarkets || now-observatoryUpdatedAt>=OBSERVATORY_HOLD_MS){
       const candidates=[...latestMarkets].filter(m=>["DEVELOPING","CONFIRMING"].includes(String(m.state||"").toUpperCase()))
-        .sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,3);
-      const fallback=[...latestMarkets].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,3);
+        .sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,OBSERVATORY_SIZE);
+      const fallback=[...latestMarkets].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,OBSERVATORY_SIZE);
       observatoryMarkets=candidates.length?candidates:fallback;
       observatoryUpdatedAt=now;
     }
