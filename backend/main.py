@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone, time, timedelta
+from pathlib import Path
+import json
+import os
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -51,6 +54,23 @@ ENGINE_STARTED = datetime.now(timezone.utc)
 
 LONDON = ZoneInfo("Europe/London")
 NEW_YORK = ZoneInfo("America/New_York")
+
+
+def mt5_bridge_heartbeat() -> dict[str, Any]:
+    """Read the optional MQL5 read-only bridge heartbeat."""
+    configured = os.getenv("TRADING_HUB_BRIDGE_FILE")
+    if configured:
+        path = Path(configured)
+    else:
+        appdata = os.getenv("APPDATA")
+        path = Path(appdata) / "MetaQuotes" / "Terminal" / "Common" / "Files" / "trading_hub_heartbeat.json" if appdata else None
+    if path is None or not path.exists():
+        return {"connected": False, "path": str(path) if path else None}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return {"connected": True, "path": str(path), **data}
+    except Exception as exc:
+        return {"connected": False, "path": str(path), "error": str(exc)}
 
 
 def normalize_symbol(symbol: str) -> str:
@@ -212,6 +232,7 @@ def health():
     account = None
     symbols = 0
     error = None
+    bridge = mt5_bridge_heartbeat()
 
     if mt5 is not None:
         try:
@@ -247,6 +268,7 @@ def health():
         "terminal": terminal,
         "account": account,
         "symbols": symbols,
+        "bridge": bridge,
         "uptime_started": ENGINE_STARTED.isoformat(),
         "error": error,
     }
