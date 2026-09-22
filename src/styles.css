@@ -462,3 +462,17 @@ main{position:relative;padding-bottom:90px}.topline{border-bottom-color:rgba(98,
 .radar-grid{margin-top:10px}
 @media(max-width:900px){.live-command-head,.live-intel-grid{grid-template-columns:1fr}.live-stage-head{align-items:flex-start;flex-direction:column}.stage-status{width:100%}}
 @media(max-width:600px){.radar-detail-panel{padding:15px}.radar-detail-top h2{font-size:23px}.map-canvas{height:220px}.setup-lifecycle{grid-template-columns:repeat(2,1fr)}}
+
+/* Setup Observatory */
+.developing-command{margin-top:10px;padding:18px 20px;background:linear-gradient(145deg,#0d151c,#090f15);border-color:#263843}
+.developing-head{display:flex;justify-content:space-between;align-items:flex-end;gap:15px;margin-bottom:12px}
+.developing-head h2{margin:5px 0 4px;font-size:16px}.developing-head p{margin:0;color:#718091;font-size:9px}
+.observatory-count{padding:6px 8px;border:1px solid #273844;border-radius:5px;color:#6d8291;font:7px "DM Mono",monospace;white-space:nowrap}
+.developing-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.developing-card{position:relative;text-align:left;color:inherit;border:1px solid #253640;border-radius:10px;padding:13px;background:linear-gradient(145deg,#101921,#0b1218);transition:transform .16s,border-color .16s,box-shadow .16s;overflow:hidden}
+.developing-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:#61d7ff;opacity:.65}
+.developing-card:hover{transform:translateY(-2px);border-color:#3b5361;box-shadow:0 12px 30px rgba(0,0,0,.25)}
+.dev-card-top{display:flex;justify-content:space-between;align-items:flex-start}.dev-card-top b{display:block;font:13px "DM Mono",monospace}.dev-card-top small{display:block;margin-top:4px;color:#637383;font:7px "DM Mono",monospace}.dev-card-top strong{font:18px "DM Mono",monospace;color:#dbe7ef}
+.dev-price{margin-top:13px;font:15px "DM Mono",monospace;color:#b9c8d4}.dev-thesis{height:30px;margin-top:7px;color:#7e8c9a;font-size:8px;line-height:1.5;overflow:hidden}
+.dev-meta{display:flex;align-items:center;gap:6px;margin-top:11px;flex-wrap:wrap}.dev-meta span{padding:4px 5px;border:1px solid #25343f;border-radius:4px;color:#71818f;font:6px "DM Mono",monospace}.dev-meta em{margin-left:auto;font:7px "DM Mono",monospace;font-style:normal;color:#aab6c2}.dev-meta em.buy{color:#55e6a4}.dev-meta em.sell{color:#ff6f7a}
+@media(max-width:800px){.developing-grid{grid-template-columns:1fr}.developing-head{align-items:flex-start;flex-direction:column}.observatory-count{width:100%}}
