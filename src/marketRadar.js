@@ -44,29 +44,55 @@ function setupMap(m){
   const high=Number(m.london_high||price*1.004);
   const low=Number(m.london_low||price*0.996);
   const key=Number(m.nearest_level||price);
-  const span=Math.max(Math.abs(high-low),Math.abs(price)*0.002,0.0001);
-  const min=Math.min(low,key,price)-span*.45;
-  const max=Math.max(high,key,price)+span*.45;
-  const y=v=>Math.max(4,Math.min(96,((max-v)/(max-min))*100));
+  const entry=Number(m.entry||price);
+  const stop=Number(m.stop_loss);
+  const target=Number(m.take_profit);
+  const span=Math.max(
+    Math.abs(high-low),
+    Math.abs(price)*0.002,
+    Number.isFinite(stop)?Math.abs(entry-stop):0,
+    Number.isFinite(target)?Math.abs(target-entry):0,
+    0.0001
+  );
+  const levels=[high,low,key,entry];
+  if(Number.isFinite(stop))levels.push(stop);
+  if(Number.isFinite(target))levels.push(target);
+  const min=Math.min(...levels)-span*.25;
+  const max=Math.max(...levels)+span*.25;
+  const y=v=>Math.max(3,Math.min(97,((max-v)/(max-min))*100));
   const pos=v=>y(v).toFixed(1);
   const priceY=pos(price), highY=pos(high), lowY=pos(low), keyY=pos(key);
+  const entryY=pos(entry);
+  const stopY=Number.isFinite(stop)?pos(stop):null;
+  const targetY=Number.isFinite(target)?pos(target):null;
   const action=String(m.action||"WAIT").toUpperCase();
-  const accent=action==="BUY"?"buy":action==="SELL"?"sell":"wait";
+  const direction=String(m.direction||"").toUpperCase();
+  const accent=action.includes("BUY")||direction==="LONG"?"buy":action.includes("SELL")||direction==="SHORT"?"sell":"wait";
+  const tradePlan=Number.isFinite(stop)&&Number.isFinite(target);
+  const rr=m.rr!=null?Number(m.rr):null;
   return '<div class="live-price-map">'
-    +'<div class="map-header"><div><span class="kicker">SETUP MAP</span><b>Price structure &amp; reaction zones</b></div><span class="map-live"><i class="live-dot"></i>LIVE</span></div>'
+    +'<div class="map-header"><div><span class="kicker">SETUP MAP</span><b>Live trade geometry · structure → risk → target</b></div><span class="map-live"><i class="live-dot"></i>LIVE</span></div>'
     +'<div class="map-canvas">'
     +'<div class="map-grid"><i></i><i></i><i></i><i></i><i></i></div>'
     +'<div class="map-zone london" style="top:'+highY+'%;height:'+Math.max(8,lowY-highY)+'%"><span>LONDON RANGE</span></div>'
     +'<div class="map-line key" style="top:'+keyY+'%"><span>KEY LEVEL · '+fmt(key,4)+'</span></div>'
-    +'<div class="map-line price '+accent+'" style="top:'+priceY+'%"><span>LIVE PRICE · '+fmt(price)+'</span></div>'
+    +(tradePlan?'<div class="map-line target" style="top:'+targetY+'%"><span>TAKE PROFIT · '+fmt(target,4)+'</span></div>':'')
+    +(tradePlan?'<div class="map-line stop" style="top:'+stopY+'%"><span>STOP LOSS · '+fmt(stop,4)+'</span></div>':'')
+    +'<div class="map-line entry '+accent+'" style="top:'+entryY+'%"><span>ENTRY · '+fmt(entry,4)+'</span></div>'
+    +'<div class="map-line price '+accent+'" style="top:'+priceY+'%"><span>LIVE · '+fmt(price,4)+'</span></div>'
     +'<div class="map-node high" style="top:'+highY+'%"><span>HIGH</span></div>'
     +'<div class="map-node low" style="top:'+lowY+'%"><span>LOW</span></div>'
     +'<div class="map-axis"><span>'+fmt(max,4)+'</span><span>'+fmt((max+min)/2,4)+'</span><span>'+fmt(min,4)+'</span></div>'
     +'</div>'
-    +'<div class="map-footer"><span><i class="dot entry"></i>Price</span><span><i class="dot level"></i>Key level</span><span><i class="dot range"></i>London range</span><span><i class="dot danger"></i>Risk/invalid</span></div>'
+    +'<div class="map-plan">'
+    +'<div><span>ENTRY</span><b>'+fmt(entry,4)+'</b></div>'
+    +'<div class="risk"><span>STOP</span><b>'+(Number.isFinite(stop)?fmt(stop,4):"WAIT")+'</b></div>'
+    +'<div class="reward"><span>TARGET</span><b>'+(Number.isFinite(target)?fmt(target,4):"WAIT")+'</b></div>'
+    +'<div><span>R:R</span><b>'+(rr!=null&&Number.isFinite(rr)?rr.toFixed(2)+"R":"—")+'</b></div>'
+    +'</div>'
+    +'<div class="map-footer"><span><i class="dot entry"></i>Entry</span><span><i class="dot level"></i>Key level</span><span><i class="dot range"></i>London range</span><span><i class="dot danger"></i>Stop</span><span><i class="dot target"></i>Target</span></div>'
     +'</div>';
 }
-
 function lifecycle(m){
   const state=String(m.state||"WATCHING").toUpperCase();
   const stage=String(m.stage||"").toUpperCase();
