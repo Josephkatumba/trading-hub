@@ -1,8 +1,16 @@
 const KEY="th_engine_url";
-const DEFAULT="http://127.0.0.1:8000";
+const DEFAULT="http://127.0.0.1:8010";
 
 export function getEngineUrl(){
-  try{return (localStorage.getItem(KEY)||DEFAULT).replace(/\/$/,"");}catch{return DEFAULT;}
+  try{
+    const saved=localStorage.getItem(KEY);
+    // Migrate the old local backend port automatically.
+    if(saved && /127\.0\.0\.1:8000$/.test(saved)){
+      localStorage.setItem(KEY,DEFAULT);
+      return DEFAULT;
+    }
+    return (saved||DEFAULT).replace(/\/$/,"");
+  }catch{return DEFAULT;}
 }
 
 export function setEngineUrl(url){
