@@ -79,8 +79,9 @@ function setupMap(m){
   const targetY=Number.isFinite(target)?pos(target):null;
   const action=String(m.action||"WAIT").toUpperCase();
   const direction=String(m.direction||"").toUpperCase();
+  const state=String(m.state||"WATCHING").toUpperCase();
   const accent=action.includes("BUY")||direction==="LONG"?"buy":action.includes("SELL")||direction==="SHORT"?"sell":"wait";
-  const tradePlan=Number.isFinite(stop)&&Number.isFinite(target);
+  const tradePlan=["DEVELOPING","CONFIRMING"].includes(state)&&Number.isFinite(stop)&&Number.isFinite(target);
   const rr=m.rr!=null?Number(m.rr):null;
   return '<div class="live-price-map">'
     +'<div class="map-header"><div><span class="kicker">SETUP MAP</span><b>Live trade geometry · structure → risk → target</b></div><span class="map-live"><i class="live-dot"></i>LIVE</span></div>'
@@ -97,9 +98,9 @@ function setupMap(m){
     +'<div class="map-axis"><span>'+fmt(max,4)+'</span><span>'+fmt((max+min)/2,4)+'</span><span>'+fmt(min,4)+'</span></div>'
     +'</div>'
     +'<div class="map-plan">'
-    +'<div><span>ENTRY</span><b>'+fmt(entry,4)+'</b></div>'
-    +'<div class="risk"><span>STOP</span><b>'+(Number.isFinite(stop)?fmt(stop,4):"WAIT")+'</b></div>'
-    +'<div class="reward"><span>TARGET</span><b>'+(Number.isFinite(target)?fmt(target,4):"WAIT")+'</b></div>'
+    +'<div><span>ENTRY</span><b>'+(tradePlan?fmt(entry,4):"WAIT")+'</b></div>'
+    +'<div class="risk"><span>'+(state==="DEVELOPING"?"PROVISIONAL STOP":"STOP")+'</span><b>'+(tradePlan?fmt(stop,4):"WAIT")+'</b></div>'
+    +'<div class="reward"><span>'+(state==="DEVELOPING"?"PROVISIONAL TARGET":"TARGET")+'</span><b>'+(tradePlan?fmt(target,4):"WAIT")+'</b></div>'
     +'<div><span>R:R</span><b>'+(rr!=null&&Number.isFinite(rr)?rr.toFixed(2)+"R":"—")+'</b></div>'
     +'</div>'
     +'<div class="map-footer"><span><i class="dot entry"></i>Entry</span><span><i class="dot level"></i>Key level</span><span><i class="dot range"></i>London range</span><span><i class="dot danger"></i>Stop</span><span><i class="dot target"></i>Target</span></div>'
@@ -114,9 +115,9 @@ function lifecycle(m){
   const steps=[
     ["HTF BIAS",!!m.higher_timeframe_bias],
     ["PRICE ACTION",/candle|rejection|displacement|engulf|structure|price action/i.test(text)||!!m.price_action],
-    ["TRENDLINE",/TRENDLINE|BREAK|REVERSAL|TEST/i.test(stage+setup)],
+    ["TRENDLINE",!!m.trendline_gate||/TRENDLINE|BREAK|REVERSAL|TEST/i.test(stage+setup)],
     ["S/R",!!m.nearest_level||/support|resistance|level/i.test(text)],
-    ["CONFIRM",state==="CONFIRMING"||action!=="WAIT"]
+    ["CONFIRM",state==="CONFIRMING"]
   ];
   return '<div class="setup-lifecycle setup-lifecycle-five">'+steps.map((s,i)=>'<div class="'+(s[1]?"done":"")+'"><span class="life-index">0'+(i+1)+'</span><b>'+s[0]+'</b><i></i></div>').join("")+'</div>';
 }
@@ -211,7 +212,8 @@ function opportunityCards(markets, lockedSymbols=null){
       const stop=Number(m.stop_loss);
       const target=Number(m.take_profit);
       const rr=Number(m.rr);
-      const hasPlan=Number.isFinite(entry)&&Number.isFinite(stop)&&Number.isFinite(target);
+      const state=String(m.state||"WATCHING").toUpperCase();
+      const hasPlan=["DEVELOPING","CONFIRMING"].includes(state)&&Number.isFinite(entry)&&Number.isFinite(stop)&&Number.isFinite(target);
       const setupLabel=m.setup_family?String(m.setup_family).toUpperCase():String(m.setup||"SETUP").toUpperCase();
       const expanded=expandedObservatorySymbol===m.symbol;
       return '<button class="developing-card '+tone+(expanded?" expanded":"")+'" data-symbol="'+esc(m.symbol)+'">'
