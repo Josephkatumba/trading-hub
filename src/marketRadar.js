@@ -1,9 +1,9 @@
 import {engineFetch} from "./engine.js";
 
 const DEMO_MARKETS = [
-  {symbol:"XAUUSD",price:3348.2,change_pct:0.42,state:"WATCHING",score:74,setup:"Trendline reversal",reason:"Waiting for rejection + retest.",session:"New York",market_bias:"BEARISH",momentum:"BEARISH",higher_timeframe_bias:"BEARISH",structure:"Lower highs + lower lows",stage:"TRENDLINE TEST",insight:"Bearish structure is active. Confirmation is still required.",rsi:44,action:"WAIT",trigger:"Wait for rejection and a confirmed retest before considering the setup."},
-  {symbol:"EURUSD",price:1.1742,change_pct:-0.16,state:"WATCHING",score:61,setup:"Trendline reversal",reason:"Resistance is being tested.",session:"New York",market_bias:"BEARISH",momentum:"BEARISH",higher_timeframe_bias:"BEARISH",structure:"Lower highs + lower lows",stage:"TRENDLINE TEST",insight:"Bearish structure with momentum alignment.",rsi:46,action:"WAIT",trigger:"Resistance is active, but confirmation is still missing."},
-  {symbol:"GBPUSD",price:1.3518,change_pct:0.09,state:"WATCHING",score:54,setup:"Trendline reversal",reason:"Approaching a reaction zone.",session:"New York",market_bias:"RANGE / NEUTRAL",momentum:"NEUTRAL",higher_timeframe_bias:"NEUTRAL",structure:"Mixed / range",stage:"STRUCTURE BIAS",insight:"Mixed structure. Wait for cleaner directional evidence.",rsi:51,action:"WAIT",trigger:"No clean directional sequence yet."}
+  {symbol:"XAUUSD",price:3348.2,change_pct:0.42,state:"WATCHING",score:74,setup:"Trendline setup",reason:"Trendline is being monitored for a break or rejection, with support/resistance as confirmation.",session:"New York",market_bias:"BEARISH",momentum:"BEARISH",higher_timeframe_bias:"BEARISH",structure:"Lower highs + lower lows",stage:"TRENDLINE TEST",insight:"Bearish structure is active. Confirmation is still required.",rsi:44,action:"WAIT",trigger:"Wait for a confirmed trendline break/retest or a clean rejection at S/R."},
+  {symbol:"EURUSD",price:1.1742,change_pct:-0.16,state:"WATCHING",score:61,setup:"Trendline setup",reason:"Resistance is being tested for a trendline break or rejection.",session:"New York",market_bias:"BEARISH",momentum:"BEARISH",higher_timeframe_bias:"BEARISH",structure:"Lower highs + lower lows",stage:"TRENDLINE TEST",insight:"Bearish structure with momentum alignment.",rsi:46,action:"WAIT",trigger:"Watch the resistance interaction and wait for price-action confirmation."},
+  {symbol:"GBPUSD",price:1.3518,change_pct:0.09,state:"WATCHING",score:54,setup:"Trendline setup",reason:"Approaching a key reaction zone where a break or reversal may develop.",session:"New York",market_bias:"RANGE / NEUTRAL",momentum:"NEUTRAL",higher_timeframe_bias:"NEUTRAL",structure:"Mixed / range",stage:"STRUCTURE BIAS",insight:"Mixed structure. Wait for cleaner directional evidence.",rsi:51,action:"WAIT",trigger:"Wait for top-down structure and a clear price-action sequence."}
 ];
 
 let refreshTimer = null;
@@ -18,7 +18,7 @@ function actionIcon(action){return String(action||"WAIT").toUpperCase()==="BUY"?
 
 function scoreBars(m){
   const b=m.score_breakdown||{};
-  const max={trendline:20,structure:15,support_resistance:15,rejection:15,session:10,volatility:10,momentum:10,higher_timeframe:5};
+  const max={trendline:20,structure:15,support_resistance:20,price_action:10,session:5,momentum:10,higher_timeframe:10};
   return Object.keys(max).map(k=>{
     const label=k.replace(/_/g," ").toUpperCase();
     const value=Number(b[k]||0);
@@ -68,15 +68,36 @@ function setupMap(m){
 }
 
 function lifecycle(m){
-  const action=String(m.action||"WAIT").toUpperCase();
   const state=String(m.state||"WATCHING").toUpperCase();
+  const stage=String(m.stage||"").toUpperCase();
+  const setup=String(m.setup||"").toUpperCase();
+  const action=String(m.action||"WAIT").toUpperCase();
+  const text=(m.reason||"")+" "+(m.insight||"");
   const steps=[
-    ["STRUCTURE",["DEVELOPING","CONFIRMING"].includes(state)||action!=="WAIT"],
-    ["TRENDLINE",String(m.stage||"").includes("TRENDLINE")],
-    ["REACTION",action!=="WAIT" || /reject|retest|confirm/i.test(String(m.reason||""))],
-    ["CONFIRM",action!=="WAIT" && state==="CONFIRMING"]
+    ["HTF BIAS",!!m.higher_timeframe_bias],
+    ["PRICE ACTION",/candle|rejection|displacement|engulf|structure|price action/i.test(text)||!!m.price_action],
+    ["TRENDLINE",/TRENDLINE|BREAK|REVERSAL|TEST/i.test(stage+setup)],
+    ["S/R",!!m.nearest_level||/support|resistance|level/i.test(text)],
+    ["CONFIRM",state==="CONFIRMING"||action!=="WAIT"]
   ];
-  return '<div class="setup-lifecycle">'+steps.map((s,i)=>'<div class="'+(s[1]?"done":"")+'"><span class="life-index">0'+(i+1)+'</span><b>'+s[0]+'</b><i></i></div>').join("")+'</div>';
+  return '<div class="setup-lifecycle setup-lifecycle-five">'+steps.map((s,i)=>'<div class="'+(s[1]?"done":"")+'"><span class="life-index">0'+(i+1)+'</span><b>'+s[0]+'</b><i></i></div>').join("")+'</div>';
+}
+function analysisLens(m){
+  const setup=String(m.setup||"Trendline setup");
+  const htf=m.higher_timeframe_bias||"Awaiting HTF read";
+  const pa=m.price_action||m.price_action_state||"Waiting for candle/structure confirmation";
+  const trend=m.trendline_state||m.trendline||m.stage||"Monitoring";
+  const sr=m.sr_context||m.nearest_level_type||"Support / resistance scan";
+  const crt=m.crt_context||"Context scan";
+  return '<div class="analysis-lens">'
+    +'<div class="analysis-lens-head"><div><span class="kicker">MULTI-LENS MARKET READ</span><h3>One market · five evidence layers</h3></div><span class="lens-badge">'+esc(setup)+'</span></div>'
+    +'<div class="lens-grid">'
+    +'<div class="lens-card"><span>01 · TOP-DOWN</span><b>'+esc(htf)+'</b><small>H1 / higher-timeframe context</small></div>'
+    +'<div class="lens-card"><span>02 · PRICE ACTION</span><b>'+esc(pa)+'</b><small>Reaction, displacement and structure</small></div>'
+    +'<div class="lens-card"><span>03 · TRENDLINE</span><b>'+esc(trend)+'</b><small>Break, test or reversal state</small></div>'
+    +'<div class="lens-card"><span>04 · SUPPORT / RESISTANCE</span><b>'+esc(sr)+'</b><small>Key level interaction</small></div>'
+    +'<div class="lens-card crt"><span>05 · CRT CONTEXT</span><b>'+esc(crt)+'</b><small>Range/candle context, not a standalone signal</small></div>'
+    +'</div></div>';
 }
 
 function renderDetail(m){
@@ -87,9 +108,10 @@ function renderDetail(m){
   const risk=m.stop_loss!=null?fmt(m.stop_loss,2):"Not calculated";
   const reward=m.take_profit!=null?fmt(m.take_profit,2):"Not calculated";
   return '<div class="radar-detail">'
-    +'<div class="radar-detail-top"><div><span class="kicker">LIVE MARKET INTELLIGENCE · PRIMARY FEED</span><h2>'+esc(m.symbol)+'</h2><p>'+esc(m.stage||"NO SETUP")+' · '+esc(m.session||"Session unknown")+' · '+esc(m.setup||"Trendline reversal")+'</p></div><div class="radar-big-score"><strong>'+Number(m.score||0)+'</strong><small>/100</small></div></div>'
+    +'<div class="radar-detail-top"><div><span class="kicker">LIVE MARKET INTELLIGENCE · PRIMARY FEED</span><h2>'+esc(m.symbol)+'</h2><p>'+esc(m.stage||"NO SETUP")+' · '+esc(m.session||"Session unknown")+' · '+esc(m.setup||"Trendline setup")+'</p></div><div class="radar-big-score"><strong>'+Number(m.score||0)+'</strong><small>/100</small></div></div>'
     +'<div class="live-command-head"><div class="live-verdict '+actionClass(action)+'"><span class="action-icon">'+actionIcon(action)+'</span><div><small>ENGINE VERDICT</small><b>'+esc(action)+'</b><em>'+esc(m.state||"WATCHING")+'</em></div></div><div class="live-thesis"><span>ONE-LINE THESIS</span><b>'+esc(m.insight||m.reason||"Waiting for more market structure.")+'</b></div></div>'
     +setupMap(m)
+    +analysisLens(m)
     +'<div class="live-intel-grid"><div class="live-intel-copy"><span class="kicker">AI MARKET READ</span><p>'+esc(m.insight||m.reason||"Waiting for more market structure.")+'</p><div class="ai-action-note"><span>NEXT OBSERVATION</span><b>'+esc(m.trigger||"Wait for a clean setup.")+'</b></div></div><div><span class="kicker">SETUP LIFECYCLE</span>'+lifecycle(m)+'</div></div>'
     +'<div class="radar-level-strip"><div><span>LIVE PRICE</span><b>'+fmt(m.price)+'</b></div><div><span>INVALIDATION / STOP</span><b>'+risk+'</b></div><div><span>TARGET</span><b>'+reward+'</b></div></div>'
     +'<div class="radar-checks"><div><span>BIAS</span><b>'+esc(m.market_bias||"—")+'</b></div><div><span>MOMENTUM</span><b>'+esc(m.momentum||"—")+' · RSI '+(m.rsi!=null?Number(m.rsi).toFixed(0):"—")+'</b></div><div><span>H1 BIAS</span><b>'+esc(m.higher_timeframe_bias||"—")+'</b></div><div><span>STRUCTURE</span><b>'+esc(m.structure||"—")+'</b></div><div><span>SPREAD</span><b>'+fmt(m.spread,3)+'</b></div>'+london+key+'</div>'
@@ -100,14 +122,14 @@ function renderDetail(m){
 }
 
 export function renderMarketRadar(){
-  return '<section class="page-title radar-title"><div><div class="kicker">TRADING HUB · MARKET COMMAND CENTER</div><h1>Market Radar</h1><p class="sub">One screen for structure, momentum, sessions, confluence and emerging trendline-reversal opportunities.</p></div><div class="radar-engine"><i class="live-dot"></i><span id="radarEngineStatus">CONNECTING ENGINE</span></div></section>'
-    +'<section class="radar-hero"><div class="radar-hero-copy"><div class="radar-eyebrow"><span class="live-dot"></span> LIVE SCANNING NETWORK</div><h2>See the market before you touch the button.</h2><p>Trading Hub continuously ranks the instruments it can observe, explains the setup state and separates <b>watching</b> from <b>confirmation</b>. The radar is built around your trendline-reversal process.</p><div class="radar-hero-tags"><span>M15 STRUCTURE</span><span>H1 CONTEXT</span><span>S/R</span><span>SESSION</span><span>MOMENTUM</span></div></div><div class="radar-hero-stats"><div><b id="radarWatching">0</b><span>WATCHING</span></div><div><b id="radarDeveloping">0</b><span>DEVELOPING</span></div><div><b id="radarConfirming">0</b><span>CONFIRMING</span></div><div><b id="radarBullish">0</b><span>BULLISH</span></div></div></section>'
+  return '<section class="page-title radar-title"><div><div class="kicker">TRADING HUB · MARKET COMMAND CENTER</div><h1>Market Radar</h1><p class="sub">One screen for top-down context, price action, trendline breaks/reversals, support/resistance and confirmation.</p></div><div class="radar-engine"><i class="live-dot"></i><span id="radarEngineStatus">CONNECTING ENGINE</span></div></section>'
+    +'<section class="radar-hero"><div class="radar-hero-copy"><div class="radar-eyebrow"><span class="live-dot"></span> LIVE SCANNING NETWORK</div><h2>See the market before you touch the button.</h2><p>Trading Hub continuously ranks the instruments it can observe, explains the setup state and separates <b>watching</b> from <b>confirmation</b>. The radar combines top-down analysis, price action, trendline breaks/reversals and support/resistance into one confirmation workflow.</p><div class="radar-hero-tags"><span>H1 / H4 CONTEXT</span><span>PRICE ACTION</span><span>TRENDLINE</span><span>S/R</span><span>CRT CONTEXT</span></div></div><div class="radar-hero-stats"><div><b id="radarWatching">0</b><span>WATCHING</span></div><div><b id="radarDeveloping">0</b><span>DEVELOPING</span></div><div><b id="radarConfirming">0</b><span>CONFIRMING</span></div><div><b id="radarBullish">0</b><span>BULLISH</span></div></div></section>'
     +'<section class="radar-command-strip"><div><span class="kicker">SCANNER STATUS</span><b>MARKET COVERAGE</b><small>Forex · Gold · Indices · Crypto</small></div><div><span class="kicker">REFRESH</span><b>10 SEC</b><small>Engine snapshots update automatically</small></div><div><span class="kicker">MODEL</span><b>100 POINT</b><small>Transparent confluence scoring</small></div><div><span class="kicker">EXECUTION</span><b>MANUAL</b><small>Scanner never sends an order</small></div></section>'
     +'<section class="panel developing-command"><div class="developing-head"><div><span class="kicker">SETUP OBSERVATORY</span><h2>Three setups worth watching</h2><p>Keep the developing opportunities visible. Click any card to open its full intelligence feed below.</p></div><span class="observatory-count">TOP 3 · LIVE QUEUE</span></div><div id="developingCards" class="developing-grid"></div></section>'
     +'<section class="panel live-intelligence-stage"><div class="live-stage-head"><div><span class="kicker">PRIMARY SYSTEM VIEW</span><h2>Live Market Intelligence</h2><p>Trading Hub turns raw market data into a readable setup thesis, reaction map and confirmation state.</p></div><div class="stage-status"><i class="live-dot"></i><span id="radarUpdated">Waiting…</span></div></div><div class="radar-detail-panel" id="radarDetail"></div></section>'
     +'<section class="radar-grid"><div class="panel radar-market-panel"><div class="panel-head"><div><span class="kicker">OPPORTUNITY MATRIX</span><h2>Where attention belongs</h2></div><span class="radar-refresh">LIVE QUEUE</span></div><div class="radar-legend"><span>PAIR</span><span>PRICE / 24H</span><span>BIAS</span><span>STATE</span><span>SCORE</span></div><div class="radar-table" id="radarTable"></div></div></section>'
     +'<section class="radar-bottom-grid"><div class="panel radar-fundamentals"><div class="panel-head"><div><span class="kicker">MACRO RADAR</span><h2>Events that can change the tape</h2></div><span class="radar-refresh">US EVENTS</span></div><div id="radarFundamentals" class="macro-list"><div class="macro-empty"><b>Loading macro context</b></div></div></div><div class="panel radar-philosophy"><div class="kicker">TRADING HUB PHILOSOPHY</div><div class="philosophy-orb">✦</div><h2>Wait for the market to earn the trade.</h2><p>The radar is intentionally allowed to say <b>WAIT</b>. Every observation becomes structured data that can later train the learning layer.</p><div class="philosophy-flow"><span>OBSERVE</span><i>→</i><span>CONFIRM</span><i>→</i><span>EXECUTE</span><i>→</i><span>LEARN</span></div></div></section>'
-    +'<section class="radar-method"><div class="kicker">SCANNER LOGIC · V3</div><div class="radar-steps"><span>01 M15 STRUCTURE</span><i>→</i><span>02 TRENDLINE</span><i>→</i><span>03 S/R</span><i>→</i><span>04 MOMENTUM</span><i>→</i><span>05 H1 BIAS</span><i>→</i><span>06 SESSION</span><i>→</i><b>100-POINT SETUP</b></div><p>Transparent by design. A clean “no setup” result is still valuable training data for the future Goldimus learning layer.</p></section>';
+    +'<section class="radar-method"><div class="kicker">SCANNER LOGIC · V3</div><div class="radar-steps"><span>01 HTF</span><i>→</i><span>02 PRICE ACTION</span><i>→</i><span>03 TRENDLINE</span><i>→</i><span>04 S/R</span><i>→</i><span>05 CRT</span><i>→</i><span>06 SESSION</span><i>→</i><b>100-POINT SETUP</b></div><p>Transparent by design. Breaks and reversals are both valid setup families; top-down context, price action and S/R determine whether either one earns confirmation.</p></section>';
 }
 function demoData(){return DEMO_MARKETS.map(m=>({...m,price:m.price + Math.sin(Date.now()/60000)*0.4,updated:"Demo feed"}));}
 async function getFundamentals(){try{return await engineFetch("/api/market/fundamentals");}catch(_){return {configured:false,events:[],status:"ENGINE OFFLINE"};}}
