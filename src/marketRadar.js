@@ -220,7 +220,7 @@ function paint(result){
     }
     cards.querySelectorAll(".developing-card").forEach(btn=>btn.addEventListener("click",()=>{
       const m=latestMarkets.find(x=>x.symbol===btn.dataset.symbol)||observatoryMarkets?.find(x=>x.symbol===btn.dataset.symbol);
-      if(m){detail.innerHTML=renderDetail(m);detail.dataset.symbol=m.symbol;detail.scrollIntoView({behavior:"smooth",block:"start");}
+      if(m){detail.innerHTML=renderDetail(m);detail.dataset.symbol=m.symbol;detail.scrollIntoView({behavior:"smooth",block:"start"});}
     }));
   }
   const current=detail.dataset.symbol;
