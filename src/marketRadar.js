@@ -193,7 +193,7 @@ function opportunityCards(markets, lockedSymbols=null){
     .sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,OBSERVATORY_SIZE);
   const fallback=[...markets].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,OBSERVATORY_SIZE);
   const picks=Array.isArray(lockedSymbols)&&lockedSymbols.length
-    ? lockedSymbols.map(symbol=>markets.find(m=>m.symbol===symbol)).filter(Boolean).slice(0,3)
+    ? lockedSymbols.map(symbol=>markets.find(m=>m.symbol===symbol)).filter(Boolean).slice(0,OBSERVATORY_SIZE)
     : (candidates.length?candidates:fallback);
   return picks.map((m,index)=>{
       const action=String(m.action||"WAIT").toUpperCase();
@@ -206,13 +206,15 @@ function opportunityCards(markets, lockedSymbols=null){
       const rr=Number(m.rr);
       const hasPlan=Number.isFinite(entry)&&Number.isFinite(stop)&&Number.isFinite(target);
       const setupLabel=m.setup_family?String(m.setup_family).toUpperCase():String(m.setup||"SETUP").toUpperCase();
-      return '<button class="developing-card '+tone+'" data-symbol="'+esc(m.symbol)+'">'
+      const expanded=expandedObservatorySymbol===m.symbol;
+      return '<button class="developing-card '+tone+(expanded?" expanded":"")+'" data-symbol="'+esc(m.symbol)+'">';
         +'<div class="dev-card-glow"></div>'
         +'<div class="dev-card-top"><div><small class="dev-rank">0'+(index+1)+' · LIVE OPPORTUNITY</small><b>'+esc(m.symbol)+'</b><small>'+esc(m.state||"WATCHING")+' · '+esc(setupLabel)+'</small></div><div class="dev-score"><strong>'+Number(m.score||0)+'</strong><span>/100</span></div></div>'
         +miniStructure(m)
         +'<div class="dev-price-row"><div><span class="dev-label">LIVE PRICE</span><div class="dev-price">'+fmt(m.price)+'</div></div><div class="dev-proximity"><span>'+trigger.label+'</span><b>'+trigger.value+'</b></div></div>'
         +(hasPlan?'<div class="dev-plan"><div><span>ENTRY</span><b>'+fmt(entry,2)+'</b></div><div class="risk"><span>SL</span><b>'+fmt(stop,2)+'</b></div><div class="reward"><span>TP</span><b>'+fmt(target,2)+'</b></div><div><span>R:R</span><b>'+(Number.isFinite(rr)?rr.toFixed(2)+'R':'—')+'</b></div></div>':'<div class="dev-plan waiting"><span>TRADE PLAN</span><b>Waiting for calculated levels</b></div>')
         +'<div class="dev-thesis">'+esc(m.insight||m.reason||"Setup developing")+'</div>'
+        +(expanded?'<div class="dev-expanded"><div><span>WHY</span><b>'+esc(m.reason||m.insight||"No setup explanation yet.")+'</b></div><div><span>CONFIRMATION</span><b>'+esc(m.trigger||"Wait for confirmation")+'</b></div><div><span>HTF / S-R</span><b>'+esc((m.higher_timeframe_bias||"—")+" · "+(m.nearest_level_type||"S/R scan"))+'</b></div></div>':"")
         +'<div class="dev-meta"><span>'+esc(m.market_bias||"NEUTRAL")+'</span><span>'+esc(m.stage||"STRUCTURE")+'</span><em class="'+actionClass(action)+'">'+action+'</em></div>'
         +'</button>';
     }).join("")
@@ -238,10 +240,16 @@ function paint(result){
     const liveObservatory=observatoryMarkets.map(old=>latestMarkets.find(m=>m.symbol===old.symbol)||old);
     observatoryMarkets=liveObservatory;
     cards.innerHTML=opportunityCards(liveObservatory,lockedSymbols);
-    cards.querySelectorAll(".developing-card").forEach(btn=>btn.addEventListener("click",()=>{
+    cards.onclick=(event)=>{
+      const btn=event.target.closest(".developing-card");
+      if(!btn)return;
       const m=latestMarkets.find(x=>x.symbol===btn.dataset.symbol)||observatoryMarkets?.find(x=>x.symbol===btn.dataset.symbol);
-      if(m){detail.innerHTML=renderDetail(m);detail.dataset.symbol=m.symbol;detail.scrollIntoView({behavior:"smooth",block:"start"});}
-    }));
+      if(m){
+        expandedObservatorySymbol=expandedObservatorySymbol===m.symbol?null:m.symbol;
+        cards.innerHTML=opportunityCards(observatoryMarkets,lockedSymbols);
+        detail.innerHTML=renderDetail(m);detail.dataset.symbol=m.symbol;
+      }
+    };
   }
   const current=detail.dataset.symbol;
   const focus=sorted.find(m=>m.symbol===current)||sorted.find(m=>["CONFIRMING","DEVELOPING","WATCHING"].includes(m.state))||sorted[0];
