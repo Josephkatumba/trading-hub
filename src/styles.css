@@ -561,3 +561,21 @@ main{position:relative;padding-bottom:90px}.topline{border-bottom-color:rgba(98,
   .map-zone.london{left:25px;right:55px}
   .map-node{right:39px}
 }
+
+/* Observatory full-grid command cards */
+.developing-command{padding:22px 24px}
+.developing-head{margin-bottom:18px}
+.developing-grid{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch}
+.developing-card{width:100%;min-width:0;min-height:260px;padding:18px 18px 16px;display:flex;flex-direction:column;justify-content:flex-start}
+.dev-card-top{flex:none}
+.dev-card-top b{font-size:15px}
+.dev-card-top strong{font-size:22px}
+.dev-chart{height:125px;margin:15px 0 11px;flex:none}
+.dev-price-row{flex:none}
+.dev-price{font-size:17px}
+.dev-thesis{height:auto;min-height:42px;margin-top:10px;font-size:9px;line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.dev-meta{margin-top:auto;padding-top:12px}
+.dev-meta span{font-size:7px;padding:5px 6px}
+.dev-meta em{font-size:8px}
+@media(max-width:1050px){.developing-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.developing-card{min-height:250px}}
+@media(max-width:700px){.developing-grid{grid-template-columns:1fr}.developing-card{min-height:0}}
