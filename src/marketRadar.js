@@ -8,6 +8,9 @@ const DEMO_MARKETS = [
 
 let refreshTimer = null;
 let latestMarkets = [];
+let observatoryMarkets = null;
+let observatoryUpdatedAt = 0;
+const OBSERVATORY_HOLD_MS = 30000;
 const esc = s => String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 const stateClass = s => String(s||"").toLowerCase().replace(/\s+/g,"-");
 const biasClass = s => String(s||"").toLowerCase().replace(/\s+/g,"-").replace(/\//g,"-");
@@ -188,8 +191,7 @@ function opportunityCards(markets){
     .sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,3);
   const fallback=[...markets].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,3);
   const picks=candidates.length?candidates:fallback;
-  return '<div class="developing-grid">'
-    +picks.map(m=>{
+  return picks.map(m=>{
       const action=String(m.action||"WAIT").toUpperCase();
       const trigger=triggerRead(m);
       return '<button class="developing-card" data-symbol="'+esc(m.symbol)+'">'
@@ -210,10 +212,15 @@ function paint(result){
   const sorted=[...latestMarkets].sort((a,b)=>(b.score||0)-(a.score||0));
   table.innerHTML=sorted.map(row).join("");
   if(cards){
-    cards.innerHTML=opportunityCards(latestMarkets);
+    const now=Date.now();
+    if(!observatoryMarkets || now-observatoryUpdatedAt>=OBSERVATORY_HOLD_MS){
+      observatoryMarkets=[...latestMarkets];
+      observatoryUpdatedAt=now;
+      cards.innerHTML=opportunityCards(observatoryMarkets);
+    }
     cards.querySelectorAll(".developing-card").forEach(btn=>btn.addEventListener("click",()=>{
-      const m=latestMarkets.find(x=>x.symbol===btn.dataset.symbol);
-      if(m){detail.innerHTML=renderDetail(m);detail.scrollIntoView({behavior:"smooth",block:"start"});}
+      const m=latestMarkets.find(x=>x.symbol===btn.dataset.symbol)||observatoryMarkets?.find(x=>x.symbol===btn.dataset.symbol);
+      if(m){detail.innerHTML=renderDetail(m);detail.dataset.symbol=m.symbol;detail.scrollIntoView({behavior:"smooth",block:"start");}
     }));
   }
   const current=detail.dataset.symbol;
