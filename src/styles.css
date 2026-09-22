@@ -662,3 +662,33 @@ main{position:relative;padding-bottom:90px}.topline{border-bottom-color:rgba(98,
 }
 .dev-meta em.buy{color:#55e6a4;text-shadow:0 0 12px rgba(85,230,164,.35)}
 .dev-meta em.sell{color:#ff7783;text-shadow:0 0 12px rgba(255,119,131,.35)}
+
+/* Observatory Command Panels */
+.developing-grid{gap:18px}
+.developing-card{isolation:isolate;min-height:350px;padding:18px 18px 16px;position:relative}
+.developing-card .dev-card-glow{position:absolute;inset:-35%;background:radial-gradient(circle,rgba(97,215,255,.10),transparent 52%);pointer-events:none;z-index:-1;transition:.25s}
+.developing-card.buy .dev-card-glow{background:radial-gradient(circle,rgba(85,230,164,.13),transparent 52%)}
+.developing-card.sell .dev-card-glow{background:radial-gradient(circle,rgba(255,111,122,.13),transparent 52%)}
+.developing-card:hover .dev-card-glow{transform:scale(1.15)}
+.developing-card.buy{border-color:#286348}
+.developing-card.sell{border-color:#68343e}
+.developing-card.watch{border-color:#315266}
+.dev-rank{font-size:6px!important;letter-spacing:.14em;color:#61d7ff!important;margin-bottom:7px!important}
+.dev-score{display:flex;align-items:baseline;gap:2px}
+.dev-score strong{font-size:28px;color:#8ee9ff;text-shadow:0 0 18px rgba(97,215,255,.35)}
+.dev-score span{font:7px "DM Mono",monospace;color:#597384}
+.developing-card.buy .dev-score strong{color:#70efad;text-shadow:0 0 18px rgba(85,230,164,.3)}
+.developing-card.sell .dev-score strong{color:#ff858f;text-shadow:0 0 18px rgba(255,111,122,.3)}
+.dev-label{display:block;font:6px "DM Mono",monospace;letter-spacing:.12em;color:#5f7b8d;margin-bottom:3px}
+.dev-price{font-size:19px;font-weight:600}
+.dev-plan{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:11px}
+.dev-plan div,.dev-plan.waiting{padding:8px 7px;border:1px solid #263b47;border-radius:6px;background:rgba(8,15,21,.7)}
+.dev-plan span{display:block;font:6px "DM Mono",monospace;color:#607889}
+.dev-plan b{display:block;margin-top:4px;font:8px "DM Mono",monospace;color:#d4e2eb}
+.dev-plan .risk{border-color:#4c3037}.dev-plan .risk b{color:#ff858f}
+.dev-plan .reward{border-color:#285542}.dev-plan .reward b{color:#6fe0a3}
+.dev-plan.waiting{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.dev-plan.waiting b{margin:0;color:#8b9aa8}
+.dev-thesis{min-height:48px;margin-top:11px!important;-webkit-line-clamp:3}
+@media(max-width:1050px){.developing-card{min-height:340px}}
+@media(max-width:700px){.developing-card{min-height:0}.dev-plan{grid-template-columns:repeat(2,1fr)}}
