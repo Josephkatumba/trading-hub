@@ -512,3 +512,52 @@ main{position:relative;padding-bottom:90px}.topline{border-bottom-color:rgba(98,
 .setup-lifecycle-five{grid-template-columns:repeat(5,1fr)}
 @media(max-width:1000px){.lens-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:650px){.lens-grid{grid-template-columns:1fr 1fr}.setup-lifecycle-five{grid-template-columns:repeat(2,1fr)}.analysis-lens-head{align-items:flex-start;flex-direction:column}.lens-badge{width:100%}}
+
+
+/* Trade Plan Geometry */
+.live-intelligence-stage{position:relative;overflow:hidden}
+.live-price-map{margin-top:18px}
+.map-canvas{position:relative;height:430px;margin-top:12px;border:1px solid #202c36;border-radius:12px;overflow:hidden;background:radial-gradient(circle at 50% 50%,rgba(103,215,209,.045),transparent 42%),#080d13}
+.map-grid{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-evenly}
+.map-grid i{display:block;height:1px;background:#121c25}
+.map-zone.london{position:absolute;left:42px;right:70px;border:1px dashed rgba(120,168,255,.28);background:rgba(120,168,255,.035);z-index:1}
+.map-zone.london span{position:absolute;left:8px;top:7px;font:7px "DM Mono",monospace;color:#6681a4;letter-spacing:.1em}
+.map-line{position:absolute;left:42px;right:70px;height:1px;z-index:5}
+.map-line span{position:absolute;left:8px;top:-10px;padding:3px 6px;border-radius:4px;background:#0b1118;border:1px solid #273440;font:7px "DM Mono",monospace;white-space:nowrap}
+.map-line.key{border-top:1px dashed #75879a;opacity:.8}
+.map-line.key span{color:#a8b5c3}
+.map-line.entry{border-top:2px solid #67d7d1;box-shadow:0 0 13px rgba(103,215,209,.25)}
+.map-line.entry.buy{border-color:#6fe0a3;box-shadow:0 0 15px rgba(111,224,163,.3)}
+.map-line.entry.sell{border-color:#f0808a;box-shadow:0 0 15px rgba(240,128,138,.3)}
+.map-line.entry span{color:#cbe9e7}
+.map-line.price{border-top:1px solid rgba(255,255,255,.72);z-index:7}
+.map-line.price span{right:0;left:auto;color:#eef4fa}
+.map-line.stop{border-top:1px dashed #f0808a;box-shadow:0 0 12px rgba(240,128,138,.14);z-index:6}
+.map-line.stop span{color:#f0808a}
+.map-line.target{border-top:1px dashed #6fe0a3;box-shadow:0 0 12px rgba(111,224,163,.14);z-index:6}
+.map-line.target span{color:#6fe0a3}
+.map-node{position:absolute;right:53px;width:10px;height:10px;margin-top:-5px;border-radius:50%;border:2px solid #647588;background:#0a1016;z-index:8}
+.map-node span{position:absolute;right:14px;top:-3px;font:7px "DM Mono",monospace;color:#647588}
+.map-axis{position:absolute;right:8px;top:10px;bottom:10px;width:50px;display:flex;flex-direction:column;justify-content:space-between;text-align:right;color:#465565;font:7px "DM Mono",monospace}
+.map-plan{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:8px}
+.map-plan div{padding:11px;border:1px solid #202b35;border-radius:8px;background:#0d141a}
+.map-plan span{display:block;color:#687586;font:7px "DM Mono",monospace;letter-spacing:.1em}
+.map-plan b{display:block;margin-top:6px;font:11px "DM Mono",monospace}
+.map-plan .risk b{color:#f0808a}
+.map-plan .reward b{color:#6fe0a3}
+.map-header{display:flex;justify-content:space-between;align-items:flex-end}
+.map-header>b,.map-header div>b{display:block;font-size:11px;margin-top:5px}
+.map-live{font:7px "DM Mono",monospace;color:#6fe0a3}
+.map-footer{display:flex;gap:14px;flex-wrap:wrap;margin-top:9px;color:#637183;font:7px "DM Mono",monospace}
+.map-footer .dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;background:#67d7d1}
+.map-footer .dot.level{background:#75879a}
+.map-footer .dot.range{background:#78a8ff}
+.map-footer .dot.danger{background:#f0808a}
+.map-footer .dot.target{background:#6fe0a3}
+@media(max-width:700px){
+  .map-canvas{height:360px}
+  .map-plan{grid-template-columns:repeat(2,1fr)}
+  .map-line{left:25px;right:55px}
+  .map-zone.london{left:25px;right:55px}
+  .map-node{right:39px}
+}
