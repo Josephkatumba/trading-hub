@@ -289,11 +289,23 @@ def analyze_symbol(
             direction = "SHORT"
 
     trendline_gate = bool(trend["family"] and trendline_direction)
+
+    # Flexible confirmation gate:
+    # A clean trendline event is mandatory, but we deliberately do NOT require
+    # every evidence layer to agree. Price action must agree with the event,
+    # then at least one of HTF bias, nearby S/R, or CRT context should support it.
+    # This keeps the scanner selective without starving it of valid setups.
+    htf_alignment = (
+        (trendline_direction == "LONG" and htf_bias == "BULLISH")
+        or (trendline_direction == "SHORT" and htf_bias == "BEARISH")
+    )
+    sr_alignment = level_atr_distance <= 0.85
+    crt_alignment = crt["direction"] == trendline_direction
+    confirmation_support = htf_alignment or sr_alignment or crt_alignment
     confirmation_alignment = bool(
         trendline_gate
         and pa["direction"] == trendline_direction
-        and ((trendline_direction == "LONG" and htf_bias == "BULLISH")
-             or (trendline_direction == "SHORT" and htf_bias == "BEARISH"))
+        and confirmation_support
     )
 
     breakdown = {
@@ -371,13 +383,18 @@ def analyze_symbol(
 
     if direction is None:
         state, setup = "NO SETUP", "None"
-    elif trend["family"] == "BREAK" and score >= 70:
-        state, setup = "CONFIRMING", "Trendline break"
-    elif trend["family"] == "REVERSAL" and score >= 70:
-        state, setup = "CONFIRMING", "Trendline reversal"
-    elif trendline_gate and score >= 55:
+    elif (
+        trend["family"] in {"BREAK", "REVERSAL"}
+        and score >= 65
+        and pa["direction"] == trendline_direction
+        and confirmation_support
+    ):
+        state, setup = "CONFIRMING", (
+            "Trendline break" if trend["family"] == "BREAK" else "Trendline reversal"
+        )
+    elif trendline_gate and score >= 50:
         state, setup = "DEVELOPING", f"Trendline {trend['family'].lower()}"
-    elif trendline_gate and score >= 35:
+    elif trendline_gate:
         state, setup = "WATCHING", f"Trendline {trend['family'].lower()} watch"
     elif direction:
         state, setup = "WATCHING", "Directional context only"
@@ -416,6 +433,15 @@ def analyze_symbol(
         trigger = "Wait for clean trendline structure"
 
     levels = _trade_levels(rows, direction, close, atr, highs, lows, level, level_kind)
+
+    # Levels are useful for planning, but the UI should not imply they are
+    # actionable while the scanner is only watching directional context.
+    if state == "WATCHING" and not trendline_gate:
+        levels["stop_loss"] = None
+        levels["take_profit"] = None
+        levels["risk_distance"] = None
+        levels["reward_distance"] = None
+        levels["rr"] = None
     if state in {"CONFIRMING", "DEVELOPING"} and direction and levels["rr"] is not None and levels["rr"] < 1.5:
         # A nearby opposing level can create poor asymmetry. Keep the levels
         # visible, but downgrade the setup rather than pretending the target is attractive.
@@ -452,7 +478,12 @@ def analyze_symbol(
         "setup": setup,
         "trendline_gate": trendline_gate,
         "confirmation_alignment": confirmation_alignment,
-        "strategy_valid": state == "CONFIRMING" and trendline_gate and confirmation_alignment and (levels["rr"] or 0) >= 1.5,
+        "strategy_valid": (
+            state == "CONFIRMING"
+            and trendline_gate
+            and confirmation_alignment
+            and (levels["rr"] or 0) >= 1.5
+        ),
         "direction": direction,
         "reason": reason,
         "insight": insight,
