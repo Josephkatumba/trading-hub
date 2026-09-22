@@ -496,3 +496,19 @@ main{position:relative;padding-bottom:90px}.topline{border-bottom-color:rgba(98,
 .dev-proximity span{display:block;color:#617483;font:5px "DM Mono",monospace}
 .dev-proximity b{display:block;margin-top:2px;color:#aebdca;font:6px "DM Mono",monospace}
 .developing-card:focus-visible{outline:1px solid #61d7ff;outline-offset:2px}
+
+/* Multi-lens analysis */
+.analysis-lens{margin-top:9px;padding:15px;border:1px solid #233540;border-radius:10px;background:radial-gradient(circle at 90% 0,rgba(184,156,255,.07),transparent 30%),linear-gradient(145deg,#0d161e,#0a1117)}
+.analysis-lens-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+.analysis-lens-head h3{margin:5px 0 0;font-size:13px}
+.lens-badge{padding:6px 8px;border:1px solid #30404c;border-radius:5px;color:#9eafbd;background:#0b141b;font:6px "DM Mono",monospace}
+.lens-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.lens-card{min-height:82px;padding:10px;border:1px solid #202f3a;border-radius:7px;background:#0b1319}
+.lens-card span{display:block;color:#566a79;font:6px "DM Mono",monospace;letter-spacing:.04em}
+.lens-card b{display:block;margin-top:8px;color:#cbd7e0;font-size:8px;line-height:1.35}
+.lens-card small{display:block;margin-top:6px;color:#566775;font-size:6px;line-height:1.35}
+.lens-card.crt{border-color:#40355b;background:linear-gradient(145deg,#11101b,#0b1118)}
+.lens-card.crt span{color:#9f8bd0}
+.setup-lifecycle-five{grid-template-columns:repeat(5,1fr)}
+@media(max-width:1000px){.lens-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:650px){.lens-grid{grid-template-columns:1fr 1fr}.setup-lifecycle-five{grid-template-columns:repeat(2,1fr)}.analysis-lens-head{align-items:flex-start;flex-direction:column}.lens-badge{width:100%}}
