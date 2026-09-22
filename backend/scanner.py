@@ -278,12 +278,23 @@ def analyze_symbol(
     crt = _crt_context(rows, atr)
     level, level_atr_distance, level_kind = _nearest_level(rows, close, atr)
 
-    direction = trend["direction"] or pa["direction"] or crt["direction"]
+    # Trendline-first strategy gate. Generic directional bias can describe
+    # the market, but cannot become a trade setup without a trendline event.
+    trendline_direction = trend["direction"]
+    direction = trendline_direction or pa["direction"] or crt["direction"]
     if direction is None:
         if htf_bias == "BULLISH" and ema20 > ema50:
             direction = "LONG"
         elif htf_bias == "BEARISH" and ema20 < ema50:
             direction = "SHORT"
+
+    trendline_gate = bool(trend["family"] and trendline_direction)
+    confirmation_alignment = bool(
+        trendline_gate
+        and pa["direction"] == trendline_direction
+        and ((trendline_direction == "LONG" and htf_bias == "BULLISH")
+             or (trendline_direction == "SHORT" and htf_bias == "BEARISH"))
+    )
 
     breakdown = {
         "trendline": 0,
@@ -364,14 +375,17 @@ def analyze_symbol(
         state, setup = "CONFIRMING", "Trendline break"
     elif trend["family"] == "REVERSAL" and score >= 70:
         state, setup = "CONFIRMING", "Trendline reversal"
-    elif trend["family"] and score >= 55:
+    elif trendline_gate and score >= 55:
         state, setup = "DEVELOPING", f"Trendline {trend['family'].lower()}"
-    elif score >= 50:
-        state, setup = "DEVELOPING", "Trendline setup"
-    elif score >= 35:
-        state, setup = "WATCHING", "Trendline setup"
+    elif trendline_gate and score >= 35:
+        state, setup = "WATCHING", f"Trendline {trend['family'].lower()} watch"
+    elif direction:
+        state, setup = "WATCHING", "Directional context only"
     else:
         state, setup = "NO SETUP", "None"
+
+    if trendline_gate and not confirmation_alignment:
+        reasons.append("trendline event is not fully aligned with price action and higher-timeframe bias")
 
     momentum = "BULLISH" if rsi >= 55 else "BEARISH" if rsi <= 45 else "NEUTRAL"
 
@@ -390,10 +404,14 @@ def analyze_symbol(
         trigger = "Break above trendline + retest/close confirmation"
     elif trend["family"] == "BREAK" and direction == "SHORT":
         trigger = "Break below trendline + retest/close confirmation"
+    elif trend["family"] == "REVERSAL" and direction == "LONG":
+        trigger = "Trendline support rejection + bullish close + S/R confirmation"
+    elif trend["family"] == "REVERSAL" and direction == "SHORT":
+        trigger = "Trendline resistance rejection + bearish close + S/R confirmation"
     elif direction == "LONG":
-        trigger = "Bullish rejection + close confirmation"
+        trigger = "Directional context only; wait for a clean trendline event"
     elif direction == "SHORT":
-        trigger = "Bearish rejection + close confirmation"
+        trigger = "Directional context only; wait for a clean trendline event"
     else:
         trigger = "Wait for clean trendline structure"
 
@@ -432,6 +450,9 @@ def analyze_symbol(
         "action": action,
         "score": score,
         "setup": setup,
+        "trendline_gate": trendline_gate,
+        "confirmation_alignment": confirmation_alignment,
+        "strategy_valid": state == "CONFIRMING" and trendline_gate and confirmation_alignment and (levels["rr"] or 0) >= 1.5,
         "direction": direction,
         "reason": reason,
         "insight": insight,
@@ -455,6 +476,7 @@ def analyze_symbol(
         "price_action_state": pa["state"],
         "trendline": trend["label"],
         "trendline_state": trend["family"] or "WATCHING",
+        "trendline_line": trend["line"],
         "setup_family": trend["family"],
         "sr_context": f"{level_kind} {level:.8f}" if level else "No nearby level",
         "crt_context": crt["label"],
@@ -467,4 +489,3 @@ def analyze_symbol(
         "spread_atr": spread / atr if atr else 0.0,
         "score_breakdown": breakdown,
     }
-

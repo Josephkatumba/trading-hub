@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone, time, timedelta
+from pathlib import Path
+import json
+import os
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -12,6 +15,7 @@ load_dotenv()
 
 from scanner import analyze_symbol
 from macro import fundamentals_snapshot
+from observations import record_markets, recent_observations
 
 try:
     import MetaTrader5 as mt5
@@ -50,6 +54,23 @@ ENGINE_STARTED = datetime.now(timezone.utc)
 
 LONDON = ZoneInfo("Europe/London")
 NEW_YORK = ZoneInfo("America/New_York")
+
+
+def mt5_bridge_heartbeat() -> dict[str, Any]:
+    """Read the optional MQL5 read-only bridge heartbeat."""
+    configured = os.getenv("TRADING_HUB_BRIDGE_FILE")
+    if configured:
+        path = Path(configured)
+    else:
+        appdata = os.getenv("APPDATA")
+        path = Path(appdata) / "MetaQuotes" / "Terminal" / "Common" / "Files" / "trading_hub_heartbeat.json" if appdata else None
+    if path is None or not path.exists():
+        return {"connected": False, "path": str(path) if path else None}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return {"connected": True, "path": str(path), **data}
+    except Exception as exc:
+        return {"connected": False, "path": str(path), "error": str(exc)}
 
 
 def normalize_symbol(symbol: str) -> str:
@@ -200,6 +221,7 @@ def market_snapshot() -> list[dict[str, Any]]:
             })
     finally:
         mt5.shutdown()
+    record_markets(markets)
     return markets
 
 
@@ -210,6 +232,7 @@ def health():
     account = None
     symbols = 0
     error = None
+    bridge = mt5_bridge_heartbeat()
 
     if mt5 is not None:
         try:
@@ -237,11 +260,15 @@ def health():
     return {
         "ok": True,
         "service": "trading-hub-market-engine",
+        "engine_version": "0.3.0",
+        "strategy": "trendline-first-v3",
+        "execution_enabled": False,
         "mt5_available": mt5 is not None,
         "mt5_connected": connected,
         "terminal": terminal,
         "account": account,
         "symbols": symbols,
+        "bridge": bridge,
         "uptime_started": ENGINE_STARTED.isoformat(),
         "error": error,
     }
@@ -270,5 +297,13 @@ def context():
         "live": bool(markets),
         "markets": markets,
         "fundamentals": fundamentals_snapshot(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+@app.get("/api/market/observations")
+def observations(limit: int = 100):
+    return {
+        "observations": recent_observations(limit),
+        "limit": max(1, min(limit, 1000)),
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
