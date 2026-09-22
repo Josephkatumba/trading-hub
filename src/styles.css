@@ -692,3 +692,24 @@ main{position:relative;padding-bottom:90px}.topline{border-bottom-color:rgba(98,
 .dev-thesis{min-height:48px;margin-top:11px!important;-webkit-line-clamp:3}
 @media(max-width:1050px){.developing-card{min-height:340px}}
 @media(max-width:700px){.developing-card{min-height:0}.dev-plan{grid-template-columns:repeat(2,1fr)}}
+
+/* Observatory 10-pair matrix + expandable intelligence */
+.developing-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.developing-card{min-height:250px;padding:14px 14px 13px}
+.dev-chart{height:92px;margin:11px 0 9px}
+.dev-card-top b{font-size:13px}
+.dev-card-top strong{font-size:20px}
+.dev-price{font-size:15px}
+.dev-thesis{font-size:8px;min-height:38px}
+.dev-expanded{margin-top:10px;padding:10px;border:1px solid #304654;border-radius:7px;background:rgba(97,215,255,.045);display:grid;gap:8px}
+.dev-expanded div{padding-top:7px;border-top:1px solid #20313c}
+.dev-expanded div:first-child{padding-top:0;border-top:0}
+.dev-expanded span{display:block;color:#6e8b9c;font:6px "DM Mono",monospace;letter-spacing:.12em}
+.dev-expanded b{display:block;margin-top:3px;color:#cbd9e3;font-size:8px;line-height:1.45}
+.developing-card.expanded{min-height:0;border-color:#4c6d7e;box-shadow:0 14px 35px rgba(0,0,0,.3),0 0 22px rgba(97,215,255,.08)}
+.developing-card.expanded.buy{border-color:#367454}
+.developing-card.expanded.sell{border-color:#75404a}
+@media(max-width:1250px){.developing-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:1000px){.developing-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.developing-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.developing-card{min-height:220px;padding:12px}.dev-chart{height:80px}.dev-plan{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.developing-grid{grid-template-columns:1fr}.developing-card{min-height:0}}
