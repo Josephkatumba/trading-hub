@@ -112,6 +112,29 @@ export function renderMarketRadar(){
 function demoData(){return DEMO_MARKETS.map(m=>({...m,price:m.price + Math.sin(Date.now()/60000)*0.4,updated:"Demo feed"}));}
 async function getFundamentals(){try{return await engineFetch("/api/market/fundamentals");}catch(_){return {configured:false,events:[],status:"ENGINE OFFLINE"};}}
 async function getRadar(){try{const data=await engineFetch("/api/market/radar");if(Array.isArray(data?.markets)&&data.markets.length)return {markets:data.markets,live:true,source:data.source||"MT5"};}catch(_){}return {markets:demoData(),live:false,source:"Demo feed"};}
+function miniStructure(m){
+  const bias=String(m.market_bias||"").toUpperCase();
+  const bearish=bias.includes("BEAR");
+  const bullish=bias.includes("BULL");
+  const trend=bullish?"up":bearish?"down":"flat";
+  const points=bullish?"8,62 24,55 40,60 56,43 72,47 88,30 104,34 120,20":bearish?"8,20 24,27 40,19 56,37 72,31 88,48 104,42 120,60":"8,42 24,36 40,48 56,41 72,45 88,39 104,44 120,40";
+  const high=m.london_high!=null?fmt(m.london_high,2):"L-H";
+  const low=m.london_low!=null?fmt(m.london_low,2):"L-L";
+  return '<div class="dev-chart '+trend+'">'
+    +'<div class="dev-chart-grid"></div><div class="dev-range"><span>'+high+'</span><span>'+low+'</span></div>'
+    +'<svg viewBox="0 0 128 80" preserveAspectRatio="none" aria-hidden="true"><polyline points="'+points+'" fill="none"/></svg>'
+    +'<div class="dev-trendline"></div><i class="dev-live-marker"></i>'
+    +'<span class="dev-chart-label">M15 · STRUCTURE</span></div>';
+}
+function triggerRead(m){
+  const trigger=Number(m.trigger);
+  const price=Number(m.price);
+  if(Number.isFinite(trigger)&&Number.isFinite(price)&&price){
+    const distance=Math.abs(trigger-price)/price*100;
+    return {label:distance<0.15?"NEAR TRIGGER":distance<0.4?"APPROACHING":"DISTANT",value:distance.toFixed(2)+"% away"};
+  }
+  return {label:"AWAITING TRIGGER",value:"Confirmation required"};
+}
 function opportunityCards(markets){
   const candidates=[...markets].filter(m=>["DEVELOPING","CONFIRMING"].includes(String(m.state||"").toUpperCase()))
     .sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,3);
@@ -120,9 +143,11 @@ function opportunityCards(markets){
   return '<div class="developing-grid">'
     +picks.map(m=>{
       const action=String(m.action||"WAIT").toUpperCase();
+      const trigger=triggerRead(m);
       return '<button class="developing-card" data-symbol="'+esc(m.symbol)+'">'
         +'<div class="dev-card-top"><div><b>'+esc(m.symbol)+'</b><small>'+esc(m.state||"WATCHING")+'</small></div><strong>'+Number(m.score||0)+'</strong></div>'
-        +'<div class="dev-price">'+fmt(m.price)+'</div>'
+        +miniStructure(m)
+        +'<div class="dev-price-row"><div class="dev-price">'+fmt(m.price)+'</div><div class="dev-proximity"><span>'+trigger.label+'</span><b>'+trigger.value+'</b></div></div>'
         +'<div class="dev-thesis">'+esc(m.insight||m.reason||"Setup developing")+'</div>'
         +'<div class="dev-meta"><span>'+esc(m.market_bias||"NEUTRAL")+'</span><span>'+esc(m.stage||"STRUCTURE")+'</span><em class="'+actionClass(action)+'">'+action+'</em></div>'
         +'</button>';
