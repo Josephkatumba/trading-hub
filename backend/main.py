@@ -80,11 +80,50 @@ def normalize_symbol(symbol: str) -> str:
 def mt5_symbol(symbol: str) -> str | None:
     if mt5 is None:
         return None
+
     candidates = SYMBOL_ALIASES.get(symbol, [symbol])
+
+    # Prefer exact broker symbols first. IC Markets' Market Watch commonly
+    # exposes clean names such as XAUUSD, USTEC, US500, EURUSD and BTCUSD.
+    expanded = []
     for base in candidates:
         for candidate in [base, base + "r", base + ".r", base + "m", base + ".m"]:
+            if candidate not in expanded:
+                expanded.append(candidate)
+
+    for candidate in expanded:
+        try:
+            # Selecting the symbol makes the Python MT5 bridge see symbols
+            # that are available in the terminal but not currently selected.
+            mt5.symbol_select(candidate, True)
             if mt5.symbol_info(candidate) is not None:
                 return candidate
+        except Exception:
+            continue
+
+    # Final fallback: discover the broker's actual symbol by matching the
+    # requested base against the terminal's available symbol names.
+    try:
+        available = mt5.symbols_get() or []
+        names = [str(item.name) for item in available]
+        for base in candidates:
+            base_upper = base.upper()
+            matches = [
+                name for name in names
+                if name.upper() == base_upper
+                or name.upper().startswith(base_upper)
+                or name.upper().endswith(base_upper)
+            ]
+            for name in matches:
+                try:
+                    mt5.symbol_select(name, True)
+                    if mt5.symbol_info(name) is not None:
+                        return name
+                except Exception:
+                    continue
+    except Exception:
+        pass
+
     return None
 
 
