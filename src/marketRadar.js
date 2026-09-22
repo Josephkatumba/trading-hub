@@ -191,13 +191,23 @@ function opportunityCards(markets){
     .sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,3);
   const fallback=[...markets].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,3);
   const picks=candidates.length?candidates:fallback;
-  return picks.map(m=>{
+  return picks.map((m,index)=>{
       const action=String(m.action||"WAIT").toUpperCase();
       const trigger=triggerRead(m);
-      return '<button class="developing-card" data-symbol="'+esc(m.symbol)+'">'
-        +'<div class="dev-card-top"><div><b>'+esc(m.symbol)+'</b><small>'+esc(m.state||"WATCHING")+'</small></div><strong>'+Number(m.score||0)+'</strong></div>'
+      const direction=String(m.direction||"").toUpperCase();
+      const tone=action.includes("BUY")||direction==="LONG"?"buy":action.includes("SELL")||direction==="SHORT"?"sell":"watch";
+      const entry=Number(m.entry);
+      const stop=Number(m.stop_loss);
+      const target=Number(m.take_profit);
+      const rr=Number(m.rr);
+      const hasPlan=Number.isFinite(entry)&&Number.isFinite(stop)&&Number.isFinite(target);
+      const setupLabel=m.setup_family?String(m.setup_family).toUpperCase():String(m.setup||"SETUP").toUpperCase();
+      return '<button class="developing-card '+tone+'" data-symbol="'+esc(m.symbol)+'">'
+        +'<div class="dev-card-glow"></div>'
+        +'<div class="dev-card-top"><div><small class="dev-rank">0'+(index+1)+' · LIVE OPPORTUNITY</small><b>'+esc(m.symbol)+'</b><small>'+esc(m.state||"WATCHING")+' · '+esc(setupLabel)+'</small></div><div class="dev-score"><strong>'+Number(m.score||0)+'</strong><span>/100</span></div></div>'
         +miniStructure(m)
-        +'<div class="dev-price-row"><div class="dev-price">'+fmt(m.price)+'</div><div class="dev-proximity"><span>'+trigger.label+'</span><b>'+trigger.value+'</b></div></div>'
+        +'<div class="dev-price-row"><div><span class="dev-label">LIVE PRICE</span><div class="dev-price">'+fmt(m.price)+'</div></div><div class="dev-proximity"><span>'+trigger.label+'</span><b>'+trigger.value+'</b></div></div>'
+        +(hasPlan?'<div class="dev-plan"><div><span>ENTRY</span><b>'+fmt(entry,2)+'</b></div><div class="risk"><span>SL</span><b>'+fmt(stop,2)+'</b></div><div class="reward"><span>TP</span><b>'+fmt(target,2)+'</b></div><div><span>R:R</span><b>'+(Number.isFinite(rr)?rr.toFixed(2)+'R':'—')+'</b></div></div>':'<div class="dev-plan waiting"><span>TRADE PLAN</span><b>Waiting for calculated levels</b></div>')
         +'<div class="dev-thesis">'+esc(m.insight||m.reason||"Setup developing")+'</div>'
         +'<div class="dev-meta"><span>'+esc(m.market_bias||"NEUTRAL")+'</span><span>'+esc(m.stage||"STRUCTURE")+'</span><em class="'+actionClass(action)+'">'+action+'</em></div>'
         +'</button>';
