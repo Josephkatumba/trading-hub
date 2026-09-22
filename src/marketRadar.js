@@ -103,6 +103,7 @@ export function renderMarketRadar(){
   return '<section class="page-title radar-title"><div><div class="kicker">TRADING HUB · MARKET COMMAND CENTER</div><h1>Market Radar</h1><p class="sub">One screen for structure, momentum, sessions, confluence and emerging trendline-reversal opportunities.</p></div><div class="radar-engine"><i class="live-dot"></i><span id="radarEngineStatus">CONNECTING ENGINE</span></div></section>'
     +'<section class="radar-hero"><div class="radar-hero-copy"><div class="radar-eyebrow"><span class="live-dot"></span> LIVE SCANNING NETWORK</div><h2>See the market before you touch the button.</h2><p>Trading Hub continuously ranks the instruments it can observe, explains the setup state and separates <b>watching</b> from <b>confirmation</b>. The radar is built around your trendline-reversal process.</p><div class="radar-hero-tags"><span>M15 STRUCTURE</span><span>H1 CONTEXT</span><span>S/R</span><span>SESSION</span><span>MOMENTUM</span></div></div><div class="radar-hero-stats"><div><b id="radarWatching">0</b><span>WATCHING</span></div><div><b id="radarDeveloping">0</b><span>DEVELOPING</span></div><div><b id="radarConfirming">0</b><span>CONFIRMING</span></div><div><b id="radarBullish">0</b><span>BULLISH</span></div></div></section>'
     +'<section class="radar-command-strip"><div><span class="kicker">SCANNER STATUS</span><b>MARKET COVERAGE</b><small>Forex · Gold · Indices · Crypto</small></div><div><span class="kicker">REFRESH</span><b>10 SEC</b><small>Engine snapshots update automatically</small></div><div><span class="kicker">MODEL</span><b>100 POINT</b><small>Transparent confluence scoring</small></div><div><span class="kicker">EXECUTION</span><b>MANUAL</b><small>Scanner never sends an order</small></div></section>'
+    +'<section class="panel developing-command"><div class="developing-head"><div><span class="kicker">SETUP OBSERVATORY</span><h2>Three setups worth watching</h2><p>Keep the developing opportunities visible. Click any card to open its full intelligence feed below.</p></div><span class="observatory-count">TOP 3 · LIVE QUEUE</span></div><div id="developingCards" class="developing-grid"></div></section>'
     +'<section class="panel live-intelligence-stage"><div class="live-stage-head"><div><span class="kicker">PRIMARY SYSTEM VIEW</span><h2>Live Market Intelligence</h2><p>Trading Hub turns raw market data into a readable setup thesis, reaction map and confirmation state.</p></div><div class="stage-status"><i class="live-dot"></i><span id="radarUpdated">Waiting…</span></div></div><div class="radar-detail-panel" id="radarDetail"></div></section>'
     +'<section class="radar-grid"><div class="panel radar-market-panel"><div class="panel-head"><div><span class="kicker">OPPORTUNITY MATRIX</span><h2>Where attention belongs</h2></div><span class="radar-refresh">LIVE QUEUE</span></div><div class="radar-legend"><span>PAIR</span><span>PRICE / 24H</span><span>BIAS</span><span>STATE</span><span>SCORE</span></div><div class="radar-table" id="radarTable"></div></div></section>'
     +'<section class="radar-bottom-grid"><div class="panel radar-fundamentals"><div class="panel-head"><div><span class="kicker">MACRO RADAR</span><h2>Events that can change the tape</h2></div><span class="radar-refresh">US EVENTS</span></div><div id="radarFundamentals" class="macro-list"><div class="macro-empty"><b>Loading macro context</b></div></div></div><div class="panel radar-philosophy"><div class="kicker">TRADING HUB PHILOSOPHY</div><div class="philosophy-orb">✦</div><h2>Wait for the market to earn the trade.</h2><p>The radar is intentionally allowed to say <b>WAIT</b>. Every observation becomes structured data that can later train the learning layer.</p><div class="philosophy-flow"><span>OBSERVE</span><i>→</i><span>CONFIRM</span><i>→</i><span>EXECUTE</span><i>→</i><span>LEARN</span></div></div></section>'
@@ -111,14 +112,41 @@ export function renderMarketRadar(){
 function demoData(){return DEMO_MARKETS.map(m=>({...m,price:m.price + Math.sin(Date.now()/60000)*0.4,updated:"Demo feed"}));}
 async function getFundamentals(){try{return await engineFetch("/api/market/fundamentals");}catch(_){return {configured:false,events:[],status:"ENGINE OFFLINE"};}}
 async function getRadar(){try{const data=await engineFetch("/api/market/radar");if(Array.isArray(data?.markets)&&data.markets.length)return {markets:data.markets,live:true,source:data.source||"MT5"};}catch(_){}return {markets:demoData(),live:false,source:"Demo feed"};}
+function opportunityCards(markets){
+  const candidates=[...markets].filter(m=>["DEVELOPING","CONFIRMING"].includes(String(m.state||"").toUpperCase()))
+    .sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,3);
+  const fallback=[...markets].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,3);
+  const picks=candidates.length?candidates:fallback;
+  return '<div class="developing-grid">'
+    +picks.map(m=>{
+      const action=String(m.action||"WAIT").toUpperCase();
+      return '<button class="developing-card" data-symbol="'+esc(m.symbol)+'">'
+        +'<div class="dev-card-top"><div><b>'+esc(m.symbol)+'</b><small>'+esc(m.state||"WATCHING")+'</small></div><strong>'+Number(m.score||0)+'</strong></div>'
+        +'<div class="dev-price">'+fmt(m.price)+'</div>'
+        +'<div class="dev-thesis">'+esc(m.insight||m.reason||"Setup developing")+'</div>'
+        +'<div class="dev-meta"><span>'+esc(m.market_bias||"NEUTRAL")+'</span><span>'+esc(m.stage||"STRUCTURE")+'</span><em class="'+actionClass(action)+'">'+action+'</em></div>'
+        +'</button>';
+    }).join("")
+    +'</div>';
+}
+
 function paint(result){
   latestMarkets=result.markets||[];
-  const table=document.getElementById("radarTable"),detail=document.getElementById("radarDetail");
+  const table=document.getElementById("radarTable"),detail=document.getElementById("radarDetail"),cards=document.getElementById("developingCards");
   if(!table||!detail)return;
   const sorted=[...latestMarkets].sort((a,b)=>(b.score||0)-(a.score||0));
   table.innerHTML=sorted.map(row).join("");
-  const focus=sorted.find(m=>["CONFIRMING","DEVELOPING","WATCHING"].includes(m.state))||sorted[0];
+  if(cards){
+    cards.innerHTML=opportunityCards(latestMarkets);
+    cards.querySelectorAll(".developing-card").forEach(btn=>btn.addEventListener("click",()=>{
+      const m=latestMarkets.find(x=>x.symbol===btn.dataset.symbol);
+      if(m){detail.innerHTML=renderDetail(m);detail.scrollIntoView({behavior:"smooth",block:"start"});}
+    }));
+  }
+  const current=detail.dataset.symbol;
+  const focus=sorted.find(m=>m.symbol===current)||sorted.find(m=>["CONFIRMING","DEVELOPING","WATCHING"].includes(m.state))||sorted[0];
   detail.innerHTML=renderDetail(focus);
+  detail.dataset.symbol=focus?.symbol||"";
   const counts={WATCHING:0,DEVELOPING:0,CONFIRMING:0};
   latestMarkets.forEach(m=>{if(counts[m.state]!=null)counts[m.state]++});
   document.getElementById("radarWatching").textContent=counts.WATCHING;
@@ -127,7 +155,7 @@ function paint(result){
   document.getElementById("radarBullish").textContent=latestMarkets.filter(m=>String(m.market_bias||"").startsWith("BULLISH")).length;
   document.getElementById("radarUpdated").textContent=result.live?"LIVE · "+new Date().toLocaleTimeString():"DEMO · "+new Date().toLocaleTimeString();
   const status=document.getElementById("radarEngineStatus");if(status)status.textContent=result.live?"LIVE MT5 ENGINE":"DEMO FEED · BACKEND NOT CONNECTED";
-  table.querySelectorAll(".radar-row-btn").forEach(btn=>btn.addEventListener("click",()=>{const m=latestMarkets.find(x=>x.symbol===btn.dataset.symbol);if(m)detail.innerHTML=renderDetail(m);}));
+  table.querySelectorAll(".radar-row-btn").forEach(btn=>btn.addEventListener("click",()=>{const m=latestMarkets.find(x=>x.symbol===btn.dataset.symbol);if(m){detail.innerHTML=renderDetail(m);detail.dataset.symbol=m.symbol;}}));
 }
 function paintFundamentals(data){
   const el=document.getElementById("radarFundamentals");if(!el)return;
