@@ -10,7 +10,7 @@ let refreshTimer = null;
 let latestMarkets = [];
 let observatoryMarkets = null;
 let observatoryUpdatedAt = 0;
-const OBSERVATORY_HOLD_MS = 30000;
+const OBSERVATORY_HOLD_MS = 120000;
 const esc = s => String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 const stateClass = s => String(s||"").toLowerCase().replace(/\s+/g,"-");
 const biasClass = s => String(s||"").toLowerCase().replace(/\s+/g,"-").replace(/\//g,"-");
@@ -186,11 +186,13 @@ function triggerRead(m){
   }
   return {label:"AWAITING TRIGGER",value:"Confirmation required"};
 }
-function opportunityCards(markets){
+function opportunityCards(markets, lockedSymbols=null){
   const candidates=[...markets].filter(m=>["DEVELOPING","CONFIRMING"].includes(String(m.state||"").toUpperCase()))
     .sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,3);
   const fallback=[...markets].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,3);
-  const picks=candidates.length?candidates:fallback;
+  const picks=Array.isArray(lockedSymbols)&&lockedSymbols.length
+    ? lockedSymbols.map(symbol=>markets.find(m=>m.symbol===symbol)).filter(Boolean).slice(0,3)
+    : (candidates.length?candidates:fallback);
   return picks.map((m,index)=>{
       const action=String(m.action||"WAIT").toUpperCase();
       const trigger=triggerRead(m);
@@ -224,10 +226,16 @@ function paint(result){
   if(cards){
     const now=Date.now();
     if(!observatoryMarkets || now-observatoryUpdatedAt>=OBSERVATORY_HOLD_MS){
-      observatoryMarkets=[...latestMarkets];
+      const candidates=[...latestMarkets].filter(m=>["DEVELOPING","CONFIRMING"].includes(String(m.state||"").toUpperCase()))
+        .sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,3);
+      const fallback=[...latestMarkets].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,3);
+      observatoryMarkets=candidates.length?candidates:fallback;
       observatoryUpdatedAt=now;
-      cards.innerHTML=opportunityCards(observatoryMarkets);
     }
+    const lockedSymbols=observatoryMarkets.map(m=>m.symbol);
+    const liveObservatory=observatoryMarkets.map(old=>latestMarkets.find(m=>m.symbol===old.symbol)||old);
+    observatoryMarkets=liveObservatory;
+    cards.innerHTML=opportunityCards(liveObservatory,lockedSymbols);
     cards.querySelectorAll(".developing-card").forEach(btn=>btn.addEventListener("click",()=>{
       const m=latestMarkets.find(x=>x.symbol===btn.dataset.symbol)||observatoryMarkets?.find(x=>x.symbol===btn.dataset.symbol);
       if(m){detail.innerHTML=renderDetail(m);detail.dataset.symbol=m.symbol;detail.scrollIntoView({behavior:"smooth",block:"start"});}
