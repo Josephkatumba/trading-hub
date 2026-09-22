@@ -196,13 +196,18 @@ function triggerRead(m){
   }
   return {label:"AWAITING TRIGGER",value:"Confirmation required"};
 }
+function observatoryRank(m){
+  const state=String(m.state||"WATCHING").toUpperCase();
+  const priority=state==="CONFIRMING"?3:state==="DEVELOPING"?2:state==="WATCHING"?1:0;
+  return priority*1000+Number(m.score||0);
+}
 function opportunityCards(markets, lockedSymbols=null){
-  const candidates=[...markets].filter(m=>["DEVELOPING","CONFIRMING"].includes(String(m.state||"").toUpperCase()))
-    .sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,OBSERVATORY_SIZE);
-  const fallback=[...markets].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,OBSERVATORY_SIZE);
+  const candidates=[...markets]
+    .sort((a,b)=>observatoryRank(b)-observatoryRank(a))
+    .slice(0,OBSERVATORY_SIZE);
   const picks=Array.isArray(lockedSymbols)&&lockedSymbols.length
     ? lockedSymbols.map(symbol=>markets.find(m=>m.symbol===symbol)).filter(Boolean).slice(0,OBSERVATORY_SIZE)
-    : (candidates.length?candidates:fallback);
+    : candidates;
   return picks.map((m,index)=>{
       const action=String(m.action||"WAIT").toUpperCase();
       const trigger=triggerRead(m);
@@ -238,10 +243,9 @@ function paint(result){
   if(cards){
     const now=Date.now();
     if(!observatoryMarkets || now-observatoryUpdatedAt>=OBSERVATORY_HOLD_MS){
-      const candidates=[...latestMarkets].filter(m=>["DEVELOPING","CONFIRMING"].includes(String(m.state||"").toUpperCase()))
-        .sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,OBSERVATORY_SIZE);
-      const fallback=[...latestMarkets].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,OBSERVATORY_SIZE);
-      observatoryMarkets=candidates.length?candidates:fallback;
+      observatoryMarkets=[...latestMarkets]
+        .sort((a,b)=>observatoryRank(b)-observatoryRank(a))
+        .slice(0,OBSERVATORY_SIZE);
       observatoryUpdatedAt=now;
     }
     const lockedSymbols=observatoryMarkets.map(m=>m.symbol);
