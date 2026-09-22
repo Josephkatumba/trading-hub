@@ -12,6 +12,7 @@ load_dotenv()
 
 from scanner import analyze_symbol
 from macro import fundamentals_snapshot
+from observations import record_markets, recent_observations
 
 try:
     import MetaTrader5 as mt5
@@ -200,6 +201,7 @@ def market_snapshot() -> list[dict[str, Any]]:
             })
     finally:
         mt5.shutdown()
+    record_markets(markets)
     return markets
 
 
@@ -237,6 +239,9 @@ def health():
     return {
         "ok": True,
         "service": "trading-hub-market-engine",
+        "engine_version": "0.3.0",
+        "strategy": "trendline-first-v3",
+        "execution_enabled": False,
         "mt5_available": mt5 is not None,
         "mt5_connected": connected,
         "terminal": terminal,
@@ -270,5 +275,13 @@ def context():
         "live": bool(markets),
         "markets": markets,
         "fundamentals": fundamentals_snapshot(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+@app.get("/api/market/observations")
+def observations(limit: int = 100):
+    return {
+        "observations": recent_observations(limit),
+        "limit": max(1, min(limit, 1000)),
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
