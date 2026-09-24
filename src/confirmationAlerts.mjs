@@ -1,3 +1,27 @@
+import {setupFamilyLabel, strategyIdOf, strategyTag} from "./strategyModel.mjs";
+
+/**
+ * What a confirmed-setup notification shows. Every notification names its strategy; there
+ * is no combined signal. Unavailable values are explicit, never guessed.
+ */
+export function confirmationToastModel(event) {
+  const strategy = strategyTag(strategyIdOf(event));
+  const direction = ["LONG", "SHORT"].includes(String(event?.direction || "").toUpperCase()) ? String(event.direction).toUpperCase() : null;
+  const family = event?.setup_type || event?.setup_family || event?.trendline_event || event?.setup || null;
+  const confirmed = event?.confirmed_at ? (Number.isNaN(Date.parse(event.confirmed_at)) ? String(event.confirmed_at) : new Date(event.confirmed_at).toLocaleString()) : null;
+  const evidence = String(event?.rule_evidence?.reason || event?.reason || "").trim();
+  return {
+    title: "NEW CONFIRMED SETUP",
+    strategyId: strategy.id, strategyTag: strategy.tag, strategyLabel: strategy.label,
+    headline: (event?.symbol || "Symbol unavailable") + " · " + strategy.tag + " · " + (direction || "Direction unavailable"),
+    setup: setupFamilyLabel(family, direction) || "Unavailable",
+    score: event?.score == null ? "Unavailable" : String(event.score),
+    confirmedAt: confirmed || "Unavailable",
+    evidence: evidence ? (evidence.length > 180 ? evidence.slice(0, 177) + "…" : evidence) : null,
+    note: "Not an entry recommendation.",
+  };
+}
+
 export function isPersistedConfirmation(event) {
   // Shadow-mode strategy confirmations are research records, never live alerts
   // (the backend already keeps them out of the live performance setups list).

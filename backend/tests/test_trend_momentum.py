@@ -1,4 +1,4 @@
-"""Phase 10: Trend / Momentum research strategy (tm-pullback-v1, SHADOW mode).
+"""Phase 10: Trend / Momentum strategy (tm-pullback-v1; SHADOW in Phase 10, LIVE since Phase 10b).
 
 Rules are tested on explicit synthetic multi-timeframe paths (tests/tm_fixtures.py);
 the bearish cases are exact price mirrors of the bullish ones. Persistence,
@@ -44,7 +44,7 @@ def tm_market(payload: dict, symbol: str = "XAUUSD", price: float | None = None,
     last = payload.get("entry") or 110.0
     row = {"symbol": symbol, "broker_symbol": symbol, "price": price if price is not None else last, "bid": last, "ask": last,
            "spread": 0.0, "change_pct": 0.0, **payload, "timeframe": "M15", "higher_timeframes": ["H1", "H4", "D1"],
-           "strategy_id": "trend_momentum", "strategy_version": payload["strategy_version"], "strategy_mode": "SHADOW"}
+           "strategy_id": "trend_momentum", "strategy_version": payload["strategy_version"], "strategy_mode": "LIVE"}
     if verified:
         row.update(time_provenance={"source_time_basis": "UTC", "timezone_normalization_status": "VERIFIED"},
                    source_timestamp=g.BASE_NOW.isoformat())
@@ -280,11 +280,11 @@ class DeterminismTests(unittest.TestCase):
 
 # --------------------------------------------------------------------------- lifecycle/persistence
 class PersistenceLifecycleTests(IsolationTestCase):
-    def test_snapshots_carry_their_own_identity_and_research_flag(self):
+    def test_snapshots_carry_their_own_identity(self):
         batch = self.store.scan(tm_market(evaluate(trigger=False)))
         snapshot = self.store.records("setup_observations.jsonl")[0]
-        self.assertEqual((snapshot["strategy_id"], snapshot["strategy_version"], snapshot["shadow"]),
-                         ("trend_momentum", "tm-pullback-v1", True))
+        self.assertEqual((snapshot["strategy_id"], snapshot["strategy_version"], snapshot.get("shadow")),
+                         ("trend_momentum", "tm-pullback-v1", None))                      # LIVE: no research flag
         self.assertEqual(snapshot["episode_identity"]["strategy_id"], "trend_momentum")
         self.assertEqual(snapshot["setup_type"], "TM_PULLBACK_CONTINUATION")
         self.assertEqual(snapshot["timeframe"], "M15")
@@ -305,10 +305,10 @@ class PersistenceLifecycleTests(IsolationTestCase):
         # Existing lifecycle rule: unchanged evidence does not immediately reopen a just-closed episode.
         self.assertEqual((broken[0]["setup_id"], broken[0]["episode_suppressed"]), (first, True))
         confirmations = self.store.records("setup_confirmations.jsonl")
-        self.assertEqual([(c["setup_id"], c["strategy_id"], c["strategy_version"], c["shadow"]) for c in confirmations],
-                         [(first, "trend_momentum", "tm-pullback-v1", True)])
+        self.assertEqual([(c["setup_id"], c["strategy_id"], c["strategy_version"], c.get("shadow")) for c in confirmations],
+                         [(first, "trend_momentum", "tm-pullback-v1", None)])
 
-    def test_watching_is_a_research_candidate_never_a_confirmation(self):
+    def test_watching_is_a_candidate_never_a_confirmation(self):
         self.store.scan(tm_market(evaluate(pullback_bars=1, retracement=0.1), price=115.0))
         self.assertEqual(self.store.records("setup_observations.jsonl")[0]["lifecycle_state"], "DETECTED")
         self.assertEqual(self.store.records("setup_confirmations.jsonl"), [])
@@ -322,10 +322,24 @@ class PersistenceLifecycleTests(IsolationTestCase):
 
 
 class ResearchModeTests(IsolationTestCase):
-    def test_registered_in_research_mode_only(self):
-        self.assertEqual(REGISTRY.mode("trend_momentum"), SHADOW)
-        self.assertNotIn("trend_momentum", REGISTRY.live())
+    """Trend / Momentum is LIVE; SHADOW (research) mode stays available for future experimental
+    strategies. Its guarantees are exercised here with trend_momentum registered in research
+    mode, as it was in Phase 10."""
+
+    def setUp(self):
+        super().setUp()
+        self.research = g.research_mode(observations)
+        self.registry = self.research.__enter__()
+
+    def tearDown(self):
+        self.research.__exit__(None, None, None)
+        super().tearDown()
+
+    def test_registered_live_and_research_mode_still_available(self):
+        self.assertEqual(REGISTRY.mode("trend_momentum"), LIVE)
+        self.assertIn("trend_momentum", REGISTRY.live())
         self.assertEqual(REGISTRY.get("trend_momentum").version, "tm-pullback-v1")
+        self.assertEqual(self.registry.mode("trend_momentum"), SHADOW)
 
     def test_research_confirmations_are_never_live(self):
         self.store.scan(tm_market(evaluate()), market("LONG", state="CONFIRMING", valid=True, invalidation=2600.0))
@@ -413,7 +427,7 @@ class OutcomeTests(IsolationTestCase):
         with g.isolated_store(observations, self.store.root):
             report = {item["strategy_id"]: item for item in strategy_lab.strategy_lab_report(outcomes)["strategies"]}
         research = report["trend_momentum"]
-        self.assertEqual((research["mode"], research["version"]), ("SHADOW", "tm-pullback-v1"))
+        self.assertEqual((research["mode"], research["version"]), ("LIVE", "tm-pullback-v1"))
         self.assertEqual(research["setups"]["total"], 3)
         self.assertEqual(research["confirmations"], 2)
         self.assertEqual((research["outcomes"]["verified_target"], research["outcomes"]["verified_stop"]), (1, 1))
@@ -451,7 +465,7 @@ class ScenarioBroker(FakeBroker):
 
 def trendline_and_sr():
     registry = g.trendline_only_registry()
-    registry.register(SupportResistanceStrategy(), enabled=True, mode=SHADOW)
+    registry.register(SupportResistanceStrategy(), enabled=True, mode=LIVE)
     return registry
 
 
@@ -475,19 +489,19 @@ class EndToEndTests(unittest.TestCase):
     def records(self, files, name="setup_observations.jsonl"):
         return [json.loads(line) for line in files.get(name, b"").splitlines()]
 
-    def test_trend_momentum_produces_research_results_in_the_scan(self):
+    def test_trend_momentum_produces_live_results_in_the_scan(self):
         markets, files = self.full
         entries = {m["symbol"]: {e["strategy_id"]: e for e in m["strategies"]} for m in markets}
         self.assertEqual({s: e["trend_momentum"]["state"] for s, e in entries.items()},
                          {"XAUUSD": "CONFIRMING", "EURUSD": "CONFIRMING", "GBPUSD": "DEVELOPING", "NAS100": "NO SETUP"})
-        self.assertEqual({e["trend_momentum"]["mode"] for e in entries.values()}, {"SHADOW"})
+        self.assertEqual({e["trend_momentum"]["mode"] for e in entries.values()}, {"LIVE"})
         self.assertTrue(entries["XAUUSD"]["trend_momentum"]["confirmed"])
         snapshots = [r for r in self.records(files) if r["strategy_id"] == "trend_momentum"]
         self.assertEqual(sorted(r["symbol"] for r in snapshots), ["EURUSD", "GBPUSD", "XAUUSD"])
-        self.assertTrue(all(r["shadow"] is True for r in snapshots))
+        self.assertFalse(any(r.get("shadow") for r in snapshots))
         confirmations = [c for c in self.records(files, "setup_confirmations.jsonl") if c["strategy_id"] == "trend_momentum"]
         self.assertEqual(len(confirmations), 2)
-        self.assertTrue(all(c["shadow"] is True for c in confirmations))
+        self.assertFalse(any(c.get("shadow") for c in confirmations))
 
     def test_trendline_markets_and_records_are_unchanged(self):
         strip = lambda rows: [{k: v for k, v in m.items() if k != "strategies"} for m in rows]  # noqa: E731
@@ -512,14 +526,15 @@ class EndToEndTests(unittest.TestCase):
         strip = lambda rows: [{k: v for k, v in r.items() if k not in ids} for r in rows if r.get("strategy_id") == "support_resistance"]  # noqa: E731
         self.assertEqual(strip(self.records(sr_files)), strip(self.records(files)))
 
-    def test_no_live_confirmation_or_live_performance_from_research(self):
+    def test_live_confirmations_are_strategy_specific(self):
         _, files = self.full
         confirmations = self.records(files, "setup_confirmations.jsonl")
         report = performance_report(confirmations, [], self.records(files), report_date=g.BASE_NOW.date().isoformat(), days=1)
-        live = {s.get("strategy_id") or "trendline" for s in report["daily"][0]["setups"]}
-        self.assertNotIn("trend_momentum", live)
-        self.assertIn("trend_momentum", report["daily"][0]["shadow_strategies"])     # measured as research only
-        self.assertIn("trend_momentum", report["daily"][0]["by_strategy"])
+        day = report["daily"][0]
+        live = [(s["strategy_id"], s["symbol"], s["direction"]) for s in day["setups"] if s.get("strategy_id") == "trend_momentum"]
+        self.assertEqual(sorted(live), [("trend_momentum", "EURUSD", "SHORT"), ("trend_momentum", "XAUUSD", "LONG")])
+        self.assertEqual(day["shadow_strategies"], [])
+        self.assertIn("trend_momentum", day["by_strategy"])
 
 
 if __name__ == "__main__":

@@ -88,7 +88,8 @@ test("counters come from data and are unavailable (not zero) when offline", () =
     confirmed: [episode({setup_id: "c", lifecycle_state: "CONFIRMED", confirmation: {}}), episode({setup_id: "d", lifecycle_state: "ACTIVE", confirmation: {}})],
     closed: [episode({setup_id: "e", lifecycle_state: "EXPIRED"})]};
   assert.deepEqual(gardenCounters({markets: new Array(15).fill({}), episodes, mode: "LIVE"}),
-    {watched: 15, growing: 1, confirming: 1, bloomed: 1, active: 1});
+    {watched: 15, growing: 1, confirming: 1, bloomed: 1, active: 1,
+      byStrategy: [{id: "trendline", tag: "TRENDLINE", label: "Trendline", count: 4}]});
   const offline = gardenCounters({markets: [], episodes: null, mode: "OFFLINE"});
   assert.ok(Object.values(offline).every(value => value === null));
   assert.match(counterTiles(offline), /—/);

@@ -220,13 +220,26 @@ def sr_market(payload: dict, symbol: str = "XAUUSD", price: float | None = None)
 
 
 class ShadowPersistenceTests(IsolationTestCase):
-    def test_registry_runs_sr_in_shadow_mode_with_its_own_identity(self):
-        self.assertEqual(strategies.REGISTRY.mode("support_resistance"), "SHADOW")
-        self.assertEqual(strategies.REGISTRY.live(), ["trendline"])
+    """The SHADOW (research) mechanism, exercised with S/R registered in research mode as it
+    was in Phases 6-10. S/R is LIVE now (tests/test_live_strategies.py); SHADOW stays
+    available for future experimental strategies and keeps these guarantees."""
+
+    def setUp(self):
+        super().setUp()
+        self.research = g.research_mode(observations, main)
+        self.registry = self.research.__enter__()
+
+    def tearDown(self):
+        self.research.__exit__(None, None, None)
+        super().tearDown()
+
+    def test_registry_identity_and_research_mode_still_available(self):
+        self.assertEqual(strategies.REGISTRY.mode("support_resistance"), "LIVE")
+        self.assertEqual(strategies.REGISTRY.live(), ["trendline", "support_resistance", "trend_momentum"])
         self.assertEqual((SupportResistanceStrategy.strategy_id, SupportResistanceStrategy.version), ("support_resistance", "sr-levels-v1"))
         self.assertNotEqual(SupportResistanceStrategy.version, strategies.TrendlineStrategy.version)
         m15 = f.support_ending("bounce")
-        results = strategies.REGISTRY.evaluate(MarketInput("SYN", m15, higher_rows=f.range_h1(), bars={"M15": m15, "H1": f.range_h1()}))
+        results = self.registry.evaluate(MarketInput("SYN", m15, higher_rows=f.range_h1(), bars={"M15": m15, "H1": f.range_h1()}))
         self.assertEqual({sid: r.mode for sid, r in results.items()}, {"trendline": "LIVE", "support_resistance": "SHADOW", "trend_momentum": "SHADOW"})
 
     def test_lifecycle_evidence_and_single_confirmation(self):
@@ -323,9 +336,10 @@ class ShadowPersistenceTests(IsolationTestCase):
 
 class ScanLoopShadowTests(unittest.TestCase):
     def test_shadow_sr_in_the_scan_loop_leaves_trendline_unchanged(self):
-        with tempfile.TemporaryDirectory() as tmp:
+        # Research mode (as in Phases 6-10); the LIVE scan loop is tests/test_live_strategies.py.
+        with tempfile.TemporaryDirectory() as tmp, g.research_mode(observations) as research:
             baseline, baseline_files = run_scan(FakeBroker(IC_MARKETS), g.trendline_only_registry(), root=Path(tmp) / "a")
-            markets, files = run_scan(FakeBroker(IC_MARKETS), strategies.build_default_registry(), root=Path(tmp) / "b")
+            markets, files = run_scan(FakeBroker(IC_MARKETS), research, root=Path(tmp) / "b")
         strip = lambda rows: [{k: v for k, v in m.items() if k != "strategies"} for m in rows]  # noqa: E731
         self.assertEqual(g.canonical(strip(markets)), g.canonical(strip(baseline)), "top-level markets are the trendline result")
         for market_row in markets:

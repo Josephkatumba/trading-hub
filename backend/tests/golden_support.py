@@ -147,6 +147,32 @@ def legacy_trendline(*modules):
             patch.stop()
 
 
+def research_registry():
+    """The registered strategies with every non-trendline strategy in SHADOW (research) mode:
+    the Phase 6-10 deployment. SHADOW stays available for future experimental strategies,
+    so its guarantees (never live, never alerts) are still tested through this registry."""
+    from strategies import LIVE, SHADOW, TRENDLINE, StrategyRegistry, build_default_registry
+    default = build_default_registry()
+    registry = StrategyRegistry()
+    for strategy_id in default.registered():
+        registry.register(default.get(strategy_id), enabled=True, mode=LIVE if strategy_id == TRENDLINE else SHADOW)
+    return registry
+
+
+@contextmanager
+def research_mode(*modules):
+    """Run `modules` (observations, main, strategy_lab, ...) with research_registry()."""
+    registry = research_registry()
+    patches = [mock.patch.object(module, "STRATEGIES" if hasattr(module, "STRATEGIES") else "REGISTRY", registry) for module in modules]
+    for patch in patches:
+        patch.start()
+    try:
+        yield registry
+    finally:
+        for patch in patches:
+            patch.stop()
+
+
 def as_version(payload: dict, version: str) -> dict:
     """`payload` labelled with trendline `version` (analyze_symbol reports v3 by default;
     the label is the only thing the version parameter changes)."""

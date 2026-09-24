@@ -64,7 +64,9 @@ test("mutation: removing the shadow guard from alerts is caught", async () => {
   const source = readFileSync(new URL("../src/confirmationAlerts.mjs", import.meta.url), "utf8");
   const guard = "event?.shadow !== true &&";
   assert.ok(source.includes(guard), "the guard exists");
-  const mutated = await import("data:text/javascript," + encodeURIComponent(source.replace(guard, "")));
+  // A data: module cannot resolve relative imports; point them at the real files.
+  const absolute = source.replace(/from "\.\/([^"]+)"/g, (_, file) => 'from "' + new URL("../src/" + file, import.meta.url).href + '"');
+  const mutated = await import("data:text/javascript," + encodeURIComponent(absolute.replace(guard, "")));
   assert.equal(mutated.isPersistedConfirmation(TM_CONFIRMATION), true, "without the guard a research confirmation would alert");
   assert.notEqual(mutated.isPersistedConfirmation(TM_CONFIRMATION), isPersistedConfirmation(TM_CONFIRMATION));
 });

@@ -1,6 +1,6 @@
-"""Trend / Momentum research strategy: trend continuation after a controlled pullback.
+"""Trend / Momentum strategy: trend continuation after a controlled pullback.
 
-Registered in SHADOW (research) mode. Deterministic and rule-based: nothing is
+Registered LIVE (research-only SHADOW before Phase 10b). Deterministic and rule-based: nothing is
 decided by an AI model, every rule below is a fixed calculation over MT5 bars,
 and every rule's outcome is written to `strategy_evidence`. It is independent
 of the trendline and S/R strategies: it imports neither, and computes its own

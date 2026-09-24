@@ -62,17 +62,17 @@ class StrategyLabTests(IsolationTestCase):
         report = self.report()
         self.assertEqual(list(report), ["trendline", "support_resistance", "trend_momentum"])
         sr, trend = report["support_resistance"], report["trendline"]
-        self.assertEqual((sr["mode"], sr["version"], trend["mode"]), ("SHADOW", "sr-levels-v1", "LIVE"))
+        self.assertEqual((sr["mode"], sr["version"], trend["mode"]), ("LIVE", "sr-levels-v1", "LIVE"))
         self.assertEqual((sr["setups"]["total"], trend["setups"]["total"]), (3, 1))
         self.assertEqual((sr["setups"]["by_state"]["CONFIRMED"], sr["setups"]["by_state"]["DEVELOPING"]), (2, 1))
         self.assertEqual((sr["confirmations"], trend["confirmations"]), (2, 1))
-        self.assertEqual((sr["shadow_records"], trend["shadow_records"]), (3, 0))
+        self.assertEqual((sr["shadow_records"], trend["shadow_records"]), (0, 0))      # both LIVE
         self.assertEqual(set(sr["by_instrument"]), {"XAUUSD", "EURUSD", "GBPUSD"})
         self.assertEqual(set(trend["by_instrument"]), {"XAUUSD"})
         self.assertEqual({k: v["setups"] for k, v in sr["by_direction"].items()}, {"LONG": 2, "SHORT": 1})
         self.assertEqual({k: v["setups"] for k, v in sr["by_timeframe"].items()}, {"M15": 3})
         self.assertEqual({k: v["setups"] for k, v in sr["by_setup_type"].items()}, {"SR_BOUNCE": 3})
-        self.assertTrue(all(row["shadow"] for row in sr["recent"]))
+        self.assertFalse(any(row["shadow"] for row in sr["recent"]))
         self.assertEqual({row["setup_id"] for row in sr["recent"]}, {self.sr_long_id, self.sr_short_id, self.sr_dev_id})
 
     def test_verified_outcomes_are_grouped_by_strategy_and_unverified_never_count(self):
@@ -120,8 +120,8 @@ class StrategyLabTests(IsolationTestCase):
         self.assertEqual(evidence["level"]["type"], "SUPPORT")
         self.assertTrue(evidence["confirmation"]["passed"])
         self.assertEqual(evidence["plan"]["rr"], self.sr_long["rr"])
-        self.assertEqual({r["strategy_id"] for b in ("current", "confirmed", "closed") for r in garden[b]}, {"trendline"},
-                         "measuring S/R never puts it in the Garden")
+        # LIVE S/R setups are Garden setups; each keeps its own strategy identity.
+        self.assertEqual({r["strategy_id"] for b in ("current", "confirmed", "closed") for r in garden[b]}, {"trendline", "support_resistance"})
 
 
 class MlDatasetSeparationTests(IsolationTestCase):
@@ -135,14 +135,14 @@ class MlDatasetSeparationTests(IsolationTestCase):
                                              rows["setup_lifecycle.jsonl"] + [legacy_event], rows["setup_confirmations.jsonl"])
         self.assertEqual(set(split), {"trendline", "support_resistance", "UNATTRIBUTED"})
         self.assertEqual(len(split["support_resistance"]["observations"]), 1)
-        self.assertTrue(all(r.get("shadow") is True for r in split["support_resistance"]["observations"]))
+        self.assertFalse(any(r.get("shadow") is True for r in split["support_resistance"]["observations"]))
         self.assertIn(legacy_row, split["trendline"]["observations"])
         self.assertIn(legacy_event, split["trendline"]["lifecycle_events"])
         self.assertEqual(split["UNATTRIBUTED"]["market_outcomes"], [stray_outcome])
         self.assertEqual([c["strategy_id"] for c in split["support_resistance"]["confirmation_events"]], ["support_resistance"])
         audit = ml_dataset.audit_by_strategy(rows["setup_observations.jsonl"], [], rows["setup_lifecycle.jsonl"], rows["setup_confirmations.jsonl"])
         self.assertEqual({k: (v["mode"], v["records"]["observations"], v["shadow_snapshots"]) for k, v in audit.items()},
-                         {"trendline": ("LIVE", 1, 0), "support_resistance": ("SHADOW", 1, 1)})
+                         {"trendline": ("LIVE", 1, 0), "support_resistance": ("LIVE", 1, 0)})
         self.assertIn("statistics", audit["support_resistance"])
 
     def test_live_audit_labels_its_scope(self):
@@ -156,7 +156,7 @@ class MlDatasetSeparationTests(IsolationTestCase):
                 audit = ml_dataset.audit_live_dataset()
         self.assertEqual(audit["strategy_scope"], "ALL_STRATEGIES_COMBINED")
         self.assertEqual(set(audit["by_strategy"]), {"trendline", "support_resistance"})
-        self.assertEqual(audit["by_strategy"]["support_resistance"]["shadow_snapshots"], 1)
+        self.assertEqual(audit["by_strategy"]["support_resistance"]["shadow_snapshots"], 0)
 
 
 if __name__ == "__main__":

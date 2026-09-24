@@ -133,19 +133,19 @@ class RegistryIsolationTests(unittest.TestCase):
         self.fixture = next(f for f in g.load_fixtures() if f["name"] == "real_XAUUSD")
         self.expected = g.canonical(g.as_version(g.scan(self.fixture), TrendlineStrategy.version))
 
-    def test_default_registry_has_trendline_live_and_sr_in_shadow(self):
-        # Phase 6 registered Support & Resistance, Phase 10 Trend / Momentum, both in SHADOW
-        # (research) mode; trendline stays the only LIVE strategy.
+    def test_default_registry_has_three_live_strategies(self):
+        # Trendline, Support & Resistance (Phase 6) and Trend / Momentum (Phase 10) are all LIVE
+        # since Phase 10b; each stays independent (scoped by strategy_id).
         for registry in (strategies.REGISTRY, build_default_registry()):
             self.assertEqual(registry.registered(), ["trendline", "support_resistance", "trend_momentum"])
             self.assertEqual(registry.enabled(), ["trendline", "support_resistance", "trend_momentum"])
-            self.assertEqual(registry.live(), ["trendline"])
-            self.assertEqual([registry.mode(s) for s in registry.registered()], ["LIVE", "SHADOW", "SHADOW"])
+            self.assertEqual(registry.live(), ["trendline", "support_resistance", "trend_momentum"])
+            self.assertEqual([registry.mode(s) for s in registry.registered()], ["LIVE", "LIVE", "LIVE"])
 
     def test_trendline_runs_through_the_registry(self):
         results = build_default_registry().evaluate(market_input(self.fixture))
         self.assertEqual(list(results), ["trendline", "support_resistance", "trend_momentum"])
-        self.assertEqual([r.mode for r in results.values()], ["LIVE", "SHADOW", "SHADOW"])
+        self.assertEqual([r.mode for r in results.values()], ["LIVE", "LIVE", "LIVE"])
         self.assertTrue(results["trendline"].ok)
         self.assertEqual(results["trendline"].strategy_version, "trendline-first-v4")
         self.assertEqual(g.canonical(results["trendline"].payload), self.expected)

@@ -173,6 +173,38 @@ export function gardenResearchEntries(entries) {
     && entry.status === "OK" && entry.direction && entry.state && entry.state !== "NO SETUP");
 }
 
+// Readable names for strategy setup families (the S/R names are the engine's own
+// setup names). Families not listed (e.g. trendline BREAK / REVERSAL) are shown as recorded.
+const FAMILY_LABELS = Object.freeze({
+  SR_BOUNCE: {LONG: "Support bounce", SHORT: "Resistance rejection", any: "S/R bounce"},
+  SR_BREAK_RETEST: {LONG: "Resistance break/retest", SHORT: "Support break/retest", any: "S/R break/retest"},
+  TM_PULLBACK_CONTINUATION: {LONG: "Trend continuation · pullback", SHORT: "Trend continuation · pullback", any: "Trend continuation · pullback"},
+});
+
+export function setupFamilyLabel(family, direction = null) {
+  if (family == null || family === "") return null;
+  const labels = FAMILY_LABELS[String(family).toUpperCase()];
+  if (!labels) return String(family);
+  return labels[String(direction || "").toUpperCase()] || labels.any;
+}
+
+/**
+ * Live Garden counts per strategy. Each episode (setup_id) is counted once, under its own
+ * strategy; rows without a setup_id are counted individually.
+ */
+export function strategyBreakdown(rows) {
+  const seen = new Set();
+  const counts = new Map();
+  for (const row of rows || []) {
+    const key = row?.setup_id ? String(row.setup_id) : null;
+    if (key && seen.has(key)) continue;
+    if (key) seen.add(key);
+    const id = strategyIdOf(row);
+    counts.set(id, (counts.get(id) || 0) + 1);
+  }
+  return [...counts].map(([id, count]) => ({...strategyTag(id), count}));
+}
+
 /** Group any rows by strategy id (e.g. archive entries); insertion order is first appearance. */
 export function groupByStrategy(rows) {
   const groups = new Map();

@@ -1,8 +1,11 @@
 """Strategy contract, registry and the registered strategies.
 
-The trendline strategy is the only LIVE strategy. Support & Resistance and
-Trend / Momentum run in SHADOW (research) mode: evaluated and persisted for
-review and research, never presented as a live setup or alert. New strategies are added by implementing base.Strategy and
+Trendline, Support & Resistance and Trend / Momentum are LIVE: each produces its
+own setups, lifecycle, confirmations, notifications and outcomes, independently
+(scoped by strategy_id). LIVE is not a claim of profitability. SHADOW (research)
+mode remains available for future experimental strategies: evaluated and
+persisted for review only, never presented as a live setup or alert.
+New strategies are added by implementing base.Strategy and
 registering them in build_default_registry(); they do not touch the trendline
 strategy.
 """
@@ -21,8 +24,8 @@ TRENDLINE = TrendlineStrategy.strategy_id
 def build_default_registry() -> StrategyRegistry:
     registry = StrategyRegistry()
     registry.register(TrendlineStrategy(), enabled=True, mode=LIVE)
-    registry.register(SupportResistanceStrategy(), enabled=True, mode=SHADOW)
-    registry.register(TrendMomentumStrategy(), enabled=True, mode=SHADOW)
+    registry.register(SupportResistanceStrategy(), enabled=True, mode=LIVE)
+    registry.register(TrendMomentumStrategy(), enabled=True, mode=LIVE)
     return registry
 
 

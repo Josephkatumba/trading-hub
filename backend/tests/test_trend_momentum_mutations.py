@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import golden_support  # noqa: E402,F401  (puts backend/ on sys.path)
 
 import observations  # noqa: E402
-from strategies import LIVE  # noqa: E402
+from strategies import LIVE, SHADOW  # noqa: E402
 from strategies import trend_momentum as tm  # noqa: E402
 
 TESTS = "test_trend_momentum."
@@ -68,15 +68,18 @@ MUTATIONS = {
                             ["ContinuationTests.test_bullish_continuation_after_controlled_pullback_confirms"]),
     # Persistence identity and isolation
     "strategy_id removed from persistence": ([wrap(observations, "_snapshot", _without("strategy_id"))],
-                                             ["PersistenceLifecycleTests.test_snapshots_carry_their_own_identity_and_research_flag"]),
+                                             ["PersistenceLifecycleTests.test_snapshots_carry_their_own_identity"]),
     "strategy_id removed from episode identity": ([wrap(observations, "_snapshot", _identity_without_strategy)],
-                                                  ["PersistenceLifecycleTests.test_snapshots_carry_their_own_identity_and_research_flag"]),
+                                                  ["PersistenceLifecycleTests.test_snapshots_carry_their_own_identity"]),
     "episodes/suppression not scoped by strategy": ([mock.patch.object(observations, "record_strategy_id", lambda record: "trendline")],
                                                     ["IsolationTests.test_simultaneous_trendline_and_trend_momentum_same_symbol",
                                                      "IsolationTests.test_a_trendline_direction_change_never_touches_trend_momentum",
                                                      "IsolationTests.test_a_closed_trend_momentum_episode_never_suppresses_trendline"]),
     "research confirmation treated as live": ([mock.patch.object(observations, "_strategy_mode", lambda *args: LIVE)],
                                               ["ResearchModeTests.test_research_confirmations_are_never_live"]),
+    "live strategy demoted to research (its alerts would vanish)": ([mock.patch.object(observations, "_strategy_mode", lambda *args: SHADOW)],
+                                                                    ["PersistenceLifecycleTests.test_snapshots_carry_their_own_identity",
+                                                                     "PersistenceLifecycleTests.test_lifecycle_developing_confirmed_then_invalidated"]),
 }
 
 

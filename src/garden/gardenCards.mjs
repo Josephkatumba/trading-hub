@@ -2,11 +2,31 @@
 // models in gardenModel.mjs. Unavailable values are always shown explicitly.
 import {GARDEN_STAGES} from "./gardenModel.mjs";
 import {STRATEGY_STATUS, gardenResearchEntries, normalizeRegistry, shadowResults, strategyPerformance, strategyTag} from "../strategyModel.mjs";
+import {confirmationToastModel} from "../confirmationAlerts.mjs";
 
 export const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"}[c]));
 const orUnavailable = (value, text = "Unavailable") => value == null || value === "" ? '<span class="gd-na">' + text + '</span>' : esc(value);
 
 export const NOT_ADVICE = "Not an entry recommendation. TRADeden observes and explains; you make the decisions.";
+
+/** Confirmed-setup notification card: strategy, symbol, direction, setup, score, time, evidence. */
+export function confirmationToastHtml(event) {
+  const toast = confirmationToastModel(event);
+  return '<article class="confirmation-toast-card" data-confirmation-toast="' + esc(String(event?.setup_id || "unknown")) + '" data-strategy="' + esc(toast.strategyId) + '">'
+    + '<b>🌸 ' + esc(toast.title) + '</b><strong>' + esc(toast.headline) + '</strong>'
+    + '<span>Setup · ' + esc(toast.setup) + '</span><span>Score · ' + esc(toast.score) + '</span>'
+    + '<small>Confirmation time · ' + esc(toast.confirmedAt) + '</small>'
+    + (toast.evidence ? '<small class="confirmation-toast-evidence">' + esc(toast.evidence) + '</small>' : '')
+    + '<small class="confirmation-toast-note">' + esc(toast.note) + '</small></article>';
+}
+
+/** Per-strategy split of the live Garden counters ("TRENDLINE 3 · S/R 2 · TREND/MOM 4"). */
+export function strategyBreakdownLine(breakdown) {
+  if (!breakdown?.length) return "";
+  return '<div class="gd-counter-breakdown" aria-label="Live setups by strategy">'
+    + breakdown.map(item => '<span data-strategy="' + esc(item.id) + '">' + esc(item.tag) + ' <b>' + Number(item.count) + '</b></span>').join("")
+    + '</div>';
+}
 
 export function counterTiles(counters) {
   const tiles = [
@@ -18,7 +38,8 @@ export function counterTiles(counters) {
   ];
   return tiles.map(([key, label, icon, help]) =>
     '<div class="gd-counter gd-counter-' + key + '" title="' + esc(help) + '"><span class="gd-counter-icon" aria-hidden="true">' + icon + '</span>'
-    + '<b data-counter="' + key + '">' + (counters?.[key] == null ? "—" : esc(counters[key])) + '</b><span>' + esc(label) + '</span></div>').join("");
+    + '<b data-counter="' + key + '">' + (counters?.[key] == null ? "—" : esc(counters[key])) + '</b><span>' + esc(label) + '</span></div>').join("")
+    + strategyBreakdownLine(counters?.byStrategy);
 }
 
 function level(label, value, extraClass = "") {

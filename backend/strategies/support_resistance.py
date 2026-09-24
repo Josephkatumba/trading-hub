@@ -1,4 +1,4 @@
-"""Support & Resistance strategy (deterministic, rule-based; registered in SHADOW mode).
+"""Support & Resistance strategy (deterministic, rule-based; registered LIVE since Phase 10b, shadow before).
 
 Nothing here is decided by an AI model: every decision below is a fixed rule
 over MT5 bars, and every rule's outcome is written to `strategy_evidence`.

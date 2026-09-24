@@ -6,7 +6,7 @@
 // shown comes from API data; anything missing becomes an explicit unavailable
 // state rather than a guess.
 import {currentWatchSetups, partitionSetupEpisodes} from "../radarLayout.mjs";
-import {liveGardenRows, strategyConflict, strategyIdOf, strategyMatrix, strategyTag} from "../strategyModel.mjs";
+import {liveGardenRows, setupFamilyLabel, strategyBreakdown, strategyConflict, strategyIdOf, strategyMatrix, strategyTag} from "../strategyModel.mjs";
 
 export const GARDEN_STAGES = Object.freeze({
   growing: {key: "growing", icon: "🌱", label: "Growing", description: "Setup is developing."},
@@ -160,7 +160,7 @@ export function setupCardModel(row, {bucket = null, analysis = null, tracked = f
     tone: cardTone(stage, dir),
     bucket: bucket || (stage === "history" ? "history" : stage === "bloomed" || stage === "active" ? "bloomed" : "growing"),
     score: finite(row?.score) ? Math.round(Number(row.score)) : null,
-    setupType: setupTypeOf(row),
+    setupType: setupFamilyLabel(setupTypeOf(row), dir),
     latestObservation: latestObservationNote(row),
     strategy: strategyTag(strategyIdOf(row)),
     timeframe: row?.timeframe || null,
@@ -187,7 +187,19 @@ export function setupCardModel(row, {bucket = null, analysis = null, tracked = f
  * appear as live setups. History keeps every recorded setup.
  */
 export function gardenAreas(episodes, markets = [], {registry = null} = {}) {
-  const all = [...(episodes?.current || []), ...(episodes?.confirmed || []), ...(episodes?.closed || [])];
+  // One entry per episode: a setup_id listed in more than one bucket keeps its last
+  // (most advanced) copy, so no episode is shown or counted twice.
+  const bySetup = new Map();
+  const loose = [];
+  for (const row of [...(episodes?.current || []), ...(episodes?.confirmed || []), ...(episodes?.closed || [])]) {
+    if (row?.setup_id) {
+      bySetup.delete(String(row.setup_id));
+      bySetup.set(String(row.setup_id), row);
+    } else {
+      loose.push(row);
+    }
+  }
+  const all = [...bySetup.values(), ...loose];
   const parts = partitionSetupEpisodes(all);
   let growing = parts.current;
   if (!all.length) growing = currentWatchSetups(markets);
@@ -202,7 +214,7 @@ export function gardenAreas(episodes, markets = [], {registry = null} = {}) {
 
 /** Live hero counters. null means "unavailable" (engine offline), never a fake 0. */
 export function gardenCounters({markets = [], episodes = null, mode = "LIVE", registry = null} = {}) {
-  if (mode === "OFFLINE") return {watched: null, growing: null, confirming: null, bloomed: null, active: null};
+  if (mode === "OFFLINE") return {watched: null, growing: null, confirming: null, bloomed: null, active: null, byStrategy: null};
   const areas = gardenAreas(episodes, markets, {registry});
   const live = [...areas.growing, ...areas.bloomed];
   const count = stage => live.filter(row => gardenStage(row) === stage).length;
@@ -212,6 +224,7 @@ export function gardenCounters({markets = [], episodes = null, mode = "LIVE", re
     confirming: count("shaping"),
     bloomed: count("bloomed"),
     active: count("active"),
+    byStrategy: strategyBreakdown(live),
   };
 }
 
