@@ -113,5 +113,6 @@ export function analystPanel(model, {loading = false, simulated = false} = {}) {
 }
 
 export function stageLegend() {
-  return Object.values(GARDEN_STAGES).map(stage => '<span class="gd-legend-item gd-legend-' + stage.key + '"><i aria-hidden="true">' + stage.icon + '</i>' + esc(stage.label) + '</span>').join("");
+  return Object.values(GARDEN_STAGES).map(stage => '<span class="gd-legend-item gd-legend-' + stage.key + '"><i class="gd-legend-dot" aria-hidden="true"></i>' + esc(stage.label) + '</span>').join("")
+    + '<span class="gd-legend-item gd-legend-dir"><i class="gd-legend-dot gd-dot-long" aria-hidden="true"></i>Long <i class="gd-legend-dot gd-dot-short" aria-hidden="true"></i>Short</span>';
 }

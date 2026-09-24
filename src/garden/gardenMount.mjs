@@ -56,40 +56,44 @@ export async function mountGarden(container, {onSelect = () => {}, reducedMotion
   return {...createFallbackGarden(container, {onSelect, reducedMotion}), reason: decision.reason};
 }
 
-// ----- CSS/2D garden -----------------------------------------------------------
+// ----- CSS/2D constellation ------------------------------------------------------
 const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"}[c]));
+const SPAN = 6.4;   // outer archive radius in layout units
+const project = (x, z, y = 0) => ({left: 50 + (x / SPAN) * 45, top: 50 + (z / SPAN) * 40 - y * 5});
 
 export function createFallbackGarden(container, {onSelect = () => {}, reducedMotion = false} = {}) {
   const root = document.createElement("div");
   root.className = "gd-garden2d" + (reducedMotion ? " is-still" : "");
-  root.innerHTML = '<svg class="gd-hills" viewBox="0 0 1000 300" preserveAspectRatio="none" aria-hidden="true">'
-    + '<path d="M0 170 C 180 120 320 150 480 130 S 800 110 1000 140 L1000 300 L0 300Z" class="gd-hill-back"/>'
-    + '<path d="M0 215 C 200 185 360 205 540 190 S 830 180 1000 200 L1000 300 L0 300Z" class="gd-hill-front"/></svg>'
+  const rings = [2.45, 4.95, 5.7].map((r, i) => '<ellipse cx="50" cy="50" rx="' + (r / SPAN * 45).toFixed(2) + '" ry="' + (r / SPAN * 40).toFixed(2)
+    + '" class="gd-orbit gd-orbit-' + i + '"/>').join("");
+  let seed = 11;
+  const random = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+  const dust = Array.from({length: 26}, () => '<i class="gd-mote" style="left:' + (random() * 100).toFixed(1) + '%;top:' + (8 + random() * 84).toFixed(1)
+    + '%;--d:' + (random() * 6).toFixed(2) + 's;--s:' + (0.6 + random() * 1.2).toFixed(2) + '"></i>').join("");
+  root.innerHTML = '<svg class="gd-orbits" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' + rings + '</svg>'
+    + '<div class="gd-motes" aria-hidden="true">' + dust + '</div>'
     + '<div class="gd-bed" role="list" aria-label="Setups in the garden"></div>';
   container.appendChild(root);
   const bed = root.querySelector(".gd-bed");
   let selectedId = null;
   const onClick = event => {
-    const plant = event.target.closest("[data-plant-id]");
-    if (plant) onSelect(plant.dataset.plantId);
+    const orb = event.target.closest("[data-plant-id]");
+    if (orb) onSelect(orb.dataset.plantId);
   };
   bed.addEventListener("click", onClick);
 
   let signature = "";
-  function update(plants) {
-    const next = JSON.stringify(plants.map(p => [p.id, p.stage, p.direction, p.x.toFixed(2), p.z.toFixed(2)]));
-    if (next === signature) return select(selectedId);   // unchanged: keep sway phases running
+  function update(orbs) {
+    const next = JSON.stringify(orbs.map(o => [o.id, o.stage, o.direction, o.x.toFixed(2), o.z.toFixed(2)]));
+    if (next === signature) return select(selectedId);   // unchanged: keep float phases running
     signature = next;
-    bed.innerHTML = plants.map(plant => {
-      const depth = Math.max(0, Math.min(1, (4.0 - plant.z) / 9.4));   // 0 = front, 1 = back
-      const left = ((plant.x + 8.5) / 17) * 90 + 5;
-      const bottom = 7 + depth * 27;                                   // front hill .. back hill crest
-      const scale = (1.15 - depth * 0.5).toFixed(2);
-      return '<button type="button" role="listitem" class="gd-plant2d gd-p-' + plant.stage + ' gd-p-' + String(plant.direction || "none").toLowerCase()
-        + (plant.id === selectedId ? ' is-selected' : '') + '" data-plant-id="' + esc(plant.id) + '" title="' + esc(plant.symbol) + '"'
-        + ' style="left:' + left.toFixed(1) + '%;bottom:' + bottom.toFixed(1) + '%;--s:' + scale + ';--d:' + (plant.phase % 3).toFixed(2) + 's;z-index:' + Math.round((1 - depth) * 100) + '">'
-        + '<span class="gd-p-stem"></span><span class="gd-p-leaf gd-p-leaf-l"></span><span class="gd-p-leaf gd-p-leaf-r"></span><span class="gd-p-head"></span>'
-        + '<span class="gd-p-label">' + esc(plant.symbol) + '</span></button>';
+    bed.innerHTML = orbs.map(orb => {
+      const {left, top} = project(orb.x, orb.z, orb.y);
+      const depth = (orb.z / SPAN + 1) / 2;                 // 0 = back, 1 = front
+      return '<button type="button" role="listitem" class="gd-orb2d gd-o-' + orb.stage + ' gd-o-' + String(orb.direction || "none").toLowerCase()
+        + (orb.id === selectedId ? ' is-selected' : '') + '" data-plant-id="' + esc(orb.id) + '" aria-label="' + esc(orb.symbol + " · " + orb.stage) + '"'
+        + ' style="left:' + left.toFixed(1) + '%;top:' + top.toFixed(1) + '%;--k:' + (0.8 + depth * 0.35).toFixed(2) + ';--d:' + (orb.phase % 4).toFixed(2) + 's;z-index:' + Math.round(depth * 100) + '">'
+        + '<span class="gd-o-body"></span><span class="gd-o-label">' + esc(orb.symbol) + '</span></button>';
     }).join("");
   }
 

@@ -59,58 +59,53 @@ body.garden-mode .topline b { color: #1c2321; }
 .gd-counter-bloomed b { color: #b44f7d; }
 .gd-counter-active b { color: var(--gd-leaf); }
 
-.gd-stage-wrap { position: relative; min-height: 440px; border: 1px solid var(--gd-border); border-radius: 22px; overflow: hidden; background: linear-gradient(180deg, #fbfdfb 0%, #eef5ec 58%, #e2ecde 100%); box-shadow: var(--gd-shadow); }
+.gd-stage-wrap { position: relative; min-height: 440px; border: 1px solid var(--gd-border); border-radius: 22px; overflow: hidden; background: radial-gradient(70% 60% at 50% 55%, #ffffff 0%, rgba(255,255,255,0) 70%), linear-gradient(180deg, #fbfcfb 0%, #f1f6f1 60%, #e9f1e8 100%); box-shadow: var(--gd-shadow); }
 .gd-stage { position: absolute; inset: 0; }
 .gd-canvas { display: block; width: 100% !important; height: 100% !important; }
-.gd-stage-overlay { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); max-width: calc(100% - 32px); padding: 8px 14px; border-radius: 999px; background: rgba(255, 255, 255, .88); border: 1px solid var(--gd-border); color: var(--gd-muted); font-size: 12px; font-weight: 600; text-align: center; backdrop-filter: blur(6px); }
-.gd-stage-overlay[data-mode="OFFLINE"], .gd-stage-overlay[data-mode="ENGINE_NO_DATA"] { color: var(--gd-short); border-color: var(--gd-short-border); }
+.gd-stage-overlay { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: grid; gap: 3px; max-width: min(420px, calc(100% - 32px)); padding: 12px 18px; border-radius: 16px; background: rgba(255, 255, 255, .72); border: 1px solid rgba(227, 232, 225, .9); color: var(--gd-muted); font-size: 13px; text-align: center; backdrop-filter: blur(8px); pointer-events: none; }
+.gd-stage-overlay b { color: var(--gd-text); font-size: 16px; font-weight: 800; letter-spacing: -.01em; }
+.gd-stage-overlay[hidden] { display: none; }
+.gd-stage-overlay[data-mode="OFFLINE"] b, .gd-stage-overlay[data-mode="ENGINE_NO_DATA"] b { color: var(--gd-short); }
 .gd-stage-overlay[data-mode="DEMO"] { color: #8a5a00; border-color: #f0d9a8; background: #fff8e8; }
 .gd-legend { position: absolute; left: 14px; right: 14px; bottom: 12px; display: flex; flex-wrap: wrap; gap: 6px; pointer-events: none; }
 .gd-legend-item { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 999px; background: rgba(255, 255, 255, .86); border: 1px solid var(--gd-border); color: var(--gd-muted); font-size: 11px; font-weight: 600; }
-.gd-legend-item i { font-style: normal; }
+.gd-legend-dot { width: 9px; height: 9px; border-radius: 50%; background: #7fae8f; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.6); }
+.gd-legend-shaping .gd-legend-dot { width: 11px; height: 11px; background: #4f9c78; box-shadow: 0 0 0 2px rgba(79,156,120,.2); }
+.gd-legend-bloomed .gd-legend-dot { width: 12px; height: 12px; background: radial-gradient(circle, #fff 0 20%, #9fd8b8 60%); box-shadow: 0 0 0 3px rgba(47,174,114,.15); }
+.gd-legend-active .gd-legend-dot { width: 12px; height: 12px; background: #2fae72; outline: 1px solid rgba(28,35,33,.25); outline-offset: 2px; }
+.gd-legend-history .gd-legend-dot { width: 6px; height: 6px; background: #b3bab6; }
+.gd-dot-long { background: #2fae72 !important; }
+.gd-dot-short { background: #e0685f !important; margin-left: 4px; }
 .gd-stage-mode { position: absolute; top: 12px; right: 14px; color: var(--gd-faint); font-size: 10.5px; }
 .gd-pin[hidden] { display: none; }
 .gd-pin { position: absolute; left: 0; top: 0; display: grid; gap: 1px; padding: 6px 10px; border-radius: 10px; background: #1c2321; color: #fff; font-size: 11px; line-height: 1.3; white-space: nowrap; pointer-events: none; box-shadow: 0 8px 20px rgba(0, 0, 0, .18); will-change: transform; }
 .gd-pin span { color: #cfe3d6; font-size: 10.5px; }
 .gd-pin::after { content: ""; position: absolute; left: 50%; bottom: -5px; width: 10px; height: 10px; background: #1c2321; transform: translateX(-50%) rotate(45deg); }
 
-/* ----- 2D fallback garden ----- */
-.gd-garden2d { position: absolute; inset: 0; }
-.gd-hills { position: absolute; inset: auto 0 0 0; width: 100%; height: 62%; }
-.gd-hill-back { fill: #e3ecdf; }
-.gd-hill-front { fill: #d6e4d2; }
-.gd-bed { position: absolute; inset: 0 0 34px 0; }
-.gd-plant2d { position: absolute; width: 34px; height: 64px; margin-left: -17px; padding: 0; border: 0; background: none; cursor: pointer; transform: scale(var(--s, 1)); transform-origin: 50% 100%; }
-.gd-plant2d > span { position: absolute; left: 50%; display: block; }
-.gd-p-stem { bottom: 0; width: 3px; height: 34px; margin-left: -1.5px; border-radius: 3px; background: #5f8f6b; transform-origin: 50% 100%; }
-.gd-p-leaf { bottom: 14px; width: 15px; height: 8px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: #7fb08a; }
-.gd-p-leaf-l { margin-left: -15px; transform: rotate(-24deg); }
-.gd-p-leaf-r { margin-left: 1px; transform: rotate(24deg); }
-.gd-p-head { bottom: 32px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: transparent; }
-.gd-p-label { bottom: -16px; transform: translateX(-50%); padding: 1px 5px; border-radius: 6px; background: rgba(255, 255, 255, .9); color: var(--gd-muted); font-size: 9.5px; font-weight: 700; white-space: nowrap; }
-.gd-p-growing .gd-p-stem { height: 20px; }
-.gd-p-growing .gd-p-leaf { bottom: 9px; background: #a8cfa4; width: 11px; height: 6px; }
-.gd-p-growing .gd-p-leaf-l { margin-left: -11px; }
-.gd-p-shaping .gd-p-head { bottom: 33px; width: 9px; height: 13px; margin-left: -4.5px; border-radius: 50% 50% 45% 45%; background: #9fcdb0; }
-.gd-p-shaping.gd-p-short .gd-p-head { background: #f0b4b0; }
-.gd-p-bloomed .gd-p-stem { height: 40px; }
-.gd-p-bloomed .gd-p-head { bottom: 36px; width: 20px; height: 20px; margin-left: -10px; background: radial-gradient(circle, #f2c46b 0 26%, #6cc28f 28% 100%); box-shadow: 0 0 0 4px rgba(108, 194, 143, .18); }
-.gd-p-bloomed.gd-p-short .gd-p-head { background: radial-gradient(circle, #f2c46b 0 26%, #ee8f8f 28% 100%); box-shadow: 0 0 0 4px rgba(238, 143, 143, .2); }
-.gd-p-active .gd-p-stem { width: 5px; margin-left: -2.5px; height: 28px; background: #8a6f55; }
-.gd-p-active .gd-p-leaf { display: none; }
-.gd-p-active .gd-p-head { bottom: 22px; width: 30px; height: 30px; margin-left: -15px; border-radius: 45% 45% 40% 40%; background: #3f9d63; }
-.gd-p-active.gd-p-short .gd-p-head { background: #c85d5d; }
-.gd-p-history { opacity: .7; }
-.gd-p-history .gd-p-stem { height: 10px; background: #b9b3a6; }
-.gd-p-history .gd-p-leaf { background: #cdb892; bottom: 1px; }
-.gd-p-history .gd-p-label { display: none; color: var(--gd-faint); }
-.gd-p-history.is-selected .gd-p-label, .gd-p-history:hover .gd-p-label, .gd-p-history:focus-visible .gd-p-label { display: block; }
-.gd-plant2d.is-selected .gd-p-label { background: #1c2321; color: #fff; }
-.gd-plant2d.is-selected::before { content: ""; position: absolute; left: 50%; bottom: -4px; width: 36px; height: 10px; margin-left: -18px; border-radius: 50%; border: 2px solid rgba(28, 35, 33, .45); }
-.gd-plant2d:not(.gd-p-history) .gd-p-stem, .gd-plant2d:not(.gd-p-history) .gd-p-head { animation: gd-sway 5.5s ease-in-out infinite; animation-delay: calc(var(--d, 0s) * -1); transform-origin: 50% 100%; }
-.gd-plant2d:focus-visible { outline: 2px solid var(--gd-leaf); outline-offset: 4px; border-radius: 8px; }
-.gd-garden2d.is-still .gd-plant2d * { animation: none !important; }
-@keyframes gd-sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+/* ----- 2D fallback constellation ----- */
+.gd-garden2d { position: absolute; inset: 0; overflow: hidden; }
+.gd-orbits { position: absolute; inset: 0; width: 100%; height: 100%; }
+.gd-orbit { fill: none; stroke: #b9c9bd; stroke-width: .25; vector-effect: non-scaling-stroke; }
+.gd-orbit-0 { stroke: #9fb3a6; }
+.gd-orbit-2 { stroke-dasharray: 2 3; opacity: .7; }
+.gd-motes { position: absolute; inset: 0; pointer-events: none; }
+.gd-mote { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #8fae9c; opacity: .35; transform: scale(var(--s, 1)); animation: gd-float 9s ease-in-out infinite; animation-delay: calc(var(--d, 0s) * -1); }
+.gd-bed { position: absolute; inset: 0; }
+.gd-orb2d { position: absolute; display: grid; place-items: center; width: 44px; height: 44px; margin: -22px 0 0 -22px; padding: 0; border: 0; background: none; cursor: pointer; transform: scale(var(--k, 1)); }
+.gd-o-body { width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffffff 0 12%, #cfe3d6 34%, #7fae8f 100%); box-shadow: 0 0 0 5px rgba(127, 174, 143, .12), 0 6px 14px rgba(47, 90, 66, .14); animation: gd-float 7s ease-in-out infinite; animation-delay: calc(var(--d, 0s) * -1); }
+.gd-o-shaping .gd-o-body { width: 22px; height: 22px; background: radial-gradient(circle at 35% 30%, #ffffff 0 10%, #bfe0cc 34%, #4f9c78 100%); box-shadow: 0 0 0 4px rgba(79, 156, 120, .12), 0 0 0 9px rgba(79, 156, 120, .07); }
+.gd-o-bloomed .gd-o-body, .gd-o-active .gd-o-body { width: 30px; height: 30px; background: radial-gradient(circle at 35% 30%, #ffffff 0 10%, #bff0d4 36%, #2fae72 100%); box-shadow: 0 0 0 6px rgba(47, 174, 114, .14), 0 0 26px rgba(47, 174, 114, .28); animation: none; }
+.gd-o-bloomed.gd-o-short .gd-o-body, .gd-o-active.gd-o-short .gd-o-body { background: radial-gradient(circle at 35% 30%, #ffffff 0 10%, #f8cbc6 36%, #e0685f 100%); box-shadow: 0 0 0 6px rgba(224, 104, 95, .14), 0 0 26px rgba(224, 104, 95, .26); }
+.gd-o-active .gd-o-body { width: 34px; height: 34px; outline: 1px solid rgba(28, 35, 33, .18); outline-offset: 7px; }
+.gd-o-history .gd-o-body { width: 7px; height: 7px; background: #b3bab6; box-shadow: none; animation: none; opacity: .75; }
+.gd-o-label { position: absolute; top: calc(100% - 6px); left: 50%; transform: translateX(-50%); padding: 1px 6px; border-radius: 6px; background: rgba(255, 255, 255, .92); color: var(--gd-muted); font-size: 10px; font-weight: 700; white-space: nowrap; }
+.gd-o-history .gd-o-label, .gd-o-growing .gd-o-label, .gd-o-shaping .gd-o-label { display: none; }
+.gd-orb2d:hover .gd-o-label, .gd-orb2d:focus-visible .gd-o-label { display: block; }
+.gd-orb2d.is-selected .gd-o-label { display: block; background: #1c2321; color: #fff; z-index: 2; }
+.gd-orb2d.is-selected .gd-o-body { outline: 2px solid #1c2321; outline-offset: 5px; }
+.gd-orb2d:focus-visible { outline: 2px solid var(--gd-leaf); outline-offset: 2px; border-radius: 50%; }
+.gd-garden2d.is-still .gd-o-body, .gd-garden2d.is-still .gd-mote { animation: none !important; }
+@keyframes gd-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -5px; } }
 
 /* ----- layout ----- */
 .gd-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 400px); gap: 22px; align-items: start; }
@@ -301,7 +296,6 @@ body.garden-mode .topline b { color: #1c2321; }
   .gd-card.is-selected::before { display: none; }
   .gd-actions button { min-height: 44px; flex: 1 1 calc(50% - 6px); }
   .gd-market-row { min-height: 48px; }
-  .gd-plant2d { width: 44px; margin-left: -22px; }
 }
 
 /* The mode banner uses the hidden attribute; its display:flex rule must not override it. */

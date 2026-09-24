@@ -234,59 +234,64 @@ export function marketOverviewRow(market) {
   };
 }
 
-// ----- plant layout -------------------------------------------------------
+// ----- constellation layout ---------------------------------------------------
 function hash(text) {
   let h = 2166136261;
   for (const char of String(text)) { h ^= char.charCodeAt(0); h = Math.imul(h, 16777619); }
   return (h >>> 0) / 4294967295;
 }
 
-const ZONES = {           // x range, z range (z grows toward the viewer; the view narrows at the front)
-  history: {x: [-8, 8], z: [-5.0, -2.8]},
-  growing: {x: [-6.8, 6.8], z: [-2.3, 0.4]},
-  shaping: {x: [-5.8, 5.8], z: [-1.2, 1.0]},
-  active: {x: [-4.8, 4.8], z: [0.3, 1.9]},
-  bloomed: {x: [-3.6, 3.6], z: [2.0, 3.5]},
-};
-export const MAX_PLANTS = {history: 14, growing: 16, shaping: 10, bloomed: 10, active: 8};
+// Concentric lifecycle bands on the constellation plane: what matters most sits
+// nearest the centre; closed setups settle on a faint outer archive ring.
+export const BANDS = Object.freeze({
+  bloomed: {r: [0.9, 2.2], y: [0.6, 1.2], min: 1.25},
+  active: {r: [1.3, 2.6], y: [0.5, 1.1], min: 1.3},
+  shaping: {r: [2.6, 3.6], y: [0.4, 1.15], min: 1.0},
+  growing: {r: [3.5, 4.6], y: [0.3, 1.25], min: 0.85},
+  history: {r: [5.3, 6.1], y: [0.05, 0.3], min: 0.5},
+});
+export const MAX_ORBS = {history: 18, growing: 18, shaping: 10, bloomed: 10, active: 8};
 
 /**
- * Plants for the garden scene. Positions are a pure function of setup id and
- * stage, so plants do not jump between refreshes; a small relaxation pass keeps
- * neighbours from overlapping.
+ * Orb positions for the garden visual. A pure function of setup key and stage,
+ * so orbs never jump between refreshes; a relaxation pass keeps orbs apart and a
+ * final clamp keeps each one inside its lifecycle band.
  */
-export function plantLayout(cards, selectedId = null) {
+export function constellationLayout(cards, selectedId = null) {
   const counts = {};
-  const plants = [];
+  const orbs = [];
   for (const card of cards) {
     if (!card?.key) continue;
     counts[card.stage] = (counts[card.stage] || 0) + 1;
-    if (counts[card.stage] > (MAX_PLANTS[card.stage] || 10)) continue;
-    const zone = ZONES[card.stage] || ZONES.growing;
-    plants.push({
+    if (counts[card.stage] > (MAX_ORBS[card.stage] || 10)) continue;
+    const band = BANDS[card.stage] || BANDS.growing;
+    const angle = hash(card.key + ":a") * Math.PI * 2;
+    const radius = band.r[0] + hash(card.key + ":r") * (band.r[1] - band.r[0]);
+    orbs.push({
       id: card.key, symbol: card.symbol, stage: card.stage, direction: card.direction,
       score: card.score, selected: card.key === selectedId,
-      x: zone.x[0] + hash(card.key + ":x") * (zone.x[1] - zone.x[0]),
-      z: zone.z[0] + hash(card.key + ":z") * (zone.z[1] - zone.z[0]),
+      x: Math.cos(angle) * radius, z: Math.sin(angle) * radius,
+      y: band.y[0] + hash(card.key + ":y") * (band.y[1] - band.y[0]),
       phase: hash(card.key + ":p") * Math.PI * 2,
     });
   }
-  for (let pass = 0; pass < 6; pass++) {
-    for (let i = 0; i < plants.length; i++) {
-      for (let j = i + 1; j < plants.length; j++) {
-        const a = plants[i], b = plants[j];
+  for (let pass = 0; pass < 8; pass++) {
+    for (let i = 0; i < orbs.length; i++) {
+      for (let j = i + 1; j < orbs.length; j++) {
+        const a = orbs[i], b = orbs[j];
+        const need = Math.max(BANDS[a.stage].min, BANDS[b.stage].min);
         const dx = b.x - a.x, dz = b.z - a.z, distance = Math.hypot(dx, dz) || 0.001;
-        if (distance < 1.1) {
-          const push = (1.1 - distance) / 2, ux = dx / distance, uz = dz / distance;
-          a.x -= ux * push; a.z -= uz * push * 0.5; b.x += ux * push; b.z += uz * push * 0.5;
+        if (distance < need) {
+          const push = (need - distance) / 2, ux = dx / distance, uz = dz / distance;
+          a.x -= ux * push; a.z -= uz * push; b.x += ux * push; b.z += uz * push;
         }
       }
     }
+    for (const orb of orbs) {                 // stay inside the lifecycle band
+      const band = BANDS[orb.stage], radius = Math.hypot(orb.x, orb.z) || 0.001;
+      const clamped = Math.max(band.r[0], Math.min(band.r[1], radius));
+      orb.x *= clamped / radius; orb.z *= clamped / radius;
+    }
   }
-  for (const plant of plants) {           // keep each plant inside its (framed) zone
-    const zone = ZONES[plant.stage] || ZONES.growing;
-    plant.x = Math.max(zone.x[0] - 0.5, Math.min(zone.x[1] + 0.5, plant.x));
-    plant.z = Math.max(zone.z[0] - 0.4, Math.min(zone.z[1] + 0.4, plant.z));
-  }
-  return plants;
+  return orbs;
 }

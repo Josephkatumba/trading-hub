@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {GARDEN_STAGES, analystModel, cardTone, formatRiskReward, gardenAreas, gardenCounters, gardenStage,
-  marketOverviewRow, plantLayout, setupCardModel, tradeLevels} from "../src/garden/gardenModel.mjs";
+  marketOverviewRow, constellationLayout, BANDS, setupCardModel, tradeLevels} from "../src/garden/gardenModel.mjs";
 import {analystPanel, counterTiles, marketOverview, setupCard} from "../src/garden/gardenCards.mjs";
 import {chooseGardenRenderer} from "../src/garden/gardenMount.mjs";
 
@@ -119,16 +119,27 @@ test("market overview rows show real values or explicit gaps", () => {
   assert.match(marketOverview([empty]), /Unavailable/);
 });
 
-test("plant layout is stable per setup, capped per stage, and keeps plants apart", () => {
+test("constellation layout is stable per setup, capped per stage, banded and spaced", () => {
   const cards = Array.from({length: 40}, (_, i) => setupCardModel(episode({setup_id: "s" + i, lifecycle_state: i % 2 ? "INVALIDATED" : "DETECTED"})));
-  const first = plantLayout(cards), second = plantLayout(cards);
+  const first = constellationLayout(cards), second = constellationLayout(cards);
   assert.deepEqual(first, second);
-  assert.ok(first.filter(p => p.stage === "history").length <= 14);
-  assert.ok(first.filter(p => p.stage === "growing").length <= 16);
-  for (let i = 0; i < first.length; i++) for (let j = i + 1; j < first.length; j++) {
-    assert.ok(Math.hypot(first[i].x - first[j].x, first[i].z - first[j].z) > 0.45, "plants overlap");
+  assert.ok(first.filter(p => p.stage === "history").length <= 18);
+  assert.ok(first.filter(p => p.stage === "growing").length <= 18);
+  for (const orb of first) {
+    const radius = Math.hypot(orb.x, orb.z), band = BANDS[orb.stage];
+    assert.ok(radius >= band.r[0] - 1e-9 && radius <= band.r[1] + 1e-9, "orb outside its lifecycle band");
   }
-  assert.equal(plantLayout(cards, "s0").find(p => p.id === "s0").selected, true);
+  const live = first.filter(p => p.stage !== "history");
+  for (let i = 0; i < live.length; i++) for (let j = i + 1; j < live.length; j++) {
+    assert.ok(Math.hypot(live[i].x - live[j].x, live[i].z - live[j].z) > 0.4, "live orbs overlap");
+  }
+  assert.equal(constellationLayout(cards, "s0").find(p => p.id === "s0").selected, true);
+});
+
+test("history sits outside every live band so closed setups never crowd the centre", () => {
+  const liveMax = Math.max(...["bloomed", "active", "shaping", "growing"].map(stage => BANDS[stage].r[1]));
+  assert.ok(BANDS.history.r[0] > liveMax);
+  assert.ok(BANDS.bloomed.r[1] <= BANDS.growing.r[0]);
 });
 
 test("renderer choice: WebGL only where it is cheap and wanted", () => {

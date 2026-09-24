@@ -9,7 +9,7 @@ import {confirmationDisplay, renderAnalystEvidence} from "./analystPresentation.
 import {setupCountSummary, visibleSetupEntries} from "./radarLayout.mjs";
 import {createConfirmationAlertTracker, dispatchConfirmationAlerts, dispatchTestSound, persistedConfirmationEvents} from "./confirmationAlerts.mjs";
 import {CONFIRMATION_CHIME_CONFIG, playConfirmationChime} from "./confirmationChime.mjs";
-import {analystModel, gardenAreas, gardenCounters, marketOverviewRow, plantLayout, setupCardModel} from "./garden/gardenModel.mjs";
+import {analystModel, gardenAreas, gardenCounters, marketOverviewRow, constellationLayout, setupCardModel} from "./garden/gardenModel.mjs";
 import {analystPanel, counterTiles, emptyArea, esc, marketOverview, setupCard, stageLegend} from "./garden/gardenCards.mjs";
 import {mountGarden, prefersReducedMotion} from "./garden/gardenMount.mjs";
 
@@ -165,17 +165,25 @@ function pinLabel(){
 }
 function paintGarden(cards){
   if(!garden)return;
-  const plants=plantLayout([...cards.bloomed,...cards.growing,...cards.history],selectedKey);
+  const plants=constellationLayout([...cards.bloomed,...cards.growing,...cards.history],selectedKey);
   garden.update(plants);
   garden.select(selectedKey,pinLabel());
   const overlay=document.getElementById("gardenOverlay");
   if(overlay){
-    const message=radarMode==="OFFLINE"?"Engine offline — the garden is resting. Nothing here reflects the current market."
-      :radarMode==="DEMO"?"Simulated garden — demo fixtures, not market data."
-      :radarMode==="ENGINE_NO_DATA"?"Engine online, but MT5 returned no markets."
-      :!plants.some(plant=>plant.stage!=="history")?"Nothing is growing right now · "+latestMarkets.length+" markets watched. Closed setups rest in the back row.":"";
-    overlay.hidden=!message;overlay.textContent=message;overlay.dataset.mode=radarMode;
+    const [title,text]=gardenCaption(plants);
+    overlay.hidden=!title;overlay.dataset.mode=radarMode;
+    overlay.innerHTML=title?'<b>'+esc(title)+'</b>'+(text?'<span>'+esc(text)+'</span>':''):"";
   }
+}
+// Honest captions: the environment is ambient; only real setups are orbs.
+function gardenCaption(orbs){
+  if(radarMode==="OFFLINE")return ["The garden is resting.","Engine offline — nothing here reflects the current market."];
+  if(radarMode==="DEMO")return ["Simulated garden.","Demo fixtures, not market data."];
+  if(radarMode==="ENGINE_NO_DATA")return ["The engine is online.","MT5 returned no markets, so nothing is being watched."];
+  const live=orbs.filter(orb=>orb.stage!=="history");
+  if(!live.length)return ["The garden is watching.","Nothing is developing right now. TRADeden keeps scanning "+latestMarkets.length+" markets."];
+  if(!live.some(orb=>orb.stage==="bloomed"||orb.stage==="active"))return ["Nothing has bloomed yet.","TRADeden is waiting for confirmation."];
+  return [null,null];
 }
 let lastCards={growing:[],bloomed:[],history:[]};
 function repaintCards(){
