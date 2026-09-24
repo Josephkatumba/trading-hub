@@ -2,15 +2,11 @@ import "./styles.css";
 import {getTrades,saveTrades,resetTrades,parseCSV,calculateMetrics,getAccounts,getTradeContext,getBrokerTimeZone,setBrokerTimeZone,normalizeTrades} from "./data.js";
 import {mergeImportedTrades} from "./tradeImport.mjs";
 import {isValidTimeZone} from "./tradeTime.mjs";
+import {INITIAL_ACCOUNTS} from "./accounts.mjs";
 import {getReview,saveReview,reviewedCount,DEFAULT_RULES} from "./journal.js";
 import {renderAnalytics,renderInsights,initInsights} from "./behaviorView.js";
 import {renderMarketRadar,initMarketRadar,stopMarketRadar} from "./marketRadar.js";
 
-const initialAccounts={
- "Goldimus Funded":{platform:"FundedNext",balance:52140,status:"LIVE"},
- "Personal Futures":{platform:"Tradovate",balance:12480,status:"LIVE"},
- "XAUUSD Account":{platform:"MT5",balance:8460,status:"WATCH"}
-};
 let state={view:"overview",trades:getTrades(),importOpen:false,selectedTrade:null,filters:{account:"ALL",symbol:"ALL",session:"ALL"}};
 
 const nav=[["overview","Overview","⌂"],["radar","Market Radar","◉"],["accounts","Accounts","◈"],["trades","Trades","↗"],["analytics","Analytics","◒"],["insights","AI Intelligence","✦"]];
@@ -32,7 +28,7 @@ function filterSelect(key,label){
 
 function render(){
  const all=state.trades, trades=filteredTrades(), m=calculateMetrics(trades), reviews=reviewedCount();
- const accounts=getAccounts(all).map(a=>({...a,...(initialAccounts[a.name]||{})}));
+ const accounts=getAccounts(all).map(a=>({...a,...(INITIAL_ACCOUNTS[a.name]||{})}));
  document.querySelector("#root").innerHTML=`
  <div class="app">
   <button class="mobile-menu-btn" id="mobileMenu" aria-label="Open navigation">☰</button>
