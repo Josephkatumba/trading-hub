@@ -1,4 +1,6 @@
-# Trading Hub
+# TRADeden 🌿
+
+A market intelligence garden that watches the market for you. (Formerly "Trading Hub".)
 
 Trading Hub is being built as a trading intelligence platform: one workspace for accounts, execution data, analytics, AI insights, social trading, and eventually a marketplace.
 
@@ -28,6 +30,32 @@ Account connection → trade normalization → analytics → trading fingerprint
 
 Tests: `npm test` (frontend), `cd backend && python -m unittest discover -s tests`
 (backend; run `test_scanner_quality.py` from the repo root with `PYTHONPATH=backend`).
+
+## The TRADeden Garden (Market Radar)
+
+The radar page is the Garden: a light, card-first view of every setup the engine is
+watching, with a small 3D garden that mirrors the backend lifecycle.
+
+| Garden | Backend lifecycle (authoritative, unchanged) |
+|---|---|
+| 🌱 Growing | DETECTED, DEVELOPING |
+| 🌿 Taking Shape | CONFIRMING |
+| 🌸 Bloomed | CONFIRMED |
+| 🌳 Active | ACTIVE |
+| 🍂 History | INVALIDATED, EXPIRED, RESOLVED |
+
+- Cards show only API values; missing levels read "Not yet calculated" (entry/stop/
+  target appear only once the engine has computed both a stop and a target).
+- The Analyst panel restates recorded, rule-based evidence
+  (`deterministic-setup-analyst-v1`); it is not an AI/ML prediction.
+- No execution buttons: View setup / View evidence / View analysis / Track setup
+  (tracking is a local, per-browser pin — it never writes to the engine).
+- 3D (Three.js, lazily loaded) is used on desktop when WebGL is available. A 2D CSS
+  garden is used on screens under 720px, with Data Saver, on low-memory devices, or
+  when WebGL is missing. `prefers-reduced-motion` renders static frames.
+  Force a mode with `localStorage.th_garden_3d = "0"` (2D) or `"1"` (3D).
+- Code: `src/garden/` (`gardenModel.mjs`, `gardenCards.mjs` are pure and tested;
+  `gardenScene.mjs` is the 3D scene; `gardenMount.mjs` chooses and falls back).
 
 ## Data honesty
 

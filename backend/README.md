@@ -80,3 +80,22 @@ Do not bind to `0.0.0.0` or put the engine behind a public URL until all of thes
    include broker symbol names; confirm nothing identifies the account).
 7. **Firewall**: expose only the proxy port, never 8000 directly.
 
+## Observation store and index
+
+`data/*.jsonl` are the canonical, append-only records. `jsonl_index.py` keeps a
+derived index (byte offsets + small per-row summaries) so radar, episodes,
+performance, setup detail/history and analysis no longer re-read the whole
+observation log per request.
+
+- The index is refreshed on every query by reading only newly appended bytes, so
+  it never lags the JSONL and does not change observation frequency.
+- A sidecar is persisted in `data/.index/` (git-ignored). It is safe to delete at
+  any time: a missing, corrupt, tampered, schema-changed or mismatched sidecar is
+  rebuilt from the JSONL (about 0.7 s for 81 MB); a stale one catches up
+  incrementally.
+- Incomplete trailing lines are not indexed until finished, and every append first
+  terminates any half-written line so it cannot swallow the next record.
+  Unparseable lines are counted in `/api/health` → `storage.setup_observations.jsonl.index`.
+- `tests/test_observation_index.py` proves the indexed queries return the same
+  results as the former full scans (frozen in `tests/legacy_observations.py`).
+

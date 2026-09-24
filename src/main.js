@@ -10,7 +10,7 @@ import {renderMarketRadar,initMarketRadar,stopMarketRadar} from "./marketRadar.j
 
 let state={view:"overview",trades:getTrades(),importOpen:false,selectedTrade:null,filters:{account:"ALL",symbol:"ALL",session:"ALL"}};
 
-const nav=[["overview","Overview","⌂"],["radar","Market Radar","◉"],["accounts","Accounts","◈"],["trades","Trades","↗"],["analytics","Analytics","◒"],["insights","AI Intelligence","✦"]];
+const nav=[["overview","Overview","⌂"],["radar","TRADeden Garden","🌿"],["accounts","Accounts","◈"],["trades","Trades","↗"],["analytics","Analytics","◒"],["insights","AI Intelligence","✦"]];
 const money=n=>(n<0?"-$":"$")+Math.abs(Number(n)||0).toLocaleString(undefined,{maximumFractionDigits:0});
 const signed=n=>n>=0?"+"+money(n):money(n);
 const pct=n=>Number(n||0).toFixed(1)+"%";
@@ -35,7 +35,7 @@ function render(){
   <button class="mobile-menu-btn" id="mobileMenu" aria-label="Open navigation">☰</button>
   <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
   <aside>
-   <div class="brand"><span class="logo-mark">TH</span><div>Trading Hub<small>INTELLIGENCE PLATFORM</small></div></div>
+   <div class="brand"><span class="logo-mark">Te</span><div>TRADeden<small>MARKET INTELLIGENCE GARDEN</small></div></div>
    <div class="workspace"><span>WORKSPACE</span><b>Joseph's Portfolio</b><i>⌄</i></div>
    <nav>${nav.map(n=>`<a class="${state.view===n[0]?"active":""}" data-view="${n[0]}"><span>${n[2]}</span>${n[1]}</a>`).join("")}</nav>
    <div class="side-section"><span>DISCOVER</span><a data-view="analytics"><span>◎</span>Performance</a><a data-view="insights"><span>✦</span>AI Analyst</a><a><span>◇</span>Marketplace <em class="soon">SOON</em></a></div>
@@ -47,6 +47,7 @@ function render(){
   </main>
  </div>
  ${state.importOpen?importModal():""}${state.selectedTrade?tradeDrawer(state.selectedTrade,all):""}`;
+ document.body.classList.toggle("garden-mode",state.view==="radar");
  bind();
  if(state.view==="radar") initMarketRadar(); else stopMarketRadar();
  if(state.view==="insights") initInsights();
@@ -55,8 +56,8 @@ function render(){
 function importModal(){return `
 <div class="modal-backdrop" id="modal"><div class="modal">
 <button class="modal-close" id="closeModal">×</button><div class="kicker">DATA CONNECTION</div>
-<h2>Connect your trading history</h2><p class="sub">Start with a CSV from MT5, a broker, prop firm or futures platform. Trading Hub normalizes the execution data inside your workspace.</p>
-<label class="tz-field"><span>BROKER SERVER TIMEZONE</span><input id="brokerTz" list="tzList" value="${esc(getBrokerTimeZone())}" placeholder="e.g. Europe/Athens or UTC — leave empty if unknown" autocomplete="off"/><datalist id="tzList">${timeZoneOptions()}</datalist><small>MT5 exports use broker server time, not UTC. Sessions are only classified when this is set; otherwise they show as <b>Unverified</b>. Check your broker's documentation — Trading Hub does not guess it.</small></label>
+<h2>Connect your trading history</h2><p class="sub">Start with a CSV from MT5, a broker, prop firm or futures platform. TRADeden normalizes the execution data inside your workspace.</p>
+<label class="tz-field"><span>BROKER SERVER TIMEZONE</span><input id="brokerTz" list="tzList" value="${esc(getBrokerTimeZone())}" placeholder="e.g. Europe/Athens or UTC — leave empty if unknown" autocomplete="off"/><datalist id="tzList">${timeZoneOptions()}</datalist><small>MT5 exports use broker server time, not UTC. Sessions are only classified when this is set; otherwise they show as <b>Unverified</b>. Check your broker's documentation — TRADeden does not guess it.</small></label>
 <label class="dropzone" id="dropzone"><input id="csvFile" type="file" accept=".csv,text/csv,.txt"/><span class="upload-icon">↑</span><b>Drop CSV here or click to browse</b><small>CSV · XLS exports can be converted to CSV · browser-local prototype</small></label>
 <div id="importStatus"></div><div class="import-actions"><button class="ghost" id="cancelImport">Cancel</button><button class="primary" id="importDemo">Restore demo dataset</button></div>
 </div></div>`;}
@@ -86,7 +87,7 @@ function tradeDrawer(t,trades){
    <div class="review-actions"><span id="reviewSaved">${review.updatedAt?"Saved locally":"Not reviewed yet"}</span><button class="primary" id="saveReview">Save review</button></div>
   </div>
   <div class="drawer-section"><div class="kicker">SIMILAR TRADES</div><div class="similar-list">${similar.length?similar.map(x=>`<button data-trade="${esc(x.id)}"><span>${x.symbol} · ${x.side}</span><b class="${x.pnl>=0?"up":"down"}">${signed(x.pnl)}</b></button>`).join(""):"<p class='sub'>More history will unlock comparable setups.</p>"}</div></div>
-  <button class="ai-button drawer-ai" id="askTrade">Ask Trading Hub <span>↗</span></button>
+  <button class="ai-button drawer-ai" id="askTrade">Ask TRADeden <span>↗</span></button>
  </section></div>`;
 }
 const views={
