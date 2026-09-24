@@ -67,6 +67,10 @@ export function parseCSV(text,{sourceTimeZone=""}={}){
   return normalizeTrades(assignImportIds(rows),"");
 }
 
+// Running sum in the same left-to-right order as the previous
+// slice(0,i+1).reduce(...) version, so values are bit-identical, in O(n).
+export function equityCurve(ordered){let equity=0;return ordered.map((t,i)=>{const pnl=Number(t.pnl)||0;equity+=pnl;return {i,pnl,equity};});}
+
 export function calculateMetrics(trades){
   const ordered=[...trades].sort((a,b)=>String(a.time).localeCompare(String(b.time)));
   const pnl=ordered.reduce((s,t)=>s+(Number(t.pnl)||0),0),wins=ordered.filter(t=>Number(t.pnl)>0),losses=ordered.filter(t=>Number(t.pnl)<0),breakevens=ordered.filter(t=>Number(t.pnl)===0);
@@ -79,7 +83,7 @@ export function calculateMetrics(trades){
   const bestInstrument=Object.entries(bySymbol).sort((a,b)=>b[1]-a[1])[0]?.[0]||"—",bestSession=Object.entries(bySession).filter(([name])=>name!==UNVERIFIED_SESSION).sort((a,b)=>b[1]-a[1])[0]?.[0]||"—";
   const avgR=ordered.length?ordered.reduce((s,t)=>s+(Number(t.r)||0),0)/ordered.length:0;
   const expectancy=ordered.length?pnl/ordered.length:0;
-  return {pnl,wins:wins.length,losses:losses.length,breakevens:breakevens.length,winRate:ordered.length?wins.length/ordered.length*100:0,profitFactor:grossLoss?grossProfit/grossLoss:0,avgWin,avgLoss,payoffRatio:avgLoss?avgWin/avgLoss:0,expectancy,avgR,maxDrawdown,bestInstrument,bestSession,grossProfit,grossLoss,equityCurve:ordered.map((t,i)=>({i,pnl:Number(t.pnl)||0,equity:ordered.slice(0,i+1).reduce((s,x)=>s+(Number(x.pnl)||0),0)}))};
+  return {pnl,wins:wins.length,losses:losses.length,breakevens:breakevens.length,winRate:ordered.length?wins.length/ordered.length*100:0,profitFactor:grossLoss?grossProfit/grossLoss:0,avgWin,avgLoss,payoffRatio:avgLoss?avgWin/avgLoss:0,expectancy,avgR,maxDrawdown,bestInstrument,bestSession,grossProfit,grossLoss,equityCurve:equityCurve(ordered)};
 }
 
 export function getAccounts(trades){const map=new Map();trades.forEach(t=>{if(!map.has(t.account))map.set(t.account,{name:t.account,platform:"Imported",balance:0,pnl:0,trades:0});const a=map.get(t.account);a.pnl+=Number(t.pnl)||0;a.trades++;});return [...map.values()];}
