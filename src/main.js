@@ -4,7 +4,7 @@ import {mergeImportedTrades} from "./tradeImport.mjs";
 import {isValidTimeZone} from "./tradeTime.mjs";
 import {getReview,saveReview,reviewedCount,DEFAULT_RULES} from "./journal.js";
 import {renderAnalytics,renderInsights,initInsights} from "./behaviorView.js";
-import {renderMarketRadar,initMarketRadar} from "./marketRadar.js";
+import {renderMarketRadar,initMarketRadar,stopMarketRadar} from "./marketRadar.js";
 
 const initialAccounts={
  "Goldimus Funded":{platform:"FundedNext",balance:52140,status:"LIVE"},
@@ -51,7 +51,7 @@ function render(){
  </div>
  ${state.importOpen?importModal():""}${state.selectedTrade?tradeDrawer(state.selectedTrade,all):""}`;
  bind();
- if(state.view==="radar") initMarketRadar();
+ if(state.view==="radar") initMarketRadar(); else stopMarketRadar();
  if(state.view==="insights") initInsights();
 }
 
@@ -171,4 +171,5 @@ async function handleFile(file){
  if(status)status.innerHTML='<div class="import-success">✓ Added '+result.added+' new trade'+(result.added===1?'':'s')+'.'+(notes.length?' '+esc(notes.join(' · '))+'.':'')+'</div>';
  setTimeout(()=>{state.importOpen=false;render();},skipped||result.sampleExcluded?2200:700);
 }
+window.addEventListener("pagehide",stopMarketRadar);
 render();

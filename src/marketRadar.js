@@ -1,4 +1,5 @@
-import {engineFetch} from "./engine.js";
+import {engineFetch,getEngineUrl} from "./engine.js";
+import {createPoller} from "./radarPolling.mjs";
 import {confirmationDisplay, freshnessLabel, renderAnalystEvidence} from "./analystPresentation.mjs";
 import {currentWatchSetups, partitionConfirmations, partitionSetupEpisodes, setupCountSummary, visibleSetupEntries} from "./radarLayout.mjs";
 import {createConfirmationAlertTracker, dispatchConfirmationAlerts, dispatchTestSound, persistedConfirmationEvents} from "./confirmationAlerts.mjs";
@@ -17,7 +18,7 @@ const DEMO_MARKETS = [
   {symbol:"GBPJPY",price:199.62,change_pct:0.14,state:"WATCHING",score:53,setup:"Trendline setup",reason:"Cross-pair structure is mixed and needs a cleaner trendline event.",session:"New York",market_bias:"RANGE / NEUTRAL",momentum:"NEUTRAL",higher_timeframe_bias:"BULLISH",structure:"Mixed / range",stage:"STRUCTURE BIAS",insight:"Mixed conditions make patience important.",rsi:52,action:"WAIT",trigger:"Wait for a clear trendline break/reversal with S/R confirmation."}
 ];
 
-let refreshTimer = null;
+let radarPoller = null;
 let latestMarkets = [];
 let latestEpisodes = {current:[],confirmed:[],closed:[]};
 let watchExpanded = false;
@@ -175,7 +176,7 @@ function renderDetail(m, analysis=null){
 }
 
 export function renderMarketRadar(){
-  return '<section class="page-title radar-title"><div><div class="kicker">TRADING HUB · MARKET COMMAND CENTER</div><h1>Market Radar</h1><p class="sub">One screen for top-down context, price action, trendline breaks/reversals, support/resistance and confirmation.</p></div><div class="radar-header-tools"><div class="radar-engine"><i class="live-dot"></i><span id="radarEngineStatus">CONNECTING ENGINE</span></div><div class="confirmation-alert-controls"><button type="button" id="confirmationAlertsToggle" class="alert-control" aria-pressed="false" title="Enable Alerts">🔇 Alerts OFF</button><button type="button" id="testConfirmationSound" class="alert-test-control">Test sound</button></div></div><div id="confirmationToast" class="confirmation-toast" role="status" aria-live="polite" hidden></div></section>'
+  return '<div id="radarRoot" class="radar-root"><div id="radarModeBanner" class="radar-mode-banner" role="status" hidden></div><section class="page-title radar-title"><div><div class="kicker">TRADING HUB · MARKET COMMAND CENTER</div><h1>Market Radar</h1><p class="sub">One screen for top-down context, price action, trendline breaks/reversals, support/resistance and confirmation.</p></div><div class="radar-header-tools"><div class="radar-engine"><i class="live-dot"></i><span id="radarEngineStatus">CONNECTING ENGINE</span></div><div class="confirmation-alert-controls"><button type="button" id="confirmationAlertsToggle" class="alert-control" aria-pressed="false" title="Enable Alerts">🔇 Alerts OFF</button><button type="button" id="testConfirmationSound" class="alert-test-control">Test sound</button></div></div><div id="confirmationToast" class="confirmation-toast" role="status" aria-live="polite" hidden></div></section>'
     +'<section class="radar-hero"><div class="radar-hero-copy"><div class="radar-eyebrow"><span class="live-dot"></span> LIVE SCANNING NETWORK</div><h2>See the market before you touch the button.</h2><p>Trading Hub continuously ranks the instruments it can observe, explains the setup state and separates <b>watching</b> from <b>confirmation</b>. The radar combines top-down analysis, price action, trendline breaks/reversals and support/resistance into one confirmation workflow.</p><div class="radar-hero-tags"><span>H1 / H4 CONTEXT</span><span>PRICE ACTION</span><span>TRENDLINE</span><span>S/R</span><span>CRT CONTEXT</span></div></div><div class="radar-hero-stats"><div><b id="radarWatching">0</b><span>WATCHING</span></div><div><b id="radarDeveloping">0</b><span>DEVELOPING</span></div><div><b id="radarConfirming">0</b><span>CONFIRMING</span></div><div><b id="radarBullish">0</b><span>BULLISH</span></div></div></section>'
     +'<section class="radar-command-strip"><div><span class="kicker">SCANNER STATUS</span><b>MARKET COVERAGE</b><small>Forex · Gold · Indices · Crypto</small></div><div><span class="kicker">REFRESH</span><b>10 SEC</b><small>Engine snapshots update automatically</small></div><div><span class="kicker">MODEL</span><b>TRENDLINE V3</b><small>Trendline event is the strategy gate</small></div><div><span class="kicker">EXECUTION</span><b>MANUAL</b><small>No orders are sent by Trading Hub</small></div></section>'
     +'<section class="panel developing-command watch-panel"><div class="developing-head"><div><span class="kicker">MARKET RADAR · LIVE EPISODES</span><h2>CURRENT / DEVELOPING SETUPS</h2><p>Persistent setup episodes remain here as scanner evidence changes.</p></div><span id="watchCount" class="observatory-count">0 SETUPS</span></div><div id="watchingCards" class="developing-grid watch-grid lifecycle-grid"></div></section>'
@@ -186,11 +187,25 @@ export function renderMarketRadar(){
     +'<section class="panel live-intelligence-stage"><div class="live-stage-head"><div><span class="kicker">PRIMARY SYSTEM VIEW</span><h2>Live Market Intelligence</h2><p>Trading Hub turns raw market data into a readable setup thesis, reaction map and confirmation state.</p></div><div class="stage-status"><i class="live-dot"></i><span id="radarUpdated">Waiting…</span></div></div><div class="radar-detail-panel" id="radarDetail"></div></section>'
     +'<section class="radar-grid"><div class="panel radar-market-panel"><div class="panel-head"><div><span class="kicker">OPPORTUNITY MATRIX</span><h2>Where attention belongs</h2></div><span class="radar-refresh">LIVE QUEUE</span></div><div class="radar-legend"><span>PAIR</span><span>PRICE / 24H</span><span>BIAS</span><span>STATE</span><span>SCORE</span></div><div class="radar-table" id="radarTable"></div></div></section>'
     +'<section class="radar-bottom-grid"><div class="panel radar-fundamentals"><div class="panel-head"><div><span class="kicker">MACRO RADAR</span><h2>Events that can change the tape</h2></div><span class="radar-refresh">US EVENTS</span></div><div id="radarFundamentals" class="macro-list"><div class="macro-empty"><b>Loading macro context</b></div></div></div><div class="panel radar-philosophy"><div class="kicker">TRADING HUB PHILOSOPHY</div><div class="philosophy-orb">✦</div><h2>Wait for the market to earn the trade.</h2><p>The radar is intentionally allowed to say <b>WAIT</b>. Every observation becomes structured data that can later train the learning layer.</p><div class="philosophy-flow"><span>OBSERVE</span><i>→</i><span>CONFIRM</span><i>→</i><span>EXECUTE</span><i>→</i><span>LEARN</span></div></div></section>'
-    +'<section class="radar-method"><div class="kicker">SCANNER LOGIC · V3</div><div class="radar-steps"><span>01 HTF</span><i>→</i><span>02 PRICE ACTION</span><i>→</i><span>03 TRENDLINE</span><i>→</i><span>04 S/R</span><i>→</i><span>05 CRT</span><i>→</i><span>06 SESSION</span><i>→</i><b>100-POINT SETUP</b></div><p>Transparent by design. Breaks and reversals are both valid setup families; top-down context, price action and S/R determine whether either one earns confirmation.</p></section>';
+    +'<section class="radar-method"><div class="kicker">SCANNER LOGIC · V3</div><div class="radar-steps"><span>01 HTF</span><i>→</i><span>02 PRICE ACTION</span><i>→</i><span>03 TRENDLINE</span><i>→</i><span>04 S/R</span><i>→</i><span>05 CRT</span><i>→</i><span>06 SESSION</span><i>→</i><b>100-POINT SETUP</b></div><p>Transparent by design. Breaks and reversals are both valid setup families; top-down context, price action and S/R determine whether either one earns confirmation.</p></section></div>';
 }
-function demoData(){return DEMO_MARKETS.map(m=>({...m,price:m.price + Math.sin(Date.now()/60000)*0.4,updated:"Demo feed"}));}
+// Demo fixtures are for UI development only and are OFF by default. Enable with
+// VITE_RADAR_DEMO=1 at build time or localStorage th_radar_demo=1 in the browser.
+export function radarDemoEnabled(){
+  try{if(import.meta.env?.VITE_RADAR_DEMO==="1")return true;}catch(_){}
+  try{return localStorage.getItem("th_radar_demo")==="1";}catch(_){return false;}
+}
+function demoData(){return DEMO_MARKETS.map(m=>({...m,simulated:true,source:"DEMO",updated:"Simulated fixture"}));}
 async function getFundamentals(){try{return await engineFetch("/api/market/fundamentals");}catch(_){return {configured:false,events:[],status:"ENGINE OFFLINE"};}}
-async function getRadar(){try{const data=await engineFetch("/api/market/radar");if(Array.isArray(data?.markets)&&data.markets.length)return {markets:data.markets,live:!!data.live,source:data.source||"MT5",timestamp:data.timestamp};}catch(_){}return {markets:demoData(),live:false,source:"Demo feed"};}
+// mode: LIVE | ENGINE_NO_DATA (engine reachable, MT5 returned nothing) | OFFLINE | DEMO.
+// A reachable engine is never replaced by demo data.
+async function getRadar(){
+  try{
+    const data=await engineFetch("/api/market/radar"),markets=Array.isArray(data?.markets)?data.markets:[];
+    return {mode:data?.live&&markets.length?"LIVE":"ENGINE_NO_DATA",markets,live:!!data?.live&&markets.length>0,source:data?.source||"MT5",timestamp:data?.timestamp,mt5Status:data?.mt5_status,error:data?.error};
+  }catch(_){}
+  return radarDemoEnabled()?{mode:"DEMO",markets:demoData(),live:false,source:"DEMO"}:{mode:"OFFLINE",markets:[],live:false,source:"OFFLINE"};
+}
 async function getPerformance(){try{return await engineFetch("/api/market/performance");}catch(_){return null;}}
 async function getAnalysis(m){if(!m?.setup_id)return null;const observationId=m.observation_id||"";const key=m.setup_id+":"+observationId;if(analystCache.has(key))return analystCache.get(key);try{const suffix=observationId?"?observation_id="+encodeURIComponent(observationId):"";const data=await engineFetch("/api/market/setups/"+encodeURIComponent(m.setup_id)+"/analysis"+suffix);analystCache.set(key,data);return data;}catch(_){analystCache.set(key,null);return null;}}
 function miniStructure(m){
@@ -374,13 +389,15 @@ function paint(result){
   processConfirmationEvents(result.performance);
   const table=document.getElementById("radarTable"),detail=document.getElementById("radarDetail"),watchCards=document.getElementById("watchingCards"),confirmedCards=document.getElementById("confirmedCards");
   if(!table||!detail)return;
+  const mode=result.mode||"LIVE";
+  paintMode(mode,result);
   const sorted=[...latestMarkets].sort((a,b)=>(b.score||0)-(a.score||0));
-  table.innerHTML=sorted.map(row).join("");
+  table.innerHTML=sorted.length?sorted.map(row).join(""):'<div class="empty-state">'+(mode==="OFFLINE"?"Engine offline — no market data is shown.":"The engine returned no markets.")+'</div>';
   paintEpisodeBuckets(latestEpisodes,latestMarkets);
   paintConfirmed(latestMarkets,result.performance);
   const current=detail.dataset.symbol;
   const focus=sorted.find(m=>m.symbol===current)||sorted.find(m=>["CONFIRMING","DEVELOPING","WATCHING"].includes(m.state))||sorted[0];
-  detail.innerHTML=renderDetail(focus,selectedMarket?.setup_id===focus?.setup_id?selectedMarket.analysis:null);
+  detail.innerHTML=!focus&&mode!=="LIVE"?offlineDetail(mode):renderDetail(focus,selectedMarket?.setup_id===focus?.setup_id?selectedMarket.analysis:null);
   detail.dataset.symbol=focus?.symbol||"";
   selectedMarket=focus?{...focus,analysis:selectedMarket?.setup_id===focus.setup_id?selectedMarket.analysis:null}:null;
   if(focus?.setup_id&&!selectedMarket?.analysis)getAnalysis(focus).then(analysis=>{if(analysis&&selectedMarket?.setup_id===focus.setup_id){selectedMarket={...focus,analysis};detail.innerHTML=renderDetail(focus,analysis);}});
@@ -390,11 +407,25 @@ function paint(result){
   document.getElementById("radarDeveloping").textContent=counts.DEVELOPING;
   document.getElementById("radarConfirming").textContent=counts.CONFIRMING;
   document.getElementById("radarBullish").textContent=latestMarkets.filter(m=>String(m.market_bias||"").startsWith("BULLISH")).length;
-  document.getElementById("radarUpdated").textContent=result.live?"LIVE · "+new Date().toLocaleTimeString():"DEMO · "+new Date().toLocaleTimeString();
-  const status=document.getElementById("radarEngineStatus");if(status)status.textContent=result.live?"LIVE MT5 ENGINE":"DEMO FEED · BACKEND NOT CONNECTED";
+  const now=new Date().toLocaleTimeString();
+  document.getElementById("radarUpdated").textContent={LIVE:"LIVE · "+now,ENGINE_NO_DATA:"NO MARKET DATA · "+now,OFFLINE:"OFFLINE · checked "+now,DEMO:"SIMULATED · NOT MARKET DATA"}[mode];
+  const status=document.getElementById("radarEngineStatus");if(status)status.textContent={LIVE:"LIVE MT5 ENGINE",ENGINE_NO_DATA:"ENGINE ONLINE · MT5 "+String(result.mt5Status||"NO DATA"),OFFLINE:"ENGINE OFFLINE",DEMO:"DEMO MODE · ENGINE OFFLINE"}[mode];
   table.querySelectorAll(".radar-row-btn").forEach(btn=>btn.addEventListener("click",()=>{const m=latestMarkets.find(x=>x.symbol===btn.dataset.symbol);if(m)selectMarket(m,detail);}));
   paintPerformance(result.performance);
 }
+function paintMode(mode,result){
+  const root=document.getElementById("radarRoot"),banner=document.getElementById("radarModeBanner");
+  if(root){root.classList.toggle("is-simulated",mode==="DEMO");root.classList.toggle("is-offline",mode==="OFFLINE"||mode==="ENGINE_NO_DATA");}
+  if(!banner)return;
+  if(mode==="LIVE"){banner.hidden=true;banner.innerHTML="";return;}
+  banner.hidden=false;banner.dataset.mode=mode;
+  banner.innerHTML=mode==="DEMO"
+    ?'<b>DEMO MODE</b><b>ENGINE OFFLINE</b><b>SIMULATED SETUPS</b><span>Everything below is fixed sample data for UI development. Prices, scores and setups are not current market information. Disable with localStorage th_radar_demo=0.</span>'
+    :mode==="OFFLINE"
+    ?'<b>ENGINE OFFLINE</b><span>No market data. Start the engine with backend/start_engine.bat (expected at '+esc(getEngineUrl())+'). Retrying every 10 seconds.</span>'
+    :'<b>ENGINE ONLINE</b><b>NO MARKET DATA</b><span>MT5 status: '+esc(result.mt5Status||"UNKNOWN")+(result.error?' · '+esc(result.error):'')+'. Check that MetaTrader 5 is open and logged in.</span>';
+}
+function offlineDetail(mode){return '<div class="radar-empty"><div class="radar-empty-orb">⌁</div><b>'+(mode==="OFFLINE"?"Engine offline":"No market data")+'</b><p>'+(mode==="OFFLINE"?"The scanner is not running, so no setups are being evaluated. Nothing on this page reflects the current market.":"The engine is reachable but MT5 returned no markets.")+'</p></div>';}
 function selectMarket(m,detail){selectedMarket={...m,analysis:null};detail.innerHTML=renderDetail(m);detail.dataset.symbol=m.symbol;getAnalysis(m).then(analysis=>{if(analysis&&selectedMarket?.setup_id===m.setup_id){selectedMarket={...m,analysis};detail.innerHTML=renderDetail(m,analysis);}});}
 function readSeenConfirmationIds(){
   try{const parsed=JSON.parse(localStorage.getItem("tradingHub.confirmationAlerts.seenSetupIds")||"[]");return Array.isArray(parsed)?parsed:[];}catch(_){return [];}
@@ -465,4 +496,18 @@ function paintFundamentals(data){
   el.innerHTML=events.length?events.map(e=>'<div class="macro-event"><span>'+esc(e.date||"")+'</span><b>'+esc(e.event||"Economic event")+'</b><em>'+esc(String(e.importance||""))+'</em></div>').join(""):'<div class="macro-empty"><b>No major events returned</b><span>'+esc(data.status||"LIVE")+'</span></div>';
 }
 async function getSetupEpisodes(){try{return await engineFetch("/api/market/setup-episodes?bucket=all&limit=100");}catch(_){return null;}}
-export async function initMarketRadar(){if(refreshTimer)clearInterval(refreshTimer);bindConfirmationAlertControls();initializeConfirmationAlertTracker();const refresh=async()=>{const [radar,performance,episodes]=await Promise.all([getRadar(),getPerformance(),getSetupEpisodes()]);paint({...radar,performance,episodes:episodes||latestEpisodes});};paintFundamentals(await getFundamentals());await refresh();refreshTimer=setInterval(refresh,10000);}
+const EMPTY_EPISODES={current:[],confirmed:[],closed:[]};
+async function refreshRadar(isCurrent){
+  const [radar,performance,episodes]=await Promise.all([getRadar(),getPerformance(),getSetupEpisodes()]);
+  if(!isCurrent())return;
+  // Engine offline or demo: never show previously fetched engine episodes as if current.
+  paint({...radar,performance,episodes:radar.mode==="LIVE"||radar.mode==="ENGINE_NO_DATA"?(episodes||latestEpisodes):EMPTY_EPISODES});
+}
+export async function initMarketRadar(){
+  bindConfirmationAlertControls();initializeConfirmationAlertTracker();
+  if(!radarPoller)radarPoller=createPoller({task:refreshRadar,intervalMs:10000});
+  const poll=radarPoller.start();
+  paintFundamentals(await getFundamentals());
+  await poll;
+}
+export function stopMarketRadar(){radarPoller?.stop();}
