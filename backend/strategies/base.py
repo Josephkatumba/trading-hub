@@ -1,0 +1,86 @@
+"""The strategy contract.
+
+A strategy turns one symbol's market data into one result (its payload). Each
+strategy owns its detection, confirmation, invalidation, entry, stop loss, take
+profit and evidence rules; the contract only fixes WHERE those decisions appear
+in the payload (CORE_FIELDS) and how every result is identified (strategy_id +
+version), so later phases can scope episodes, lifecycle and suppression by
+strategy without knowing any strategy's rules.
+
+Nothing here changes what a strategy computes: StrategyResult.payload is the
+strategy's own output, unmodified. The only metadata a result adds is listed in
+METADATA_FIELDS.
+"""
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import Any, ClassVar, Mapping, Sequence
+
+# Payload keys every strategy reports its decisions under. A strategy may add
+# any strategy-specific fields next to them (the trendline strategy adds many).
+CORE_FIELDS = {
+    "state": "state",                    # detection: NO SETUP / WATCHING / DEVELOPING / CONFIRMING
+    "direction": "direction",            # LONG / SHORT / None
+    "confirmed": "strategy_valid",       # confirmation: every strategy rule satisfied
+    "entry": "entry",
+    "stop_loss": "stop_loss",
+    "take_profit": "take_profit",
+    "invalidation": "invalidation_hint",  # price that invalidates the setup
+    "score": "score",
+    "evidence": "score_breakdown",       # the evidence the decision rests on
+}
+
+# The only keys StrategyResult.record() adds to a payload.
+METADATA_FIELDS = ("strategy_id",)
+
+
+@dataclass(frozen=True)
+class MarketInput:
+    """What a strategy receives for one symbol in one scan."""
+    symbol: str
+    rows: Sequence[Mapping[str, Any]]                   # primary timeframe bars, oldest first
+    spread: float = 0.0
+    session_context: Mapping[str, Any] | None = None
+    higher_rows: Sequence[Mapping[str, Any]] | None = None
+
+
+class Strategy(ABC):
+    strategy_id: ClassVar[str]                # stable identity; results and (later) episodes are scoped by it
+    version: ClassVar[str]                    # bump whenever the strategy's rules change
+    timeframe: ClassVar[str]
+    higher_timeframes: ClassVar[tuple[str, ...]] = ()
+    lifecycle: ClassVar[str]                  # episode/lifecycle policy its setups follow
+
+    @abstractmethod
+    def evaluate(self, market: MarketInput) -> dict[str, Any]:
+        """Return this strategy's payload for one symbol. Must not mutate `market`."""
+
+
+@dataclass(frozen=True)
+class StrategyResult:
+    strategy_id: str
+    strategy_version: str
+    payload: dict[str, Any] | None           # None when the strategy raised
+    error: Exception | None = None
+
+    @property
+    def ok(self) -> bool:
+        return self.error is None
+
+    def core(self, name: str) -> Any:
+        """A contract decision (see CORE_FIELDS) read from the payload."""
+        return (self.payload or {}).get(CORE_FIELDS[name])
+
+    @property
+    def confirmed(self) -> bool:
+        return self.core("confirmed") is True
+
+    def metadata(self) -> dict[str, Any]:
+        return {"strategy_id": self.strategy_id}
+
+    def record(self) -> dict[str, Any]:
+        """The payload plus the approved strategy metadata, and nothing else."""
+        if self.payload is None:
+            raise ValueError(f"strategy {self.strategy_id} failed: {self.error!r}")
+        return {**self.payload, **self.metadata()}

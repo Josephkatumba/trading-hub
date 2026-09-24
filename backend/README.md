@@ -108,3 +108,14 @@ observation log per request.
   path. See `tests/test_closed_episode_index.py` (equivalence, rebuild) and
   `tests/test_closed_episode_scaling.py` (20,000 closed episodes).
 
+
+## Strategies
+
+`strategies/` holds the strategy contract (`base.py`), the registry
+(`registry.py`) and the registered strategies. Only `TrendlineStrategy`
+(`trendline.py`) exists and is enabled; it is a pure adapter over
+`scanner.analyze_symbol`, whose rules are unchanged. The scan loop runs the
+enabled strategies through the registry and builds each market from the
+unmodified trendline payload; a failing or disabled strategy cannot affect
+another's result. Strategy metadata (`strategy_id`) is not yet added to API
+responses or persisted records. See `tests/test_strategy_registry.py`.

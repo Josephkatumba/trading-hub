@@ -20,6 +20,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from scanner import analyze_symbol
+from strategies import REGISTRY as STRATEGIES, TRENDLINE, MarketInput
 from macro import fundamentals_snapshot
 from observations import (confirmation_events, record_markets,
                           recent_observations, setup_history, lifecycle_events,
@@ -378,13 +379,14 @@ def market_snapshot() -> list[dict[str, Any]]:
             } for r in h1_rates]
             context = session_context(rows, price)
             current_spread = abs(ask - bid) if ask and bid else 0
-            scan = analyze_symbol(
-                actual,
-                rows,
-                spread=current_spread,
-                session_context=context,
-                higher_rows=higher_rows,
-            )
+            # The registry runs the enabled strategies (only trendline). Market fields
+            # stay the trendline payload exactly; strategy metadata is not added yet.
+            results = STRATEGIES.evaluate(MarketInput(actual, rows, spread=current_spread,
+                                                      session_context=context, higher_rows=higher_rows))
+            trendline = results[TRENDLINE]
+            if trendline.error is not None:
+                raise trendline.error
+            scan = trendline.payload
             reference = float(rows[-97]["close"]) if len(rows) >= 97 else float(rows[0]["close"])
             change_pct = ((price - reference) / reference * 100) if reference else 0.0
             tick_utc = tick_provenance.get("normalized_utc") if tick_provenance.get("normalization_status") == "VERIFIED" else None
