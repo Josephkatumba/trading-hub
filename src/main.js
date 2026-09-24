@@ -66,7 +66,7 @@ function timeZoneOptions(){let zones=[];try{zones=Intl.supportedValuesOf("timeZo
 
 function tradeDrawer(t,trades){
  const c=getTradeContext(t,trades),similar=trades.filter(x=>x.id!==t.id&&x.symbol===t.symbol).slice(0,3);
- const checks=[["Matched preferred session",c.sessionPnl>=0],["Matched strongest instrument",t.symbol===calculateMetrics(trades).bestInstrument],hasRecordedRisk(t)&&c.avgRisk?["Risk within observed range",Number(t.risk)<=c.avgRisk*1.25]:["Risk not recorded for this trade — range check unavailable",false]];
+ const checks=[t.session==="Unverified"?["Session unverified — preferred-session check unavailable",false]:["Matched preferred session",c.sessionPnl>=0],["Matched strongest instrument",t.symbol===calculateMetrics(trades).bestInstrument],hasRecordedRisk(t)&&c.avgRisk?["Risk within observed range",Number(t.risk)<=c.avgRisk*1.25]:["Risk not recorded for this trade — range check unavailable",false]];
  const review=getReview(t.id);
  return `
  <div class="drawer-backdrop" id="drawer"><section class="trade-drawer">
