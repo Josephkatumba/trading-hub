@@ -21,6 +21,10 @@ class TrendlineStrategy(Strategy):
     timeframe = "M15"
     higher_timeframes = ("H1",)
     lifecycle = MATCHER_VERSION      # episodes follow the existing matcher/lifecycle unchanged
+    data_requirements = {"M15": 300, "H1": 160}   # the bars the scan loop has always fetched
+
+    # evaluate() uses rows (M15) and higher_rows (H1) exactly as before; the
+    # additional context in market.bars (H4, D1, tick_volume) is not read.
 
     def evaluate(self, market: MarketInput) -> dict[str, Any]:
         return scanner.analyze_symbol(market.symbol, market.rows, spread=market.spread,

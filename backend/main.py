@@ -19,6 +19,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+import market_data
 from scanner import analyze_symbol
 from strategies import CORE_FIELDS, REGISTRY as STRATEGIES, TRENDLINE, MarketInput
 from macro import fundamentals_snapshot
@@ -141,8 +142,30 @@ SYMBOL_ALIASES = {
     "XAGUSD": ["XAGUSD", "SILVER"],
     "EURJPY": ["EURJPY"],
     "GBPJPY": ["GBPJPY"],
+    "GER40": ["GER40", "DE40", "DAX40"],   # IC Markets: DE40
 }
-WATCHLIST = list(SYMBOL_ALIASES)
+# The official Trading Hub market universe (product-facing names; the broker's
+# actual symbol is resolved through SYMBOL_ALIASES, e.g. GER40 -> DE40,
+# NAS100 -> USTEC). Markets keep the product-facing name as "symbol" and the
+# broker's name as "broker_symbol".
+OFFICIAL_UNIVERSE = ("XAUUSD", "BTCUSD", "ETHUSD", "EURUSD", "GBPUSD",
+                     "GBPJPY", "USDJPY", "NAS100", "US500", "GER40")
+# Extra instruments scanned in addition (the former watchlist's other symbols).
+# TRADING_HUB_EXTRA_SYMBOLS overrides them: a comma-separated list, or empty
+# to scan only the official universe.
+DEFAULT_EXTRA_SYMBOLS = ("USDCHF", "USDCAD", "AUDUSD", "NZDUSD", "XAGUSD", "EURJPY")
+
+
+def configured_watchlist(raw: str | None = None) -> list[str]:
+    extras = DEFAULT_EXTRA_SYMBOLS if raw is None else [part.strip().upper() for part in raw.split(",") if part.strip()]
+    watchlist = list(OFFICIAL_UNIVERSE)
+    for symbol in extras:
+        if symbol not in watchlist:
+            watchlist.append(symbol)
+    return watchlist
+
+
+WATCHLIST = configured_watchlist(os.getenv("TRADING_HUB_EXTRA_SYMBOLS"))
 ENGINE_STARTED = datetime.now(timezone.utc)
 _SCAN_LOCK = threading.RLock()
 _LAST_SCAN: dict[str, Any] = {"status": "NOT_SCANNED", "started_at": None,
@@ -351,6 +374,8 @@ def market_snapshot() -> list[dict[str, Any]]:
     strategy_markets: list[dict[str, Any]] = []
     scanned: list[tuple[dict[str, Any], dict[str, Any], dict[str, dict[str, Any]]]] = []
     bars_by_symbol: dict[str, list[dict[str, Any]]] = {}
+    # Timeframes to collect: enabled strategies' declared needs + shared H4/D1 context.
+    data_plan = market_data.plan_for(STRATEGIES)
     try:
         for requested in WATCHLIST:
             actual = mt5_symbol(requested)
@@ -405,10 +430,16 @@ def market_snapshot() -> list[dict[str, Any]]:
             } for r in h1_rates]
             context = session_context(rows, price)
             current_spread = abs(ask - bid) if ask and bid else 0
+            # Market context by timeframe (tick_volume kept as the broker reports it).
+            # M15/H1 reuse the bars fetched above; the rows/higher_rows the trendline
+            # strategy reads are unchanged.
+            bars, unavailable = market_data.fetch_timeframes(mt5, actual, data_plan, fetched={
+                "M15": market_data.bars_from_rates(rates), "H1": market_data.bars_from_rates(h1_rates)})
             # The registry runs the enabled strategies (only trendline). Market fields
             # stay the trendline payload exactly; strategy metadata is not added yet.
             results = STRATEGIES.evaluate(MarketInput(actual, rows, spread=current_spread,
-                                                      session_context=context, higher_rows=higher_rows))
+                                                      session_context=context, higher_rows=higher_rows,
+                                                      bars=bars, unavailable_timeframes=unavailable))
             trendline = results[TRENDLINE]
             if trendline.error is not None:
                 raise trendline.error
@@ -448,6 +479,7 @@ def market_snapshot() -> list[dict[str, Any]]:
                 "received_bars": len(rows),
                 "source": "MT5",
                 "timestamp": utc_iso(datetime.now(timezone.utc)),
+                "market_data": market_data.summary(bars, unavailable, requested in OFFICIAL_UNIVERSE),
             }
             market = {**quote, **scan, **provenance}
             setups: dict[str, dict[str, Any]] = {}

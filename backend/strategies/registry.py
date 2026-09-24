@@ -8,6 +8,9 @@ and isolates them from each other:
   * when more than one strategy is enabled, each receives its own deep copy of
     the market input, so no strategy can alter another's data. (With a single
     enabled strategy the input is passed as is.)
+  * a strategy whose declared data_requirements are missing from the collected
+    market context is not run; it yields a failed MissingMarketData result.
+    (A MarketInput without collected bars is not checked.)
 """
 from __future__ import annotations
 
@@ -17,6 +20,10 @@ import logging
 from .base import MarketInput, Strategy, StrategyResult
 
 LOGGER = logging.getLogger("trading_hub.strategies")
+
+
+class MissingMarketData(Exception):
+    """The market context lacks a timeframe the strategy declared it needs."""
 
 
 class StrategyRegistry:
@@ -68,6 +75,12 @@ class StrategyRegistry:
         shared = len(enabled) == 1
         results: dict[str, StrategyResult] = {}
         for strategy in enabled:
+            missing = [timeframe for timeframe in strategy.data_requirements
+                       if market.bars and timeframe not in market.bars]
+            if missing:
+                error = MissingMarketData(f"{strategy.strategy_id} needs {', '.join(missing)} for {market.symbol}")
+                results[strategy.strategy_id] = StrategyResult(strategy.strategy_id, strategy.version, None, error)
+                continue
             try:
                 payload = strategy.evaluate(market if shared else copy.deepcopy(market))
                 results[strategy.strategy_id] = StrategyResult(strategy.strategy_id, strategy.version, payload)

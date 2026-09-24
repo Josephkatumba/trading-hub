@@ -140,3 +140,21 @@ Persistence and lifecycle are scoped by strategy (`tests/test_strategy_persisten
   and includes closed episodes. An episode's `setup_type` is its latest
   observation; `confirmation.setup_type` is what it was confirmed as, and the UI
   shows the latter for confirmed setups.
+
+## Market universe and market data
+
+- Official universe (`main.OFFICIAL_UNIVERSE`): XAUUSD, BTCUSD, ETHUSD, EURUSD,
+  GBPUSD, GBPJPY, USDJPY, NAS100, US500, GER40. Broker symbols are resolved
+  through `SYMBOL_ALIASES` (IC Markets: NAS100 -> USTEC, GER40 -> DE40); markets
+  keep the product name as `symbol` and the broker name as `broker_symbol`.
+- Extra instruments are scanned after the official ten (default: USDCHF, USDCAD,
+  AUDUSD, NZDUSD, XAGUSD, EURJPY). Set `TRADING_HUB_EXTRA_SYMBOLS` to a
+  comma-separated list to change them, or to an empty value to scan only the
+  official universe.
+- `market_data.py`: strategies declare `data_requirements` (trendline: M15x300,
+  H1x160); every scan also collects the shared H4x200 and D1x200 context. Bars
+  carry `tick_volume` exactly as MT5 reports it (never invented). A timeframe the
+  terminal does not support or has no data for is listed in
+  `market_data.unavailable_timeframes` on the market, and a strategy whose
+  required data is missing is not run. The trendline strategy still reads the
+  same M15/H1 OHLC rows. See `tests/test_market_data.py`.

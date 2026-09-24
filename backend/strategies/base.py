@@ -15,7 +15,7 @@ goes in the payload's EVIDENCE_CONTAINER dict, which is persisted as is.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, ClassVar, Mapping, Sequence
 
 # Payload keys every strategy reports its decisions under. A strategy may add
@@ -57,12 +57,21 @@ def record_strategy_id(record: Mapping[str, Any]) -> str:
 
 @dataclass(frozen=True)
 class MarketInput:
-    """What a strategy receives for one symbol in one scan."""
+    """What a strategy receives for one symbol in one scan.
+
+    `rows` / `higher_rows` are the OHLC bars the trendline strategy has always
+    used (M15 / H1). `bars` is the market context by timeframe (e.g. M15, H1,
+    H4, D1), each bar with tick_volume when the broker provides it;
+    `unavailable_timeframes` names requested timeframes the broker could not
+    supply, with the reason. Empty `bars` means no context was collected.
+    """
     symbol: str
     rows: Sequence[Mapping[str, Any]]                   # primary timeframe bars, oldest first
     spread: float = 0.0
     session_context: Mapping[str, Any] | None = None
     higher_rows: Sequence[Mapping[str, Any]] | None = None
+    bars: Mapping[str, Sequence[Mapping[str, Any]]] = field(default_factory=dict)
+    unavailable_timeframes: Mapping[str, str] = field(default_factory=dict)
 
 
 class Strategy(ABC):
@@ -71,6 +80,9 @@ class Strategy(ABC):
     timeframe: ClassVar[str]
     higher_timeframes: ClassVar[tuple[str, ...]] = ()
     lifecycle: ClassVar[str]                  # episode/lifecycle policy its setups follow
+    # Market data the strategy needs: {timeframe: bars}. The collector supplies
+    # these in MarketInput.bars; a strategy is not run when one is unavailable.
+    data_requirements: ClassVar[Mapping[str, int]] = {}
 
     @abstractmethod
     def evaluate(self, market: MarketInput) -> dict[str, Any]:
