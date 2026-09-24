@@ -1,4 +1,5 @@
 import "./styles.css";
+import "./shell.css";
 import {getTrades,saveTrades,resetTrades,parseCSV,calculateMetrics,getAccounts,getTradeContext,getBrokerTimeZone,setBrokerTimeZone,normalizeTrades} from "./data.js";
 import {mergeImportedTrades} from "./tradeImport.mjs";
 import {isValidTimeZone} from "./tradeTime.mjs";
@@ -6,11 +7,17 @@ import {INITIAL_ACCOUNTS} from "./accounts.mjs";
 import {formatR,hasRecordedR,hasRecordedRisk} from "./riskData.mjs";
 import {getReview,saveReview,reviewedCount,DEFAULT_RULES} from "./journal.js";
 import {renderAnalytics,renderInsights,initInsights} from "./behaviorView.js";
-import {renderMarketRadar,initMarketRadar,stopMarketRadar} from "./marketRadar.js";
+import {renderMarketRadar,initMarketRadar,stopMarketRadar,scrollToGardenSection} from "./marketRadar.js";
 
-let state={view:"overview",trades:getTrades(),importOpen:false,selectedTrade:null,filters:{account:"ALL",symbol:"ALL",session:"ALL"}};
+let state={view:"radar",trades:getTrades(),importOpen:false,selectedTrade:null,filters:{account:"ALL",symbol:"ALL",session:"ALL"}};
 
-const nav=[["overview","Overview","⌂"],["radar","TRADeden Garden","🌿"],["accounts","Accounts","◈"],["trades","Trades","↗"],["analytics","Analytics","◒"],["insights","AI Intelligence","✦"]];
+// Navigation: the Garden is the product; watch tools sit beside it; journal
+// tools stay available but quieter. Items with an anchor open a Garden section.
+const NAV={
+ watch:[["radar","Markets","◎","gardenMarkets"],["analytics","Setup Lab","◒"],["insights","Analyst","✦"],["radar","Setup performance","▦","gardenPerformance"],["radar","Alerts","◔","gardenAlerts"]],
+ journal:[["overview","Portfolio","⌂"],["trades","Trades","↗"],["accounts","Accounts","◈"]]
+};
+const navLink=([view,label,icon,anchor])=>`<a class="${state.view===view&&!anchor?"active":""}" data-view="${view}"${anchor?` data-anchor="${anchor}"`:""}><span>${icon}</span>${label}</a>`;
 const money=n=>(n<0?"-$":"$")+Math.abs(Number(n)||0).toLocaleString(undefined,{maximumFractionDigits:0});
 const signed=n=>n>=0?"+"+money(n):money(n);
 const pct=n=>Number(n||0).toFixed(1)+"%";
@@ -35,10 +42,10 @@ function render(){
   <button class="mobile-menu-btn" id="mobileMenu" aria-label="Open navigation">☰</button>
   <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
   <aside>
-   <div class="brand"><span class="logo-mark">Te</span><div>TRADeden<small>MARKET INTELLIGENCE GARDEN</small></div></div>
-   <div class="workspace"><span>WORKSPACE</span><b>Joseph's Portfolio</b><i>⌄</i></div>
-   <nav>${nav.map(n=>`<a class="${state.view===n[0]?"active":""}" data-view="${n[0]}"><span>${n[2]}</span>${n[1]}</a>`).join("")}</nav>
-   <div class="side-section"><span>DISCOVER</span><a data-view="analytics"><span>◎</span>Performance</a><a data-view="insights"><span>✦</span>AI Analyst</a><a><span>◇</span>Marketplace <em class="soon">SOON</em></a></div>
+   <div class="brand"><span class="logo-mark" aria-hidden="true">🌿</span><div>TRAD<em>eden</em><small>Always watching the market</small></div></div>
+   <a class="nav-garden ${state.view==="radar"?"active":""}" data-view="radar"><span class="nav-garden-orb" aria-hidden="true"></span><div><b>Garden</b><small>Live market constellation</small></div></a>
+   <nav aria-label="Watch"><span class="nav-label">Watch</span>${NAV.watch.map(navLink).join("")}</nav>
+   <nav class="nav-secondary" aria-label="Journal"><span class="nav-label">Journal</span>${NAV.journal.map(navLink).join("")}<a class="nav-muted"><span>◇</span>Marketplace <em class="soon">SOON</em></a></nav>
    <div class="side-bottom"><a><span>⚙</span>Settings</a><div class="profile"><div class="avatar">JK</div><div><b>Joseph Katumba</b><small>Pro workspace</small></div><span>•••</span></div></div>
   </aside>
   <main>
@@ -116,7 +123,11 @@ function linePath(points,w,h,pad){
 
 function openImport(){state.importOpen=true;render();}
 function bind(){
- document.querySelectorAll("[data-view]").forEach(el=>el.onclick=()=>{state.view=el.dataset.view;state.selectedTrade=null;render();});
+ document.querySelectorAll("[data-view]").forEach(el=>el.onclick=()=>{
+   state.view=el.dataset.view;state.selectedTrade=null;render();
+   if(el.dataset.anchor)scrollToGardenSection(el.dataset.anchor);
+   else window.scrollTo(0,0);
+ });
  document.querySelectorAll("[data-trade]").forEach(el=>el.onclick=()=>{state.selectedTrade=state.trades.find(t=>String(t.id)===String(el.dataset.trade))||null;render();});
  ["importTop","importAccounts","importTrades","importAI","connectTop","importBasis"].forEach(id=>{const el=document.getElementById(id);if(el)el.onclick=openImport;});
  document.querySelectorAll("[data-filter]").forEach(el=>el.onchange=()=>{state.filters[el.dataset.filter]=el.value;render();});

@@ -28,6 +28,7 @@ const DEMO_MARKETS = [
 
 const TRACKED_KEY="tradeden.trackedSetups";
 let radarPoller = null;
+let pendingAnchor = null;
 let radarMode = "LIVE";
 let latestResult = null;
 let latestMarkets = [];
@@ -61,7 +62,7 @@ export function renderMarketRadar(){
     +'<div id="radarModeBanner" class="radar-mode-banner" role="status" hidden></div>'
     +'<header class="gd-topbar"><div class="gd-brand"><span class="gd-brand-mark" aria-hidden="true">🌿</span><div><b>TRAD<span>eden</span></b><small>Market intelligence garden</small></div></div>'
     +'<div class="gd-top-tools"><div class="gd-engine"><i class="gd-status-dot" aria-hidden="true"></i><span id="radarEngineStatus">Connecting engine</span></div><span class="gd-updated" id="radarUpdated">Waiting…</span>'
-    +'<div class="confirmation-alert-controls"><button type="button" id="confirmationAlertsToggle" class="alert-control" aria-pressed="false" title="Enable Alerts">🔇 Alerts OFF</button><button type="button" id="testConfirmationSound" class="alert-test-control">Test sound</button></div></div>'
+    +'<div class="confirmation-alert-controls" id="gardenAlerts"><button type="button" id="confirmationAlertsToggle" class="alert-control" aria-pressed="false" title="Enable Alerts">🔇 Alerts OFF</button><button type="button" id="testConfirmationSound" class="alert-test-control">Test sound</button></div></div>'
     +'<div id="confirmationToast" class="confirmation-toast" role="status" aria-live="polite" hidden></div></header>'
     +'<section class="gd-world" id="gardenWorld" aria-label="The TRADeden Garden">'
     +'<div class="gd-world-stage"><div class="gd-stage" id="gardenStage"></div><div class="gd-stage-overlay" id="gardenOverlay" hidden></div>'
@@ -76,8 +77,8 @@ export function renderMarketRadar(){
     +area("bloomed","🌸","Bloomed Setups","Confirmed by the existing strategy rules, including setups now being tracked as active.")
     +'<section class="gd-area gd-area-history" id="area-history"><header class="gd-area-head"><div><h2><span aria-hidden="true">🍂</span> Garden Archive</h2><p>What happened to the setups TRADeden surfaced. Only confirmed setups can hit a target or stop; the rest failed or went stale before confirmation.</p></div><span class="gd-count" id="historyCount"></span></header><div id="historyCards" class="gd-archive"></div></section>'
     +'</div><div class="gd-side"><section class="gd-analyst" id="gardenAnalyst" aria-live="polite">'+analystPanel(null)+'</section>'
-    +'<section class="gd-panel gd-markets"><header class="gd-panel-head"><h2>Markets TRADeden watches</h2><span class="gd-count" id="marketCount"></span></header><div id="radarTable" class="gd-market-list"></div></section></div></div>'
-    +'<section class="gd-panel performance-panel"><header class="gd-panel-head"><div><h2>📊 Today\'s setup performance</h2><p>Headline uses the 4h market outcome. Other configured horizons remain visible. Trade outcomes are excluded.</p></div></header><div id="dailyPerformance"><div class="macro-empty"><b>Loading performance</b></div></div></section>'
+    +'<section class="gd-panel gd-markets" id="gardenMarkets"><header class="gd-panel-head"><h2>Markets TRADeden watches</h2><span class="gd-count" id="marketCount"></span></header><div id="radarTable" class="gd-market-list"></div></section></div></div>'
+    +'<section class="gd-panel performance-panel" id="gardenPerformance"><header class="gd-panel-head"><div><h2>📊 Today\'s setup performance</h2><p>Headline uses the 4h market outcome. Other configured horizons remain visible. Trade outcomes are excluded.</p></div></header><div id="dailyPerformance"><div class="macro-empty"><b>Loading performance</b></div></div></section>'
     +'<details class="gd-panel historical-confirmations" id="historicalConfirmations"><summary><span>📚 Confirmation event archive · today (<b id="historicalConfirmationCount">0</b>)</span><span class="historical-expand-hint">Expand</span></summary><p class="gd-archive-status" id="confirmedArchiveStatus"></p><div id="historicalConfirmationCards" class="gd-grid"></div></details>'
     +'<section class="gd-panel radar-fundamentals"><header class="gd-panel-head"><h2>Macro events that can change the tape</h2><span class="gd-count">US events</span></header><div id="radarFundamentals" class="macro-list"><div class="macro-empty"><b>Loading macro context</b></div></div></section>'
     +'<footer class="gd-method"><p><b>How TRADeden watches:</b> H1 context → price action → trendline → support/resistance → CRT → session → a transparent 100-point setup score. Breaks and reversals are both valid setup families; the trendline event is the strategy gate.</p><p>TRADeden is decision support, not an auto-trading platform. Not an entry recommendation.</p></footer>'
@@ -106,7 +107,21 @@ async function getRadar(){
 }
 async function getPerformance(){try{return await engineFetch("/api/market/performance");}catch(_){return null;}}
 const analysisKey=row=>row?.setup_id?row.setup_id+":"+(row.observation_id||""):null;
-async function getAnalysis(m){if(!m?.setup_id)return null;const observationId=m.observation_id||"";const key=m.setup_id+":"+observationId;if(analystCache.has(key))return analystCache.get(key);try{const suffix=observationId?"?observation_id="+encodeURIComponent(observationId):"";const data=await engineFetch("/api/market/setups/"+encodeURIComponent(m.setup_id)+"/analysis"+suffix);analystCache.set(key,data);return data;}catch(_){analystCache.set(key,null);return null;}}
+// One request per analysis: concurrent callers share the in-flight promise.
+// (Caching only on completion let every repaint re-request pending analyses.)
+const analysisInFlight=new Map();
+function getAnalysis(m){
+  if(!m?.setup_id)return Promise.resolve(null);
+  const observationId=m.observation_id||"";const key=m.setup_id+":"+observationId;
+  if(analystCache.has(key))return Promise.resolve(analystCache.get(key));
+  if(analysisInFlight.has(key))return analysisInFlight.get(key);
+  const suffix=observationId?"?observation_id="+encodeURIComponent(observationId):"";
+  const request=engineFetch("/api/market/setups/"+encodeURIComponent(m.setup_id)+"/analysis"+suffix)
+    .then(data=>{analystCache.set(key,data);return data;},()=>{analystCache.set(key,null);return null;})
+    .finally(()=>analysisInFlight.delete(key));
+  analysisInFlight.set(key,request);
+  return request;
+}
 async function getSetupEpisodes(){try{return await engineFetch("/api/market/setup-episodes?bucket=all&limit=100");}catch(_){return null;}}
 async function getOutcomes(){try{const data=await engineFetch("/api/market/outcomes");return Array.isArray(data?.outcomes)?data.outcomes:null;}catch(_){return null;}}
 
@@ -287,7 +302,7 @@ function paintConfirmed(markets, performance){
     const card=setupCardModel(row,{bucket:"archive",analysis:analystCache.get(analysisKey(event))||null,simulated:radarMode==="DEMO"});
     return setupCard({...card,key:"archive-"+(event.setup_id||"")},{extraFoot:'<small class="gd-outcome">4h market outcome: <b>'+esc(outcome==="PENDING"?"Pending":outcome)+'</b> · '+esc(display.label.toLowerCase())+' · not a trade result</small>'});
   }).join(""):'<div class="gd-empty"><b>No confirmation events today.</b></div>';
-  for(const {event} of entries){const key=analysisKey(event);if(event.observation_id&&!analystCache.has(key))getAnalysis(event).then(analysis=>{if(analysis)repaint();});}
+  for(const {event} of entries){const key=analysisKey(event);if(event.observation_id&&!analystCache.has(key)&&!analysisInFlight.has(key))getAnalysis(event).then(analysis=>{if(analysis)repaint();});}
 }
 
 // ----- paint ------------------------------------------------------------------
@@ -317,6 +332,7 @@ function paint(result){
   document.getElementById("radarUpdated").textContent={LIVE:"Updated "+now,ENGINE_NO_DATA:"No market data · "+now,OFFLINE:"Offline · checked "+now,DEMO:"Simulated · not market data"}[mode];
   const status=document.getElementById("radarEngineStatus");if(status)status.textContent={LIVE:"Live MT5 engine",ENGINE_NO_DATA:"Engine online · MT5 "+String(result.mt5Status||"no data"),OFFLINE:"Engine offline",DEMO:"Demo mode · engine offline"}[mode];
   paintPerformance(result.performance);
+  if(pendingAnchor)setTimeout(applyPendingAnchor,0);
 }
 function paintMode(mode,result){
   const root=document.getElementById("radarRoot"),banner=document.getElementById("radarModeBanner");
@@ -436,6 +452,16 @@ export async function initMarketRadar(){
   const poll=radarPoller.start();
   paintFundamentals(await getFundamentals());
   await Promise.all([poll,visual]);
+}
+/** Scroll to a Garden section once live content has painted (its height depends on data). */
+export function scrollToGardenSection(id){
+  pendingAnchor=id;
+  if(latestResult&&document.getElementById("growingCards")?.childElementCount)applyPendingAnchor();
+}
+function applyPendingAnchor(){
+  const target=pendingAnchor&&document.getElementById(pendingAnchor);
+  pendingAnchor=null;
+  if(target)target.scrollIntoView({block:"start"});
 }
 export function stopMarketRadar(){radarPoller?.stop();disposeGarden();}
 
