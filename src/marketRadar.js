@@ -19,6 +19,7 @@ const DEMO_MARKETS = [
 ];
 
 let radarPoller = null;
+let radarMode = "LIVE";
 let latestMarkets = [];
 let latestEpisodes = {current:[],confirmed:[],closed:[]};
 let watchExpanded = false;
@@ -177,7 +178,7 @@ function renderDetail(m, analysis=null){
 
 export function renderMarketRadar(){
   return '<div id="radarRoot" class="radar-root"><div id="radarModeBanner" class="radar-mode-banner" role="status" hidden></div><section class="page-title radar-title"><div><div class="kicker">TRADING HUB · MARKET COMMAND CENTER</div><h1>Market Radar</h1><p class="sub">One screen for top-down context, price action, trendline breaks/reversals, support/resistance and confirmation.</p></div><div class="radar-header-tools"><div class="radar-engine"><i class="live-dot"></i><span id="radarEngineStatus">CONNECTING ENGINE</span></div><div class="confirmation-alert-controls"><button type="button" id="confirmationAlertsToggle" class="alert-control" aria-pressed="false" title="Enable Alerts">🔇 Alerts OFF</button><button type="button" id="testConfirmationSound" class="alert-test-control">Test sound</button></div></div><div id="confirmationToast" class="confirmation-toast" role="status" aria-live="polite" hidden></div></section>'
-    +'<section class="radar-hero"><div class="radar-hero-copy"><div class="radar-eyebrow"><span class="live-dot"></span> LIVE SCANNING NETWORK</div><h2>See the market before you touch the button.</h2><p>Trading Hub continuously ranks the instruments it can observe, explains the setup state and separates <b>watching</b> from <b>confirmation</b>. The radar combines top-down analysis, price action, trendline breaks/reversals and support/resistance into one confirmation workflow.</p><div class="radar-hero-tags"><span>H1 / H4 CONTEXT</span><span>PRICE ACTION</span><span>TRENDLINE</span><span>S/R</span><span>CRT CONTEXT</span></div></div><div class="radar-hero-stats"><div><b id="radarWatching">0</b><span>WATCHING</span></div><div><b id="radarDeveloping">0</b><span>DEVELOPING</span></div><div><b id="radarConfirming">0</b><span>CONFIRMING</span></div><div><b id="radarBullish">0</b><span>BULLISH</span></div></div></section>'
+    +'<section class="radar-hero"><div class="radar-hero-copy"><div class="radar-eyebrow"><span class="live-dot"></span> <span id="radarEyebrow">LIVE SCANNING NETWORK</span></div><h2>See the market before you touch the button.</h2><p>Trading Hub continuously ranks the instruments it can observe, explains the setup state and separates <b>watching</b> from <b>confirmation</b>. The radar combines top-down analysis, price action, trendline breaks/reversals and support/resistance into one confirmation workflow.</p><div class="radar-hero-tags"><span>H1 / H4 CONTEXT</span><span>PRICE ACTION</span><span>TRENDLINE</span><span>S/R</span><span>CRT CONTEXT</span></div></div><div class="radar-hero-stats"><div><b id="radarWatching">0</b><span>WATCHING</span></div><div><b id="radarDeveloping">0</b><span>DEVELOPING</span></div><div><b id="radarConfirming">0</b><span>CONFIRMING</span></div><div><b id="radarBullish">0</b><span>BULLISH</span></div></div></section>'
     +'<section class="radar-command-strip"><div><span class="kicker">SCANNER STATUS</span><b>MARKET COVERAGE</b><small>Forex · Gold · Indices · Crypto</small></div><div><span class="kicker">REFRESH</span><b>10 SEC</b><small>Engine snapshots update automatically</small></div><div><span class="kicker">MODEL</span><b>TRENDLINE V3</b><small>Trendline event is the strategy gate</small></div><div><span class="kicker">EXECUTION</span><b>MANUAL</b><small>No orders are sent by Trading Hub</small></div></section>'
     +'<section class="panel developing-command watch-panel"><div class="developing-head"><div><span class="kicker">MARKET RADAR · LIVE EPISODES</span><h2>CURRENT / DEVELOPING SETUPS</h2><p>Persistent setup episodes remain here as scanner evidence changes.</p></div><span id="watchCount" class="observatory-count">0 SETUPS</span></div><div id="watchingCards" class="developing-grid watch-grid lifecycle-grid"></div></section>'
     +'<section class="panel developing-command confirmed-panel"><div class="confirmed-head"><div><span class="kicker">VALIDATED BY EXISTING STRATEGY RULES</span><h2>CONFIRMED SETUPS</h2></div><div id="confirmedStatus" class="confirmed-status">0 CONFIRMED</div></div><div id="persistentConfirmedCards" class="developing-grid confirmed-grid lifecycle-grid"></div></section>'
@@ -270,7 +271,7 @@ function paintEpisodeBuckets(episodes, markets=[]){
   const confirmed=partitioned.confirmed;
   const closed=partitioned.closed.slice(0,20);
   const live=document.getElementById("watchingCards"),confirmedNode=document.getElementById("persistentConfirmedCards"),closedNode=document.getElementById("recentlyClosedCards");
-  if(live)live.innerHTML=current.length?current.map(m=>lifecycleCard(m,"current")).join(""):'<div class="radar-empty compact-empty"><b>No current or developing setup episodes.</b><p>Monitoring remains active.</p></div>';
+  if(live)live.innerHTML=current.length?current.map(m=>lifecycleCard(m,"current")).join(""):'<div class="radar-empty compact-empty"><b>No current or developing setup episodes.</b><p>'+(radarMode==="OFFLINE"?"Engine offline — nothing is being monitored.":"Monitoring remains active.")+'</p></div>';
   if(confirmedNode)confirmedNode.innerHTML=confirmed.length?confirmed.map(m=>lifecycleCard(m,"confirmed")).join(""):'<div class="confirmed-empty"><b>No confirmed setup episodes yet.</b></div>';
   if(closedNode)closedNode.innerHTML=closed.length?closed.map(m=>lifecycleCard(m,"closed")).join(""):'<div class="confirmed-empty"><b>No recently closed setups.</b></div>';
   const count=document.getElementById("watchCount");if(count)count.textContent=current.length+" SETUPS";
@@ -390,6 +391,7 @@ function paint(result){
   const table=document.getElementById("radarTable"),detail=document.getElementById("radarDetail"),watchCards=document.getElementById("watchingCards"),confirmedCards=document.getElementById("confirmedCards");
   if(!table||!detail)return;
   const mode=result.mode||"LIVE";
+  radarMode=mode;
   paintMode(mode,result);
   const sorted=[...latestMarkets].sort((a,b)=>(b.score||0)-(a.score||0));
   table.innerHTML=sorted.length?sorted.map(row).join(""):'<div class="empty-state">'+(mode==="OFFLINE"?"Engine offline — no market data is shown.":"The engine returned no markets.")+'</div>';
@@ -397,9 +399,9 @@ function paint(result){
   paintConfirmed(latestMarkets,result.performance);
   const current=detail.dataset.symbol;
   const focus=sorted.find(m=>m.symbol===current)||sorted.find(m=>["CONFIRMING","DEVELOPING","WATCHING"].includes(m.state))||sorted[0];
-  detail.innerHTML=!focus&&mode!=="LIVE"?offlineDetail(mode):renderDetail(focus,selectedMarket?.setup_id===focus?.setup_id?selectedMarket.analysis:null);
+  detail.innerHTML=!focus&&mode!=="LIVE"?offlineDetail(mode):renderDetail(focus,selectedMarket?.setup_id===focus?.setup_id?selectedMarket?.analysis??null:null);
   detail.dataset.symbol=focus?.symbol||"";
-  selectedMarket=focus?{...focus,analysis:selectedMarket?.setup_id===focus.setup_id?selectedMarket.analysis:null}:null;
+  selectedMarket=focus?{...focus,analysis:selectedMarket?.setup_id===focus.setup_id?selectedMarket?.analysis??null:null}:null;
   if(focus?.setup_id&&!selectedMarket?.analysis)getAnalysis(focus).then(analysis=>{if(analysis&&selectedMarket?.setup_id===focus.setup_id){selectedMarket={...focus,analysis};detail.innerHTML=renderDetail(focus,analysis);}});
   const counts={WATCHING:0,DEVELOPING:0,CONFIRMING:0};
   latestMarkets.forEach(m=>{if(counts[m.state]!=null)counts[m.state]++});
@@ -416,6 +418,8 @@ function paint(result){
 function paintMode(mode,result){
   const root=document.getElementById("radarRoot"),banner=document.getElementById("radarModeBanner");
   if(root){root.classList.toggle("is-simulated",mode==="DEMO");root.classList.toggle("is-offline",mode==="OFFLINE"||mode==="ENGINE_NO_DATA");}
+  const eyebrow=document.getElementById("radarEyebrow");
+  if(eyebrow)eyebrow.textContent={LIVE:"LIVE SCANNING NETWORK",ENGINE_NO_DATA:"ENGINE ONLINE · NO MARKET DATA",OFFLINE:"SCANNER OFFLINE",DEMO:"SIMULATED · NOT SCANNING"}[mode];
   if(!banner)return;
   if(mode==="LIVE"){banner.hidden=true;banner.innerHTML="";return;}
   banner.hidden=false;banner.dataset.mode=mode;
