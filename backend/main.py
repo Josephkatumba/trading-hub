@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone, time, timedelta
 from pathlib import Path
 import json
@@ -59,7 +60,59 @@ class LifecycleTransitionRequest(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
-app = FastAPI(title="Trading Hub Market Engine", version="0.3.0")
+# One MT5 terminal connection is reused across requests. Previously every radar
+# poll and health check called initialize()/shutdown(); a health check could
+# then shut the connection down in the middle of a concurrent radar scan.
+_MT5_LOCK = threading.RLock()
+_MT5_SESSION: dict[str, Any] = {"initialized": False, "initializations": 0}
+
+
+def ensure_mt5() -> tuple[bool, str | None]:
+    """Return (connected, error), initializing or re-initializing only when needed."""
+    if mt5 is None:
+        return False, "MetaTrader5 package is unavailable"
+    with _MT5_LOCK:
+        if _MT5_SESSION["initialized"]:
+            try:
+                if mt5.terminal_info() is not None:
+                    return True, None
+            except Exception:
+                LOGGER.exception("MT5 liveness check failed")
+            # Terminal went away: drop the stale session and reconnect below.
+            _MT5_SESSION["initialized"] = False
+            try:
+                mt5.shutdown()
+            except Exception:
+                LOGGER.exception("MT5 shutdown of stale session failed")
+        try:
+            connected = bool(mt5.initialize())
+        except Exception as exc:
+            LOGGER.exception("MT5 initialization failed")
+            return False, str(exc)
+        _MT5_SESSION["initializations"] += 1
+        _MT5_SESSION["initialized"] = connected
+        if connected:
+            return True, None
+        return False, str(getattr(mt5, "last_error", lambda: "MT5 terminal is unavailable")())
+
+
+def close_mt5() -> None:
+    with _MT5_LOCK:
+        if mt5 is not None and _MT5_SESSION["initialized"]:
+            try:
+                mt5.shutdown()
+            except Exception:
+                LOGGER.exception("MT5 shutdown failed")
+        _MT5_SESSION["initialized"] = False
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    yield
+    close_mt5()
+
+
+app = FastAPI(title="Trading Hub Market Engine", version="0.3.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -259,14 +312,7 @@ def market_snapshot() -> list[dict[str, Any]]:
                               market_count=0, error="MetaTrader5 package is unavailable",
                               elapsed_ms=round((monotonic_time.perf_counter() - started) * 1000, 2))
         return []
-    try:
-        initialized = bool(mt5.initialize())
-    except Exception as exc:
-        initialized = False
-        LOGGER.exception("MT5 initialization failed")
-        initialize_error = str(exc)
-    else:
-        initialize_error = str(getattr(mt5, "last_error", lambda: "MT5 terminal is unavailable")()) if not initialized else None
+    initialized, initialize_error = ensure_mt5()
     if not initialized:
         with _SCAN_LOCK:
             _LAST_SCAN.update(status="MT5_OFFLINE", completed_at=utc_iso(datetime.now(timezone.utc)),
@@ -379,11 +425,6 @@ def market_snapshot() -> list[dict[str, Any]]:
                               market_count=len(markets), error=str(exc),
                               elapsed_ms=round((monotonic_time.perf_counter() - started) * 1000, 2))
         return []
-    finally:
-        try:
-            mt5.shutdown()
-        except Exception:
-            LOGGER.exception("MT5 shutdown failed")
     try:
         record_markets(markets)
         confirmations = confirmation_events()
@@ -423,7 +464,7 @@ def health():
 
     if mt5 is not None:
         try:
-            connected = bool(mt5.initialize())
+            connected, error = ensure_mt5()
             if connected:
                 info = mt5.terminal_info()
                 acct = mt5.account_info()
@@ -434,15 +475,8 @@ def health():
                 # Never expose login/server: /api/health is readable by any allowed origin.
                 account = {"available": acct is not None}
                 symbols = int(mt5.symbols_total() or 0)
-            else:
-                error = str(getattr(mt5, "last_error", lambda: "MT5 terminal is unavailable")())
         except Exception as exc:
             error = str(exc)
-        finally:
-            try:
-                mt5.shutdown()
-            except Exception:
-                pass
 
     now = datetime.now(timezone.utc)
     with _SCAN_LOCK:
@@ -499,7 +533,7 @@ def mt5_time_diagnostic(symbols: str | None = None, bars: int = 8):
     from fastapi import HTTPException
     if mt5 is None:
         raise HTTPException(status_code=503, detail="MetaTrader5 package is unavailable")
-    if not mt5.initialize():
+    if not ensure_mt5()[0]:
         raise HTTPException(status_code=503, detail="MT5 terminal is unavailable")
 
     before = datetime.now(timezone.utc)
@@ -573,7 +607,7 @@ def mt5_time_diagnostic(symbols: str | None = None, bars: int = 8):
                   "source_time_basis": source_basis or "UNVERIFIED",
                 "markets": result}
     finally:
-        mt5.shutdown()
+        pass  # MT5 connection is reused across requests; see ensure_mt5().
 
 
 @app.get("/api/market/radar")
@@ -732,7 +766,7 @@ def derive_setup_market_outcome(setup_id: str, observation_id: str, horizon: str
                 if row.get("observation_id") == observation_id and row.get("horizon") == horizon]
     if existing:
         return existing[-1]
-    if mt5 is None or not mt5.initialize():
+    if not ensure_mt5()[0]:
         from fastapi import HTTPException
         raise HTTPException(status_code=503, detail="MT5 unavailable")
     try:
@@ -755,7 +789,7 @@ def derive_setup_market_outcome(setup_id: str, observation_id: str, horizon: str
             bars.append({"time": datetime.fromisoformat(normalized["normalized_utc"]).timestamp(),
                 "high": float(rate["high"]), "low": float(rate["low"]), "close": float(rate["close"])})
     finally:
-        mt5.shutdown()
+        pass  # MT5 connection is reused across requests; see ensure_mt5().
     outcome = derive_market_outcome(snapshot, horizon, bars, timeframe)
     if outcome is None:
         from fastapi import HTTPException
