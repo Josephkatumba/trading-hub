@@ -31,31 +31,41 @@ Account connection → trade normalization → analytics → trading fingerprint
 Tests: `npm test` (frontend), `cd backend && python -m unittest discover -s tests`
 (backend; run `test_scanner_quality.py` from the repo root with `PYTHONPATH=backend`).
 
-## The TRADeden Garden (Market Radar)
+## The TRADeden Garden
 
-The radar page is the Garden: a light, card-first view of every setup the engine is
-watching, with a small 3D garden that mirrors the backend lifecycle.
+The Garden is the product and the landing page: a living market constellation
+where every orb is a real setup from the engine, placed by its (unchanged,
+authoritative) lifecycle state.
 
-| Garden | Backend lifecycle (authoritative, unchanged) |
-|---|---|
-| 🌱 Growing | DETECTED, DEVELOPING |
-| 🌿 Taking Shape | CONFIRMING |
-| 🌸 Bloomed | CONFIRMED |
-| 🌳 Active | ACTIVE |
-| 🍂 History | INVALIDATED, EXPIRED, RESOLVED |
+| Garden | Backend lifecycle | In the constellation |
+|---|---|---|
+| 🌱 Growing | DETECTED, DEVELOPING | small sage orb, outer live band |
+| 🌿 Taking Shape | CONFIRMING | larger orb with energy rings |
+| 🌸 Bloomed | CONFIRMED | mint (long) / coral (short) orb with a still crown, centre band |
+| 🌳 Active | ACTIVE | large orb with a stable field ring |
+| 🍂 Archive | INVALIDATED, EXPIRED, RESOLVED | quiet grey point on the outer ring |
 
-- Cards show only API values; missing levels read "Not yet calculated" (entry/stop/
-  target appear only once the engine has computed both a stop and a target).
-- The Analyst panel restates recorded, rule-based evidence
-  (`deterministic-setup-analyst-v1`); it is not an AI/ML prediction.
-- No execution buttons: View setup / View evidence / View analysis / Track setup
-  (tracking is a local, per-browser pin — it never writes to the engine).
-- 3D (Three.js, lazily loaded) is used on desktop when WebGL is available. A 2D CSS
-  garden is used on screens under 720px, with Data Saver, on low-memory devices, or
-  when WebGL is missing. `prefers-reduced-motion` renders static frames.
-  Force a mode with `localStorage.th_garden_3d = "0"` (2D) or `"1"` (3D).
-- Code: `src/garden/` (`gardenModel.mjs`, `gardenCards.mjs` are pure and tested;
-  `gardenScene.mjs` is the 3D scene; `gardenMount.mjs` chooses and falls back).
+- Ambient motion (dust, currents, lifecycle rings, a slow scanning sweep) never
+  represents data. With nothing live the Garden says "The garden is watching.";
+  with nothing confirmed, "Nothing has bloomed yet."
+- A confirmation bloom plays once, only for a real transition into CONFIRMED seen
+  while the Garden is open.
+- **Garden Archive = outcomes.** Setups closed before confirmation are shown as
+  ⚠️ Invalidated / ⏳ Expired and are never counted as trades. Confirmed setups get
+  🎯 Target hit / 🛑 Stop hit only from outcome records that pass the backend's
+  data-integrity rules (verified timestamps, proven candle chronology); otherwise
+  "Outcome unverified" / "pending". R is shown only when the labelled barriers are
+  provably the planned stop and target. No win rate is shown.
+- Cards show entry/stop/target/R:R only when the engine calculated them. The
+  Analyst is rule-based (`deterministic-setup-analyst-v1`), not AI/ML, and switches
+  wording for live, confirmed and closed setups. No execution buttons.
+- 3D (Three.js, lazily loaded, ~30 fps cap, paused when hidden/off-screen) on
+  desktop; a matching 2D CSS constellation on screens under 720px, with Data Saver,
+  low memory or no WebGL; reduced motion renders static frames. Force a mode with
+  `localStorage.th_garden_3d = "0"` (2D) or `"1"` (3D).
+- Code: `src/garden/` (`gardenModel.mjs`, `gardenCards.mjs` pure and tested;
+  `gardenScene.mjs` 3D; `gardenMount.mjs` renderer choice + 2D), `src/shell.css`
+  (navigation).
 
 ## Data honesty
 

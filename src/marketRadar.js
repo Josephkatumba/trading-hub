@@ -71,7 +71,7 @@ export function renderMarketRadar(){
     +'<h1>The market is always moving.<br><span>TRADeden is always watching.</span></h1>'
     +'<p>TRADeden continuously watches the markets for developing structures, confirmations and invalidations so you don\'t have to stare at charts all day.</p>'
     +'<div class="gd-counters" id="gardenCounters">'+counterTiles(null)+'</div>'
-    +'<p class="gd-hero-note">Every orb is a real setup from the existing strategy and lifecycle. Execution stays manual — TRADeden never places orders.</p></div></section>'
+    +'<p class="gd-hero-note" id="gardenHeroNote">Every orb is a real setup from the existing strategy and lifecycle. Execution stays manual — TRADeden never places orders.</p></div></section>'
     +'<div class="gd-layout"><div class="gd-main">'
     +area("growing","🌱","Growing Garden","Current and developing setups. Evidence is still accumulating.")
     +area("bloomed","🌸","Bloomed Setups","Confirmed by the existing strategy rules, including setups now being tracked as active.")
@@ -355,6 +355,9 @@ function paint(result){
 function paintMode(mode,result){
   const root=document.getElementById("radarRoot"),banner=document.getElementById("radarModeBanner");
   if(root){root.classList.toggle("is-simulated",mode==="DEMO");root.classList.toggle("is-offline",mode==="OFFLINE"||mode==="ENGINE_NO_DATA");root.dataset.mode=mode;}
+  const note=document.getElementById("gardenHeroNote");
+  if(note)note.textContent=mode==="DEMO"?"Demo mode: every orb here is a simulated fixture, not a real setup and not market data."
+    :"Every orb is a real setup from the existing strategy and lifecycle. Execution stays manual — TRADeden never places orders.";
   const eyebrow=document.getElementById("radarEyebrow");
   if(eyebrow)eyebrow.textContent={LIVE:"🌿 The TRADeden Garden · live",ENGINE_NO_DATA:"🌿 The TRADeden Garden · engine online, no market data",OFFLINE:"🌿 The TRADeden Garden · scanner offline",DEMO:"🌿 The TRADeden Garden · simulated, not scanning"}[mode];
   if(!banner)return;

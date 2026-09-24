@@ -171,6 +171,7 @@ test("focus panel shows the selection with real levels only", async () => {
   const sparse = focusPanel(setupCardModel(episode()));
   assert.doesNotMatch(sparse, /gd-focus-levels/);
   assert.equal(focusPanel(null), "");
+  assert.match(focusPanel(setupCardModel({symbol: "XAUUSD", state: "WATCHING"}, {simulated: true})), /Simulated fixture/);
 });
 
 test("analyst wording follows the lifecycle: live, confirmed, history", async () => {

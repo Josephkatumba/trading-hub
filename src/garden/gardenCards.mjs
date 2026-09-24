@@ -177,6 +177,7 @@ export function focusPanel(card) {
   return '<div class="gd-focus-head"><i class="gd-swatch gd-swatch-' + card.stage + ' gd-swatch-' + String(card.direction || "none").toLowerCase() + '" aria-hidden="true"></i>'
     + '<div><b>' + esc(card.symbol) + '</b><span>' + card.stageIcon + ' ' + esc(card.headline) + '</span></div>'
     + (card.score == null ? '' : '<strong>' + card.score + '<small>/100</small></strong>') + '</div>'
+    + (card.simulated ? '<p class="gd-analyst-sim">Simulated fixture — not market data.</p>' : '')
     + levels
     + '<p class="gd-focus-meta">' + (card.session ? esc(card.session) + ' session' : 'Session unavailable') + (card.confirmationTime ? ' · confirmed ' + esc(card.confirmationTime) : '') + '</p>'
     + '<div class="gd-focus-actions"><button type="button" data-focus-action="view-setup">View setup</button><button type="button" data-focus-action="view-analysis">View analysis</button></div>';
