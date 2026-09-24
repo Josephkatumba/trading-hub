@@ -13,6 +13,12 @@ function describeBucket(rows,label){
   return {label,pnl,trades:rows.length,winRate:wins/rows.length*100,avgPnl:pnl/rows.length};
 }
 
+// Rounded to cents so float noise like 1e-13 reads as flat, not profitable.
+export function sampleResultTitle(net){
+ const cents=Math.round((Number(net)||0)*100);
+ return cents>0?"Why the current sample is profitable":cents<0?"Why the current sample is losing":"Why the current sample is flat";
+}
+
 export function answerQuestion(question,trades){
  const q=String(question||"").toLowerCase(), b=analyzeBehavior(trades);
  const ordered=[...trades].sort((a,z)=>String(a.time).localeCompare(String(z.time)));
@@ -56,8 +62,8 @@ export function answerQuestion(question,trades){
    facts=gold.length?[pct(gold.filter(t=>Number(t.pnl)>0).length/gold.length*100)+" win rate."]:[];
  }
  else if(/why.*lose|why.*losing|losing|performance|doing|overview|what.*wrong/.test(q)){
-   title="Why the current sample is losing";
    const net=total(trades);
+   title=sampleResultTitle(net);
    const instrument=b.bySymbol[0];
    const worstInstrument=[...b.bySymbol].sort((a,z)=>a.pnl-z.pnl)[0];
    const worstSession=[...b.bySession].filter(x=>x.name!==UNVERIFIED_SESSION).sort((a,z)=>a.pnl-z.pnl)[0];
@@ -69,7 +75,7 @@ export function answerQuestion(question,trades){
      worstSession?describeBucket(trades.filter(t=>t.session===worstSession.name),"session"):null,
      worstSide?describeBucket(trades.filter(t=>t.side===worstSide.name),"direction"):null
    ].filter(Boolean);
-   body="Across "+trades.length+" executions, total P&L is "+signed(net)+". The machine is looking for concentration of losses rather than assuming a single cause.";
+   body="Across "+trades.length+" executions, total P&L is "+signed(net)+". The machine is looking for "+(net>0?"where results concentrate":"concentration of losses")+" rather than assuming a single cause.";
    if(worstInstrument)facts.push("Lowest instrument: "+worstInstrument.name+" at "+signed(worstInstrument.pnl)+" across "+worstInstrument.trades+" trades.");
    if(worstSession)facts.push("Lowest session: "+worstSession.name+" at "+signed(worstSession.pnl)+" across "+worstSession.trades+" trades.");
    if(worstSide)facts.push("Lowest direction: "+worstSide.name+" at "+signed(worstSide.pnl)+" across "+worstSide.trades+" trades.");
