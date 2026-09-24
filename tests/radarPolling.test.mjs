@@ -15,7 +15,8 @@ test("start runs once immediately, then keeps exactly one 10s interval", async (
   assert.equal(calls,1);
   assert.equal(t.live.size,1);
   assert.equal([...t.live.values()][0].ms,10000);
-  t.tick();t.tick();
+  const settle=()=>new Promise(r=>setImmediate(r));
+  t.tick();await settle();t.tick();await settle();
   assert.equal(calls,3);
 });
 
@@ -62,4 +63,17 @@ test("the task can tell when its result is stale", async () => {
   const poller=createPoller({task:async isCurrent=>{await first.promise;staleSeen=!isCurrent();},schedule:t.schedule,cancel:t.cancel});
   const started=poller.start();poller.stop();first.resolve();await started;
   assert.equal(staleSeen,true);
+});
+
+test("a tick is skipped while the previous refresh is still running (no pile-up)", async () => {
+  const t=fakeTimers();const slow=deferred();let calls=0;
+  const settle=()=>new Promise(r=>setImmediate(r));
+  const poller=createPoller({task:()=>{calls++;return calls===2?slow.promise:Promise.resolve();},schedule:t.schedule,cancel:t.cancel});
+  await poller.start();                       // call 1
+  t.tick();await settle();                    // call 2 starts and hangs
+  t.tick();await settle();t.tick();await settle();   // skipped while call 2 is pending
+  assert.equal(calls,2);
+  slow.resolve();await settle();
+  t.tick();await settle();                    // call 3
+  assert.equal(calls,3);
 });
