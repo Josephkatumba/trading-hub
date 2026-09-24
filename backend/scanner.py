@@ -254,7 +254,10 @@ def analyze_symbol(
     spread: float = 0.0,
     session_context: dict[str, Any] | None = None,
     higher_rows: list[Any] | None = None,
+    strategy_version: str = "trendline-first-v3",
 ) -> dict[str, Any]:
+    # strategy_version only labels the output; it changes no calculation. The
+    # trendline strategy passes its own version (strategies/trendline.py).
     if len(rows) < 60:
         return {
             "state": "NO SETUP", "score": 0, "setup": "Insufficient data",
@@ -475,7 +478,7 @@ def analyze_symbol(
     invalidation = levels["stop_loss"]
 
     return {
-        "strategy_version": "trendline-first-v3",
+        "strategy_version": strategy_version,
         "timeframe": "M15",
         "higher_timeframes": ["H1"],
         "state": state,

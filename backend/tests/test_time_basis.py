@@ -130,9 +130,12 @@ class BoundaryTests(unittest.TestCase):
                 self.assertEqual(server_time(datetime(*day, 17, 0, tzinfo=NEW_YORK)), "00:00")      # NY 17:00 always server midnight
                 self.assertEqual(to_utc(server_epoch_of(london)), london.astimezone(timezone.utc))  # round trip
 
-    def test_setting_the_basis_does_not_change_session_logic(self):
-        """session_context still reads raw epochs (documented limitation): the basis leaves it unchanged."""
+    def test_session_logic_follows_the_basis_and_fails_closed_without_it(self):
+        """Since trendline-first-v4 the London session is selected through the basis (Phase 9);
+        without a basis the London range is unavailable instead of guessed."""
+        import session_time
         fixture = next(f for f in g.load_fixtures() if f["name"] == "real_XAUUSD")
+        rows, price = fixture["rows"], fixture["rows"][-1]["close"]
         now = datetime(2026, 9, 24, 14, 0, tzinfo=timezone.utc)
 
         class Frozen(datetime):
@@ -141,11 +144,15 @@ class BoundaryTests(unittest.TestCase):
                 return now if tz else now.replace(tzinfo=None)
         with mock.patch.object(main, "datetime", Frozen):
             with mock.patch.dict(os.environ, {"TRADING_HUB_MT5_SOURCE_TIMEZONE": BASIS}):
-                verified = main.session_context(fixture["rows"], fixture["rows"][-1]["close"])
-            os.environ.pop("TRADING_HUB_MT5_SOURCE_TIMEZONE", None)
-            unset = main.session_context(fixture["rows"], fixture["rows"][-1]["close"])
-        self.assertEqual(verified, unset)
-
+                verified = main.session_context(rows, price)
+            with mock.patch.dict(os.environ, {}, clear=False):
+                os.environ.pop("TRADING_HUB_MT5_SOURCE_TIMEZONE", None)
+                unset = main.session_context(rows, price)
+        self.assertEqual(verified, session_time.session_context_corrected(rows, price, now, BASIS))
+        self.assertEqual(verified["london_date"], "2026-09-24")
+        self.assertEqual((unset["london_high"], unset["london_low"], unset["london_date"], unset["session_alignment"]),
+                         (0.0, 0.0, None, None))
+        self.assertEqual((unset["session"], unset["new_york_time"]), (verified["session"], verified["new_york_time"]))
 
 def snapshot(observed: datetime, *, strategy_id="trendline", raw=True, direction="LONG", verified=False):
     bar_open = observed.replace(minute=(observed.minute // 15) * 15, second=0, microsecond=0)

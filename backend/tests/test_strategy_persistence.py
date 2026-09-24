@@ -74,7 +74,8 @@ class PersistedStrategyFieldTests(IsolationTestCase):
         self.assertEqual(set(snapshots), {"trendline", "sr"})
         self.assertEqual(snapshots["trendline"]["strategy_evidence"], {})
         self.assertEqual(snapshots["sr"]["strategy_evidence"], evidence)
-        self.assertEqual(snapshots["trendline"]["strategy_version"], "trendline-first-v3")
+        self.assertEqual(snapshots["trendline"]["strategy_version"], TrendlineStrategy.version)
+        self.assertEqual(TrendlineStrategy.version, "trendline-first-v4")
         self.assertEqual(snapshots["sr"]["strategy_version"], "sr-v1")  # unregistered: what the market reports
         for strategy_id, snapshot in snapshots.items():
             self.assertEqual(snapshot["episode_identity"]["strategy_id"], strategy_id)

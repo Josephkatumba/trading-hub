@@ -12,7 +12,7 @@ from .base import (CORE_FIELDS, DISABLED, EVIDENCE_CONTAINER, LEGACY_STRATEGY_ID
                    MarketInput, Strategy, StrategyResult, record_strategy_id)
 from .registry import StrategyRegistry
 from .support_resistance import SupportResistanceStrategy
-from .trendline import TrendlineStrategy
+from .trendline import LEGACY_VERSION as TRENDLINE_LEGACY_VERSION, LegacyTrendlineStrategy, TrendlineStrategy
 
 TRENDLINE = TrendlineStrategy.strategy_id
 
@@ -28,4 +28,5 @@ REGISTRY = build_default_registry()
 
 __all__ = ["CORE_FIELDS", "DISABLED", "EVIDENCE_CONTAINER", "LEGACY_STRATEGY_ID", "LIVE", "METADATA_FIELDS", "MarketInput",
            "REGISTRY", "SHADOW", "Strategy", "StrategyRegistry", "StrategyResult", "SupportResistanceStrategy", "TRENDLINE",
-           "TrendlineStrategy", "build_default_registry", "record_strategy_id"]
+           "TRENDLINE_LEGACY_VERSION", "LegacyTrendlineStrategy", "TrendlineStrategy", "build_default_registry",
+           "record_strategy_id"]

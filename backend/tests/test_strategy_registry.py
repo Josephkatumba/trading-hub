@@ -1,7 +1,9 @@
 """Phase 2: strategy contract + registry, with the trendline engine as the only strategy.
 
-Adapter equivalence: TrendlineStrategy output == scanner.analyze_symbol output,
-and its record == that output + exactly the approved metadata (strategy_id).
+Adapter equivalence: TrendlineStrategy output == scanner.analyze_symbol output
+(labelled with the strategy's version: trendline-first-v4 since the Phase 9 session
+correction; LegacyTrendlineStrategy reproduces the v3 output exactly), and its
+record == that output + exactly the approved metadata (strategy_id).
 Registry isolation: trendline runs through the registry; disabled strategies
 produce nothing; registering, enabling, failing or input-mutating future
 strategies cannot change the trendline result. The scan loop in main keeps
@@ -22,8 +24,8 @@ import golden_support as g  # noqa: E402
 
 import scanner  # noqa: E402
 import strategies  # noqa: E402
-from strategies import (CORE_FIELDS, METADATA_FIELDS, MarketInput, Strategy, StrategyRegistry,  # noqa: E402
-                        TrendlineStrategy, build_default_registry)
+from strategies import (CORE_FIELDS, METADATA_FIELDS, LegacyTrendlineStrategy, MarketInput, Strategy,  # noqa: E402
+                        StrategyRegistry, TrendlineStrategy, build_default_registry)
 from test_trendline_invariants import results as random_scans, walk  # noqa: E402
 
 
@@ -71,6 +73,10 @@ class AdapterEquivalenceTests(unittest.TestCase):
         cls.strategy = TrendlineStrategy()
 
     def assertAdapterEquivalent(self, market: MarketInput, direct: dict):
+        # `direct` is analyze_symbol's default (v3-labelled) output: the legacy strategy
+        # reproduces it exactly, v4 differs only in the version label.
+        self.assertEqual(g.canonical(LegacyTrendlineStrategy().evaluate(market)), g.canonical(direct))
+        direct = g.as_version(direct, TrendlineStrategy.version)
         payload = self.strategy.evaluate(market)
         self.assertEqual(g.canonical(payload), g.canonical(direct))
         result = strategies.StrategyResult(self.strategy.strategy_id, self.strategy.version, payload)
@@ -98,10 +104,11 @@ class AdapterEquivalenceTests(unittest.TestCase):
         fixture = next(f for f in self.fixtures if f["name"] == "real_XAUUSD")
         market = MarketInput(fixture["symbol"], copy.deepcopy(fixture["rows"]))
         before = copy.deepcopy(market)
-        self.assertEqual(g.canonical(self.strategy.evaluate(market)), g.canonical(scanner.analyze_symbol(fixture["symbol"], fixture["rows"])))
+        self.assertEqual(g.canonical(self.strategy.evaluate(market)),
+                         g.canonical(g.as_version(scanner.analyze_symbol(fixture["symbol"], fixture["rows"]), TrendlineStrategy.version)))
         self.assertEqual(market, before)
         short = MarketInput("SYN", walk(1, 59, 900.0, 0.3))
-        self.assertEqual(self.strategy.evaluate(short), scanner.analyze_symbol("SYN", walk(1, 59, 900.0, 0.3)))
+        self.assertEqual(self.strategy.evaluate(short), scanner.analyze_symbol("SYN", walk(1, 59, 900.0, 0.3)))  # no version when too short
 
     def test_identity_matches_what_the_engine_reports(self):
         for fixture in self.fixtures:
@@ -124,7 +131,7 @@ class AdapterEquivalenceTests(unittest.TestCase):
 class RegistryIsolationTests(unittest.TestCase):
     def setUp(self):
         self.fixture = next(f for f in g.load_fixtures() if f["name"] == "real_XAUUSD")
-        self.expected = g.canonical(g.scan(self.fixture))
+        self.expected = g.canonical(g.as_version(g.scan(self.fixture), TrendlineStrategy.version))
 
     def test_default_registry_has_trendline_live_and_sr_in_shadow(self):
         # Phase 6 registered Support & Resistance in SHADOW mode; trendline stays the only LIVE strategy.
@@ -139,7 +146,7 @@ class RegistryIsolationTests(unittest.TestCase):
         self.assertEqual(list(results), ["trendline", "support_resistance"])
         self.assertEqual([r.mode for r in results.values()], ["LIVE", "SHADOW"])
         self.assertTrue(results["trendline"].ok)
-        self.assertEqual(results["trendline"].strategy_version, "trendline-first-v3")
+        self.assertEqual(results["trendline"].strategy_version, "trendline-first-v4")
         self.assertEqual(g.canonical(results["trendline"].payload), self.expected)
 
     def test_disabled_strategy_produces_no_output_and_is_not_called(self):
@@ -247,7 +254,9 @@ class ScanLoopTests(unittest.TestCase):
         for market, (args, kwargs, payload) in zip(markets, direct_calls):
             # Same call the scan loop made before, and every payload field lands unchanged.
             self.assertEqual(args[0], market["broker_symbol"])
-            self.assertEqual(set(kwargs), {"spread", "session_context", "higher_rows"})
+            # Same call as before plus the version label (Phase 9: trendline-first-v4).
+            self.assertEqual(set(kwargs), {"spread", "session_context", "higher_rows", "strategy_version"})
+            self.assertEqual(kwargs["strategy_version"], "trendline-first-v4")
             self.assertEqual(g.canonical({key: market[key] for key in payload}), g.canonical(payload))
             self.assertNotIn("strategy_id", market)
         self.assertEqual(len(recorded), 1)

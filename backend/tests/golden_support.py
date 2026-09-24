@@ -22,7 +22,11 @@ sys.path.insert(0, str(BACKEND))
 FIXTURES = TESTS / "fixtures"
 SCANNER_FIXTURES = FIXTURES / "scanner"
 SCANNER_GOLDEN = FIXTURES / "golden" / "scanner_golden.json"
+# Persistence goldens per trendline version. The Phase 0/3 directory is the
+# trendline-first-v3 baseline and is never regenerated for later versions.
 PERSISTENCE_GOLDEN = FIXTURES / "golden" / "persistence"
+PERSISTENCE_GOLDEN_V4 = FIXTURES / "golden" / "persistence_trendline-first-v4"
+TRENDLINE_V3, TRENDLINE_V4 = "trendline-first-v3", "trendline-first-v4"
 OFFICIAL_SCAN = ["XAUUSD", "BTCUSD", "ETHUSD", "EURUSD", "GBPUSD", "GBPJPY", "USDJPY", "NAS100", "US500", "GER40"]
 PERSISTED_FILES = ("setup_observations.jsonl", "setup_lifecycle.jsonl", "setup_confirmations.jsonl")
 BASE_NOW = datetime(2026, 9, 24, 12, 0, 0, tzinfo=timezone.utc)
@@ -114,6 +118,39 @@ def trendline_only_registry():
     return registry
 
 
+def legacy_registry(shadow: bool = True):
+    """The default registry with trendline at its historical version (trendline-first-v3,
+    raw-epoch session time). The frozen pre-strategy/pre-index implementation
+    (tests/legacy_observations.py) writes that version, so byte comparisons with it
+    run the current code under this registry; v3 -> v4 is proven separately
+    (tests/test_trendline_v4.py)."""
+    from strategies import LIVE, SHADOW, LegacyTrendlineStrategy, StrategyRegistry, SupportResistanceStrategy
+    registry = StrategyRegistry()
+    registry.register(LegacyTrendlineStrategy(), enabled=True, mode=LIVE)
+    if shadow:
+        registry.register(SupportResistanceStrategy(), enabled=True, mode=SHADOW)
+    return registry
+
+
+@contextmanager
+def legacy_trendline(*modules):
+    """Run `modules` (observations, main) with legacy_registry() as their STRATEGIES."""
+    patches = [mock.patch.object(module, "STRATEGIES", legacy_registry()) for module in modules]
+    for patch in patches:
+        patch.start()
+    try:
+        yield
+    finally:
+        for patch in patches:
+            patch.stop()
+
+
+def as_version(payload: dict, version: str) -> dict:
+    """`payload` labelled with trendline `version` (analyze_symbol reports v3 by default;
+    the label is the only thing the version parameter changes)."""
+    return {**payload, "strategy_version": version} if isinstance(payload, dict) and "strategy_version" in payload else payload
+
+
 def load_fixtures() -> list[dict]:
     return [json.loads(path.read_text(encoding="utf-8")) for path in sorted(SCANNER_FIXTURES.glob("*.json"))]
 
@@ -155,6 +192,11 @@ def persistence_rounds() -> list[list[dict]]:
     return [first, [dict(m) for m in first], third]
 
 
+@contextmanager
+def _nothing():
+    yield
+
+
 class FrozenClock:
     """Replaces observations.datetime so now() is controllable per round."""
     current = BASE_NOW
@@ -194,8 +236,9 @@ def isolated_store(module, root: Path):
             setattr(module, name, value)
 
 
-def run_persistence(module, root: Path) -> dict[str, bytes]:
-    with isolated_store(module, root):
+def run_persistence(module, root: Path, legacy: bool = False) -> dict[str, bytes]:
+    """The golden scan rounds through `module`; legacy=True runs trendline-first-v3."""
+    with isolated_store(module, root), (legacy_trendline(module) if legacy else _nothing()):
         for index, markets in enumerate(persistence_rounds()):
             FrozenClock.current = BASE_NOW + timedelta(minutes=15 * index)
             module.record_markets(json.loads(json.dumps(markets)))

@@ -34,6 +34,21 @@ REAL_DATA = BACKEND / "data"
 FILES = ("setup_observations.jsonl", "setup_lifecycle.jsonl", "setup_confirmations.jsonl")
 FROZEN_NOW = datetime(2026, 9, 24, 12, 0, 0, tzinfo=timezone.utc)
 
+# The frozen implementation writes trendline-first-v3 (the version it was frozen at),
+# so the current module runs with the v3 strategy here; v4 differs from v3 only in
+# that label for these inputs (tests/test_trendline_v4.py, test_persistence_golden).
+_LEGACY_VERSION = None
+
+
+def setUpModule():
+    global _LEGACY_VERSION
+    _LEGACY_VERSION = g.legacy_trendline(current)
+    _LEGACY_VERSION.__enter__()
+
+
+def tearDownModule():
+    _LEGACY_VERSION.__exit__(None, None, None)
+
 
 class FrozenDatetime(datetime):
     @classmethod

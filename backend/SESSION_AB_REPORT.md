@@ -1,7 +1,9 @@
 # Phase 9: session-time A/B (LEGACY vs CORRECTED), trendline strategy
 
 Generated 2026-09-24 with `python tests/tools/session_ab_report.py OUT.json` (read-only:
-MT5 history + the real JSONL store; nothing written). Production is unchanged.
+MT5 history + the real JSONL store; nothing written). Production was unchanged by the experiment;
+the correction was then adopted as **trendline-first-v4** (see "Adoption" at the end). Below,
+"production" / "LEGACY" means the pre-v4 behaviour.
 
 ## Where session time enters the trendline strategy
 
@@ -84,3 +86,26 @@ and 654 real historical scan moments. It is not materially different for trading
 the current thresholds; it is a data-correctness fix for the recorded session range and score.
 Adopting it changes recorded strategy output (score, reason, session fields), so it must ship as a
 new trendline version, not a silent edit.
+
+## Adoption: trendline-first-v4
+
+Approved after this report. `TrendlineStrategy` (strategies/trendline.py) is now
+`trendline-first-v4` and is the registered LIVE trendline. Its session context uses the CORRECTED path
+(`main.session_context` delegates to it, basis from `TRADING_HUB_MT5_SOURCE_TIMEZONE`; without a basis
+the London range is unavailable rather than guessed). Detection, scoring thresholds, confirmation,
+levels, lifecycle and setup families are unchanged; `scanner.analyze_symbol` only gained a
+`strategy_version` label parameter (default `trendline-first-v3`).
+
+- `LegacyTrendlineStrategy` (`trendline-first-v3`, unregistered) keeps the old raw-epoch session
+  context; tests/legacy_session_context.py is a verbatim frozen copy of the pre-v4 production function.
+- Records keep the version that wrote them: nothing is rewritten, relabelled or migrated. Both versions
+  share `strategy_id` `trendline`, and the episode matcher is unchanged, so an episode open across the
+  upgrade has v3 snapshots followed by v4 snapshots.
+- Goldens: the Phase 0/3 scanner and persistence goldens remain the v3 baseline (reproduced by running
+  the v3 strategy); v4 persistence goldens are in tests/fixtures/golden/persistence_trendline-first-v4
+  and differ from v3 only in the version label.
+- Support & Resistance (shadow) does not read the session context; its snapshots record the scan's
+  shared market session context, which is now the corrected London range.
+- tests/test_trendline_v4.py compares full scans under both versions: only the London fields, the
+  session alignment, the session score (±2, New York only) with the total score and reason text, and the
+  version label differ.

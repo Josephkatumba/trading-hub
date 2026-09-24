@@ -34,6 +34,21 @@ import observations as current  # noqa: E402
 SYMBOLS = ("XAUUSD", "EURUSD", "NAS100", "LEGACY")
 ANCHOR_PAIRS = (("08:00", "09:00"), ("08:00", "10:00"), ("09:00", "11:00"))
 
+# The frozen implementation writes trendline-first-v3 (the version it was frozen at),
+# so the current module runs with the v3 strategy here; v4 differs from v3 only in
+# that label for these inputs (tests/test_trendline_v4.py, test_persistence_golden).
+_LEGACY_VERSION = None
+
+
+def setUpModule():
+    global _LEGACY_VERSION
+    _LEGACY_VERSION = g.legacy_trendline(current)
+    _LEGACY_VERSION.__enter__()
+
+
+def tearDownModule():
+    _LEGACY_VERSION.__exit__(None, None, None)
+
 
 def legacy_rows() -> list[dict]:
     """Pre-episode rows (no record_type) for LEGACY, incl. one without trendline."""

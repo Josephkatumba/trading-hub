@@ -109,11 +109,12 @@ no raw epoch). The 66 stored outcome records remain quarantined: they carry no
 outcome-level chronology proof, and records are not rewritten. The derived outcomes are
 computed in memory only; persisting them would be a separate, explicit decision.
 
-### Known limitation (not changed in Phase 8)
+### Known limitation (not changed in Phase 8; resolved by trendline-first-v4, see SESSION_AB_REPORT.md)
 
 `main.session_context` selects the London-session bars by reading raw MT5 epochs as UTC,
 so its London high/low window is 2-3 hours early. On the cached real bars (1,200 hourly
 samples) the London range differed in 90% of samples and the trendline
 `session_alignment` input (+5 score and a reason) in 5.7%. The session label itself uses
 the real clock and is correct. Fixing it changes live trendline scoring and needs an
-explicit decision.
+explicit decision. **Resolved:** the Phase 9 A/B test measured the correction and it was adopted as
+trendline-first-v4; records written before it keep trendline-first-v3 and are not rewritten.

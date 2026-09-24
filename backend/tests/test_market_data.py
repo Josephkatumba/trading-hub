@@ -222,7 +222,8 @@ class ContextTests(unittest.TestCase):
         self.assertEqual((dict(legacy_input.bars), dict(legacy_input.unavailable_timeframes)), ({}, {}))
         results = self.registry(Capture()).evaluate(legacy_input)
         self.assertTrue(results["trendline"].ok and results["capture"].ok, "no context collected: requirements unchecked")
-        self.assertEqual(g.canonical(results["trendline"].payload), g.canonical(g.scan({**fixture, "spread": 0.0, "session_context": None})))
+        self.assertEqual(g.canonical(results["trendline"].payload),
+                         g.canonical(g.as_version(g.scan({**fixture, "spread": 0.0, "session_context": None}), TrendlineStrategy.version)))
         self.assertEqual(TrendlineStrategy.data_requirements, {"M15": 300, "H1": 160})
         self.assertEqual(market_data.plan_for(strategies.REGISTRY), {"M15": 300, "H1": 160, "H4": 200, "D1": 200})
 

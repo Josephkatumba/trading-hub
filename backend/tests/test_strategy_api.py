@@ -38,7 +38,7 @@ class Disabled(Strategy):
 class RegistryApiTests(unittest.TestCase):
     def test_describe_lists_status_for_every_registered_strategy(self):
         self.assertEqual(strategies.REGISTRY.describe(), [
-            {"strategy_id": "trendline", "version": "trendline-first-v3", "timeframe": "M15", "higher_timeframes": ["H1"], "status": "LIVE"},
+            {"strategy_id": "trendline", "version": "trendline-first-v4", "timeframe": "M15", "higher_timeframes": ["H1"], "status": "LIVE"},
             {"strategy_id": "support_resistance", "version": "sr-levels-v1", "timeframe": "M15",
              "higher_timeframes": ["H1", "H4", "D1"], "status": "SHADOW"}])
         registry = strategies.build_default_registry()

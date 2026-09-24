@@ -1,9 +1,10 @@
-"""Phase 9: LEGACY vs CORRECTED session time (A/B experiment; production unchanged).
+"""Phase 9: LEGACY vs CORRECTED session time.
 
-The legacy path here must stay byte-identical to production main.session_context
-(the Phase 0 goldens keep asserting legacy trendline behaviour); the corrected path
-converts bar times through the verified broker basis. A/B regression tests pin what
-the correction can and cannot change in the scanner.
+The legacy path must stay identical to the pre-v4 production main.session_context,
+frozen verbatim in tests/legacy_session_context.py (trendline-first-v3). The
+corrected path converts bar times through the verified broker basis and is the
+production path since trendline-first-v4. A/B regression tests pin what the
+correction can and cannot change in the scanner.
 """
 from __future__ import annotations
 
@@ -18,9 +19,11 @@ from zoneinfo import ZoneInfo
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import golden_support as g  # noqa: E402
 
+import legacy_session_context as frozen_v3  # noqa: E402
 import main  # noqa: E402
 import session_ab  # noqa: E402
 import session_time as st  # noqa: E402
+from strategies import LegacyTrendlineStrategy, TrendlineStrategy  # noqa: E402
 from test_time_basis import BASIS, server_epoch, server_epoch_of  # noqa: E402
 
 LONDON, NEW_YORK = ZoneInfo("Europe/London"), ZoneInfo("America/New_York")
@@ -49,7 +52,7 @@ def day_bars(day: tuple[int, int, int], london_high: float, early_high: float) -
 
 
 class LegacyEquivalenceTests(unittest.TestCase):
-    def test_legacy_port_is_identical_to_production_session_context(self):
+    def samples(self):
         rng = random.Random(9)
         for fixture in g.load_fixtures():
             rows = fixture["rows"]
@@ -57,13 +60,28 @@ class LegacyEquivalenceTests(unittest.TestCase):
                 continue
             base = datetime.fromtimestamp(rows[-1]["time"], timezone.utc)
             for _ in range(25):
-                now = base + timedelta(minutes=rng.randint(-72 * 60, 72 * 60))
-                with self.subTest(fixture=fixture["name"], now=now), mock.patch.object(main, "datetime", frozen(now)):
-                    self.assertEqual(st.session_context_legacy(rows, rows[-1]["close"], now), main.session_context(rows, rows[-1]["close"]))
+                yield fixture, rows, base + timedelta(minutes=rng.randint(-72 * 60, 72 * 60))
 
-    def test_production_still_reads_raw_epochs_as_utc(self):
-        self.assertIs(main._bar_dt({"time": 1790286300}).tzinfo, timezone.utc)
-        self.assertEqual(main._bar_dt({"time": 1790286300}), st.legacy_bar_time({"time": 1790286300}))
+    def test_legacy_port_is_identical_to_the_pre_v4_production_session_context(self):
+        for fixture, rows, now in self.samples():
+            with self.subTest(fixture=fixture["name"], now=now), mock.patch.object(frozen_v3, "datetime", frozen(now)):
+                expected = frozen_v3.session_context(rows, rows[-1]["close"])
+                self.assertEqual(st.session_context_legacy(rows, rows[-1]["close"], now), expected)
+                self.assertEqual(LegacyTrendlineStrategy().session_context(rows, rows[-1]["close"], now, BASIS), expected,
+                                 "v3 ignores the basis: raw epochs as UTC")
+
+    def test_legacy_bar_time_is_the_pre_v4_bar_dt(self):
+        self.assertIs(frozen_v3._bar_dt({"time": 1790286300}).tzinfo, timezone.utc)
+        self.assertEqual(frozen_v3._bar_dt({"time": 1790286300}), st.legacy_bar_time({"time": 1790286300}))
+        self.assertFalse(hasattr(main, "_bar_dt"), "production no longer reads raw epochs as UTC")
+
+    def test_production_uses_the_corrected_path_of_the_live_trendline_version(self):
+        self.assertEqual(main.STRATEGIES.get("trendline").version, "trendline-first-v4")
+        for fixture, rows, now in self.samples():
+            with self.subTest(fixture=fixture["name"], now=now), mock.patch.object(main, "datetime", frozen(now)),                  mock.patch.dict("os.environ", {"TRADING_HUB_MT5_SOURCE_TIMEZONE": BASIS}):
+                production = main.session_context(rows, rows[-1]["close"])
+                self.assertEqual(production, st.session_context_corrected(rows, rows[-1]["close"], now, BASIS))
+                self.assertEqual(production, TrendlineStrategy().session_context(rows, rows[-1]["close"], now, BASIS))
 
 
 class CorrectedSessionTests(unittest.TestCase):
