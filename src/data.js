@@ -2,6 +2,7 @@ import {IMPORTED_TRADES} from "./importedData.js";
 import {withTimeProvenance,isValidTimeZone,UNVERIFIED_SESSION} from "./tradeTime.mjs";
 import {assignImportIds,tradeOrigin} from "./tradeImport.mjs";
 import {redactSampleTrade} from "./sampleRedaction.mjs";
+import {averageR,hasRecordedRisk} from "./riskData.mjs";
 const DEMO_TRADES = [
   { id:"TH-001", account:"Goldimus Funded", symbol:"XAUUSD", side:"BUY", entry:3342.2, exit:3356.8, volume:0.3, pnl:620, r:1.84, risk:337, time:"2026-09-21 14:32", session:"New York" },
   { id:"TH-002", account:"Personal Futures", symbol:"NAS100", side:"SELL", entry:22780, exit:22690, volume:1, pnl:410, r:1.35, risk:303, time:"2026-09-21 11:08", session:"London" },
@@ -42,6 +43,8 @@ function splitLine(line,delimiter=","){
 }
 function delimiterFor(line){return [",",";","\t"].sort((a,b)=>line.split(b).length-line.split(a).length)[0];}
 const num=value=>Number(String(value??"").replace(/[$,%]/g,"").replace(/,/g,""))||0;
+// Absent/blank optional columns stay null (unknown) instead of becoming 0.
+const optNum=value=>String(value??"").trim()===""?null:num(value);
 const aliases={
  account:["account","accountname","accountid","login"],symbol:["symbol","instrument","market"],side:["side","direction","type","action","ordertype"],
  entry:["entry","entryprice","openprice","open"],exit:["exit","exitprice","closeprice","close"],volume:["volume","lots","size","quantity"],
@@ -59,7 +62,7 @@ export function parseCSV(text,{sourceTimeZone=""}={}){
     const row=splitLine(line,delimiter),rawSide=String(find(row,aliases.side)).toUpperCase(),time=find(row,aliases.time),pnl=num(find(row,aliases.pnl));
     const account=find(row,aliases.account)||"Imported Account",symbol=(find(row,aliases.symbol)||"UNKNOWN").toUpperCase();
     const session=find(row,aliases.session);
-    const trade={explicitId:find(row,aliases.id),ticket:find(row,aliases.ticket),account,symbol,side:rawSide.includes("SELL")?"SELL":"BUY",entry:num(find(row,aliases.entry)),exit:num(find(row,aliases.exit)),volume:num(find(row,aliases.volume)),pnl,r:num(find(row,aliases.r)),risk:num(find(row,aliases.risk)),time:time||""};
+    const trade={explicitId:find(row,aliases.id),ticket:find(row,aliases.ticket),account,symbol,side:rawSide.includes("SELL")?"SELL":"BUY",entry:num(find(row,aliases.entry)),exit:num(find(row,aliases.exit)),volume:num(find(row,aliases.volume)),pnl,r:optNum(find(row,aliases.r)),risk:optNum(find(row,aliases.risk)),time:time||""};
     if(session){trade.session=session;trade.session_source="export";}
     if(sourceTimeZone)trade.source_timezone=sourceTimeZone;
     return trade;
@@ -81,10 +84,10 @@ export function calculateMetrics(trades){
   const by=key=>ordered.reduce((m,t)=>(m[t[key]||"Unknown"]=(m[t[key]||"Unknown"]||0)+(Number(t.pnl)||0),m),{});
   const bySymbol=by("symbol"),bySession=by("session");
   const bestInstrument=Object.entries(bySymbol).sort((a,b)=>b[1]-a[1])[0]?.[0]||"—",bestSession=Object.entries(bySession).filter(([name])=>name!==UNVERIFIED_SESSION).sort((a,b)=>b[1]-a[1])[0]?.[0]||"—";
-  const avgR=ordered.length?ordered.reduce((s,t)=>s+(Number(t.r)||0),0)/ordered.length:0;
+  const rStats=averageR(ordered),avgR=rStats.value,rCoverage=rStats.count,riskCoverage=ordered.filter(hasRecordedRisk).length;
   const expectancy=ordered.length?pnl/ordered.length:0;
-  return {pnl,wins:wins.length,losses:losses.length,breakevens:breakevens.length,winRate:ordered.length?wins.length/ordered.length*100:0,profitFactor:grossLoss?grossProfit/grossLoss:0,avgWin,avgLoss,payoffRatio:avgLoss?avgWin/avgLoss:0,expectancy,avgR,maxDrawdown,bestInstrument,bestSession,grossProfit,grossLoss,equityCurve:equityCurve(ordered)};
+  return {pnl,wins:wins.length,losses:losses.length,breakevens:breakevens.length,winRate:ordered.length?wins.length/ordered.length*100:0,profitFactor:grossLoss?grossProfit/grossLoss:0,avgWin,avgLoss,payoffRatio:avgLoss?avgWin/avgLoss:0,expectancy,avgR,rCoverage,riskCoverage,maxDrawdown,bestInstrument,bestSession,grossProfit,grossLoss,equityCurve:equityCurve(ordered)};
 }
 
 export function getAccounts(trades){const map=new Map();trades.forEach(t=>{if(!map.has(t.account))map.set(t.account,{name:t.account,platform:"Imported",balance:0,pnl:0,trades:0});const a=map.get(t.account);a.pnl+=Number(t.pnl)||0;a.trades++;});return [...map.values()];}
-export function getTradeContext(trade,trades){const sameSymbol=trades.filter(t=>t.symbol===trade.symbol),wins=sameSymbol.filter(t=>t.pnl>0),sameSession=sameSymbol.filter(t=>t.session===trade.session);const risks=trades.map(t=>Number(t.risk)||0).filter(Boolean);const avgRisk=risks.length?risks.reduce((s,x)=>s+x,0)/risks.length:0;return {symbolTrades:sameSymbol.length,symbolWinRate:sameSymbol.length?wins.length/sameSymbol.length*100:0,symbolAvgR:sameSymbol.length?sameSymbol.reduce((s,t)=>s+(Number(t.r)||0),0)/sameSymbol.length:0,symbolPnl:sameSymbol.reduce((s,t)=>s+(Number(t.pnl)||0),0),sessionPnl:sameSession.reduce((s,t)=>s+(Number(t.pnl)||0),0),avgRisk};}
+export function getTradeContext(trade,trades){const sameSymbol=trades.filter(t=>t.symbol===trade.symbol),wins=sameSymbol.filter(t=>t.pnl>0),sameSession=sameSymbol.filter(t=>t.session===trade.session);const risks=trades.filter(hasRecordedRisk).map(t=>Number(t.risk));const avgRisk=risks.length?risks.reduce((s,x)=>s+x,0)/risks.length:0;return {symbolTrades:sameSymbol.length,symbolWinRate:sameSymbol.length?wins.length/sameSymbol.length*100:0,symbolAvgR:averageR(sameSymbol).value,symbolPnl:sameSymbol.reduce((s,t)=>s+(Number(t.pnl)||0),0),sessionPnl:sameSession.reduce((s,t)=>s+(Number(t.pnl)||0),0),avgRisk};}

@@ -32,6 +32,7 @@ export function answerQuestion(question,trades){
  if(/risk|size|sizing|lot/.test(q)){
    title="Your risk profile";
    body=b.riskAvg?"Your average recorded risk is "+money(b.riskAvg)+". Risk consistency is "+(b.riskCv?Math.max(0,(1-b.riskCv)*100).toFixed(0):"—")+"/100.":"There is not enough recorded risk data yet.";
+   if(!b.riskAvg)facts.push("Risk needs each trade's initial stop loss (risk = |entry − stop| × volume × contract value). MT5 history exports do not include it, so it is shown as unavailable rather than estimated.");
    if(b.riskCv>.35)facts.push("Risk varies materially across the current sample.");
    facts.push("Risk consistency describes variability in recorded risk, not whether the risk level itself is appropriate.");
  }

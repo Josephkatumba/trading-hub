@@ -871,3 +871,4 @@ main{position:relative;padding-bottom:90px}.topline{border-bottom-color:rgba(98,
 .radar-root.is-simulated .panel,.radar-root.is-simulated .radar-hero{position:relative;background-image:repeating-linear-gradient(135deg,rgba(246,197,107,.05) 0 14px,transparent 14px 28px)}
 .radar-root.is-simulated .panel::after{content:"SIMULATED · NOT MARKET DATA";position:absolute;top:10px;right:12px;padding:2px 7px;border-radius:4px;background:#f6c56b;color:#1a1204;font-size:8px;font-weight:700;letter-spacing:.12em;pointer-events:none}
 .radar-root.is-simulated .live-dot,.radar-root.is-offline .live-dot{animation:none;background:#687486;box-shadow:none}
+.unavailable{color:#8a95a5!important;font-style:italic}

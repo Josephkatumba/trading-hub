@@ -1,3 +1,4 @@
+import {averageR} from "./riskData.mjs";
 import {getJournal} from "./journal.js";
 
 const avg=xs=>xs.length?xs.reduce((s,x)=>s+x,0)/xs.length:0;
@@ -7,7 +8,7 @@ const median=xs=>{if(!xs.length)return 0;const a=[...xs].sort((x,y)=>x-y),m=Math
 function bucket(trades,key){
   const map=new Map();
   trades.forEach(t=>{const value=t[key]||"Unknown";if(!map.has(value))map.set(value,[]);map.get(value).push(t);});
-  return [...map.entries()].map(([name,items])=>{const pnl=items.reduce((s,t)=>s+(Number(t.pnl)||0),0),wins=items.filter(t=>Number(t.pnl)>0).length;return {name,trades:items.length,pnl,winRate:items.length?wins/items.length*100:0,avgR:avg(items.map(t=>Number(t.r)||0)),expectancy:avg(items.map(t=>Number(t.pnl)||0))};}).sort((a,b)=>b.pnl-a.pnl);
+  return [...map.entries()].map(([name,items])=>{const pnl=items.reduce((s,t)=>s+(Number(t.pnl)||0),0),wins=items.filter(t=>Number(t.pnl)>0).length;return {name,trades:items.length,pnl,winRate:items.length?wins/items.length*100:0,avgR:averageR(items).value,expectancy:avg(items.map(t=>Number(t.pnl)||0))};}).sort((a,b)=>b.pnl-a.pnl);
 }
 function pairBuckets(trades,a,b){return bucket(trades.map(t=>({...t,__pair:(t[a]||"Unknown")+" · "+(t[b]||"Unknown")})),"__pair");}
 function equityStats(trades){
@@ -48,4 +49,4 @@ export function analyzeBehavior(trades){
   if(!flags.length)flags.push({type:"sample",title:"Machine is learning",text:"Add more executions and post-trade reviews. Trading Hub will have more evidence to compare behavior against outcomes."});
   return {reviewedCount:reviewed.length,reviewCoverage,riskAvg,riskCv,riskCoverage,confidence,confidenceLabel,consistency,setups,grades,rules,afterWin:{count:afterWin.length,avgPnl:avg(afterWin.map(t=>Number(t.pnl)||0))},afterLoss:{count:afterLoss.length,avgPnl:avg(afterLoss.map(t=>Number(t.pnl)||0))},maxWin,maxLoss,bySymbol,bySession,bySide,byAccount,pair,largestLosses,largestWins,expectancy,winAvg,lossAvg,payoff,medianPnl:median(outcomes),lossRate,tradeCount:trades.length,wins:wins.length,losses:losses.length,recoveryFactor,equity};
 }
-export function behaviorSummary(b){return {coverage:pct(b.reviewCoverage),riskConsistency:b.riskCv?Math.max(0,Math.min(100,(1-b.riskCv)*100)).toFixed(0):"—",strongestSetup:b.setups[0]?.name||"—",strongestSetupPnl:b.setups[0]?.pnl||0,confidence:b.confidence||0,confidenceLabel:b.confidenceLabel||"Early",consistency:b.consistency??0};}
+export function behaviorSummary(b){return {coverage:pct(b.reviewCoverage),riskConsistency:!b.riskAvg?"Unavailable":b.riskCv?Math.max(0,Math.min(100,(1-b.riskCv)*100)).toFixed(0):"—",strongestSetup:b.setups[0]?.name||"—",strongestSetupPnl:b.setups[0]?.pnl||0,confidence:b.confidence||0,confidenceLabel:b.confidenceLabel||"Early",consistency:b.consistency??0};}
