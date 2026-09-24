@@ -12,6 +12,9 @@ export const LEGACY_STRATEGY_ID = "trendline";
 export const STRATEGY_CATALOG = Object.freeze({
   trendline: Object.freeze({id: "trendline", tag: "TRENDLINE", label: "Trendline"}),
   support_resistance: Object.freeze({id: "support_resistance", tag: "S/R", label: "Support & Resistance"}),
+  // gardenResearch: a SHADOW (research) strategy whose current results are shown, labelled
+  // RESEARCH, in the Garden's market overview. Never as Garden setups, counters or alerts.
+  trend_momentum: Object.freeze({id: "trend_momentum", tag: "TREND/MOM", label: "Trend / Momentum", gardenResearch: true}),
   smc: Object.freeze({id: "smc", tag: "SMC", label: "Smart Money Concepts"}),
   crt: Object.freeze({id: "crt", tag: "CRT", label: "Candle Range Theory"}),
   ict: Object.freeze({id: "ict", tag: "ICT", label: "ICT"}),
@@ -109,7 +112,10 @@ export function strategyMatrix(market, registry) {
     return {...strategyTag(id), status: entry.status === "ERROR" ? "ERROR" : "OK", live: mode === "LIVE",
       mode: mode === "UNAVAILABLE" ? String(entry.mode || "LIVE").toUpperCase() : mode,
       state: entry.state ? String(entry.state).toUpperCase() : null, direction, confirmed: entry.confirmed === true,
-      setupFamily: entry.setup_family || null, setupId: entry.setup_id || null};
+      setupFamily: entry.setup_family || null, setupId: entry.setup_id || null,
+      score: Number.isFinite(Number(entry.score)) && entry.score != null ? Number(entry.score) : null,
+      plan: entry.entry != null && entry.stop_loss != null && entry.take_profit != null
+        ? {entry: entry.entry, stop: entry.stop_loss, target: entry.take_profit} : null};
   });
 }
 
@@ -155,6 +161,16 @@ export function shadowResults(markets, registry) {
   }
   const order = {CONFIRMING: 0, DEVELOPING: 1, WATCHING: 2};
   return rows.sort((a, b) => (Number(b.confirmed) - Number(a.confirmed)) || ((order[a.state] ?? 9) - (order[b.state] ?? 9)) || a.symbol.localeCompare(b.symbol));
+}
+
+/**
+ * Research results shown in the Garden market overview: SHADOW strategies whose catalog
+ * entry opts in (gardenResearch) with a directional result. Labelled RESEARCH by the
+ * renderer; never live setups, never counted, never alerts.
+ */
+export function gardenResearchEntries(entries) {
+  return (entries || []).filter(entry => !entry.live && entry.mode === "SHADOW" && entry.gardenResearch === true
+    && entry.status === "OK" && entry.direction && entry.state && entry.state !== "NO SETUP");
 }
 
 /** Group any rows by strategy id (e.g. archive entries); insertion order is first appearance. */

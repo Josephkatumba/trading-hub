@@ -119,16 +119,18 @@ def trendline_only_registry():
 
 
 def legacy_registry(shadow: bool = True):
-    """The default registry with trendline at its historical version (trendline-first-v3,
-    raw-epoch session time). The frozen pre-strategy/pre-index implementation
+    """The default registry (same strategies and modes) with trendline at its historical
+    version (trendline-first-v3, raw-epoch session time); shadow=False: trendline only. The frozen pre-strategy/pre-index implementation
     (tests/legacy_observations.py) writes that version, so byte comparisons with it
     run the current code under this registry; v3 -> v4 is proven separately
     (tests/test_trendline_v4.py)."""
-    from strategies import LIVE, SHADOW, LegacyTrendlineStrategy, StrategyRegistry, SupportResistanceStrategy
+    from strategies import LIVE, TRENDLINE, LegacyTrendlineStrategy, StrategyRegistry, build_default_registry
+    default = build_default_registry()
     registry = StrategyRegistry()
     registry.register(LegacyTrendlineStrategy(), enabled=True, mode=LIVE)
-    if shadow:
-        registry.register(SupportResistanceStrategy(), enabled=True, mode=SHADOW)
+    for strategy_id in default.registered() if shadow else ():
+        if strategy_id != TRENDLINE:
+            registry.register(default.get(strategy_id), enabled=strategy_id in default.enabled(), mode=default.mode(strategy_id))
     return registry
 
 

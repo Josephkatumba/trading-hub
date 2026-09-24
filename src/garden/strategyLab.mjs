@@ -105,8 +105,45 @@ export function evidenceModel(detail) {
     lifecycle: (detail.lifecycle_events || []).map(event => ({to: event.to_state, reason: event.reason_code, at: formatUtc(event.occurred_at)})),
     confirmedAt: confirmation ? formatUtc(confirmation.confirmed_at) : null,
     outcomes,
-    hasEvidence: Boolean(level || evidence.confirmation),
+    trend: trendModel(evidence),
+    hasEvidence: Boolean(level || evidence.confirmation || evidence.trend),
   };
+}
+
+/** Trend / Momentum evidence (stored calculations only): trend, impulse, pullback, trigger, score parts. */
+function trendModel(evidence) {
+  const trend = evidence?.trend;
+  if (!trend) return null;
+  const round = (value, digits = 2) => value == null || !Number.isFinite(Number(value)) ? null : Number(value).toFixed(digits);
+  return {
+    h4: trend.h4 ? {structure: trend.h4.structure, slope: round(trend.h4.ema50_slope_atr), direction: trend.h4.direction} : null,
+    d1: trend.d1 ? trend.d1.status : null,
+    h1Aligned: trend.h1 ? trend.h1.aligned === true : null,
+    impulseAtr: round(evidence.momentum?.impulse_atr), efficiency: round(evidence.momentum?.efficiency),
+    retracement: round(evidence.pullback?.retracement, 3), pullbackBars: evidence.pullback?.pullback_bars ?? null,
+    controlled: evidence.pullback ? evidence.pullback.controlled === true : null, failed: evidence.pullback?.failed || [],
+    trigger: evidence.trigger ? evidence.trigger.resumption === true : null,
+    structureInvalidation: evidence.plan?.structure_invalidation == null ? null : formatPrice(evidence.plan.structure_invalidation),
+    score: Object.entries(evidence.score_components || {}).map(([name, part]) => ({name, points: part.points, max: part.max})),
+  };
+}
+
+function trendSection(trend) {
+  if (!trend) return '';
+  const yes = value => value == null ? na : value ? "yes" : "no";
+  const show = value => value == null ? na : esc(value);
+  return '<h5>Trend and momentum</h5><dl class="gd-lab-dl">'
+    + (trend.h4 ? '<div><dt>H4 trend</dt><dd>' + show(trend.h4.direction || "none") + ' · ' + show(trend.h4.structure) + ' · EMA50 slope ' + show(trend.h4.slope) + ' × ATR</dd></div>' : '')
+    + '<div><dt>D1 context</dt><dd>' + show(trend.d1) + '</dd></div>'
+    + '<div><dt>H1 aligned</dt><dd>' + yes(trend.h1Aligned) + '</dd></div>'
+    + '<div><dt>Impulse</dt><dd>' + show(trend.impulseAtr) + ' × ATR H1 · efficiency ' + show(trend.efficiency) + '</dd></div>'
+    + '<div><dt>Pullback</dt><dd>retraced ' + show(trend.retracement) + ' over ' + show(trend.pullbackBars) + ' H1 bars · controlled ' + yes(trend.controlled)
+    + (trend.failed.length ? ' (' + trend.failed.map(esc).join("; ") + ')' : '') + '</dd></div>'
+    + '<div><dt>M15 continuation</dt><dd>' + yes(trend.trigger) + '</dd></div>'
+    + (trend.structureInvalidation ? '<div><dt>Structure invalidation</dt><dd>' + esc(trend.structureInvalidation) + '</dd></div>' : '')
+    + '</dl>'
+    + (trend.score.length ? '<h5>Score components</h5><ul class="gd-lab-rules">' + trend.score.map(part => '<li>' + esc(part.name) + ' ' + Number(part.points || 0)
+      + ' / ' + Number(part.max || 0) + '</li>').join("") + '</ul>' : '');
 }
 
 export function evidencePanel(model) {
@@ -117,7 +154,8 @@ export function evidencePanel(model) {
     + (model.shadow ? ' <span class="gd-shadow-badge">SHADOW</span>' : '') + '</h4>'
     + '<p class="gd-note">Recorded ' + esc(model.basis) + (model.observedAt ? ' at ' + esc(model.observedAt) : '') + ' · ' + esc(model.version || "") + ' · '
     + esc(model.family || "") + '. Stored strategy calculations, not a generated explanation.</p>'
-    + (!model.hasEvidence ? '<p class="gd-na">This setup has no structured strategy evidence (recorded before evidence was stored, or not an S/R setup).</p>' : '')
+    + (!model.hasEvidence ? '<p class="gd-na">This setup has no structured strategy evidence (recorded before evidence was stored, or its strategy stores none).</p>' : '')
+    + trendSection(model.trend)
     + (model.level ? '<h5>Why this level</h5><dl class="gd-lab-dl"><div><dt>Level</dt><dd>' + esc(model.level.type) + ' ' + esc(model.level.price) + ' (zone ' + esc(model.level.zone) + ')</dd></div>'
       + '<div><dt>Reactions</dt><dd>' + model.level.reactions + ' (strength ' + model.level.strength + ') · ' + byTf + '</dd></div>'
       + '<div><dt>Higher timeframe</dt><dd>' + (model.level.htf ? 'yes, ' + model.level.htfReactions + ' H4/D1 reactions' : 'no H4/D1 reaction') + '</dd></div>'

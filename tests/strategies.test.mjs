@@ -34,7 +34,7 @@ test("strategy tags: catalog names, unknown ids and old records", () => {
 
 test("strategy filters: only registered strategies are selectable; catalog names are not live", () => {
   const filters = strategyFilters(TRENDLINE_ONLY);
-  assert.deepEqual(filters.map(f => f.key), ["all", "trendline", "support_resistance", "smc", "crt", "ict"]);
+  assert.deepEqual(filters.map(f => f.key), ["all", "trendline", "support_resistance", "trend_momentum", "smc", "crt", "ict"]);
   assert.deepEqual(filters.filter(f => f.selectable).map(f => f.key), ["all", "trendline"]);
   assert.equal(filters.find(f => f.key === "smc").status, "UNAVAILABLE");
   const bar = strategyFilterBar(filters, "trendline");

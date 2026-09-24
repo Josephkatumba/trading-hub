@@ -130,6 +130,41 @@ def synthetic_store(root: Path) -> None:
     (root / "setup_confirmations.jsonl").write_text("".join(json.dumps(c) + "\n" for c in confirmations), encoding="utf-8")
 
 
+def trendline_only(root: Path) -> int:
+    """Rewrite a store copy without other strategies' records (snapshots, their lifecycle
+    events and confirmations); returns how many records were removed."""
+    snapshots = root / "setup_observations.jsonl"
+    if not snapshots.exists():
+        return 0
+    removed, other_ids = 0, set()
+    for line in snapshots.read_bytes().splitlines():
+        try:
+            row = json.loads(line)
+        except ValueError:
+            continue
+        if isinstance(row, dict) and row.get("strategy_id") not in (None, "trendline"):
+            other_ids.add(str(row.get("setup_id")))
+    if not other_ids:
+        return 0
+    for name in FILES:
+        path = root / name
+        if not path.exists():
+            continue
+        kept = []
+        for line in path.read_bytes().splitlines(keepends=True):
+            try:
+                row = json.loads(line)
+            except ValueError:
+                kept.append(line)
+                continue
+            if isinstance(row, dict) and (str(row.get("setup_id")) in other_ids or row.get("strategy_id") not in (None, "trendline")):
+                removed += 1
+                continue
+            kept.append(line)
+        path.write_bytes(b"".join(kept))
+    return removed
+
+
 class Harness:
     """Two byte-identical copies of a store: one for the legacy module, one for the current one."""
 
@@ -197,14 +232,25 @@ class EquivalenceMixin:
             self.assertEqual(current.lifecycle_events(sid), legacy.lifecycle_events(sid), sid)
 
     def test_setup_episodes_match_every_bucket_and_limit(self):
+        # The frozen implementation predates strategies and shadow mode, so it lists every
+        # episode: the current module's equivalent is include_shadow=True. The default (live)
+        # view equals the frozen implementation on the store without shadow strategies'
+        # records. (Both are the same comparison when a store has no shadow records.)
+        strip = lambda rows: [{k: v for k, v in row.items() if k != "strategy_id"} for row in rows]  # noqa: E731
+        shadow = {str(row.get("setup_id")) for row in legacy.all_observations() if row.get("shadow") is True}
+        views = []
         for bucket in ("current", "confirmed", "closed", "all"):
             for limit in (1, 7, 100, 500):
-                new, old = current.setup_episodes(bucket, limit), legacy.setup_episodes(bucket, limit)
+                new, old = current.setup_episodes(bucket, limit, include_shadow=True), legacy.setup_episodes(bucket, limit)
                 # Phase 3 adds strategy_id to each episode: the record's own value, or
                 # "trendline" (read-time mapping) for records written before it existed.
                 self.assertEqual([row["strategy_id"] for row in new], [row.get("strategy_id") or "trendline" for row in old])
-                strip = lambda rows: [{k: v for k, v in row.items() if k != "strategy_id"} for row in rows]  # noqa: E731
                 self.assertEqual(strip(new), strip(old), (bucket, limit))
+                views.append((bucket, limit, current.setup_episodes(bucket, limit)))
+        trendline_only(self.h.old_root)
+        for bucket, limit, live in views:
+            self.assertFalse({str(row["setup_id"]) for row in live} & shadow, (bucket, limit))
+            self.assertEqual(strip(live), strip(legacy.setup_episodes(bucket, limit)), ("live", bucket, limit))
 
     def test_performance_report_matches(self):
         confirmations = legacy.confirmation_events()
@@ -223,6 +269,10 @@ class EquivalenceMixin:
         self.assertEqual(current.latest_broker_symbols(), old)
 
     def test_record_markets_writes_identical_records(self):
+        # Trendline markets, seeded from trendline snapshots. The frozen implementation has no
+        # strategy scoping (it would match a trendline market to another strategy's episode),
+        # so it runs on the trendline view of the store; the current module on the full store.
+        other = trendline_only(self.h.old_root)
         rows = [row for row in legacy.all_observations() if row.get("record_type") == "setup_snapshot"]
         seeds = {}
         for row in rows:
@@ -238,7 +288,10 @@ class EquivalenceMixin:
                         "price": 10.0, "atr": 0.1, "score": 40})
         # Records already in the store are compared byte for byte; only the records
         # appended here have the Phase 3 strategy fields removed before comparing.
-        initial = {name: (self.h.new_root / name).stat().st_size if (self.h.new_root / name).exists() else 0 for name in FILES}
+        size = lambda root, name: (root / name).stat().st_size if (root / name).exists() else 0  # noqa: E731
+        initial = {name: size(self.h.new_root, name) for name in FILES}
+        initial_old = {name: size(self.h.old_root, name) for name in FILES}
+        original = {name: (self.h.new_root / name).read_bytes() if (self.h.new_root / name).exists() else b"" for name in FILES}
         for round_number in range(3):
             results = {}
             for module in (legacy, current):
@@ -254,9 +307,11 @@ class EquivalenceMixin:
             for name in FILES:
                 old_bytes = (self.h.old_root / name).read_bytes() if (self.h.old_root / name).exists() else b""
                 new_bytes = (self.h.new_root / name).read_bytes() if (self.h.new_root / name).exists() else b""
-                cut = initial[name]
-                self.assertEqual(new_bytes[:cut], old_bytes[:cut], (round_number, name))
-                self.assertEqual(g.without_strategy_bytes(new_bytes[cut:]), old_bytes[cut:], (round_number, name))
+                cut, old_cut = initial[name], initial_old[name]
+                self.assertEqual(new_bytes[:cut], original[name], (round_number, name))       # existing records untouched
+                if not other:
+                    self.assertEqual(new_bytes[:cut], old_bytes[:cut], (round_number, name))
+                self.assertEqual(g.without_strategy_bytes(new_bytes[cut:]), old_bytes[old_cut:], (round_number, name))
                 found = g.jsonl_strategy_fields(new_bytes[cut:])
                 self.assertTrue(not found or g.only_trendline_fields(found), (round_number, name))
 

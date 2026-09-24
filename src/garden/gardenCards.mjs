@@ -1,7 +1,7 @@
 // TRADeden Garden markup. Pure string renderers (no DOM access) over the view
 // models in gardenModel.mjs. Unavailable values are always shown explicitly.
 import {GARDEN_STAGES} from "./gardenModel.mjs";
-import {STRATEGY_STATUS, normalizeRegistry, shadowResults, strategyPerformance, strategyTag} from "../strategyModel.mjs";
+import {STRATEGY_STATUS, gardenResearchEntries, normalizeRegistry, shadowResults, strategyPerformance, strategyTag} from "../strategyModel.mjs";
 
 export const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"}[c]));
 const orUnavailable = (value, text = "Unavailable") => value == null || value === "" ? '<span class="gd-na">' + text + '</span>' : esc(value);
@@ -91,7 +91,7 @@ export function marketOverview(rows) {
       + '<span class="gd-market-bias"><span class="gd-market-dir gd-dir-text-' + esc(String(row.direction || "none").toLowerCase()) + '">' + orUnavailable(row.direction, "—") + '</span>'
       + '<small class="gd-market-state">' + orUnavailable(row.state, "—") + '</small></span>'
       + '<span class="gd-market-setup">' + (row.stage ? GARDEN_STAGES[row.stage].icon + ' ' : '') + esc(row.setupStatus) + '</span>'
-      + strategyMatrixLine(row)
+      + strategyMatrixLine(row) + researchLine(row)
       + '</button>').join("");
 }
 
@@ -109,6 +109,22 @@ export function strategyMatrixLine(row) {
   return '<span class="gd-market-matrix">'
     + (row.conflict ? '<b class="gd-conflict-badge" title="Live strategies disagree on direction; both are shown.">Strategy conflict</b>' : '')
     + entries.map(cell).join("") + '</span>';
+}
+
+/**
+ * Research (SHADOW) results a strategy opted in to show here, on their own labelled line:
+ * RESEARCH badge, strategy tag, direction, state and score. Not setups, not alerts.
+ */
+export function researchLine(row) {
+  const entries = gardenResearchEntries(row?.strategies);
+  if (!entries.length) return "";
+  return '<span class="gd-market-research" title="Research strategy: recorded for measurement only. Not a live setup, not an alert, not a trade signal.">'
+    + '<span class="gd-shadow-badge">RESEARCH</span>'
+    + entries.map(entry => '<span class="gd-matrix-cell is-research" data-strategy="' + esc(entry.id) + '"'
+      + (entry.plan ? ' title="' + esc('Entry ' + entry.plan.entry + ' · Stop ' + entry.plan.stop + ' · Target ' + entry.plan.target) + '"' : '') + '>' + esc(entry.tag) + ' '
+      + (entry.direction === "LONG" ? "▲ LONG" : "▼ SHORT") + ' · ' + esc(entry.state) + (entry.confirmed ? ' · research confirmed' : '')
+      + (entry.score == null ? '' : ' · ' + esc(entry.score)) + '</span>').join("")
+    + '</span>';
 }
 
 /** Strategy filter buttons; strategies that are not registered cannot be selected. */

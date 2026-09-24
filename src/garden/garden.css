@@ -392,6 +392,9 @@ body.garden-mode .topline b { color: #1c2321; }
 .gd-market-matrix { display: flex; flex-wrap: wrap; gap: 6px; grid-column: 1 / -1; font-size: 11px; }
 .gd-matrix-cell { padding: 1px 7px; border-radius: 6px; background: var(--gd-grey-bg); color: var(--gd-muted); font-weight: 700; }
 .gd-matrix-cell.is-not-live { opacity: .6; font-style: italic; }
+/* Research (shadow) results a strategy opted in to show in the market overview */
+.gd-market-research { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; grid-column: 1 / -1; font-size: 11px; }
+.gd-matrix-cell.is-research { border: 1px dashed var(--gd-border-strong); background: transparent; font-style: italic; }
 .gd-conflict-badge { padding: 1px 7px; border-radius: 6px; background: #fff4e0; color: #8a5a00; font-weight: 800; }
 .gd-lab-list { display: grid; gap: 8px; margin: 10px 0; padding: 0; list-style: none; }
 .gd-lab-item { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; padding: 9px 12px; border: 1px solid var(--gd-border); border-radius: 10px; background: var(--gd-surface-2); }

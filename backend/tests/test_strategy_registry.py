@@ -134,17 +134,18 @@ class RegistryIsolationTests(unittest.TestCase):
         self.expected = g.canonical(g.as_version(g.scan(self.fixture), TrendlineStrategy.version))
 
     def test_default_registry_has_trendline_live_and_sr_in_shadow(self):
-        # Phase 6 registered Support & Resistance in SHADOW mode; trendline stays the only LIVE strategy.
+        # Phase 6 registered Support & Resistance, Phase 10 Trend / Momentum, both in SHADOW
+        # (research) mode; trendline stays the only LIVE strategy.
         for registry in (strategies.REGISTRY, build_default_registry()):
-            self.assertEqual(registry.registered(), ["trendline", "support_resistance"])
-            self.assertEqual(registry.enabled(), ["trendline", "support_resistance"])
+            self.assertEqual(registry.registered(), ["trendline", "support_resistance", "trend_momentum"])
+            self.assertEqual(registry.enabled(), ["trendline", "support_resistance", "trend_momentum"])
             self.assertEqual(registry.live(), ["trendline"])
-            self.assertEqual([registry.mode(s) for s in registry.registered()], ["LIVE", "SHADOW"])
+            self.assertEqual([registry.mode(s) for s in registry.registered()], ["LIVE", "SHADOW", "SHADOW"])
 
     def test_trendline_runs_through_the_registry(self):
         results = build_default_registry().evaluate(market_input(self.fixture))
-        self.assertEqual(list(results), ["trendline", "support_resistance"])
-        self.assertEqual([r.mode for r in results.values()], ["LIVE", "SHADOW"])
+        self.assertEqual(list(results), ["trendline", "support_resistance", "trend_momentum"])
+        self.assertEqual([r.mode for r in results.values()], ["LIVE", "SHADOW", "SHADOW"])
         self.assertTrue(results["trendline"].ok)
         self.assertEqual(results["trendline"].strategy_version, "trendline-first-v4")
         self.assertEqual(g.canonical(results["trendline"].payload), self.expected)
@@ -164,7 +165,7 @@ class RegistryIsolationTests(unittest.TestCase):
         registry = build_default_registry()
         registry.register(FutureStrategy(), enabled=True)
         results = registry.evaluate(market_input(self.fixture))
-        self.assertEqual(list(results), ["trendline", "support_resistance", "future"])
+        self.assertEqual(list(results), ["trendline", "support_resistance", "trend_momentum", "future"])
         self.assertEqual(g.canonical(results["trendline"].payload), self.expected)
         self.assertEqual(results["future"].record()["strategy_id"], "future")
 

@@ -60,7 +60,7 @@ class StrategyLabTests(IsolationTestCase):
 
     def test_counts_are_per_strategy_and_never_mixed(self):
         report = self.report()
-        self.assertEqual(list(report), ["trendline", "support_resistance"])
+        self.assertEqual(list(report), ["trendline", "support_resistance", "trend_momentum"])
         sr, trend = report["support_resistance"], report["trendline"]
         self.assertEqual((sr["mode"], sr["version"], trend["mode"]), ("SHADOW", "sr-levels-v1", "LIVE"))
         self.assertEqual((sr["setups"]["total"], trend["setups"]["total"]), (3, 1))
@@ -115,7 +115,7 @@ class StrategyLabTests(IsolationTestCase):
             response = main.strategy_lab(recent=25)
             detail = main.setup_detail(self.sr_long_id)
             garden = main.setup_episode_feed(bucket="all", limit=100)
-        self.assertEqual([s["strategy_id"] for s in response["strategies"]], ["trendline", "support_resistance"])
+        self.assertEqual([s["strategy_id"] for s in response["strategies"]], ["trendline", "support_resistance", "trend_momentum"])
         evidence = detail["snapshots"][-1]["strategy_evidence"]
         self.assertEqual(evidence["level"]["type"], "SUPPORT")
         self.assertTrue(evidence["confirmation"]["passed"])

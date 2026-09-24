@@ -124,7 +124,7 @@ class TrendlineV4EndToEndTests(unittest.TestCase):
         self.assertEqual(TrendlineStrategy.strategy_id, LegacyTrendlineStrategy.strategy_id)
         self.assertEqual(REGISTRY.get("trendline").version, "trendline-first-v4")
         self.assertEqual(REGISTRY.live(), ["trendline"])
-        self.assertEqual(REGISTRY.registered(), ["trendline", "support_resistance"])
+        self.assertEqual(REGISTRY.registered(), ["trendline", "support_resistance", "trend_momentum"])
         # Everything but the version label and the session reader is the same strategy.
         for name in ("timeframe", "higher_timeframes", "lifecycle", "data_requirements", "evaluate"):
             self.assertEqual(getattr(TrendlineStrategy, name), getattr(LegacyTrendlineStrategy, name), name)
