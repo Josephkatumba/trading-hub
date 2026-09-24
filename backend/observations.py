@@ -457,13 +457,14 @@ def snapshots_by_observation_id(observation_ids: Iterable[str]) -> dict[str, dic
     (last occurrence wins), restricted to the ids a caller will look up.
     """
     index = _observation_index()
-    out: dict[str, dict[str, Any]] = {}
     with index.lock:
+        wanted: list[tuple[str, int]] = []
         for observation_id in dict.fromkeys(str(value) for value in observation_ids):
             positions = index.lookup("k_snap_oid", observation_id)
             if positions:
-                out[observation_id] = index.load([positions[-1]])[0]
-    return out
+                wanted.append((observation_id, positions[-1]))
+        rows = index.load(position for _, position in wanted)   # one file read for all
+    return {observation_id: row for (observation_id, _), row in zip(wanted, rows)}
 
 
 def outcome_watch_snapshots(claimed_observation_ids: set[str], symbols_with_bars: set[str],
