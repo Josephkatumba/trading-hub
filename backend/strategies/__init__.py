@@ -6,7 +6,8 @@ build_default_registry(); they do not touch the trendline strategy.
 """
 from __future__ import annotations
 
-from .base import CORE_FIELDS, METADATA_FIELDS, MarketInput, Strategy, StrategyResult
+from .base import (CORE_FIELDS, EVIDENCE_CONTAINER, LEGACY_STRATEGY_ID, METADATA_FIELDS, MarketInput, Strategy,
+                   StrategyResult, record_strategy_id)
 from .registry import StrategyRegistry
 from .trendline import TrendlineStrategy
 
@@ -21,5 +22,6 @@ def build_default_registry() -> StrategyRegistry:
 
 REGISTRY = build_default_registry()
 
-__all__ = ["CORE_FIELDS", "METADATA_FIELDS", "MarketInput", "REGISTRY", "Strategy", "StrategyRegistry",
-           "StrategyResult", "TRENDLINE", "TrendlineStrategy", "build_default_registry"]
+__all__ = ["CORE_FIELDS", "EVIDENCE_CONTAINER", "LEGACY_STRATEGY_ID", "METADATA_FIELDS", "MarketInput", "REGISTRY",
+           "Strategy", "StrategyRegistry", "StrategyResult", "TRENDLINE", "TrendlineStrategy", "build_default_registry",
+           "record_strategy_id"]

@@ -117,5 +117,20 @@ observation log per request.
 `scanner.analyze_symbol`, whose rules are unchanged. The scan loop runs the
 enabled strategies through the registry and builds each market from the
 unmodified trendline payload; a failing or disabled strategy cannot affect
-another's result. Strategy metadata (`strategy_id`) is not yet added to API
-responses or persisted records. See `tests/test_strategy_registry.py`.
+another's result. See `tests/test_strategy_registry.py`.
+
+Persistence and lifecycle are scoped by strategy (`tests/test_strategy_persistence.py`):
+
+- Snapshots carry `strategy_id`, `strategy_version` (from the registered
+  strategy) and `strategy_evidence` (a strategy's own evidence dict; empty for
+  trendline, whose evidence stays in its existing fields); `episode_identity`
+  and confirmation events carry `strategy_id`. Lifecycle events and outcomes
+  join through `setup_id` / `observation_id` and are unchanged.
+- Episode matching and terminal suppression only consider episodes of the same
+  strategy, so different strategies coexist on one symbol and never invalidate
+  or suppress each other; within a strategy the rules are unchanged.
+- Historical records are never rewritten: a record without `strategy_id` is
+  read as `trendline` (setup_type BREAK / REVERSAL / WATCHING / GENERAL still
+  distinguishes its setups and context episodes).
+- API additions only: `markets[i].strategies[]` on the radar, `strategy_id` on
+  setup episodes, `by_strategy` in performance reports.

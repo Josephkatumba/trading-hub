@@ -14,6 +14,7 @@ from schemas import DataQuality, SetupConfirmationEvent, SetupLifecycleEvent, Se
 from episode_identity import identity_evidence, rank_candidates
 from market_time import parse_aware_utc, utc_iso
 from jsonl_index import ensure_trailing_newline, index_for, indexed_jsonl_records
+from strategies import EVIDENCE_CONTAINER, REGISTRY as STRATEGIES, record_strategy_id
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 LOG_FILE = DATA_DIR / "setup_observations.jsonl"
@@ -92,7 +93,7 @@ _SUMMARY_FIELDS = ("setup_id", "observation_id", "observed_at", "timestamp", "sy
                    "direction", "lifecycle_state", "broker_symbol")
 _PERFORMANCE_FIELDS = ("setup_id", "observation_id", "observed_at", "timestamp", "symbol",
                        "direction", "lifecycle_state")
-_OBSERVATION_INDEX_SCHEMA = "observations-v2"
+_OBSERVATION_INDEX_SCHEMA = "observations-v3"
 _LIFECYCLE_INDEX_SCHEMA = "lifecycle-v1"
 _CONFIRMATION_INDEX_SCHEMA = "confirmations-v1"
 _TERMINAL_STATES = frozenset({"INVALIDATED", "EXPIRED", "RESOLVED"})
@@ -101,9 +102,10 @@ _TERMINAL_STATES = frozenset({"INVALIDATED", "EXPIRED", "RESOLVED"})
 def _closed_episode_fields(row: dict[str, Any], snapshot: bool) -> dict[str, Any] | None:
     """What terminal suppression reads from an episode's latest row ("ep").
 
-    fp: trendline fingerprint, present only when the episode has a trendline
-    identity; px: float(reference price) or None. None means the row cannot be
-    represented exactly, and _record_markets then uses the full-row path.
+    st: strategy_id (read-time mapped); fp: trendline fingerprint, present only
+    when the episode has a trendline identity; px: float(reference price) or
+    None. None means the row cannot be represented exactly, and _record_markets
+    then uses the full-row path.
     """
     if "_terminal_state" in row:
         return None
@@ -117,7 +119,7 @@ def _closed_episode_fields(row: dict[str, Any], snapshot: bool) -> dict[str, Any
         line, price = row.get("trendline_identity"), row.get("price")
     if any(value is not None and not isinstance(value, str) for value in (row.get("symbol"), row.get("direction"))):
         return None
-    fields: dict[str, Any] = {}
+    fields: dict[str, Any] = {"st": record_strategy_id(row)}
     if line:
         if not isinstance(line, dict) or not isinstance(line.get("fingerprint"), (str, type(None))):
             return None
@@ -194,7 +196,7 @@ def _confirmation_index():
 # episode only what terminal suppression reads. _EpisodeTable derives both from
 # the observation index (latest summary per episode key, incl. "ep") and the
 # lifecycle index (last to_state per setup_id), consuming only rows appended
-# since the previous scan. Closed episodes are bucketed by (symbol, direction)
+# since the previous scan. Closed episodes are bucketed by (strategy, symbol, direction)
 # and addressed by first-appearance rank, so suppression finds the same first
 # match as the former in-order walk without visiting every closed episode.
 # Stores holding rows the compact form cannot represent exactly use
@@ -210,7 +212,10 @@ def _episode_from_row(key: Any, row: dict[str, Any], record_type: Any) -> dict[s
 
 
 def _suppresses(episode: dict[str, Any], market: dict[str, Any], terminal_state) -> bool:
-    """The terminal-suppression rule, evaluated exactly as the former walk did."""
+    """The terminal-suppression rule, evaluated exactly as the former walk did,
+    within one strategy: another strategy's closed episode never suppresses."""
+    if record_strategy_id(episode) != record_strategy_id(market):
+        return False
     if episode.get("symbol") != market.get("symbol") or episode.get("direction") != market.get("direction"):
         return False
     # Terminal episodes suppress exact trendline recurrence and near-price
@@ -224,7 +229,7 @@ def _suppresses(episode: dict[str, Any], market: dict[str, Any], terminal_state)
 
 
 class _ClosedBucket:
-    """Closed episodes sharing (symbol, direction), addressed by first-appearance rank."""
+    """Closed episodes sharing (strategy, symbol, direction), addressed by first-appearance rank."""
 
     def __init__(self) -> None:
         self.count = 0
@@ -335,7 +340,7 @@ class _EpisodeTable:
         if to_state not in _TERMINAL_STATES:
             self.open.add(key)
             return
-        bucket_key = (summary.get("symbol"), summary.get("direction"))
+        bucket_key = (fields["st"], summary.get("symbol"), summary.get("direction"))
         rank = self.rank[key]
         self.buckets.setdefault(bucket_key, _ClosedBucket()).add(rank, fields, to_state)
         self.closed[key] = (bucket_key, rank, fields, to_state)
@@ -358,7 +363,7 @@ class _IndexedEpisodeView:
 
     def persisted_match(self, market: dict[str, Any]) -> tuple[Any, Any] | None:
         try:
-            bucket = self.table.buckets.get((market.get("symbol"), market.get("direction")))
+            bucket = self.table.buckets.get((record_strategy_id(market), market.get("symbol"), market.get("direction")))
         except TypeError:
             return None  # unhashable market fields never equal a stored symbol/direction
         if bucket is None or not bucket.count:
@@ -486,8 +491,17 @@ def _quality(market: dict[str, Any], observed_at: str) -> DataQuality:
         observation_latency_seconds=latency, timestamp_quality=timestamp_quality)
 
 
+def _strategy_version(strategy_id: str, market: dict[str, Any]) -> str:
+    """The registered strategy's version; an unregistered id keeps what the market reports."""
+    try:
+        return STRATEGIES.get(strategy_id).version
+    except KeyError:
+        return str(market.get("strategy_version") or "unregistered")
+
+
 def _snapshot(market: dict[str, Any], setup_id: str, state: str, now: str) -> SetupSnapshot:
     observation_id = _uid("obs")
+    strategy_id = record_strategy_id(market)
     source_ts = market.get("source_timestamp")
     features = {key: market.get(key) for key in (
         "price", "bid", "ask", "spread", "change_pct", "rsi", "ema20", "ema50",
@@ -509,11 +523,13 @@ def _snapshot(market: dict[str, Any], setup_id: str, state: str, now: str) -> Se
         source_timestamp=source_ts, symbol=str(market.get("symbol", "UNKNOWN")),
         broker_symbol=market.get("broker_symbol"), timeframe=str(market.get("timeframe") or "M15"),
         higher_timeframes=list(market.get("higher_timeframes") or ["H1"]),
-        direction=market.get("direction"), strategy_version="trendline-first-v3",
+        direction=market.get("direction"), strategy_id=strategy_id,
+        strategy_version=_strategy_version(strategy_id, market),
         setup_type=market.get("setup_family") or market.get("trendline_state") or "GENERAL", lifecycle_state=state,
         reference_price=market.get("price"), proposed_entry=market.get("entry"),
         proposed_stop_loss=market.get("stop_loss"), proposed_take_profit=market.get("take_profit"),
-        features=features, rule_evidence=rule_evidence, score=market.get("score"),
+        features=features, rule_evidence=rule_evidence,
+        strategy_evidence=dict(market.get(EVIDENCE_CONTAINER) or {}), score=market.get("score"),
         score_breakdown=dict(market.get("score_breakdown") or {}),
         session={key: market.get(key) for key in ("session", "london_high", "london_low", "london_complete", "session_alignment", "london_date", "new_york_time") if key in market},
         data_freshness={"candle_age_seconds": _quality(market, now).get("candle_age_seconds"),
@@ -521,7 +537,7 @@ def _snapshot(market: dict[str, Any], setup_id: str, state: str, now: str) -> Se
             "observation_latency_seconds": _quality(market, now).get("observation_latency_seconds"),
             "timestamp_quality": _quality(market, now).get("timestamp_quality")},
         data_quality=_quality(market, now),
-        episode_identity=identity_evidence(market),
+        episode_identity={**identity_evidence(market), "strategy_id": strategy_id},
         invalidation_price=market.get("invalidation_hint"), atr=market.get("atr"),
         time_provenance=time_provenance)
 
@@ -563,8 +579,11 @@ def _record_markets(markets: list[dict[str, Any]]) -> int:
         episode["_terminal_state"] = "EXPIRED"
         closed_now.append(episode)
     for market in markets:
+        # Episodes are scoped by strategy: another strategy's episode on the same
+        # symbol is never a candidate, so it cannot be continued, invalidated or expired.
         candidates = [episode for episode in open_episodes
-                      if episode.get("symbol") == market.get("symbol")
+                      if record_strategy_id(episode) == record_strategy_id(market)
+                      and episode.get("symbol") == market.get("symbol")
                       and str(episode.get("timeframe") or "M15") == str(market.get("timeframe") or "M15")]
         previous, evaluated = rank_candidates(market, candidates, now_dt)
         # Close episodes explicitly when their continuity breaks or they expire.
@@ -659,6 +678,7 @@ def _record_confirmation_events(current_snapshots: list[dict[str, Any]]) -> int:
             confirmation_event_id=_uid("cnf"), setup_id=setup_id,
             confirmed_at=utc_iso(confirmed_at),
             observation_id=str(snapshot.get("observation_id") or "legacy"),
+            strategy_id=record_strategy_id(snapshot),
             strategy_version=str(snapshot.get("strategy_version") or "trendline-first-v3"),
             symbol=str(snapshot.get("symbol") or "UNKNOWN"), direction=snapshot.get("direction"),
             setup_type=snapshot.get("setup_type") or snapshot.get("setup_family"),
@@ -839,7 +859,8 @@ def setup_episodes(bucket: str = "current", limit: int = 100) -> list[dict[str, 
                         if started is not None and ended is not None else None)
         except (TypeError, ValueError):
             duration = None
-        output.append({**snapshot, "lifecycle_state": state, "detected_at": detected,
+        output.append({**snapshot, "strategy_id": record_strategy_id(snapshot),
+            "lifecycle_state": state, "detected_at": detected,
             "duration_seconds": duration, "confirmation": confirmation,
             "confirmation_time": confirmation.get("confirmed_at") if confirmation else None,
             "closed_event": timeline[-1] if state in {"INVALIDATED", "EXPIRED", "RESOLVED"} and timeline else None,

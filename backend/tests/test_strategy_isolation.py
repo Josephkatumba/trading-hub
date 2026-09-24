@@ -4,10 +4,9 @@ Mandated rule: a setup from one strategy must never invalidate, suppress, modify
 or cancel a setup from another strategy; state is isolated by strategy_id, and
 opposing strategies coexist (a conflict is information, not a decision).
 
-Today episodes are scoped by symbol + timeframe only, so these rules do NOT
-hold yet. The target tests are marked expectedFailure and document the gap.
-Phase 3 (strategy_id scoping) must make them pass; an unexpected success then
-fails the suite, forcing the marker to be removed.
+Phase 0 wrote the target tests as expectedFailure while episodes were scoped
+by symbol + timeframe only; Phase 3 scoped episodes, suppression and
+confirmations by strategy_id and made them pass.
 
 The baseline tests must keep passing throughout: within ONE strategy a
 direction change still invalidates the episode, and context episodes (market
@@ -26,7 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import golden_support as g  # noqa: E402
 import observations  # noqa: E402
 
-PHASE3 = "Phase 3: episodes and suppression are not scoped by strategy_id yet"
+PHASE3 = "episodes, suppression and confirmations must be scoped by strategy_id"
 
 
 def market(direction="LONG", strategy_id=None, *, symbol="XAUUSD", state="DEVELOPING", valid=False,
@@ -113,39 +112,35 @@ class BaselineBehaviourTests(IsolationTestCase):
 
 
 class StrategyIsolationTargetTests(IsolationTestCase):
-    """Mandated isolation rules. Expected to fail until Phase 3."""
+    """Mandated isolation rules (expected failures until Phase 3)."""
 
-    @unittest.expectedFailure
     def test_opposing_strategy_does_not_invalidate_a_trendline_setup(self):
-        trendline = self.store.scan(market("LONG", "trendline_break"))[0]
+        trendline = self.store.scan(market("LONG", "trendline"))[0]
         self.store.scan(market("SHORT", "smc", anchors=None, family="REVERSAL"))
         closing = [e for e in self.store.events_for(trendline["setup_id"]) if e["to_state"] in {"INVALIDATED", "EXPIRED"}]
         self.assertEqual(closing, [], PHASE3)
 
-    @unittest.expectedFailure
     def test_opposing_strategies_coexist_as_separate_tagged_setups(self):
         for _ in range(2):
-            trendline, smc = self.store.scan(market("LONG", "trendline_break"), market("SHORT", "smc", anchors=None, family="REVERSAL"))
+            trendline, smc = self.store.scan(market("LONG", "trendline"), market("SHORT", "smc", anchors=None, family="REVERSAL"))
         self.assertNotEqual(trendline["setup_id"], smc["setup_id"])
         snapshots = self.store.records("setup_observations.jsonl")
         tagged = {s["setup_id"]: s.get("strategy_id") for s in snapshots}
-        self.assertEqual(tagged.get(trendline["setup_id"]), "trendline_break", PHASE3)
+        self.assertEqual(tagged.get(trendline["setup_id"]), "trendline", PHASE3)
         self.assertEqual(tagged.get(smc["setup_id"]), "smc", PHASE3)
         for setup_id in (trendline["setup_id"], smc["setup_id"]):
             self.assertFalse([e for e in self.store.events_for(setup_id) if e["to_state"] in {"INVALIDATED", "EXPIRED"}], PHASE3)
 
-    @unittest.expectedFailure
     def test_closed_setup_of_one_strategy_does_not_suppress_another(self):
         # An S/R episode (no trendline geometry) is invalidated by price...
         self.store.scan(market("LONG", "support_resistance", anchors=None, invalidation=2640.0))
         self.store.scan(market("LONG", "support_resistance", anchors=None, invalidation=2640.0, price=2635.0))
         # ...then a trendline setup appears nearby in the same direction: it must open, not be suppressed.
-        trendline = self.store.scan(market("LONG", "trendline_break", anchors=None, price=2636.0))[0]
+        trendline = self.store.scan(market("LONG", "trendline", anchors=None, price=2636.0))[0]
         self.assertFalse(trendline.get("episode_suppressed"), PHASE3)
 
-    @unittest.expectedFailure
     def test_confirmation_of_one_strategy_leaves_another_untouched(self):
-        trendline = self.store.scan(market("LONG", "trendline_break"))[0]
+        trendline = self.store.scan(market("LONG", "trendline"))[0]
         before = self.store.events_for(trendline["setup_id"])
         self.store.scan(market("SHORT", "smc", anchors=None, family="REVERSAL", state="CONFIRMING", valid=True, invalidation=2700.0))
         self.assertEqual(self.store.events_for(trendline["setup_id"]), before, PHASE3)

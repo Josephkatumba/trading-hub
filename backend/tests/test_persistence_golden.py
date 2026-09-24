@@ -5,9 +5,10 @@ continue, replace) with pinned time and UUIDs. The resulting observation,
 lifecycle and confirmation files must match tests/fixtures/golden/persistence
 byte for byte, and the frozen pre-index implementation must agree.
 
-Phase 3 will intentionally ADD strategy metadata to these records; that change
-must be made by regenerating the golden files (tests/tools/regen_golden.py) and
-reviewing that the diff contains only the new fields.
+Phase 3 intentionally ADDED strategy metadata (golden_support.STRATEGY_RECORD_FIELDS)
+and the golden files were regenerated once for it; with those fields removed they
+are byte-identical to the Phase 0 goldens, and the frozen pre-strategy
+implementation must still agree on everything else.
 """
 from __future__ import annotations
 
@@ -45,7 +46,20 @@ class PersistenceGoldenTests(unittest.TestCase):
                     self.fail(f"{name} changed: {len(old)} -> {len(new)} records, first difference at record {first}")
 
     def test_frozen_pre_index_implementation_agrees(self):
-        self.assertEqual(self.current, self.legacy)
+        # Identical except for the strategy fields, which carry only trendline values.
+        for name in g.PERSISTED_FILES:
+            with self.subTest(file=name):
+                self.assertEqual(g.without_strategy_bytes(self.current[name]), self.legacy[name])
+
+    def test_strategy_fields_are_the_only_additions_and_are_trendline(self):
+        snapshots = [json.loads(line) for line in self.current["setup_observations.jsonl"].splitlines()]
+        confirmations = [json.loads(line) for line in self.current["setup_confirmations.jsonl"].splitlines()]
+        self.assertTrue(g.only_trendline_fields(g.jsonl_strategy_fields(self.current["setup_observations.jsonl"])))
+        self.assertEqual({s["strategy_id"] for s in snapshots}, {"trendline"})
+        self.assertEqual({s["strategy_version"] for s in snapshots}, {"trendline-first-v3"})
+        self.assertEqual({s["episode_identity"]["strategy_id"] for s in snapshots}, {"trendline"})
+        self.assertEqual({c["strategy_id"] for c in confirmations}, {"trendline"})
+        self.assertEqual(g.jsonl_strategy_fields(self.current["setup_lifecycle.jsonl"]), [])
 
     def test_golden_run_exercises_the_trendline_lifecycle(self):
         events = [json.loads(line) for line in self.current["setup_lifecycle.jsonl"].splitlines()]

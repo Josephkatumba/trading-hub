@@ -9,7 +9,8 @@ strategy without knowing any strategy's rules.
 
 Nothing here changes what a strategy computes: StrategyResult.payload is the
 strategy's own output, unmodified. The only metadata a result adds is listed in
-METADATA_FIELDS.
+METADATA_FIELDS. Strategy-specific evidence that fits none of the core fields
+goes in the payload's EVIDENCE_CONTAINER dict, which is persisted as is.
 """
 from __future__ import annotations
 
@@ -31,8 +32,27 @@ CORE_FIELDS = {
     "evidence": "score_breakdown",       # the evidence the decision rests on
 }
 
+# Optional payload dict of strategy-specific evidence, persisted unmodified on
+# each snapshot (the trendline strategy keeps its evidence in its own fields).
+EVIDENCE_CONTAINER = "strategy_evidence"
+
 # The only keys StrategyResult.record() adds to a payload.
 METADATA_FIELDS = ("strategy_id",)
+
+# Every record written before strategy_id existed came from the trendline engine.
+LEGACY_STRATEGY_ID = "trendline"
+
+
+def record_strategy_id(record: Mapping[str, Any]) -> str:
+    """The strategy a market, snapshot, episode or confirmation record belongs to.
+
+    Historical records carry no strategy_id and are mapped here, at read time,
+    never rewritten: setup_type BREAK and REVERSAL are trendline setups, and
+    WATCHING / GENERAL are the trendline strategy's directional-context
+    episodes. All map to "trendline"; setup_type keeps telling them apart.
+    """
+    value = record.get("strategy_id")
+    return str(value) if value else LEGACY_STRATEGY_ID
 
 
 @dataclass(frozen=True)

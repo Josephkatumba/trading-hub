@@ -28,6 +28,83 @@ PERSISTED_FILES = ("setup_observations.jsonl", "setup_lifecycle.jsonl", "setup_c
 BASE_NOW = datetime(2026, 9, 24, 12, 0, 0, tzinfo=timezone.utc)
 
 
+# Phase 3 (strategy-aware persistence) ADDS exactly these fields to what
+# record_markets writes, and nothing else: strategy_id + strategy_evidence on
+# snapshots, strategy_id on confirmations, strategy_id inside episode_identity
+# (also echoed on the market dict). Comparisons with the frozen pre-strategy
+# implementation remove exactly these and require everything else unchanged.
+STRATEGY_RECORD_FIELDS = {"setup_snapshot": ("strategy_id", "strategy_evidence"),
+                          "setup_confirmation": ("strategy_id",)}
+
+
+def without_strategy_fields(value):
+    """`value` (record, market, episode or a list of them) minus the Phase 3 fields."""
+    if isinstance(value, list):
+        return [without_strategy_fields(item) for item in value]
+    if not isinstance(value, dict):
+        return value
+    added = STRATEGY_RECORD_FIELDS.get(value.get("record_type"), ())
+    result = {key: item for key, item in value.items() if key not in added}
+    identity = result.get("episode_identity")
+    if isinstance(identity, dict) and "strategy_id" in identity:
+        result["episode_identity"] = {key: item for key, item in identity.items() if key != "strategy_id"}
+    return result
+
+
+def strategy_fields(value) -> list:
+    """The Phase 3 field values carried by `value` (see without_strategy_fields)."""
+    if isinstance(value, list):
+        return [found for item in value for found in strategy_fields(item)]
+    if not isinstance(value, dict):
+        return []
+    found = [(key, value[key]) for key in STRATEGY_RECORD_FIELDS.get(value.get("record_type"), ()) if key in value]
+    identity = value.get("episode_identity")
+    if isinstance(identity, dict) and "strategy_id" in identity:
+        found.append(("episode_identity.strategy_id", identity["strategy_id"]))
+    return found
+
+
+def without_strategy_bytes(data: bytes) -> bytes:
+    """JSONL bytes with the Phase 3 fields removed from the records that carry them.
+
+    Records are re-serialized exactly as observations._append writes them, keeping
+    each line's own terminator (text-mode appends write CRLF on Windows), so the
+    result is byte-comparable with the pre-strategy implementation's output.
+    """
+    out = []
+    for line in data.splitlines(keepends=True):
+        try:
+            record = json.loads(line)
+        except ValueError:
+            out.append(line)
+            continue
+        if strategy_fields(record):
+            ending = line[len(line.rstrip(b"\r\n")):]
+            out.append(json.dumps(without_strategy_fields(record), separators=(",", ":"), default=str).encode() + ending)
+        else:
+            out.append(line)
+    return b"".join(out)
+
+
+def jsonl_strategy_fields(data: bytes) -> list:
+    found = []
+    for line in data.splitlines():
+        try:
+            found.extend(strategy_fields(json.loads(line)))
+        except ValueError:
+            continue  # blank / corrupt lines carry no fields (readers skip them too)
+    return found
+
+
+# What a trendline-only run writes into those fields.
+TRENDLINE_STRATEGY_FIELDS = [("strategy_id", "trendline"), ("strategy_evidence", {}),
+                             ("episode_identity.strategy_id", "trendline")]
+
+
+def only_trendline_fields(found: list) -> bool:
+    return bool(found) and all(item in TRENDLINE_STRATEGY_FIELDS for item in found)
+
+
 def load_fixtures() -> list[dict]:
     return [json.loads(path.read_text(encoding="utf-8")) for path in sorted(SCANNER_FIXTURES.glob("*.json"))]
 

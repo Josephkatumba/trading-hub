@@ -24,6 +24,7 @@ BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import golden_support as g  # noqa: E402
 import legacy_observations as legacy  # noqa: E402
 import observations as current  # noqa: E402
 from outcomes import resolve_due_market_outcomes  # noqa: E402
@@ -183,8 +184,10 @@ class EquivalenceMixin:
     def test_setup_episodes_match_every_bucket_and_limit(self):
         for bucket in ("current", "confirmed", "closed", "all"):
             for limit in (1, 7, 100, 500):
-                self.assertEqual(current.setup_episodes(bucket, limit), legacy.setup_episodes(bucket, limit),
-                                 (bucket, limit))
+                new = current.setup_episodes(bucket, limit)
+                # Phase 3 adds strategy_id to each episode (read-time mapped: all trendline here).
+                self.assertEqual({row.pop("strategy_id") for row in new} - {"trendline"}, set(), (bucket, limit))
+                self.assertEqual(new, legacy.setup_episodes(bucket, limit), (bucket, limit))
 
     def test_performance_report_matches(self):
         confirmations = legacy.confirmation_events()
@@ -224,11 +227,16 @@ class EquivalenceMixin:
                     batch = json.loads(json.dumps(markets))
                     count = module.record_markets(batch)
                 results[module.__name__] = (count, batch)
-            self.assertEqual(results["observations"], results["legacy_observations"], round_number)
+            # Identical except for the Phase 3 strategy fields (golden_support), all trendline.
+            new_count, new_batch = results["observations"]
+            self.assertTrue(g.only_trendline_fields(g.strategy_fields(new_batch)))
+            self.assertEqual((new_count, g.without_strategy_fields(new_batch)), results["legacy_observations"], round_number)
             for name in FILES:
                 old_bytes = (self.h.old_root / name).read_bytes() if (self.h.old_root / name).exists() else b""
                 new_bytes = (self.h.new_root / name).read_bytes() if (self.h.new_root / name).exists() else b""
-                self.assertEqual(new_bytes, old_bytes, (round_number, name))
+                self.assertEqual(g.without_strategy_bytes(new_bytes), old_bytes, (round_number, name))
+                found = g.jsonl_strategy_fields(new_bytes)
+                self.assertTrue(not found or g.only_trendline_fields(found), (round_number, name))
 
     def test_outcome_resolution_inputs_give_identical_outcomes(self):
         confirmations = legacy.confirmation_events()

@@ -34,6 +34,7 @@ class SetupSnapshot(TypedDict):
     timeframe: str
     higher_timeframes: list[str]
     direction: str | None
+    strategy_id: str
     strategy_version: str
     setup_type: str | None
     # Durable episode state; raw scanner state remains in rule_evidence/features.
@@ -44,6 +45,7 @@ class SetupSnapshot(TypedDict):
     proposed_take_profit: float | None
     features: dict[str, Any]
     rule_evidence: dict[str, Any]
+    strategy_evidence: dict[str, Any]
     score: float | None
     score_breakdown: dict[str, Any]
     session: dict[str, Any]
@@ -79,6 +81,7 @@ class SetupConfirmationEvent(TypedDict):
     setup_id: str
     confirmed_at: str
     observation_id: str
+    strategy_id: str
     strategy_version: str
     symbol: str
     direction: str | None

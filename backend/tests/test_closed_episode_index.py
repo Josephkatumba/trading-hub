@@ -7,7 +7,9 @@ drives randomized scan rounds (recurring trendlines, near-price repeats, no-
 trendline markets, direction flips, stale expiry, manual lifecycle transitions,
 legacy rows) through the frozen pre-index module (tests/legacy_observations.py)
 and the current module with pinned time/UUIDs, and requires identical market
-outputs after every round and byte-identical JSONL files at the end.
+outputs after every round and byte-identical JSONL files at the end, apart from
+the Phase 3 strategy fields (golden_support.without_strategy_fields), which must
+carry only trendline values here.
 """
 from __future__ import annotations
 
@@ -77,7 +79,7 @@ def run(module, root: Path, seed: int, rounds: int, seed_rows=(), between=None) 
             g.FrozenClock.current = now
             batch = [random_market(rng, symbol) for symbol in SYMBOLS if rng.random() < 0.85]
             module.record_markets(batch)
-            outputs.append(g.canonical(batch))
+            outputs.append(g.canonical(comparable(module, batch)))
             if rng.random() < 0.2:
                 # Manual transitions, incl. non-terminal ones that move the lifecycle
                 # ahead of the latest snapshot's lifecycle_state.
@@ -91,7 +93,20 @@ def run(module, root: Path, seed: int, rounds: int, seed_rows=(), between=None) 
             if between:
                 between(index, root)
     files = {name: (root / name).read_bytes() if (root / name).exists() else b"" for name in g.PERSISTED_FILES}
+    if module is current:
+        found = [item for data in files.values() for item in g.jsonl_strategy_fields(data)]
+        assert g.only_trendline_fields(found), "unexpected strategy field values"
+        files = {name: g.without_strategy_bytes(data) for name, data in files.items()}
     return outputs, files
+
+
+def comparable(module, markets: list[dict]) -> list[dict]:
+    """Market outputs minus the Phase 3 strategy fields (only trendline values allowed)."""
+    if module is not current:
+        return markets
+    found = g.strategy_fields(markets)
+    assert not found or g.only_trendline_fields(found), found
+    return g.without_strategy_fields(markets)
 
 
 def forget_process_state(root: Path) -> None:
@@ -172,12 +187,13 @@ class ClosedEpisodeIndexTests(unittest.TestCase):
             if index == 24:      # sidecars deleted while the backend is down
                 shutil.rmtree(root / ".index", ignore_errors=True)
                 forget_process_state(root)
-            elif index == 49:    # sidecar from the previous summary schema
+            elif index == 49:    # sidecar from the previous summary schema (v2: no strategy in "ep")
                 sidecar = root / ".index" / "setup_observations.jsonl.idx.json"
                 body = json.loads(json.loads(sidecar.read_text(encoding="utf-8"))["body"])
-                body["schema"] = "observations-v1"
+                body["schema"] = "observations-v2"
                 for row in body["rows"]:
-                    row.pop("ep", None)
+                    if isinstance(row.get("ep"), dict):
+                        row["ep"].pop("st", None)
                 text = json.dumps(body, separators=(",", ":"))
                 sidecar.write_text(json.dumps({"checksum": jsonl_index._sha(text.encode()), "body": text}), encoding="utf-8")
                 forget_process_state(root)
@@ -185,7 +201,7 @@ class ClosedEpisodeIndexTests(unittest.TestCase):
             self.assertSameRun(21, 75, legacy_rows(), between=restart)
         self.assertTrue(any("version/schema mismatch" in line for line in logs.output))
         index_dir = self.root / "current21" / ".index"
-        for name, schema in (("setup_observations.jsonl", "observations-v2"), ("setup_lifecycle.jsonl", "lifecycle-v1")):
+        for name, schema in (("setup_observations.jsonl", current._OBSERVATION_INDEX_SCHEMA), ("setup_lifecycle.jsonl", "lifecycle-v1")):
             body = json.loads(json.loads((index_dir / (name + ".idx.json")).read_text(encoding="utf-8"))["body"])
             self.assertEqual(body["schema"], schema)
 

@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from scanner import analyze_symbol
-from strategies import REGISTRY as STRATEGIES, TRENDLINE, MarketInput
+from strategies import CORE_FIELDS, REGISTRY as STRATEGIES, TRENDLINE, MarketInput
 from macro import fundamentals_snapshot
 from observations import (confirmation_events, record_markets,
                           recent_observations, setup_history, lifecycle_events,
@@ -304,6 +304,28 @@ def session_context(rows: list[dict[str, Any]], price: float) -> dict[str, Any]:
     }
 
 
+_STRATEGY_SETUP_FIELDS = ("setup_id", "observation_id", "lifecycle_state", "episode_suppressed")
+
+
+def _strategy_entry(result, setup: dict[str, Any] | None) -> dict[str, Any]:
+    """One markets[i].strategies[] item: the strategy's decisions and its episode."""
+    entry: dict[str, Any] = {"strategy_id": result.strategy_id, "strategy_version": result.strategy_version,
+                             "status": "OK" if result.ok else "ERROR"}
+    if not result.ok:
+        entry["error"] = type(result.error).__name__
+        return entry
+    entry.update({name: result.core(name) for name in CORE_FIELDS})
+    entry["setup_family"] = result.payload.get("setup_family")
+    entry.update({key: setup[key] for key in _STRATEGY_SETUP_FIELDS if setup and key in setup})
+    return entry
+
+
+def _attach_strategies(scanned: list[tuple[dict[str, Any], dict[str, Any], dict[str, dict[str, Any]]]]) -> None:
+    for market, results, setups in scanned:
+        market["strategies"] = [_strategy_entry(result, market if strategy_id == TRENDLINE else setups.get(strategy_id))
+                                for strategy_id, result in results.items()]
+
+
 def market_snapshot() -> list[dict[str, Any]]:
     started_clock = datetime.now(timezone.utc)
     started = monotonic_time.perf_counter()
@@ -324,6 +346,10 @@ def market_snapshot() -> list[dict[str, Any]]:
         return []
 
     markets: list[dict[str, Any]] = []
+    # Setups of enabled strategies other than trendline; the top-level market
+    # fields stay the trendline setup, so these are persisted as their own episodes.
+    strategy_markets: list[dict[str, Any]] = []
+    scanned: list[tuple[dict[str, Any], dict[str, Any], dict[str, dict[str, Any]]]] = []
     bars_by_symbol: dict[str, list[dict[str, Any]]] = {}
     try:
         for requested in WATCHLIST:
@@ -395,7 +421,7 @@ def market_snapshot() -> list[dict[str, Any]]:
             candle_age = (raw_tick_epoch - float(rates[-1]["time"])) if raw_tick_epoch is not None else None
             source_time = (bar_provenance.get("normalized_utc")
                 if source_timestamp_quality == "VERIFIED" else None)
-            markets.append({
+            quote = {
                 "symbol": normalize_symbol(requested),
                 "broker_symbol": actual,
                 "price": price,
@@ -403,7 +429,8 @@ def market_snapshot() -> list[dict[str, Any]]:
                 "ask": ask,
                 "spread": current_spread,
                 "change_pct": change_pct,
-                **scan,
+            }
+            provenance = {
                 **context,
                 "source_timestamp": source_time,
                 "backend_received_at": utc_iso(received_at),
@@ -421,7 +448,19 @@ def market_snapshot() -> list[dict[str, Any]]:
                 "received_bars": len(rows),
                 "source": "MT5",
                 "timestamp": utc_iso(datetime.now(timezone.utc)),
-            })
+            }
+            market = {**quote, **scan, **provenance}
+            setups: dict[str, dict[str, Any]] = {}
+            for strategy_id, result in results.items():
+                if strategy_id == TRENDLINE or not result.ok:
+                    continue
+                strategy = STRATEGIES.get(strategy_id)
+                setups[strategy_id] = {**quote, **result.payload, **provenance, "timeframe": strategy.timeframe,
+                    "higher_timeframes": list(strategy.higher_timeframes), "strategy_id": strategy_id,
+                    "strategy_version": result.strategy_version}
+            markets.append(market)
+            strategy_markets.extend(setups.values())
+            scanned.append((market, results, setups))
     except Exception as exc:
         LOGGER.exception("Market scan failed")
         with _SCAN_LOCK:
@@ -430,7 +469,7 @@ def market_snapshot() -> list[dict[str, Any]]:
                               elapsed_ms=round((monotonic_time.perf_counter() - started) * 1000, 2))
         return []
     try:
-        record_markets(markets)
+        record_markets(markets + strategy_markets)
         confirmations = confirmation_events()
         # Indexed equivalents of the former full-log scans: only snapshots that the
         # resolver can act on are loaded (see observations.outcome_watch_snapshots).
@@ -454,7 +493,9 @@ def market_snapshot() -> list[dict[str, Any]]:
             _LAST_SCAN.update(status="STORAGE_ERROR", completed_at=utc_iso(datetime.now(timezone.utc)),
                               market_count=len(markets), error=str(exc),
                               elapsed_ms=round((monotonic_time.perf_counter() - started) * 1000, 2))
+        _attach_strategies(scanned)
         return markets
+    _attach_strategies(scanned)
     with _SCAN_LOCK:
         _LAST_SCAN.update(status="CONNECTED" if markets else "NO_MARKETS",
                           completed_at=utc_iso(datetime.now(timezone.utc)), market_count=len(markets),

@@ -10,6 +10,7 @@ from typing import Any
 
 from outcomes import DEFAULT_HORIZONS
 from market_time import parse_aware_utc
+from strategies.base import record_strategy_id
 
 REPORTING_TIMEZONE = "Africa/Nairobi"
 PRIMARY_HORIZON = "4h"
@@ -121,11 +122,14 @@ def _daily(events: list[dict[str, Any]], outcomes: list[dict[str, Any]],
     by_symbol = _metrics(selected, outcome_index, PRIMARY_HORIZON, "symbol")["groups"]
     by_setup_type = _metrics(selected, outcome_index, PRIMARY_HORIZON, "setup_type")["groups"]
     by_timeframe = _metrics(selected, outcome_index, PRIMARY_HORIZON, "timeframe")["groups"]
+    # One group per strategy; confirmations recorded before strategy_id existed map to trendline.
+    by_strategy = _metrics([{**event, "strategy_id": record_strategy_id(event)} for event in selected],
+                           outcome_index, PRIMARY_HORIZON, "strategy_id")["groups"]
     setups = []
     for event in selected:
         results = {horizon: _classify(outcome_index.get((str(event.get("setup_id")),
                     str(event.get("observation_id")), horizon))) for horizon in horizons}
-        setups.append({**event, "market_outcomes": results,
+        setups.append({**event, "strategy_id": record_strategy_id(event), "market_outcomes": results,
                        "primary_outcome": results.get(PRIMARY_HORIZON, "PENDING")})
     return {"date": report_day.isoformat(), "reporting_timezone": tz_name,
         "primary_horizon": PRIMARY_HORIZON, "confirmed": len(selected),
@@ -136,7 +140,7 @@ def _daily(events: list[dict[str, Any]], outcomes: list[dict[str, Any]],
         "watchlist": _watch_count(snapshots, events, report_day, tz),
         "by_horizon": per_horizon, "by_symbol": by_symbol,
         "by_setup_type": by_setup_type, "by_timeframe": by_timeframe,
-        "setups": setups}
+        "by_strategy": by_strategy, "setups": setups}
 
 
 def performance_report(confirmations: list[dict[str, Any]], outcomes: list[dict[str, Any]],
@@ -162,9 +166,9 @@ def performance_report(confirmations: list[dict[str, Any]], outcomes: list[dict[
             "watchlist": daily[-1]["watchlist"],
             "by_horizon": {h: {k: sum(d["by_horizon"][h][k] for d in daily)
                                for k in LABELS_LOWER} for h in horizons},
-            "by_symbol": {}, "by_setup_type": {}, "by_timeframe": {},
+            "by_symbol": {}, "by_setup_type": {}, "by_timeframe": {}, "by_strategy": {},
             "setups": [setup for day in daily for setup in day["setups"]]})
-        for key in ("by_symbol", "by_setup_type", "by_timeframe"):
+        for key in ("by_symbol", "by_setup_type", "by_timeframe", "by_strategy"):
             merged: dict[str, dict[str, int]] = defaultdict(_empty_counts)
             for item in daily:
                 for group, counts in item[key].items():
