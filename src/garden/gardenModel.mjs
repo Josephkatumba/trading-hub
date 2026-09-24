@@ -408,3 +408,12 @@ export function archiveSummary(entries) {
     expired: count("expired"),
   };
 }
+
+/**
+ * A confirmation bloom is a one-time reaction to a real lifecycle transition
+ * observed while the garden is open: never on the first paint (replayed state),
+ * never under reduced motion, never for an orb that was already bloomed.
+ */
+export function shouldBloom({previousStage, nextStage, firstUpdate, animate}) {
+  return Boolean(animate && !firstUpdate && nextStage === "bloomed" && previousStage !== "bloomed");
+}

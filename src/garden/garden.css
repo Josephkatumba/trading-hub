@@ -85,6 +85,25 @@ body.garden-mode .topline b { color: #1c2321; }
 .gd-pin span { color: #cfe3d6; font-size: 10.5px; }
 .gd-pin::after { content: ""; position: absolute; left: 50%; bottom: -5px; width: 10px; height: 10px; background: #1c2321; transform: translateX(-50%) rotate(45deg); }
 
+/* ----- focus panel (selected orb / card, inside the world) ----- */
+.gd-focus { position: absolute; z-index: 4; top: 46px; right: 18px; width: 272px; display: grid; gap: 10px; padding: 14px; border: 1px solid var(--gd-border); border-radius: 16px; background: rgba(255, 255, 255, .92); box-shadow: var(--gd-shadow-hover); backdrop-filter: blur(8px); }
+.gd-focus[hidden] { display: none; }
+.gd-focus-head { display: flex; align-items: center; gap: 10px; }
+.gd-focus-head div { flex: 1; min-width: 0; }
+.gd-focus-head b { display: block; color: var(--gd-text); font-size: 16px; font-weight: 800; }
+.gd-focus-head span { display: block; color: var(--gd-muted); font-size: 11px; font-weight: 700; letter-spacing: .03em; }
+.gd-focus-head strong { color: var(--gd-text); font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.gd-focus-head strong small { color: var(--gd-faint); font-size: 10px; font-weight: 600; }
+.gd-focus-levels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin: 0; }
+.gd-focus-levels dt { color: var(--gd-faint); font-size: 9.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.gd-focus-levels dd { margin: 1px 0 0; color: var(--gd-text); font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.gd-focus-meta { margin: 0; color: var(--gd-faint); font-size: 11.5px; }
+.gd-focus-actions { display: flex; gap: 6px; }
+.gd-focus-actions button { flex: 1; min-height: 34px; border: 1px solid var(--gd-border-strong); border-radius: 9px; background: #fff; color: var(--gd-text); font-size: 12px; font-weight: 600; cursor: pointer; }
+.gd-focus-actions button:hover { background: var(--gd-surface-2); }
+@keyframes gd-flash { 0% { box-shadow: 0 0 0 3px rgba(47, 122, 82, .45); } 100% { box-shadow: 0 0 0 0 rgba(47, 122, 82, 0); } }
+.is-flash { animation: gd-flash 1.2s ease-out 1; }
+
 /* ----- 2D fallback constellation ----- */
 .gd-garden2d { position: absolute; inset: 0; overflow: hidden; }
 .gd-orbits { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -322,6 +341,7 @@ body.garden-mode .topline b { color: #1c2321; }
   .gd-world-stage { position: relative; inset: auto; height: 380px; order: 2; border-top: 1px solid var(--gd-border); }
   .gd-stage-overlay { left: 50%; }
   .gd-legend { left: 14px; justify-content: flex-start; }
+  .gd-focus { top: 12px; left: 12px; right: auto; }
 }
 @media (max-width: 1100px) {
   .gd-layout { grid-template-columns: minmax(0, 1fr); }
@@ -331,7 +351,10 @@ body.garden-mode .topline b { color: #1c2321; }
   .garden-root { padding-top: 8px; }
   .gd-world { border-radius: 20px; }
   .gd-world-copy { padding: 22px 18px 16px; }
-  .gd-world-stage { height: 260px; }
+  .gd-world-stage { height: 300px; }
+  .gd-focus { top: auto; bottom: 8px; left: 8px; right: 8px; width: auto; padding: 10px 12px; gap: 6px; }
+  .gd-focus-levels { display: none; }
+  .gd-focus-actions button { min-height: 44px; }
   .gd-arch-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
   .gd-arch-time { grid-column: 1 / -1; text-align: left; }
   .gd-arch-r:empty { display: none; }

@@ -10,7 +10,7 @@ import {setupCountSummary, visibleSetupEntries} from "./radarLayout.mjs";
 import {createConfirmationAlertTracker, dispatchConfirmationAlerts, dispatchTestSound, persistedConfirmationEvents} from "./confirmationAlerts.mjs";
 import {CONFIRMATION_CHIME_CONFIG, playConfirmationChime} from "./confirmationChime.mjs";
 import {analystModel, archiveEntry, archiveSummary, gardenAreas, gardenCounters, marketOverviewRow, constellationLayout, setupCardModel} from "./garden/gardenModel.mjs";
-import {analystPanel, archivePanel, counterTiles, emptyArea, esc, marketOverview, setupCard, stageLegend} from "./garden/gardenCards.mjs";
+import {analystPanel, archivePanel, counterTiles, emptyArea, esc, focusPanel, marketOverview, setupCard, stageLegend} from "./garden/gardenCards.mjs";
 import {mountGarden, prefersReducedMotion} from "./garden/gardenMount.mjs";
 
 const DEMO_MARKETS = [
@@ -65,7 +65,7 @@ export function renderMarketRadar(){
     +'<div class="confirmation-alert-controls" id="gardenAlerts"><button type="button" id="confirmationAlertsToggle" class="alert-control" aria-pressed="false" title="Enable Alerts">🔇 Alerts OFF</button><button type="button" id="testConfirmationSound" class="alert-test-control">Test sound</button></div></div>'
     +'<div id="confirmationToast" class="confirmation-toast" role="status" aria-live="polite" hidden></div></header>'
     +'<section class="gd-world" id="gardenWorld" aria-label="The TRADeden Garden">'
-    +'<div class="gd-world-stage"><div class="gd-stage" id="gardenStage"></div><div class="gd-stage-overlay" id="gardenOverlay" hidden></div>'
+    +'<div class="gd-world-stage"><div class="gd-stage" id="gardenStage"></div><div class="gd-stage-overlay" id="gardenOverlay" hidden></div><div class="gd-focus" id="gardenFocus" role="region" aria-label="Selected setup" aria-live="polite" hidden></div>'
     +'<div class="gd-legend">'+stageLegend()+'</div><small class="gd-stage-mode" id="gardenModeNote"></small></div>'
     +'<div class="gd-world-copy"><span class="gd-eyebrow" id="radarEyebrow">🌿 The TRADeden Garden</span>'
     +'<h1>The market is always moving.<br><span>TRADeden is always watching.</span></h1>'
@@ -190,6 +190,14 @@ function paintAnalyst(){
   node.innerHTML=analystPanel(row?analystModel(row,analysis||null):null,{loading:Boolean(key)&&analysis===undefined,simulated:radarMode==="DEMO"});
   if(key&&analysis===undefined)getAnalysis(row).then(()=>{if(selectedKey&&analysisKey(selectedRow())===key){paintAnalyst();repaintCards();}});
 }
+function paintFocus(){
+  const node=document.getElementById("gardenFocus");if(!node)return;
+  const row=selectedRow();
+  const key=analysisKey(row);
+  const card=row?setupCardModel(row,{analysis:key?analystCache.get(key)||null:null,simulated:radarMode==="DEMO"}):null;
+  node.hidden=!card;
+  node.innerHTML=card?focusPanel(card):"";
+}
 function pinLabel(){
   const row=selectedRow();if(!row)return "";
   const card=setupCardModel(row);
@@ -230,6 +238,7 @@ function select(key,{scrollTo=null}={}){
   for(const node of document.querySelectorAll(".gd-card"))node.setAttribute("aria-selected",String(node.dataset.key===key));
   for(const node of document.querySelectorAll("[data-archive-key]"))node.classList.toggle("is-selected",node.dataset.archiveKey===key);
   paintAnalyst();
+  paintFocus();
   garden?.select(key,pinLabel());
   const target=scrollTo&&document.getElementById(scrollTo);
   if(target)target.scrollIntoView({behavior:prefersReducedMotion()?"auto":"smooth",block:"start"});
@@ -237,6 +246,13 @@ function select(key,{scrollTo=null}={}){
 function bindGardenInteractions(){
   const root=document.getElementById("radarRoot");if(!root)return;
   root.onclick=event=>{
+    const focusAction=event.target.closest("[data-focus-action]")?.dataset.focusAction;
+    if(focusAction==="view-analysis"){document.getElementById("gardenAnalyst")?.scrollIntoView({behavior:prefersReducedMotion()?"auto":"smooth",block:"start"});return;}
+    if(focusAction==="view-setup"){
+      const target=[...document.querySelectorAll(".gd-card[data-key],[data-archive-key]")].find(node=>(node.dataset.key||node.dataset.archiveKey)===selectedKey);
+      if(target){target.scrollIntoView({behavior:prefersReducedMotion()?"auto":"smooth",block:"center"});target.classList.remove("is-flash");void target.offsetWidth;target.classList.add("is-flash");}
+      return;
+    }
     const toggle=event.target.closest("[data-toggle]");
     if(toggle){if(toggle.dataset.toggle==="growing")growingExpanded=!growingExpanded;else historyExpanded=!historyExpanded;repaintCards();return;}
     const filterButton=event.target.closest("[data-archive-filter]");
@@ -327,6 +343,7 @@ function paint(result){
   for(const node of document.querySelectorAll(".gd-card"))node.classList.toggle("is-selected",node.dataset.key===selectedKey);
   paintGarden(lastCards);
   paintAnalyst();
+  paintFocus();
   paintConfirmed(latestMarkets,result.performance);
   const now=new Date().toLocaleTimeString();
   document.getElementById("radarUpdated").textContent={LIVE:"Updated "+now,ENGINE_NO_DATA:"No market data · "+now,OFFLINE:"Offline · checked "+now,DEMO:"Simulated · not market data"}[mode];

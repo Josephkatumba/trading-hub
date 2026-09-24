@@ -153,3 +153,18 @@ export function archivePanel(entries, summary, {filter = "all", selectedKey = nu
     + (shown.length ? '<div class="gd-arch-list">' + rows + '</div>' : '<div class="gd-empty"><b>Nothing here</b><p>No closed setups match this filter.</p></div>')
     + (shown.length > limit ? '<button type="button" class="gd-link gd-arch-more" data-toggle="history" aria-expanded="' + expanded + '">' + (expanded ? 'Show fewer' : 'Show all ' + shown.length) + '</button>' : '');
 }
+
+/** Compact focus panel shown inside the garden world for the selected orb/card. */
+export function focusPanel(card) {
+  if (!card) return "";
+  const levels = card.levels?.planned
+    ? '<dl class="gd-focus-levels"><div><dt>Entry</dt><dd>' + esc(card.levels.entry) + '</dd></div><div><dt>Stop</dt><dd>' + esc(card.levels.stop)
+      + '</dd></div><div><dt>Target</dt><dd>' + esc(card.levels.target) + '</dd></div><div><dt>R:R</dt><dd>' + (card.levels.rr ? esc(card.levels.rr) : '—') + '</dd></div></dl>'
+    : '';
+  return '<div class="gd-focus-head"><i class="gd-swatch gd-swatch-' + card.stage + ' gd-swatch-' + String(card.direction || "none").toLowerCase() + '" aria-hidden="true"></i>'
+    + '<div><b>' + esc(card.symbol) + '</b><span>' + card.stageIcon + ' ' + esc(card.headline) + '</span></div>'
+    + (card.score == null ? '' : '<strong>' + card.score + '<small>/100</small></strong>') + '</div>'
+    + levels
+    + '<p class="gd-focus-meta">' + (card.session ? esc(card.session) + ' session' : 'Session unavailable') + (card.confirmationTime ? ' · confirmed ' + esc(card.confirmationTime) : '') + '</p>'
+    + '<div class="gd-focus-actions"><button type="button" data-focus-action="view-setup">View setup</button><button type="button" data-focus-action="view-analysis">View analysis</button></div>';
+}

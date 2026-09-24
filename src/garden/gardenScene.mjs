@@ -15,6 +15,7 @@
 // <=1.5, ~30 fps cap, paused while the tab is hidden or the canvas is off-screen,
 // static frames under reduced motion, full dispose on navigation.
 import * as THREE from "three";
+import {shouldBloom} from "./gardenModel.mjs";
 
 const PALETTE = {
   growing: 0x8fbba0, shaping: 0x4fa37c, long: 0x2ebd82, short: 0xec6f63,
@@ -83,8 +84,9 @@ void main() {
   if (r > 1.0 || r < 0.12) discard;
   float a = atan(p.y, p.x);
   float diff = mod(uAngle - a + 6.28318, 6.28318);
-  float trail = smoothstep(1.2, 0.0, diff) * smoothstep(0.0, 0.08, diff);
-  gl_FragColor = vec4(uColor, trail * 0.075 * (1.0 - r * 0.6));
+  // Soft on both edges: no hard leading line, just a slow rotating shade.
+  float trail = smoothstep(1.8, 0.35, diff) * smoothstep(0.0, 0.55, diff);
+  gl_FragColor = vec4(uColor, trail * 0.06 * (1.0 - r * 0.7));
 }`;
 
 function haloTexture() {
@@ -356,7 +358,7 @@ export function createGardenScene(container, {reducedMotion = false, onSelect = 
     camera.fov = width / height < 1.3 ? 52 : 36;
     camera.updateProjectionMatrix();
     // When the hero copy overlays the stage (desktop), let the constellation sit right.
-    world.position.x = copyOverlaysStage(container) && width / height > 1.6 ? Math.min(3.4, (width / height - 1.6) * 3 + 1.6) : 0;
+    world.position.x = copyOverlaysStage(container) && width / height > 1.4 ? Math.min(3.6, (width / height - 1.4) * 3 + 1.8) : 0;
     requestRender();
   }
 
@@ -480,8 +482,7 @@ export function createGardenScene(container, {reducedMotion = false, onSelect = 
       const group = buildOrb(orb);
       // A real transition into CONFIRMED observed while the garden is open: one
       // restrained bloom. Never on the first paint, never for replayed history.
-      const bloomed = orb.stage === "bloomed" && existing?.stage !== "bloomed";
-      if (!firstUpdate && animate && bloomed) {
+      if (shouldBloom({previousStage: existing?.stage, nextStage: orb.stage, firstUpdate, animate})) {
         group.userData.bornAt = performance.now();
         group.scale.setScalar(0.35);
         bloomEffect(group, stageColor(orb));

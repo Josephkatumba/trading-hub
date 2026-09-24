@@ -152,3 +152,23 @@ test("renderer choice: WebGL only where it is cheap and wanted", () => {
   assert.equal(chooseGardenRenderer({webgl: true, width: 1600, preference: "0"}).mode, "fallback");
   assert.equal(chooseGardenRenderer({webgl: true, width: 390, preference: "1"}).mode, "webgl");
 });
+
+test("bloom fires only on a real transition into CONFIRMED observed while open", async () => {
+  const {shouldBloom} = await import("../src/garden/gardenModel.mjs");
+  assert.equal(shouldBloom({previousStage: "shaping", nextStage: "bloomed", firstUpdate: false, animate: true}), true);
+  assert.equal(shouldBloom({previousStage: undefined, nextStage: "bloomed", firstUpdate: true, animate: true}), false, "first paint replays state");
+  assert.equal(shouldBloom({previousStage: "bloomed", nextStage: "bloomed", firstUpdate: false, animate: true}), false);
+  assert.equal(shouldBloom({previousStage: "shaping", nextStage: "bloomed", firstUpdate: false, animate: false}), false, "reduced motion");
+  assert.equal(shouldBloom({previousStage: "growing", nextStage: "shaping", firstUpdate: false, animate: true}), false);
+  assert.equal(shouldBloom({previousStage: "bloomed", nextStage: "active", firstUpdate: false, animate: true}), false);
+});
+
+test("focus panel shows the selection with real levels only", async () => {
+  const {focusPanel} = await import("../src/garden/gardenCards.mjs");
+  const planned = focusPanel(setupCardModel(episode({lifecycle_state: "CONFIRMED", confirmation: {confirmed_at: "2026-09-24T09:42:10Z"},
+    proposed_entry: 4272.4, proposed_stop_loss: 4285.2, proposed_take_profit: 4234, features: {rr: 3}})));
+  assert.match(planned, /XAUUSD/); assert.match(planned, /4,285.20/); assert.match(planned, /1:3/); assert.match(planned, /View analysis/);
+  const sparse = focusPanel(setupCardModel(episode()));
+  assert.doesNotMatch(sparse, /gd-focus-levels/);
+  assert.equal(focusPanel(null), "");
+});
