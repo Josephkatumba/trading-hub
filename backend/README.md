@@ -194,5 +194,7 @@ same audit run on each strategy's records alone (unjoinable records are
 reported as `UNATTRIBUTED`).
 
 Outcome verification requires a verified MT5 time basis
-(`TRADING_HUB_MT5_SOURCE_TIMEZONE`, see `TIMESTAMP_AUDIT_REPORT.md`). While it is
-unset, no strategy can accumulate verified outcomes.
+(`TRADING_HUB_MT5_SOURCE_TIMEZONE`, see `TIMESTAMP_AUDIT_REPORT.md`). For IC Markets
+it is `America/New_York+07:00` (server clock = New York + 7 h, verified in Phase 8).
+Without it no strategy accumulates verified outcomes. `time_reverification.py`
+re-checks historical records read-only under the basis, without rewriting them.
