@@ -21,9 +21,11 @@ load_dotenv()
 
 from scanner import analyze_symbol
 from macro import fundamentals_snapshot
-from observations import (all_observations, confirmation_events, record_markets,
+from observations import (confirmation_events, record_markets,
                           recent_observations, setup_history, lifecycle_events,
-                          record_lifecycle_transition, setup_episodes)
+                          record_lifecycle_transition, setup_episodes,
+                          latest_broker_symbols, observation_index_stats, outcome_watch_snapshots,
+                          performance_observations, snapshots_by_observation_id)
 from outcomes import (MARKET_OUTCOMES_FILE, TRADE_OUTCOMES_FILE, append_market_outcome, configured_horizons,
                       derive_market_outcome, list_records, record_trade_outcome,
                       resolve_due_market_outcomes)
@@ -428,14 +430,19 @@ def market_snapshot() -> list[dict[str, Any]]:
     try:
         record_markets(markets)
         confirmations = confirmation_events()
-        observations = all_observations()
-        snapshots_by_id = {str(row.get("observation_id")): row for row in observations
-                           if row.get("record_type") == "setup_snapshot"}
+        # Indexed equivalents of the former full-log scans: only snapshots that the
+        # resolver can act on are loaded (see observations.outcome_watch_snapshots).
+        horizons = configured_horizons()
+        snapshots_by_id = snapshots_by_observation_id(str(row.get("observation_id")) for row in confirmations)
         existing_outcomes = list_records(MARKET_OUTCOMES_FILE)
-        watch_snapshots = [row for row in observations if row.get("record_type") == "setup_snapshot"
-            and (row.get("rule_evidence") or {}).get("strategy_valid") is not True]
+        claimed = {str(snapshot.get("observation_id") or "") for snapshot in
+                   (snapshots_by_id.get(str(row.get("observation_id"))) for row in confirmations) if snapshot}
+        present = {(row.get("setup_id"), row.get("observation_id"), row.get("horizon"),
+                    row.get("label_definition")) for row in existing_outcomes}
+        watch_snapshots = outcome_watch_snapshots(claimed, {symbol for symbol, bars in bars_by_symbol.items() if bars},
+                                                  present, horizons)
         due = resolve_due_market_outcomes(confirmations, snapshots_by_id, bars_by_symbol,
-                                           existing_outcomes, configured_horizons(),
+                                           existing_outcomes, horizons,
                                            watch_snapshots=watch_snapshots)
         for outcome in due:
             append_market_outcome(outcome)
@@ -492,6 +499,8 @@ def health():
         try:
             stat = path.stat()
             storage[name] = {"status": "AVAILABLE", "bytes": stat.st_size}
+            if name == "setup_observations.jsonl":
+                storage[name]["index"] = observation_index_stats()
         except FileNotFoundError:
             storage[name] = {"status": "NOT_CREATED", "bytes": 0}
         except OSError as exc:
@@ -539,9 +548,7 @@ def mt5_time_diagnostic(symbols: str | None = None, bars: int = 8):
     before = datetime.now(timezone.utc)
     try:
         broker_symbols: dict[str, str] = {}
-        for row in reversed(all_observations()):
-            if row.get("symbol") and row.get("broker_symbol"):
-                broker_symbols.setdefault(str(row["symbol"]), str(row["broker_symbol"]))
+        broker_symbols.update(latest_broker_symbols())
         requested = [part.strip().upper() for part in symbols.split(",") if part.strip()] if symbols else [
             symbol for symbol in ("XAUUSD", "EURUSD", "NAS100", "US500")
             if symbol in broker_symbols]
@@ -706,7 +713,7 @@ def setup_performance(date: str | None = Query(default=None, min_length=10, max_
             from fastapi import HTTPException
             raise HTTPException(status_code=422, detail="date must use YYYY-MM-DD") from exc
     return performance_report(confirmation_events(), list_records(MARKET_OUTCOMES_FILE),
-        all_observations(), report_date=date, days=days,
+        performance_observations(), report_date=date, days=days,
         horizons=configured_horizons())
 
 

@@ -5,6 +5,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
@@ -42,7 +43,10 @@ class EpisodePersistenceTests(unittest.TestCase):
 
     def test_legacy_line_is_unchanged_and_adopted(self):
         with tempfile.TemporaryDirectory() as temp:
-            legacy = {"observation_id": "legacy-ob-1", "observed_at": "2026-09-23T08:30:00+00:00",
+            # Recent enough to stay inside the 24h episode gap; a fixed date here
+            # made this test start failing a day after it was written.
+            observed = (datetime.now(timezone.utc) - timedelta(minutes=30)).isoformat()
+            legacy = {"observation_id": "legacy-ob-1", "observed_at": observed,
                       "symbol": "XAUUSD", "state": "WATCHING", "direction": "LONG", "price": 2650.0,
                       "score": 60, "setup_family": None, "trendline_state": "WATCHING"}
             path = Path(temp) / "setup_observations.jsonl"

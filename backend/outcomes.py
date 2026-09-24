@@ -10,6 +10,7 @@ from typing import Any
 
 from schemas import validate_trade_outcome
 from market_time import parse_aware_utc, utc_iso
+from jsonl_index import ensure_trailing_newline
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 MARKET_OUTCOMES_FILE = DATA_DIR / "market_outcomes.jsonl"
@@ -27,6 +28,7 @@ def configured_horizons() -> tuple[str, ...]:
 
 def _append(path: Path, record: dict[str, Any]) -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+    ensure_trailing_newline(path)
     with path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(record, separators=(",", ":"), default=str) + "\n")
 

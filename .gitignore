@@ -141,3 +141,6 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Derived JSONL index sidecars (rebuilt automatically from the JSONL files)
+backend/data/.index/

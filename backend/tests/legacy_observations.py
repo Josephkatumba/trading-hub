@@ -1,3 +1,9 @@
+"""FROZEN REFERENCE: observations.py as it was before the JSONL index (commit 436fa10).
+
+Used only by tests/test_observation_index.py to prove the indexed implementation
+returns the same logical results as the original full-scan implementation.
+Do not import from application code and do not "fix" this file.
+"""
 from __future__ import annotations
 
 import hashlib
@@ -6,12 +12,28 @@ import uuid
 import threading
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 from schemas import DataQuality, SetupConfirmationEvent, SetupLifecycleEvent, SetupSnapshot
 from episode_identity import identity_evidence, rank_candidates
 from market_time import parse_aware_utc, utc_iso
-from jsonl_index import ensure_trailing_newline, index_for, indexed_jsonl_records
+
+
+def indexed_jsonl_records(path: Path, key: str, value: Any) -> list[dict[str, Any]]:
+    """Original linear-scan lookup (jsonl_index.py at commit 575feb7)."""
+    if value is None or not path.exists():
+        return []
+    wanted = str(value)
+    matches: list[dict[str, Any]] = []
+    with path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            try:
+                record = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(record, dict) and key in record and str(record[key]) == wanted:
+                matches.append(record)
+    return matches
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 LOG_FILE = DATA_DIR / "setup_observations.jsonl"
@@ -41,7 +63,6 @@ def _append(path: Path, records: list[dict[str, Any]]) -> None:
     if not records:
         return
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    ensure_trailing_newline(path)
     with path.open("a", encoding="utf-8") as handle:
         for record in records:
             handle.write(json.dumps(record, separators=(",", ":"), default=str) + "\n")
@@ -75,54 +96,6 @@ def _identity_key(market: dict[str, Any]) -> str:
     # observed. Keep identity stable across those scanner state changes.
     parts = [str(market.get("symbol", "UNKNOWN")), str(market.get("direction") or "NONE")]
     return "|".join(parts)
-
-
-def _legacy_id(row: dict[str, Any]) -> str:
-    return "stp_legacy_" + hashlib.sha256(_identity_key(row).encode()).hexdigest()[:24]
-
-
-# ----- observation index -------------------------------------------------
-# A derived index over LOG_FILE (see jsonl_index.py). Each summary holds only the
-# fields readers below need without the full row; full rows are re-read from the
-# JSONL by byte offset. The k_* keys reproduce the exact matching rules of the
-# former full scans (frozen in tests/legacy_observations.py for comparison).
-_SUMMARY_FIELDS = ("setup_id", "observation_id", "observed_at", "timestamp", "symbol",
-                   "direction", "lifecycle_state", "broker_symbol")
-_PERFORMANCE_FIELDS = ("setup_id", "observation_id", "observed_at", "timestamp", "symbol",
-                       "direction", "lifecycle_state")
-_OBSERVATION_INDEX_SCHEMA = "observations-v1"
-
-
-def _observation_summary(row: dict[str, Any]) -> dict[str, Any]:
-    record_type = row.get("record_type")
-    summary: dict[str, Any] = {field: row[field] for field in _SUMMARY_FIELDS if field in row}
-    summary["rt"] = record_type
-    if "setup_id" in row:
-        summary["k_sid"] = str(row["setup_id"])            # setup_history by setup_id
-    if "observation_id" in row:
-        summary["k_oid"] = str(row["observation_id"])      # setup_history by observation_id
-    if not record_type:
-        summary["k_legacy"] = _legacy_id(row)              # setup_history legacy fallback
-    if record_type == "setup_snapshot":
-        summary["k_episode"] = row.get("setup_id")         # _record_markets episode map
-        if row.get("setup_id"):
-            summary["k_snap"] = row["setup_id"]            # setup_episodes
-        summary["k_snap_oid"] = str(row.get("observation_id"))
-        summary["strategy_valid"] = (row.get("rule_evidence") or {}).get("strategy_valid") is True
-        summary["tz_status"] = (row.get("time_provenance") or {}).get("timezone_normalization_status")
-    elif row.get("symbol"):
-        summary["k_episode"] = _legacy_id(row)
-    return summary
-
-
-def _observation_index():
-    return index_for(LOG_FILE, _observation_summary,
-                     ("k_sid", "k_oid", "k_legacy", "k_episode", "k_snap", "k_snap_oid"),
-                     schema=_OBSERVATION_INDEX_SCHEMA)
-
-
-def observation_index_stats() -> dict[str, Any]:
-    return _observation_index().stats()
 
 
 def _uid(prefix: str) -> str:
@@ -220,23 +193,15 @@ def _snapshot(market: dict[str, Any], setup_id: str, state: str, now: str) -> Se
 
 def _record_markets(markets: list[dict[str, Any]]) -> int:
     """Append immutable observations and match them to persisted open episodes."""
+    old = _read_jsonl(LOG_FILE)
     events = _read_jsonl(LIFECYCLE_FILE)
     episodes: dict[str, dict[str, Any]] = {}
-    # Only the latest row per episode key matters (later rows overwrote earlier
-    # ones in the former full scan); dict order stays first appearance.
-    index = _observation_index()
-    with index.lock:
-        groups = index.groups("k_episode")
-        keys = list(groups)
-        latest_positions = [groups[key][-1] for key in keys]
-        kinds = [index.summary(position)["rt"] for position in latest_positions]
-        latest_rows = index.load(latest_positions)
-    for key, row, record_type in zip(keys, latest_rows, kinds):
-        if record_type == "setup_snapshot":
+    for row in old:
+        if row.get("record_type") == "setup_snapshot":
             episodes[row["setup_id"]] = dict(row)
-        else:
+        elif row.get("symbol"):
             # Deterministically adapt legacy observations without rewriting them.
-            legacy_id = key
+            legacy_id = "stp_legacy_" + hashlib.sha256(_identity_key(row).encode()).hexdigest()[:24]
             episodes[legacy_id] = {**row, "setup_id": legacy_id, "timeframe": "M15",
                 "reference_price": row.get("price"), "setup_type": row.get("setup_family") or row.get("trendline_state"),
                 "lifecycle_state": "ACTIVE" if row.get("state") in {"DEVELOPING", "CONFIRMING"} else "DETECTED",
@@ -436,82 +401,20 @@ def recent_observations(limit: int = 100) -> list[dict[str, Any]]:
 
 
 def setup_history(setup_id: str) -> list[dict[str, Any]]:
-    if setup_id is None:
-        return []
-    index = _observation_index()
-    with index.lock:
-        rows = index.load(index.lookup("k_sid", str(setup_id)) + index.lookup("k_oid", str(setup_id)))
+    rows = indexed_jsonl_records(LOG_FILE, "setup_id", setup_id)
+    rows.extend(indexed_jsonl_records(LOG_FILE, "observation_id", setup_id))
     if rows:
         rows.sort(key=lambda row: str(row.get("observed_at") or row.get("timestamp") or ""))
         return rows
     # Preserve lookup compatibility for pre-episode rows, whose stable legacy
     # identity is derived from symbol/direction rather than stored as setup_id.
-    with index.lock:
-        return index.load(index.lookup("k_legacy", setup_id))
-
-
-def snapshots_by_observation_id(observation_ids: Iterable[str]) -> dict[str, dict[str, Any]]:
-    """{str(observation_id): latest setup_snapshot with that id}, for the given ids only.
-
-    Same mapping as {str(row.get("observation_id")): row for every setup_snapshot}
-    (last occurrence wins), restricted to the ids a caller will look up.
-    """
-    index = _observation_index()
-    out: dict[str, dict[str, Any]] = {}
-    with index.lock:
-        for observation_id in dict.fromkeys(str(value) for value in observation_ids):
-            positions = index.lookup("k_snap_oid", observation_id)
-            if positions:
-                out[observation_id] = index.load([positions[-1]])[0]
-    return out
-
-
-def outcome_watch_snapshots(claimed_observation_ids: set[str], symbols_with_bars: set[str],
-                            present_keys: set[tuple[Any, ...]], horizons: Iterable[str],
-                            label_definition: str = "target-invalidation-first-v1") -> list[dict[str, Any]]:
-    """WATCH snapshots that outcomes.resolve_due_market_outcomes could still label.
-
-    Mirrors that function's own skip rules (first occurrence per observation_id,
-    after the confirmation snapshots in `claimed_observation_ids`; VERIFIED time;
-    a symbol with bars; at least one missing horizon), so dropping the other rows
-    here cannot change its output. It still re-checks everything itself.
-    """
-    horizons = tuple(horizons)
-    index = _observation_index()
-    visited = set(claimed_observation_ids)
-    selected: list[int] = []
-    with index.lock:
-        for position, summary in enumerate(index.summaries()):
-            if summary["rt"] != "setup_snapshot" or summary.get("strategy_valid"):
-                continue
-            observation_id = str(summary.get("observation_id") or "")
-            if not observation_id or observation_id in visited:
-                continue
-            visited.add(observation_id)
-            if summary.get("tz_status") != "VERIFIED":
-                continue
-            if str(summary.get("symbol") or "") not in symbols_with_bars:
-                continue
-            if all((summary.get("setup_id"), summary.get("observation_id"), horizon, label_definition)
-                   in present_keys for horizon in horizons):
-                continue
-            selected.append(position)
-        return index.load(selected)
-
-
-def performance_observations() -> list[dict[str, Any]]:
-    """The fields performance.performance_report reads from each observation row."""
-    return [{field: summary[field] for field in _PERFORMANCE_FIELDS if field in summary}
-            for summary in _observation_index().summaries()]
-
-
-def latest_broker_symbols() -> dict[str, str]:
-    """symbol -> broker symbol from the most recent row carrying both."""
-    mapping: dict[str, str] = {}
-    for summary in reversed(_observation_index().summaries()):
-        if summary.get("symbol") and summary.get("broker_symbol"):
-            mapping.setdefault(str(summary["symbol"]), str(summary["broker_symbol"]))
-    return mapping
+    legacy = []
+    for row in _read_jsonl(LOG_FILE):
+        if not row.get("record_type"):
+            legacy_id = "stp_legacy_" + hashlib.sha256(_identity_key(row).encode()).hexdigest()[:24]
+            if legacy_id == setup_id:
+                legacy.append(row)
+    return legacy
 
 
 def lifecycle_events(setup_id: str | None = None) -> list[dict[str, Any]]:
@@ -522,15 +425,17 @@ def lifecycle_events(setup_id: str | None = None) -> list[dict[str, Any]]:
 
 def setup_episodes(bucket: str = "current", limit: int = 100) -> list[dict[str, Any]]:
     """Return a bounded episode view built from append-only snapshots and events."""
+    snapshots = [row for row in _read_jsonl(LOG_FILE) if row.get("record_type") == "setup_snapshot"]
     confirmations = {row.get("setup_id"): row for row in _read_jsonl(CONFIRMATIONS_FILE)}
     events = _read_jsonl(LIFECYCLE_FILE)
-    # First and latest snapshot per setup, in first-appearance order.
-    index = _observation_index()
-    with index.lock:
-        groups = index.groups("k_snap")
-        sids = list(groups)
-        first_observed = {sid: index.summary(groups[sid][0]).get("observed_at") for sid in sids}
-        latest = dict(zip(sids, index.load(groups[sid][-1] for sid in sids)))
+    latest: dict[str, dict[str, Any]] = {}
+    first: dict[str, dict[str, Any]] = {}
+    for snapshot in snapshots:
+        sid = snapshot.get("setup_id")
+        if not sid:
+            continue
+        first.setdefault(sid, snapshot)
+        latest[sid] = snapshot
     event_map: dict[str, list[dict[str, Any]]] = {}
     for event in events:
         event_map.setdefault(str(event.get("setup_id")), []).append(event)
@@ -551,7 +456,7 @@ def setup_episodes(bucket: str = "current", limit: int = 100) -> list[dict[str, 
                           else "confirmed" if confirmation else "current")
         else:
             row_bucket = bucket
-        detected = first_observed[sid]
+        detected = first[sid].get("observed_at")
         try:
             started = parse_aware_utc(detected)
             ended = (parse_aware_utc(timeline[-1].get("occurred_at"))

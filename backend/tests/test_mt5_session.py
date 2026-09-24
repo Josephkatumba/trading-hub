@@ -66,7 +66,8 @@ class MT5SessionTests(unittest.TestCase):
         with mock.patch.object(main, "mt5_symbol", return_value=None), \
              mock.patch.object(main, "record_markets"), \
              mock.patch.object(main, "confirmation_events", return_value=[]), \
-             mock.patch.object(main, "all_observations", return_value=[]), \
+             mock.patch.object(main, "snapshots_by_observation_id", return_value={}), \
+             mock.patch.object(main, "outcome_watch_snapshots", return_value=[]), \
              mock.patch.object(main, "list_records", return_value=[]), \
              mock.patch.object(main, "resolve_due_market_outcomes", return_value=[]):
             for _ in range(3):
