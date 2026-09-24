@@ -51,6 +51,18 @@ class StrategyRegistry:
     def enabled(self) -> list[str]:
         return [strategy_id for strategy_id in self._strategies if strategy_id in self._enabled]
 
+    def describe(self) -> list[dict[str, object]]:
+        """Registered strategies and their status, for the API/UI (Strategy Lab, filters).
+
+        LIVE strategies produce live setups; DISABLED ones are registered but never
+        run. There is no shadow mode yet: a shadow strategy would be listed with its
+        own status and must never produce live Garden setups.
+        """
+        return [{"strategy_id": strategy.strategy_id, "version": strategy.version,
+                 "timeframe": strategy.timeframe, "higher_timeframes": list(strategy.higher_timeframes),
+                 "status": "LIVE" if strategy.strategy_id in self._enabled else "DISABLED"}
+                for strategy in self._strategies.values()]
+
     def evaluate(self, market: MarketInput) -> dict[str, StrategyResult]:
         enabled = [self._strategies[strategy_id] for strategy_id in self.enabled()]
         shared = len(enabled) == 1

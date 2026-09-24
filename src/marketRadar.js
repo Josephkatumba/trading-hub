@@ -10,7 +10,8 @@ import {setupCountSummary, visibleSetupEntries} from "./radarLayout.mjs";
 import {createConfirmationAlertTracker, dispatchConfirmationAlerts, dispatchTestSound, persistedConfirmationEvents} from "./confirmationAlerts.mjs";
 import {CONFIRMATION_CHIME_CONFIG, playConfirmationChime} from "./confirmationChime.mjs";
 import {analystModel, archiveEntry, archiveSummary, gardenAreas, gardenCounters, marketOverviewRow, constellationLayout, setupCardModel} from "./garden/gardenModel.mjs";
-import {analystPanel, archivePanel, counterTiles, emptyArea, esc, focusPanel, marketOverview, setupCard, stageLegend} from "./garden/gardenCards.mjs";
+import {analystPanel, archivePanel, counterTiles, emptyArea, esc, focusPanel, marketOverview, setupCard, stageLegend, strategyFilterBar, strategyLabPanel, strategyPerformanceBlock} from "./garden/gardenCards.mjs";
+import {filterByStrategy, matchesStrategy, strategyFilters, strategyPerformance, strategyTag} from "./strategyModel.mjs";
 import {mountGarden, prefersReducedMotion} from "./garden/gardenMount.mjs";
 
 const DEMO_MARKETS = [
@@ -36,6 +37,8 @@ let latestEpisodes = {current:[],confirmed:[],closed:[]};
 let growingExpanded = false;
 let historyExpanded = false;
 let archiveFilter = "all";
+let strategyFilter = "all";           // "all" or a strategy_id; applies to setups, archive and performance
+let latestRegistry = null;            // engine strategy registry (null: offline, trendline assumed)
 let latestOutcomes = [];
 let latestArchive = [];
 let selectedKey = null;
@@ -72,6 +75,7 @@ export function renderMarketRadar(){
     +'<p>TRADeden continuously watches the markets for developing structures, confirmations and invalidations so you don\'t have to stare at charts all day.</p>'
     +'<div class="gd-counters" id="gardenCounters">'+counterTiles(null)+'</div>'
     +'<p class="gd-hero-note" id="gardenHeroNote">Every orb is a real setup from the existing strategy and lifecycle. Execution stays manual — TRADeden never places orders.</p></div></section>'
+    +'<div class="gd-strategy-bar" id="strategyFilterBar"></div>'
     +'<div class="gd-layout"><div class="gd-main">'
     +area("growing","🌱","Growing Garden","Current and developing setups. Evidence is still accumulating.")
     +area("bloomed","🌸","Bloomed Setups","Confirmed by the existing strategy rules, including setups now being tracked as active.")
@@ -79,6 +83,7 @@ export function renderMarketRadar(){
     +'</div><div class="gd-side"><section class="gd-analyst" id="gardenAnalyst" aria-live="polite">'+analystPanel(null)+'</section>'
     +'<section class="gd-panel gd-markets" id="gardenMarkets"><header class="gd-panel-head"><h2>Markets TRADeden watches</h2><span class="gd-count" id="marketCount"></span></header><div id="radarTable" class="gd-market-list"></div></section></div></div>'
     +'<section class="gd-panel performance-panel" id="gardenPerformance"><header class="gd-panel-head"><div><h2>📊 Today\'s setup performance</h2><p>Headline uses the 4h market outcome. Other configured horizons remain visible. Trade outcomes are excluded.</p></div></header><div id="dailyPerformance"><div class="macro-empty"><b>Loading performance</b></div></div></section>'
+    +'<details class="gd-panel gd-strategy-lab" id="strategyLab"><summary><span>🧪 Strategy Lab</span><span class="historical-expand-hint">Expand</span></summary><p>Registered strategies and their status. Only live strategies produce Garden setups; shadow-mode results are for review here and never appear in the Garden.</p><div id="strategyLabBody"></div></details>'
     +'<details class="gd-panel historical-confirmations" id="historicalConfirmations"><summary><span>📚 Confirmation event archive · today (<b id="historicalConfirmationCount">0</b>)</span><span class="historical-expand-hint">Expand</span></summary><p class="gd-archive-status" id="confirmedArchiveStatus"></p><div id="historicalConfirmationCards" class="gd-grid"></div></details>'
     +'<section class="gd-panel radar-fundamentals"><header class="gd-panel-head"><h2>Macro events that can change the tape</h2><span class="gd-count">US events</span></header><div id="radarFundamentals" class="macro-list"><div class="macro-empty"><b>Loading macro context</b></div></div></section>'
     +'<footer class="gd-method"><p><b>How TRADeden watches:</b> H1 context → price action → trendline → support/resistance → CRT → session → a transparent 100-point setup score. Breaks and reversals are both valid setup families; the trendline event is the strategy gate.</p><p>TRADeden is decision support, not an auto-trading platform. Not an entry recommendation.</p></footer>'
@@ -101,7 +106,7 @@ async function getFundamentals(){try{return await engineFetch("/api/market/funda
 async function getRadar(){
   try{
     const data=await engineFetch("/api/market/radar"),markets=Array.isArray(data?.markets)?data.markets:[];
-    return {mode:data?.live&&markets.length?"LIVE":"ENGINE_NO_DATA",markets,live:!!data?.live&&markets.length>0,source:data?.source||"MT5",timestamp:data?.timestamp,mt5Status:data?.mt5_status,error:data?.error};
+    return {mode:data?.live&&markets.length?"LIVE":"ENGINE_NO_DATA",markets,live:!!data?.live&&markets.length>0,source:data?.source||"MT5",timestamp:data?.timestamp,mt5Status:data?.mt5_status,error:data?.error,registry:Array.isArray(data?.strategy_registry)?data.strategy_registry:null};
   }catch(_){}
   return radarDemoEnabled()?{mode:"DEMO",markets:demoData(),live:false,source:"DEMO"}:{mode:"OFFLINE",markets:[],live:false,source:"OFFLINE"};
 }
@@ -227,10 +232,20 @@ function gardenCaption(orbs){
   return [null,null];
 }
 let lastCards={growing:[],bloomed:[],history:[]};
+function visibleAreas(){
+  const areas=gardenAreas(latestEpisodes,latestMarkets,{registry:latestRegistry});
+  return {growing:filterByStrategy(areas.growing,strategyFilter),bloomed:filterByStrategy(areas.bloomed,strategyFilter),history:filterByStrategy(areas.history,strategyFilter)};
+}
+function paintStrategyControls(){
+  const filters=strategyFilters(latestRegistry);
+  if(!filters.some(filter=>filter.key===strategyFilter&&filter.selectable))strategyFilter="all";
+  const bar=document.getElementById("strategyFilterBar");if(bar)bar.innerHTML=strategyFilterBar(filters,strategyFilter);
+  const lab=document.getElementById("strategyLabBody");if(lab)lab.innerHTML=strategyLabPanel(latestRegistry);
+}
 function repaintCards(){
   if(!latestResult)return;
   latestCards=new Map();
-  lastCards=paintAreas(gardenAreas(latestEpisodes,latestMarkets));
+  lastCards=paintAreas(visibleAreas());
   paintGarden(lastCards);
 }
 function select(key,{scrollTo=null}={}){
@@ -256,6 +271,8 @@ function bindGardenInteractions(){
     }
     const toggle=event.target.closest("[data-toggle]");
     if(toggle){if(toggle.dataset.toggle==="growing")growingExpanded=!growingExpanded;else historyExpanded=!historyExpanded;repaintCards();return;}
+    const strategyButton=event.target.closest("[data-strategy-filter]");
+    if(strategyButton){strategyFilter=strategyButton.dataset.strategyFilter;historyExpanded=false;growingExpanded=false;paintStrategyControls();repaintCards();if(latestResult){paintConfirmed(latestMarkets,latestResult.performance);paintPerformance(latestResult.performance);}return;}
     const filterButton=event.target.closest("[data-archive-filter]");
     if(filterButton){archiveFilter=filterButton.dataset.archiveFilter;historyExpanded=false;repaintCards();return;}
     const archiveRow=event.target.closest("[data-archive-key]");
@@ -307,7 +324,7 @@ function paintConfirmed(markets, performance){
   if(!container||!status||!count)return;
   const repaint=()=>{if(container.isConnected)paintConfirmed(markets,performance);};
   for(const market of markets)if(market.strategy_valid===true)fetchConfirmedDetail(market.setup_id,repaint);
-  const entries=confirmedEntries(markets,performance);
+  const entries=confirmedEntries(markets,performance).filter(({event})=>matchesStrategy(event,strategyFilter));
   for(const {event} of entries)fetchConfirmedDetail(event.setup_id,repaint);
   const pending=entries.filter(({event})=>String(event.primary_outcome||event.market_outcomes?.["4h"]||"").toUpperCase()==="PENDING").length;
   const current=entries.filter(({display})=>display.currentlyConfirmed).length;
@@ -327,6 +344,7 @@ function paint(result){
   latestResult=result;
   latestMarkets=result.markets||[];
   latestEpisodes=result.episodes||latestEpisodes;
+  latestRegistry=result.registry||null;
   processConfirmationEvents(result.performance);
   const table=document.getElementById("radarTable");
   if(!table)return;
@@ -334,12 +352,13 @@ function paint(result){
   radarMode=mode;
   paintMode(mode,result);
   const counters=document.getElementById("gardenCounters");
-  if(counters)counters.innerHTML=counterTiles(gardenCounters({markets:latestMarkets,episodes:latestEpisodes,mode}));
+  if(counters)counters.innerHTML=counterTiles(gardenCounters({markets:latestMarkets,episodes:latestEpisodes,mode,registry:latestRegistry}));
+  paintStrategyControls();
   const sorted=[...latestMarkets].sort((a,b)=>(b.score||0)-(a.score||0));
-  table.innerHTML=sorted.length?marketOverview(sorted.map(marketOverviewRow)):emptyArea(mode==="OFFLINE"?"Engine offline":"No market data",mode==="OFFLINE"?"No market data is shown while the engine is offline.":"The engine returned no markets.");
+  table.innerHTML=sorted.length?marketOverview(sorted.map(market=>marketOverviewRow(market,latestRegistry))):emptyArea(mode==="OFFLINE"?"Engine offline":"No market data",mode==="OFFLINE"?"No market data is shown while the engine is offline.":"The engine returned no markets.");
   const marketCount=document.getElementById("marketCount");if(marketCount)marketCount.textContent=sorted.length?sorted.length+" instruments":"";
   latestCards=new Map();
-  lastCards=paintAreas(gardenAreas(latestEpisodes,latestMarkets));
+  lastCards=paintAreas(visibleAreas());
   if(!selectedKey||!selectedRow())selectedKey=defaultSelection(lastCards);
   for(const node of document.querySelectorAll(".gd-card"))node.classList.toggle("is-selected",node.dataset.key===selectedKey);
   paintGarden(lastCards);
@@ -436,7 +455,7 @@ function bindConfirmationAlertControls(){
   };}
   if(test)test.onclick=()=>{dispatchTestSound(()=>playConfirmationTone());};
 }
-function paintPerformance(data){const el=document.getElementById("dailyPerformance");if(!el)return;if(!data){el.innerHTML='<div class="macro-empty"><b>Performance unavailable</b><span>Backend performance endpoint did not respond.</span></div>';return;}const daily=data.daily?.[0]||data.summary||{};const horizons=daily.by_horizon||{};const rows=["15m","1h","4h","24h"].map(h=>{const x=horizons[h]||{};return '<tr><th>'+h+'</th><td>'+Number(x.win||0)+'</td><td>'+Number(x.loss||0)+'</td><td>'+Number(x.pending||0)+'</td><td>'+Number(x.no_hit||0)+'</td><td>'+Number(x.ambiguous||0)+'</td></tr>';}).join("");const h4=horizons["4h"]||{};const wins=Number(h4.win||0),losses=Number(h4.loss||0),denominator=Number(h4.win_rate_denominator??wins+losses);const rate=h4.win_rate;el.innerHTML='<div class="performance-headline"><b>'+wins+'W / '+losses+'L</b><span>4h win rate '+(rate==null?"—":Number(rate).toFixed(1)+"%")+' · denominator '+denominator+' (wins + losses)</span></div><div class="performance-table-wrap"><table class="performance-table"><thead><tr><th>HORIZON</th><th>W</th><th>L</th><th>PENDING</th><th>NO HIT</th><th>AMBIGUOUS</th></tr></thead><tbody>'+rows+'</tbody></table></div><small>Timezone: '+esc(data.timezone||daily.reporting_timezone||"Africa/Nairobi")+' · MarketOutcome records only. NO_HIT and AMBIGUOUS are excluded from win-rate denominator.</small>';}
+function paintPerformance(data){const el=document.getElementById("dailyPerformance");if(!el)return;if(!data){el.innerHTML='<div class="macro-empty"><b>Performance unavailable</b><span>Backend performance endpoint did not respond.</span></div>';return;}if(strategyFilter!=="all"){el.innerHTML=strategyPerformanceBlock(strategyPerformance(data,strategyFilter),strategyTag(strategyFilter));return;}const daily=data.daily?.[0]||data.summary||{};const horizons=daily.by_horizon||{};const rows=["15m","1h","4h","24h"].map(h=>{const x=horizons[h]||{};return '<tr><th>'+h+'</th><td>'+Number(x.win||0)+'</td><td>'+Number(x.loss||0)+'</td><td>'+Number(x.pending||0)+'</td><td>'+Number(x.no_hit||0)+'</td><td>'+Number(x.ambiguous||0)+'</td></tr>';}).join("");const h4=horizons["4h"]||{};const wins=Number(h4.win||0),losses=Number(h4.loss||0),denominator=Number(h4.win_rate_denominator??wins+losses);const rate=h4.win_rate;el.innerHTML='<div class="performance-headline"><b>'+wins+'W / '+losses+'L</b><span>4h win rate '+(rate==null?"—":Number(rate).toFixed(1)+"%")+' · denominator '+denominator+' (wins + losses)</span></div><div class="performance-table-wrap"><table class="performance-table"><thead><tr><th>HORIZON</th><th>W</th><th>L</th><th>PENDING</th><th>NO HIT</th><th>AMBIGUOUS</th></tr></thead><tbody>'+rows+'</tbody></table></div><small>Timezone: '+esc(data.timezone||daily.reporting_timezone||"Africa/Nairobi")+' · MarketOutcome records only. NO_HIT and AMBIGUOUS are excluded from win-rate denominator.</small>';}
 function paintFundamentals(data){
   const el=document.getElementById("radarFundamentals");if(!el)return;
   if(!data.configured){el.innerHTML='<div class="macro-empty"><b>Macro layer ready</b><span>Connect a Trading Economics API key on the engine to bring live US economic events into the scanner.</span></div>';return;}

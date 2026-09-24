@@ -1,6 +1,7 @@
 // TRADeden Garden markup. Pure string renderers (no DOM access) over the view
 // models in gardenModel.mjs. Unavailable values are always shown explicitly.
 import {GARDEN_STAGES} from "./gardenModel.mjs";
+import {STRATEGY_STATUS, normalizeRegistry, strategyTag} from "../strategyModel.mjs";
 
 export const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"}[c]));
 const orUnavailable = (value, text = "Unavailable") => value == null || value === "" ? '<span class="gd-na">' + text + '</span>' : esc(value);
@@ -24,6 +25,12 @@ function level(label, value, extraClass = "") {
   return '<div class="gd-level ' + extraClass + '"><span>' + label + '</span><b>' + (value == null ? '<span class="gd-na">Not yet calculated</span>' : esc(value)) + '</b></div>';
 }
 
+/** Compact strategy identity chip ("TRENDLINE", "S/R", ...). */
+export function strategyChip(strategy) {
+  if (!strategy) return "";
+  return '<span class="gd-strategy-tag" data-strategy="' + esc(strategy.id) + '" title="Strategy: ' + esc(strategy.label) + '">' + esc(strategy.tag) + '</span>';
+}
+
 function directionBadge(card) {
   if (!card.direction) return '<span class="gd-dir gd-dir-none">No direction</span>';
   return '<span class="gd-dir gd-dir-' + card.direction.toLowerCase() + '">' + (card.direction === "LONG" ? "▲ LONG" : "▼ SHORT") + '</span>';
@@ -42,6 +49,7 @@ export function setupCard(card, {selected = false, expanded = false, evidenceHtm
   } else {
     facts.push(["Confirmation", card.confirmationTime || (card.stage === "bloomed" || card.stage === "active" ? null : "Not confirmed yet")]);
   }
+  if (card.latestObservation) facts.push(["Latest observation", card.latestObservation]);
   facts.push(["Session", card.session], ["Status", card.status]);
   if (card.bucket !== "history") facts.push(["Observed for", card.duration]);
   const factRows = facts.map(([label, value]) => '<div><span>' + label + '</span><b>' + orUnavailable(value) + '</b></div>').join("");
@@ -52,7 +60,7 @@ export function setupCard(card, {selected = false, expanded = false, evidenceHtm
     + '<header class="gd-card-head"><div class="gd-card-title"><h3><i class="gd-swatch gd-swatch-' + card.stage + ' gd-swatch-' + String(card.direction || "none").toLowerCase() + '" aria-hidden="true"></i>' + esc(card.symbol) + '</h3>'
     + '<span class="gd-stage-chip"><span aria-hidden="true">' + card.stageIcon + '</span> ' + esc(card.headline) + '</span></div>'
     + '<div class="gd-score" aria-label="Setup score">' + (card.score == null ? '<b class="gd-na">—</b>' : '<b>' + card.score + '</b>') + '<span>/ 100</span></div></header>'
-    + '<div class="gd-card-sub">' + directionBadge(card) + '<span>' + orUnavailable(card.setupType, "Setup type unavailable") + (card.timeframe ? ' · ' + esc(card.timeframe) : '') + '</span>'
+    + '<div class="gd-card-sub">' + strategyChip(card.strategy) + directionBadge(card) + '<span>' + orUnavailable(card.setupType, "Setup type unavailable") + (card.timeframe ? ' · ' + esc(card.timeframe) : '') + '</span>'
     + (card.tracked ? '<span class="gd-tracked-flag">Tracking</span>' : '') + '</div>'
     + (card.levels.planned
       ? '<div class="gd-levels">' + level("Entry", card.levels.entry) + level("Stop", card.levels.stop, "gd-level-stop")
@@ -77,13 +85,67 @@ export function emptyArea(title, text) {
 export function marketOverview(rows) {
   if (!rows.length) return emptyArea("No market data", "The engine has not returned any instruments.");
   return '<div class="gd-market-head" aria-hidden="true"><span>Market</span><span>Price</span><span>Bias · state</span><span>Setup</span></div>'
-    + rows.map(row => '<button type="button" class="gd-market-row" data-symbol="' + esc(row.symbol) + '">'
+    + rows.map(row => '<button type="button" class="gd-market-row' + (row.conflict ? ' has-conflict' : '') + '" data-symbol="' + esc(row.symbol) + '">'
       + '<b>' + esc(row.symbol) + '</b>'
       + '<span class="gd-market-price">' + orUnavailable(row.price) + '<small class="gd-' + row.changeTone + '">' + (row.change ? esc(row.change) : '') + '</small></span>'
       + '<span class="gd-market-bias"><span class="gd-market-dir gd-dir-text-' + esc(String(row.direction || "none").toLowerCase()) + '">' + orUnavailable(row.direction, "—") + '</span>'
       + '<small class="gd-market-state">' + orUnavailable(row.state, "—") + '</small></span>'
       + '<span class="gd-market-setup">' + (row.stage ? GARDEN_STAGES[row.stage].icon + ' ' : '') + esc(row.setupStatus) + '</span>'
+      + strategyMatrixLine(row)
       + '</button>').join("");
+}
+
+/**
+ * Per-strategy results under a market row, only when more than one strategy
+ * reported (with the single trendline strategy the row itself is its result).
+ * A conflict shows both sides; neither is hidden.
+ */
+export function strategyMatrixLine(row) {
+  const entries = row?.strategies || [];
+  if (entries.length < 2 && !row?.conflict) return "";
+  const cell = entry => '<span class="gd-matrix-cell' + (entry.live ? '' : ' is-not-live') + '">' + esc(entry.tag) + ' '
+    + (entry.status === "ERROR" ? 'unavailable' : entry.direction ? (entry.direction === "LONG" ? "▲ BUY" : "▼ SELL") : '—') + '</span>';
+  return '<span class="gd-market-matrix">'
+    + (row.conflict ? '<b class="gd-conflict-badge" title="Live strategies disagree on direction; both are shown.">Strategy conflict</b>' : '')
+    + entries.map(cell).join("") + '</span>';
+}
+
+/** Strategy filter buttons; strategies that are not registered cannot be selected. */
+export function strategyFilterBar(filters, selected = "all") {
+  return '<div class="gd-strategy-filters" role="group" aria-label="Filter by strategy"><span class="gd-strategy-filters-label">Strategy</span>'
+    + filters.map(filter => '<button type="button" data-strategy-filter="' + esc(filter.key) + '" aria-pressed="' + (filter.key === selected) + '"'
+      + (filter.selectable ? '' : ' disabled')
+      + ' title="' + esc(filter.label + (filter.key === "all" ? "" : " · " + (STRATEGY_STATUS[filter.status] || filter.status))) + '">'
+      + esc(filter.key === "all" ? "All" : filter.tag)
+      + (filter.key !== "all" && filter.status !== "LIVE" ? '<small>' + (filter.status === "SHADOW" ? "shadow" : "not live") + '</small>' : '')
+      + '</button>').join("") + '</div>';
+}
+
+/**
+ * Strategy Lab: every registered strategy and its status. Shadow-mode results
+ * (none exist yet) are reviewed here only and never shown as live Garden setups.
+ */
+export function strategyLabPanel(registry) {
+  const entries = normalizeRegistry(registry);
+  const shadow = entries.filter(entry => entry.status === "SHADOW");
+  return '<ul class="gd-lab-list">' + entries.map(entry => {
+    const {tag, label} = strategyTag(entry.id);
+    return '<li class="gd-lab-item gd-lab-' + esc(entry.status.toLowerCase()) + '"><b>' + esc(tag) + '</b><span>' + esc(label) + '</span>'
+      + '<em>' + esc(STRATEGY_STATUS[entry.status] || entry.status) + (entry.assumed ? ' (engine offline, assumed)' : '') + '</em>'
+      + (entry.version ? '<small>' + esc(entry.version) + '</small>' : '') + '</li>';
+  }).join("") + '</ul>'
+    + '<p class="gd-note">' + (shadow.length
+      ? 'Shadow-mode strategies are evaluated for review only. Their results never appear as Garden setups.'
+      : 'No shadow-mode strategies are registered. Future strategies are reviewed here before they can produce live Garden setups.') + '</p>';
+}
+
+/** Per-strategy market-outcome counts, straight from the backend report (no derived rates). */
+export function strategyPerformanceBlock(perf, strategy) {
+  if (!perf) return '<div class="macro-empty"><b>No confirmed ' + esc(strategy.label) + ' setups in this period</b><span>Only this strategy&#039;s confirmations are counted here.</span></div>';
+  return '<div class="performance-headline"><b>' + perf.win + 'W / ' + perf.loss + 'L</b><span>' + esc(perf.tag) + ' only · ' + esc(perf.horizon) + ' market outcome</span></div>'
+    + '<div class="performance-table-wrap"><table class="performance-table"><thead><tr><th>STRATEGY</th><th>W</th><th>L</th><th>PENDING</th><th>NO HIT</th><th>AMBIGUOUS</th></tr></thead><tbody>'
+    + '<tr><th>' + esc(perf.tag) + '</th><td>' + perf.win + '</td><td>' + perf.loss + '</td><td>' + perf.pending + '</td><td>' + perf.noHit + '</td><td>' + perf.ambiguous + '</td></tr></tbody></table></div>'
+    + '<small>Per-strategy view shows the ' + esc(perf.horizon) + ' primary horizon only. Strategies are never combined here.</small>';
 }
 
 function list(items, emptyText) {
@@ -147,7 +209,7 @@ export function archivePanel(entries, summary, {filter = "all", selectedKey = nu
   const note = summary.confirmed && !summary.verifiedOutcomes
     ? '<p class="gd-arch-note">Outcomes of confirmed setups stay <b>unverified</b> until their timestamps pass TRADeden\'s data-integrity checks. Nothing is counted as a target or stop hit before that.</p>' : '';
   const rows = visible.map(entry => '<button type="button" class="gd-arch-row gd-arch-' + entry.tone + (entry.key === selectedKey ? ' is-selected' : '') + '" data-archive-key="' + esc(entry.key || "") + '">'
-    + '<span class="gd-arch-symbol"><b>' + esc(entry.symbol) + '</b><small>' + (entry.direction ? esc(entry.direction) : 'No direction') + (entry.confirmed ? ' · confirmed' : ' · not confirmed') + '</small></span>'
+    + '<span class="gd-arch-symbol"><b>' + esc(entry.symbol) + '</b>' + strategyChip(entry.strategy) + '<small>' + (entry.direction ? esc(entry.direction) : 'No direction') + (entry.confirmed ? ' · confirmed' : ' · not confirmed') + '</small></span>'
     + '<span class="gd-arch-badge"><i aria-hidden="true">' + entry.icon + '</i>' + esc(entry.label) + (entry.horizon ? '<small>within ' + esc(entry.horizon) + '</small>' : '') + '</span>'
     + '<span class="gd-arch-r">' + (entry.rText ? esc(entry.rText) : '') + '</span>'
     + '<span class="gd-arch-time">' + (entry.closedTime ? esc(entry.closedTime) : '<span class="gd-na">Time unavailable</span>') + '</span>'

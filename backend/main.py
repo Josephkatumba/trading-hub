@@ -671,7 +671,14 @@ def radar():
         "engine_status": "CONNECTED" if markets else _LAST_SCAN.get("status", "UNKNOWN"),
         "mt5_status": "CONNECTED" if markets else _LAST_SCAN.get("status", "UNKNOWN"),
         "error": _LAST_SCAN.get("error"),
+        "strategy_registry": STRATEGIES.describe(),
     }
+
+
+@app.get("/api/market/strategies")
+def strategy_registry():
+    """Registered strategies and their status (LIVE / DISABLED); only LIVE ones produce setups."""
+    return {"strategies": STRATEGIES.describe(), "timestamp": utc_iso(datetime.now(timezone.utc))}
 
 
 @app.get("/api/market/fundamentals")

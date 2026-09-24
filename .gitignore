@@ -144,3 +144,7 @@ vite.config.ts.timestamp-*
 
 # Derived JSONL index sidecars (rebuilt automatically from the JSONL files)
 backend/data/.index/
+
+# Python bytecode (never commit compiled files)
+__pycache__/
+*.pyc

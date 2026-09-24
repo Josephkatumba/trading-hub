@@ -378,3 +378,23 @@ body.garden-mode .topline b { color: #1c2321; }
 
 /* The mode banner uses the hidden attribute; its display:flex rule must not override it. */
 .radar-mode-banner[hidden] { display: none !important; }
+
+/* ----- strategy identity (Phase 4): small, never louder than the setup itself ----- */
+.gd-strategy-tag { padding: 1px 7px; border: 1px solid var(--gd-border-strong); border-radius: 6px; background: var(--gd-surface-2); color: var(--gd-muted); font-size: 10px; font-weight: 800; letter-spacing: .06em; }
+.gd-arch-symbol .gd-strategy-tag { margin-left: 6px; vertical-align: middle; }
+.gd-strategy-bar { margin: 0 0 14px; }
+.gd-strategy-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.gd-strategy-filters-label { margin-right: 4px; color: var(--gd-faint); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.gd-strategy-filters button { display: inline-flex; align-items: baseline; gap: 5px; padding: 6px 11px; border: 1px solid var(--gd-border); border-radius: 999px; background: var(--gd-surface); color: var(--gd-muted); font-size: 12px; font-weight: 700; cursor: pointer; }
+.gd-strategy-filters button small { color: var(--gd-faint); font-size: 10px; font-weight: 600; }
+.gd-strategy-filters button[aria-pressed="true"] { background: #1c2321; border-color: #1c2321; color: #fff; }
+.gd-strategy-filters button:disabled { cursor: not-allowed; opacity: .55; }
+.gd-market-matrix { display: flex; flex-wrap: wrap; gap: 6px; grid-column: 1 / -1; font-size: 11px; }
+.gd-matrix-cell { padding: 1px 7px; border-radius: 6px; background: var(--gd-grey-bg); color: var(--gd-muted); font-weight: 700; }
+.gd-matrix-cell.is-not-live { opacity: .6; font-style: italic; }
+.gd-conflict-badge { padding: 1px 7px; border-radius: 6px; background: #fff4e0; color: #8a5a00; font-weight: 800; }
+.gd-lab-list { display: grid; gap: 8px; margin: 10px 0; padding: 0; list-style: none; }
+.gd-lab-item { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; padding: 9px 12px; border: 1px solid var(--gd-border); border-radius: 10px; background: var(--gd-surface-2); }
+.gd-lab-item em { color: var(--gd-muted); font-style: normal; font-size: 12px; }
+.gd-lab-item small { color: var(--gd-faint); }
+.gd-lab-live b { color: var(--gd-leaf); }

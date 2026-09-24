@@ -6,6 +6,7 @@
 // shown comes from API data; anything missing becomes an explicit unavailable
 // state rather than a guess.
 import {currentWatchSetups, partitionSetupEpisodes} from "../radarLayout.mjs";
+import {liveGardenRows, strategyConflict, strategyIdOf, strategyMatrix, strategyTag} from "../strategyModel.mjs";
 
 export const GARDEN_STAGES = Object.freeze({
   growing: {key: "growing", icon: "🌱", label: "Growing", description: "Setup is developing."},
@@ -116,6 +117,24 @@ export function tradeLevels(row, analysis = null) {
   };
 }
 
+const CONTEXT_TYPES = new Set(["WATCHING", "GENERAL"]);
+
+/**
+ * Setup type of an episode. A confirmed episode keeps the type it was confirmed
+ * as (the confirmation event), even when its latest observation has since become
+ * directional context: the latest observation is reported separately.
+ */
+export function setupTypeOf(row) {
+  return row?.confirmation?.setup_type || row?.setup_type || row?.setup_family || row?.setup || null;
+}
+
+/** "Directional context" when a confirmed episode's latest observation is context-only, else null. */
+export function latestObservationNote(row) {
+  if (!row?.confirmation) return null;
+  const latest = upper(row?.setup_type);
+  return CONTEXT_TYPES.has(latest) && latest !== upper(row.confirmation.setup_type) ? "Directional context" : null;
+}
+
 /** Everything a setup card shows, with explicit null for unavailable values. */
 export function setupCardModel(row, {bucket = null, analysis = null, tracked = false, simulated = false} = {}) {
   const stage = gardenStage(row);
@@ -141,7 +160,9 @@ export function setupCardModel(row, {bucket = null, analysis = null, tracked = f
     tone: cardTone(stage, dir),
     bucket: bucket || (stage === "history" ? "history" : stage === "bloomed" || stage === "active" ? "bloomed" : "growing"),
     score: finite(row?.score) ? Math.round(Number(row.score)) : null,
-    setupType: row?.setup_type || row?.setup_family || row?.setup || null,
+    setupType: setupTypeOf(row),
+    latestObservation: latestObservationNote(row),
+    strategy: strategyTag(strategyIdOf(row)),
     timeframe: row?.timeframe || null,
     levels: tradeLevels(row, analysis),
     why: sentence(reason) || sentence(analysis?.summary) || null,
@@ -161,9 +182,11 @@ export function setupCardModel(row, {bucket = null, analysis = null, tracked = f
 /**
  * Split episodes into the three garden areas. Falls back to live scanner
  * markets only when the engine has no persisted episodes at all (same rule as
- * the previous radar).
+ * the previous radar). The live areas (growing, bloomed) hold only setups of
+ * strategies the registry reports as LIVE; shadow or disabled strategies never
+ * appear as live setups. History keeps every recorded setup.
  */
-export function gardenAreas(episodes, markets = []) {
+export function gardenAreas(episodes, markets = [], {registry = null} = {}) {
   const all = [...(episodes?.current || []), ...(episodes?.confirmed || []), ...(episodes?.closed || [])];
   const parts = partitionSetupEpisodes(all);
   let growing = parts.current;
@@ -171,16 +194,16 @@ export function gardenAreas(episodes, markets = []) {
   const rank = row => STAGE_ORDER.indexOf(gardenStage(row));
   const byStageThenScore = (a, b) => rank(a) - rank(b) || (Number(b.score) || 0) - (Number(a.score) || 0);
   return {
-    growing: [...growing].sort(byStageThenScore),
-    bloomed: [...parts.confirmed].sort(byStageThenScore),
+    growing: liveGardenRows(growing, registry).sort(byStageThenScore),
+    bloomed: liveGardenRows(parts.confirmed, registry).sort(byStageThenScore),
     history: parts.closed,
   };
 }
 
 /** Live hero counters. null means "unavailable" (engine offline), never a fake 0. */
-export function gardenCounters({markets = [], episodes = null, mode = "LIVE"} = {}) {
+export function gardenCounters({markets = [], episodes = null, mode = "LIVE", registry = null} = {}) {
   if (mode === "OFFLINE") return {watched: null, growing: null, confirming: null, bloomed: null, active: null};
-  const areas = gardenAreas(episodes, markets);
+  const areas = gardenAreas(episodes, markets, {registry});
   const live = [...areas.growing, ...areas.bloomed];
   const count = stage => live.filter(row => gardenStage(row) === stage).length;
   return {
@@ -256,7 +279,7 @@ export function analystModel(row, analysis = null, archive = null) {
   };
 }
 
-export function marketOverviewRow(market) {
+export function marketOverviewRow(market, registry = null) {
   const move = finite(market?.change_pct) ? Number(market.change_pct) : null;
   const bias = upper(market?.direction) || upper(market?.market_bias) || null;
   return {
@@ -269,6 +292,9 @@ export function marketOverviewRow(market) {
     setupStatus: market?.lifecycle_state ? GARDEN_STAGES[gardenStage(market)].label : "No setup",
     stage: market?.lifecycle_state ? gardenStage(market) : null,
     score: finite(market?.score) ? Math.round(Number(market.score)) : null,
+    // Per-strategy results; the top-level fields above stay the trendline result.
+    strategies: strategyMatrix(market, registry),
+    conflict: strategyConflict(market, registry),
   };
 }
 
@@ -411,10 +437,14 @@ export function archiveEntry(episode, outcomes = [], confirmationSnapshot = null
   }
   const r = outcomeR(kind, confirmationSnapshot);
   const closedAt = episode?.closed_event?.occurred_at || episode?.observed_at || null;
+  const strategyId = strategyIdOf(episode);
   return {
     key: episode?.setup_id || null,
     symbol: episode?.symbol || "Unknown",
     direction: direction(episode),
+    strategy_id: strategyId,
+    strategy: strategyTag(strategyId),
+    setupType: setupTypeOf(episode),
     confirmed,
     kind,
     ...ARCHIVE_KINDS[kind],

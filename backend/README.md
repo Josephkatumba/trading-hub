@@ -133,4 +133,10 @@ Persistence and lifecycle are scoped by strategy (`tests/test_strategy_persisten
   read as `trendline` (setup_type BREAK / REVERSAL / WATCHING / GENERAL still
   distinguishes its setups and context episodes).
 - API additions only: `markets[i].strategies[]` on the radar, `strategy_id` on
-  setup episodes, `by_strategy` in performance reports.
+  setup episodes, `by_strategy` in performance reports, `strategy_registry` on
+  the radar and `GET /api/market/strategies` (each strategy with status LIVE /
+  DISABLED; only LIVE strategies produce live Garden setups).
+- The standalone `setup-episodes?bucket=confirmed` query means "ever confirmed"
+  and includes closed episodes. An episode's `setup_type` is its latest
+  observation; `confirmation.setup_type` is what it was confirmed as, and the UI
+  shows the latter for confirmed setups.
