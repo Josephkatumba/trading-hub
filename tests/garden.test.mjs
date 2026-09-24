@@ -54,9 +54,10 @@ test("card model uses only API data and marks gaps explicitly", () => {
   assert.equal(sparse.why, null);
   assert.equal(sparse.key, "mkt-EURUSD");
   const html = setupCard(sparse);
-  assert.match(html, /Not yet calculated/);
+  assert.doesNotMatch(html, /gd-levels"/, "no level grid without calculated levels");
+  assert.match(html, /appear once the engine calculates a stop and a target/);
   assert.match(html, /No explanation was recorded/);
-  assert.match(html, /Not an entry recommendation\./);
+  assert.match(html, /Not an entry recommendation\. The trader makes the final decision\./);
 });
 
 test("cards never offer execution buttons", () => {

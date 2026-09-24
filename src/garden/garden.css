@@ -159,6 +159,14 @@ body.garden-mode .topline b { color: #1c2321; }
 .gd-tone-history .gd-dir-long, .gd-tone-history .gd-dir-short { background: #d9dcda; color: #4b524e; }
 .gd-tracked-flag { padding: 2px 8px; border-radius: 6px; background: #1c2321; color: #fff; font-size: 10.5px; font-weight: 700; }
 .gd-levels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; border: 1px solid var(--gd-border); border-radius: 12px; overflow: hidden; background: var(--gd-border); }
+.gd-levels-pending { margin: 0; padding: 9px 12px; border-radius: 10px; background: var(--gd-surface-2); border: 1px dashed var(--gd-border-strong); color: var(--gd-faint); font-size: 12px; }
+.gd-card-title h3 { display: flex; align-items: center; gap: 9px; }
+.gd-swatch { flex: none; width: 12px; height: 12px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0 14%, #cfe3d6 40%, #8fbba0 100%); box-shadow: 0 0 0 3px rgba(143, 187, 160, .16); }
+.gd-swatch-shaping { background: radial-gradient(circle at 35% 30%, #fff 0 12%, #bfe0cc 40%, #4fa37c 100%); box-shadow: 0 0 0 2px rgba(79, 163, 124, .18), 0 0 0 5px rgba(79, 163, 124, .08); }
+.gd-swatch-bloomed.gd-swatch-long, .gd-swatch-active.gd-swatch-long { background: radial-gradient(circle at 35% 30%, #fff 0 12%, #bff0d4 40%, #2ebd82 100%); box-shadow: 0 0 0 3px rgba(46, 189, 130, .18); }
+.gd-swatch-bloomed.gd-swatch-short, .gd-swatch-active.gd-swatch-short { background: radial-gradient(circle at 35% 30%, #fff 0 12%, #f8cbc6 40%, #ec6f63 100%); box-shadow: 0 0 0 3px rgba(236, 111, 99, .18); }
+.gd-swatch-active { outline: 1px solid rgba(28, 35, 33, .25); outline-offset: 3px; }
+.gd-swatch-history { width: 8px; height: 8px; background: #b3bab6; box-shadow: none; }
 .gd-level { padding: 9px 10px; background: rgba(255, 255, 255, .88); min-width: 0; }
 .gd-level > span { display: block; color: var(--gd-faint); font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
 .gd-level b { display: block; margin-top: 3px; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }

@@ -49,13 +49,15 @@ export function setupCard(card, {selected = false, expanded = false, evidenceHtm
     + (evidenceHtml || '<p class="gd-na">' + (evidenceState === "loading" ? "Loading recorded evidence…" : "No recorded analyst evidence for this setup.") + '</p>') + '</div>';
   return '<article class="gd-card gd-tone-' + card.tone + ' gd-stage-' + card.stage + (selected ? ' is-selected' : '') + (card.tracked ? ' is-tracked' : '')
     + '" data-key="' + esc(card.key || "") + '" data-setup-id="' + id + '" tabindex="0" aria-selected="' + selected + '">'
-    + '<header class="gd-card-head"><div class="gd-card-title"><h3>' + esc(card.symbol) + '</h3>'
+    + '<header class="gd-card-head"><div class="gd-card-title"><h3><i class="gd-swatch gd-swatch-' + card.stage + ' gd-swatch-' + String(card.direction || "none").toLowerCase() + '" aria-hidden="true"></i>' + esc(card.symbol) + '</h3>'
     + '<span class="gd-stage-chip"><span aria-hidden="true">' + card.stageIcon + '</span> ' + esc(card.headline) + '</span></div>'
     + '<div class="gd-score" aria-label="Setup score">' + (card.score == null ? '<b class="gd-na">—</b>' : '<b>' + card.score + '</b>') + '<span>/ 100</span></div></header>'
     + '<div class="gd-card-sub">' + directionBadge(card) + '<span>' + orUnavailable(card.setupType, "Setup type unavailable") + (card.timeframe ? ' · ' + esc(card.timeframe) : '') + '</span>'
     + (card.tracked ? '<span class="gd-tracked-flag">Tracking</span>' : '') + '</div>'
-    + '<div class="gd-levels">' + level("Entry", card.levels.entry) + level("Stop", card.levels.stop, "gd-level-stop")
-    + level("Target", card.levels.target, "gd-level-target") + level("R:R", card.levels.rr) + '</div>'
+    + (card.levels.planned
+      ? '<div class="gd-levels">' + level("Entry", card.levels.entry) + level("Stop", card.levels.stop, "gd-level-stop")
+        + level("Target", card.levels.target, "gd-level-target") + level("R:R", card.levels.rr) + '</div>'
+      : '<p class="gd-levels-pending">Entry, stop, target and R:R appear once the engine calculates a stop and a target.</p>')
     + '<div class="gd-why"><span>Why TRADeden sees it</span><p>' + (card.why ? esc(card.why) : '<span class="gd-na">No explanation was recorded for this observation.</span>') + '</p></div>'
     + '<div class="gd-facts">' + factRows + '</div>'
     + evidence
@@ -64,7 +66,7 @@ export function setupCard(card, {selected = false, expanded = false, evidenceHtm
     + '<button type="button" data-action="view-evidence" aria-expanded="' + expanded + '"' + (card.id ? '' : ' disabled') + '>' + (expanded ? 'Hide evidence' : 'View evidence') + '</button>'
     + '<button type="button" data-action="view-analysis">View analysis</button>'
     + (trackable ? '<button type="button" data-action="track" aria-pressed="' + card.tracked + '">' + (card.tracked ? 'Tracking ✓' : 'Track setup') + '</button>' : '')
-    + '</div><small class="gd-disclaimer">Not an entry recommendation.</small>' + extraFoot + '</footer>'
+    + '</div><small class="gd-disclaimer">Not an entry recommendation. The trader makes the final decision.</small>' + extraFoot + '</footer>'
     + '</article>';
 }
 
