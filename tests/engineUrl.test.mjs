@@ -34,7 +34,7 @@ test("a user-chosen remote URL is respected and only trailing slash trimmed", ()
 
 test("startup script, stop script and READMEs all use port 8000 and no 8010 remains", () => {
   const read=p=>readFileSync(new URL("../"+p,import.meta.url),"utf8");
-  assert.match(read("backend/start_engine.bat"),/--port 8000\b/);
+  assert.match(read("backend/start_engine.bat"),/--host 127\.0\.0\.1 --port 8000\b/);
   assert.match(read("STOP TRADING HUB.bat"),/:8000/);
   assert.match(read("backend/README.md"),/127\.0\.0\.1:8000\/api\/health/);
   for(const p of ["backend/start_engine.bat","STOP TRADING HUB.bat","START TRADING HUB.bat","backend/README.md","README.md","backend/main.py"])

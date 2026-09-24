@@ -97,8 +97,14 @@ LONDON = ZoneInfo("Europe/London")
 NEW_YORK = ZoneInfo("America/New_York")
 
 
+# The bridge heartbeat file also contains login, server, balance and equity.
+# Only these non-identifying fields may leave the engine.
+BRIDGE_PUBLIC_FIELDS = ("bridge", "version", "terminal_build", "symbol", "execution_enabled")
+BRIDGE_STALE_SECONDS = 60
+
+
 def mt5_bridge_heartbeat() -> dict[str, Any]:
-    """Read the optional MQL5 read-only bridge heartbeat."""
+    """Read the optional MQL5 read-only bridge heartbeat (public-safe summary)."""
     configured = os.getenv("TRADING_HUB_BRIDGE_FILE")
     if configured:
         path = Path(configured)
@@ -106,12 +112,15 @@ def mt5_bridge_heartbeat() -> dict[str, Any]:
         appdata = os.getenv("APPDATA")
         path = Path(appdata) / "MetaQuotes" / "Terminal" / "Common" / "Files" / "trading_hub_heartbeat.json" if appdata else None
     if path is None or not path.exists():
-        return {"connected": False, "path": str(path) if path else None}
+        return {"connected": False, "status": "OFFLINE"}
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
-        return {"connected": True, "path": str(path), **data}
+        age = max(0.0, monotonic_time.time() - path.stat().st_mtime)
+        status = "CONNECTED" if age <= BRIDGE_STALE_SECONDS else "STALE"
+        public = {key: data[key] for key in BRIDGE_PUBLIC_FIELDS if key in data}
+        return {"connected": status == "CONNECTED", "status": status, "age_seconds": round(age, 1), **public}
     except Exception as exc:
-        return {"connected": False, "path": str(path), "error": str(exc)}
+        return {"connected": False, "status": "UNREADABLE", "error": type(exc).__name__}
 
 
 def normalize_symbol(symbol: str) -> str:
@@ -422,10 +431,8 @@ def health():
                     "connected": bool(info),
                     "version": ".".join(map(str, mt5.version() or [])) if mt5.version() else None,
                 }
-                account = {
-                    "login": int(acct.login) if acct else None,
-                    "server": str(acct.server) if acct else None,
-                }
+                # Never expose login/server: /api/health is readable by any allowed origin.
+                account = {"available": acct is not None}
                 symbols = int(mt5.symbols_total() or 0)
             else:
                 error = str(getattr(mt5, "last_error", lambda: "MT5 terminal is unavailable")())

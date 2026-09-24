@@ -1,3 +1,4 @@
+import {migrateJournalKeys} from "./sampleRedaction.mjs";
 const KEY="th_journal_v1";
 
 const DEFAULT_RULES=[
@@ -8,7 +9,11 @@ const DEFAULT_RULES=[
 ];
 
 export function getJournal(){
-  try{return JSON.parse(localStorage.getItem(KEY)||"{}");}
+  try{
+    const {journal,changed}=migrateJournalKeys(JSON.parse(localStorage.getItem(KEY)||"{}"));
+    if(changed)localStorage.setItem(KEY,JSON.stringify(journal));
+    return journal;
+  }
   catch{return {};}
 }
 

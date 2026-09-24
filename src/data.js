@@ -1,6 +1,7 @@
 import {IMPORTED_TRADES} from "./importedData.js";
 import {withTimeProvenance,isValidTimeZone,UNVERIFIED_SESSION} from "./tradeTime.mjs";
 import {assignImportIds,tradeOrigin} from "./tradeImport.mjs";
+import {redactSampleTrade} from "./sampleRedaction.mjs";
 const DEMO_TRADES = [
   { id:"TH-001", account:"Goldimus Funded", symbol:"XAUUSD", side:"BUY", entry:3342.2, exit:3356.8, volume:0.3, pnl:620, r:1.84, risk:337, time:"2026-09-21 14:32", session:"New York" },
   { id:"TH-002", account:"Personal Futures", symbol:"NAS100", side:"SELL", entry:22780, exit:22690, volume:1, pnl:410, r:1.35, risk:303, time:"2026-09-21 11:08", session:"London" },
@@ -18,7 +19,7 @@ const TZ_KEY="th_broker_timezone";
 export function getBrokerTimeZone(){try{const z=localStorage.getItem(TZ_KEY)||"";return isValidTimeZone(z)||z.toUpperCase()==="UTC"?z:"";}catch{return "";}}
 export function setBrokerTimeZone(zone){const z=String(zone||"").trim();try{if(z)localStorage.setItem(TZ_KEY,z);else localStorage.removeItem(TZ_KEY);}catch{}return z;}
 
-export function normalizeTrades(trades,zone=getBrokerTimeZone()){return trades.map(t=>({...withTimeProvenance(t,zone),origin:tradeOrigin(t)}));}
+export function normalizeTrades(trades,zone=getBrokerTimeZone()){return trades.map(redactSampleTrade).map(t=>({...withTimeProvenance(t,zone),origin:tradeOrigin(t)}));}
 export function getTrades() {
   let raw=IMPORTED_TRADES;
   try { const saved=localStorage.getItem("th_trades"); if(saved)raw=JSON.parse(saved); } catch {}
