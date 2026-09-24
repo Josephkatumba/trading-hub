@@ -81,11 +81,13 @@ class JsonlIndex:
         self.persist = persist
         self._lock = threading.RLock()
         self.rebuilds = 0
+        self.generation = 0                  # bumped whenever positions may no longer line up
         self._reset()
         self._loaded_sidecar = False
 
     # ----- state -----------------------------------------------------------
     def _reset(self) -> None:
+        self.generation = getattr(self, "generation", 0) + 1
         self.offset = 0                      # bytes covered by complete, indexed lines
         self.spans: list[tuple[int, int]] = []
         self.rows: list[dict[str, Any]] = []  # summary per valid JSON-object line
@@ -240,6 +242,7 @@ class JsonlIndex:
         self.spans = spans
         self.rows = rows
         self.bad_lines = list(payload.get("bad_lines") or [])
+        self.generation += 1
         self._head_hash = payload["head_hash"]
         self._tail_hash = payload["tail_hash"]
         self.maps = {key: {} for key in self.keys}
@@ -268,6 +271,22 @@ class JsonlIndex:
     def summaries(self) -> list[dict[str, Any]]:
         self.refresh()
         return list(self.rows)
+
+    def delta(self, cursor: tuple[int, int] | None) -> tuple[tuple[int, int], bool, list[dict[str, Any]]]:
+        """Summaries appended since `cursor`, for callers that derive state incrementally.
+
+        Returns (new_cursor, reset, summaries). reset=True means the index was
+        rebuilt (or the cursor is foreign): discard derived state and apply the
+        returned summaries, which are then ALL rows, from position 0. Otherwise
+        they start at position cursor[1]. Hold `lock` while using the positions.
+        """
+        with self._lock:
+            self.refresh()
+            generation, count = cursor if cursor else (None, 0)
+            current = (self.generation, len(self.rows))
+            if generation != self.generation or count > len(self.rows):
+                return current, True, list(self.rows)
+            return current, False, self.rows[count:]
 
     def load(self, positions: Iterable[int]) -> list[dict[str, Any]]:
         """Fresh full rows re-read from the JSONL file, in the given order."""

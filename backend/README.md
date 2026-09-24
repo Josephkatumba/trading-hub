@@ -98,4 +98,13 @@ observation log per request.
   Unparseable lines are counted in `/api/health` → `storage.setup_observations.jsonl.index`.
 - `tests/test_observation_index.py` proves the indexed queries return the same
   results as the former full scans (frozen in `tests/legacy_observations.py`).
+- Scans (`record_markets`) load full rows only for open episodes. Closed
+  episodes are represented by a compact summary in the observation index
+  (trendline fingerprint + reference price), lifecycle state comes from an index
+  over `setup_lifecycle.jsonl`, and confirmed setup ids from an index over
+  `setup_confirmations.jsonl`; all derived state catches up incrementally, so
+  scan time does not grow with the number of closed episodes. Rows that the
+  compact form cannot represent exactly make that scan use the former full-row
+  path. See `tests/test_closed_episode_index.py` (equivalence, rebuild) and
+  `tests/test_closed_episode_scaling.py` (20,000 closed episodes).
 
