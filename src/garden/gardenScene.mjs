@@ -102,7 +102,13 @@ function haloTexture() {
   return texture;
 }
 
+export function copyOverlaysStage(container) {
+  const parent = container.parentElement;
+  return Boolean(parent) && getComputedStyle(parent).position === "absolute";
+}
+
 function stageColor(orb) {
+  if (orb.stage === "history") return orb.outcome === "target" ? 0x9fcbb2 : orb.outcome === "stop" ? 0xdca7a1 : PALETTE.history;
   if (orb.stage === "bloomed" || orb.stage === "active") {
     return orb.direction === "LONG" ? PALETTE.long : orb.direction === "SHORT" ? PALETTE.short : PALETTE.confirmed;
   }
@@ -349,8 +355,8 @@ export function createGardenScene(container, {reducedMotion = false, onSelect = 
     camera.aspect = width / height;
     camera.fov = width / height < 1.3 ? 52 : 36;
     camera.updateProjectionMatrix();
-    // Wide stages carry the hero text on the left: let the constellation sit right.
-    world.position.x = width / height > 1.7 ? Math.min(3.4, (width / height - 1.7) * 3 + 1.6) : 0;
+    // When the hero copy overlays the stage (desktop), let the constellation sit right.
+    world.position.x = copyOverlaysStage(container) && width / height > 1.6 ? Math.min(3.4, (width / height - 1.6) * 3 + 1.6) : 0;
     requestRender();
   }
 

@@ -269,7 +269,7 @@ export function constellationLayout(cards, selectedId = null) {
     const radius = band.r[0] + hash(card.key + ":r") * (band.r[1] - band.r[0]);
     orbs.push({
       id: card.key, symbol: card.symbol, stage: card.stage, direction: card.direction,
-      score: card.score, selected: card.key === selectedId,
+      score: card.score, selected: card.key === selectedId, outcome: card.outcome || null,
       x: Math.cos(angle) * radius, z: Math.sin(angle) * radius,
       y: band.y[0] + hash(card.key + ":y") * (band.y[1] - band.y[0]),
       phase: hash(card.key + ":p") * Math.PI * 2,
@@ -294,4 +294,117 @@ export function constellationLayout(cards, selectedId = null) {
     }
   }
   return orbs;
+}
+
+// ----- archive: what happened to the setups TRADeden surfaced --------------------
+export const ARCHIVE_KINDS = Object.freeze({
+  target: {icon: "🎯", label: "Target hit", tone: "target"},
+  stop: {icon: "🛑", label: "Stop hit", tone: "stop"},
+  no_hit: {icon: "◌", label: "No barrier hit", tone: "neutral"},
+  ambiguous: {icon: "◐", label: "Ambiguous candle", tone: "neutral"},
+  unverified: {icon: "…", label: "Outcome unverified", tone: "unverified"},
+  pending: {icon: "⌛", label: "Outcome pending", tone: "unverified"},
+  invalidated: {icon: "⚠️", label: "Invalidated", tone: "invalidated"},
+  expired: {icon: "⏳", label: "Expired", tone: "expired"},
+  closed: {icon: "·", label: "Closed", tone: "expired"},
+});
+const HORIZONS = ["15m", "1h", "4h", "24h"];
+
+/**
+ * Record-level mirror of backend ml_dataset._outcome_quarantine_reasons: an
+ * outcome is only "known" when its timestamps are verified and its candle
+ * chronology is proven. Legacy records without these fields stay unverified.
+ */
+export function isValidatedOutcome(outcome) {
+  const validation = outcome?.outcome_time_validation || {};
+  return outcome?.label_definition === "target-invalidation-first-v1"
+    && outcome?.timestamp_quality === "VERIFIED"
+    && outcome?.data_quality?.timestamp_quality === "VERIFIED"
+    && outcome?.outcome_time_validity === "OUTCOME_TIME_VALID"
+    && validation.outcome_time_validity === "OUTCOME_TIME_VALID"
+    && validation.every_candidate_strictly_after_observation === true
+    && validation.candidate_candles_chronological === true;
+}
+
+const num = value => (value === null || value === undefined || value === "" || !Number.isFinite(Number(value))) ? null : Number(value);
+
+/**
+ * R multiple for a verified barrier hit, only when the barriers the outcome was
+ * labelled against are provably the planned stop and target of the confirmation
+ * snapshot. Otherwise null (never estimated).
+ */
+export function outcomeR(kind, snapshot) {
+  if (!snapshot || (kind !== "target" && kind !== "stop")) return null;
+  const stop = num(snapshot.proposed_stop_loss), target = num(snapshot.proposed_take_profit);
+  const reference = num(snapshot.reference_price ?? snapshot.proposed_entry);
+  const invalidation = num(snapshot.invalidation_price);
+  if (stop == null || target == null || reference == null) return null;
+  if (invalidation != null && Math.abs(invalidation - stop) > 1e-9) return null;   // labelled against another barrier
+  const risk = Math.abs(reference - stop), reward = Math.abs(target - reference);
+  if (!(risk > 0)) return null;
+  return kind === "stop" ? -1 : Number((reward / risk).toFixed(2));
+}
+
+/**
+ * One archive entry for a closed episode.
+ * `outcomes`: market_outcome records (any, unfiltered) for this setup.
+ * `confirmationSnapshot`: the snapshot the confirmation was recorded on, if loaded.
+ */
+export function archiveEntry(episode, outcomes = [], confirmationSnapshot = null) {
+  const lifecycle = String(episode?.lifecycle_state || "").toUpperCase();
+  const confirmed = Boolean(episode?.confirmation);
+  const confirmationObservation = episode?.confirmation?.observation_id || null;
+  let kind, horizon = null, verifiedCount = 0, unverifiedCount = 0;
+  if (!confirmed) {
+    kind = lifecycle === "INVALIDATED" ? "invalidated" : lifecycle === "EXPIRED" ? "expired" : "closed";
+  } else {
+    const own = outcomes.filter(o => o?.setup_id === episode.setup_id && (!confirmationObservation || o.observation_id === confirmationObservation));
+    const verified = own.filter(isValidatedOutcome);
+    verifiedCount = verified.length;
+    unverifiedCount = own.length - verified.length;
+    const byHorizon = h => verified.find(o => o.horizon === h);
+    // Barrier windows are nested (15m inside 1h inside ...), so the shortest
+    // decisive horizon is when the first barrier was touched.
+    const decisive = HORIZONS.map(byHorizon).find(o => o && (o.label === "WIN" || o.label === "LOSS"));
+    const longest = [...HORIZONS].reverse().map(byHorizon).find(Boolean);
+    if (decisive) { kind = decisive.label === "WIN" ? "target" : "stop"; horizon = decisive.horizon; }
+    else if (longest) { kind = longest.label === "AMBIGUOUS" ? "ambiguous" : "no_hit"; horizon = longest.horizon; }
+    else kind = own.length ? "unverified" : "pending";
+  }
+  const r = outcomeR(kind, confirmationSnapshot);
+  const closedAt = episode?.closed_event?.occurred_at || episode?.observed_at || null;
+  return {
+    key: episode?.setup_id || null,
+    symbol: episode?.symbol || "Unknown",
+    direction: direction(episode),
+    confirmed,
+    kind,
+    ...ARCHIVE_KINDS[kind],
+    horizon,
+    r,
+    rText: r == null ? null : (r > 0 ? "+" : "") + r.toFixed(1) + "R",
+    verifiedCount,
+    unverifiedCount,
+    lifecycle,
+    closedAt,
+    closedTime: formatUtc(closedAt),
+    closedReason: episode?.closed_event?.reason || episode?.closed_event?.reason_code || null,
+    score: num(episode?.score),
+  };
+}
+
+/** Counts for the archive header. No win rate: only verified confirmed outcomes are "known". */
+export function archiveSummary(entries) {
+  const count = kind => entries.filter(entry => entry.kind === kind).length;
+  const confirmed = entries.filter(entry => entry.confirmed);
+  return {
+    observed: entries.length,
+    confirmed: confirmed.length,
+    target: count("target"),
+    stop: count("stop"),
+    verifiedOutcomes: confirmed.filter(entry => entry.verifiedCount > 0).length,
+    unverified: count("unverified") + count("pending"),
+    invalidated: count("invalidated"),
+    expired: count("expired"),
+  };
 }

@@ -116,3 +116,38 @@ export function stageLegend() {
   return Object.values(GARDEN_STAGES).map(stage => '<span class="gd-legend-item gd-legend-' + stage.key + '"><i class="gd-legend-dot" aria-hidden="true"></i>' + esc(stage.label) + '</span>').join("")
     + '<span class="gd-legend-item gd-legend-dir"><i class="gd-legend-dot gd-dot-long" aria-hidden="true"></i>Long <i class="gd-legend-dot gd-dot-short" aria-hidden="true"></i>Short</span>';
 }
+
+export const ARCHIVE_FILTERS = [["all", "All"], ["confirmed", "Confirmed"], ["target", "🎯 Target hit"], ["stop", "🛑 Stop hit"], ["invalidated", "⚠️ Invalidated"], ["expired", "⏳ Expired"]];
+export function archiveMatches(entry, filter) {
+  if (filter === "all") return true;
+  if (filter === "confirmed") return entry.confirmed;
+  return entry.kind === filter;
+}
+
+/** Compact archive of closed setups and what happened to them. */
+export function archivePanel(entries, summary, {filter = "all", selectedKey = null, expanded = false, limit = 14} = {}) {
+  const shown = entries.filter(entry => archiveMatches(entry, filter));
+  const visible = expanded ? shown : shown.slice(0, limit);
+  const stat = (value, label, cls = "") => '<span class="gd-arch-stat ' + cls + '"><b>' + value + '</b>' + label + '</span>';
+  const note = summary.confirmed && !summary.verifiedOutcomes
+    ? '<p class="gd-arch-note">Outcomes of confirmed setups stay <b>unverified</b> until their timestamps pass TRADeden\'s data-integrity checks. Nothing is counted as a target or stop hit before that.</p>' : '';
+  const rows = visible.map(entry => '<button type="button" class="gd-arch-row gd-arch-' + entry.tone + (entry.key === selectedKey ? ' is-selected' : '') + '" data-archive-key="' + esc(entry.key || "") + '">'
+    + '<span class="gd-arch-symbol"><b>' + esc(entry.symbol) + '</b><small>' + (entry.direction ? esc(entry.direction) : 'No direction') + (entry.confirmed ? ' · confirmed' : ' · not confirmed') + '</small></span>'
+    + '<span class="gd-arch-badge"><i aria-hidden="true">' + entry.icon + '</i>' + esc(entry.label) + (entry.horizon ? '<small>within ' + esc(entry.horizon) + '</small>' : '') + '</span>'
+    + '<span class="gd-arch-r">' + (entry.rText ? esc(entry.rText) : '') + '</span>'
+    + '<span class="gd-arch-time">' + (entry.closedTime ? esc(entry.closedTime) : '<span class="gd-na">Time unavailable</span>') + '</span>'
+    + '</button>').join("");
+  return '<div class="gd-arch-summary">'
+    + stat(summary.observed, 'setups observed')
+    + stat(summary.confirmed, 'confirmed', 'is-confirmed')
+    + stat(summary.target, '🎯 target hit', 'is-target')
+    + stat(summary.stop, '🛑 stop hit', 'is-stop')
+    + stat(summary.unverified, 'outcome unverified')
+    + stat(summary.invalidated, '⚠️ invalidated before confirmation')
+    + stat(summary.expired, '⏳ expired')
+    + '</div>' + note
+    + '<div class="gd-arch-filters" role="group" aria-label="Filter the archive">' + ARCHIVE_FILTERS.map(([key, label]) =>
+      '<button type="button" data-archive-filter="' + key + '" aria-pressed="' + (key === filter) + '">' + label + '</button>').join("") + '</div>'
+    + (shown.length ? '<div class="gd-arch-list">' + rows + '</div>' : '<div class="gd-empty"><b>Nothing here</b><p>No closed setups match this filter.</p></div>')
+    + (shown.length > limit ? '<button type="button" class="gd-link gd-arch-more" data-toggle="history" aria-expanded="' + expanded + '">' + (expanded ? 'Show fewer' : 'Show all ' + shown.length) + '</button>' : '');
+}

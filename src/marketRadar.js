@@ -9,8 +9,8 @@ import {confirmationDisplay, renderAnalystEvidence} from "./analystPresentation.
 import {setupCountSummary, visibleSetupEntries} from "./radarLayout.mjs";
 import {createConfirmationAlertTracker, dispatchConfirmationAlerts, dispatchTestSound, persistedConfirmationEvents} from "./confirmationAlerts.mjs";
 import {CONFIRMATION_CHIME_CONFIG, playConfirmationChime} from "./confirmationChime.mjs";
-import {analystModel, gardenAreas, gardenCounters, marketOverviewRow, constellationLayout, setupCardModel} from "./garden/gardenModel.mjs";
-import {analystPanel, counterTiles, emptyArea, esc, marketOverview, setupCard, stageLegend} from "./garden/gardenCards.mjs";
+import {analystModel, archiveEntry, archiveSummary, gardenAreas, gardenCounters, marketOverviewRow, constellationLayout, setupCardModel} from "./garden/gardenModel.mjs";
+import {analystPanel, archivePanel, counterTiles, emptyArea, esc, marketOverview, setupCard, stageLegend} from "./garden/gardenCards.mjs";
 import {mountGarden, prefersReducedMotion} from "./garden/gardenMount.mjs";
 
 const DEMO_MARKETS = [
@@ -27,7 +27,6 @@ const DEMO_MARKETS = [
 ];
 
 const TRACKED_KEY="tradeden.trackedSetups";
-const HISTORY_LIMIT=12;
 let radarPoller = null;
 let radarMode = "LIVE";
 let latestResult = null;
@@ -35,6 +34,9 @@ let latestMarkets = [];
 let latestEpisodes = {current:[],confirmed:[],closed:[]};
 let growingExpanded = false;
 let historyExpanded = false;
+let archiveFilter = "all";
+let latestOutcomes = [];
+let latestArchive = [];
 let selectedKey = null;
 let analystCache = new Map();
 let latestCards = new Map();          // key -> {row, card}
@@ -61,17 +63,18 @@ export function renderMarketRadar(){
     +'<div class="gd-top-tools"><div class="gd-engine"><i class="gd-status-dot" aria-hidden="true"></i><span id="radarEngineStatus">Connecting engine</span></div><span class="gd-updated" id="radarUpdated">Waiting…</span>'
     +'<div class="confirmation-alert-controls"><button type="button" id="confirmationAlertsToggle" class="alert-control" aria-pressed="false" title="Enable Alerts">🔇 Alerts OFF</button><button type="button" id="testConfirmationSound" class="alert-test-control">Test sound</button></div></div>'
     +'<div id="confirmationToast" class="confirmation-toast" role="status" aria-live="polite" hidden></div></header>'
-    +'<section class="gd-hero"><div class="gd-hero-copy"><span class="gd-eyebrow" id="radarEyebrow">🌿 The TRADeden Garden</span>'
+    +'<section class="gd-world" id="gardenWorld" aria-label="The TRADeden Garden">'
+    +'<div class="gd-world-stage"><div class="gd-stage" id="gardenStage"></div><div class="gd-stage-overlay" id="gardenOverlay" hidden></div>'
+    +'<div class="gd-legend">'+stageLegend()+'</div><small class="gd-stage-mode" id="gardenModeNote"></small></div>'
+    +'<div class="gd-world-copy"><span class="gd-eyebrow" id="radarEyebrow">🌿 The TRADeden Garden</span>'
     +'<h1>The market is always moving.<br><span>TRADeden is always watching.</span></h1>'
     +'<p>TRADeden continuously watches the markets for developing structures, confirmations and invalidations so you don\'t have to stare at charts all day.</p>'
     +'<div class="gd-counters" id="gardenCounters">'+counterTiles(null)+'</div>'
-    +'<p class="gd-hero-note">Every setup follows the existing trendline strategy and lifecycle. Execution stays manual — TRADeden never places orders.</p></div>'
-    +'<div class="gd-stage-wrap"><div class="gd-stage" id="gardenStage"></div><div class="gd-stage-overlay" id="gardenOverlay" hidden></div>'
-    +'<div class="gd-legend">'+stageLegend()+'</div><small class="gd-stage-mode" id="gardenModeNote"></small></div></section>'
+    +'<p class="gd-hero-note">Every orb is a real setup from the existing strategy and lifecycle. Execution stays manual — TRADeden never places orders.</p></div></section>'
     +'<div class="gd-layout"><div class="gd-main">'
     +area("growing","🌱","Growing Garden","Current and developing setups. Evidence is still accumulating.")
     +area("bloomed","🌸","Bloomed Setups","Confirmed by the existing strategy rules, including setups now being tracked as active.")
-    +area("history","🍂","Garden History","Closed, expired and invalidated setups.")
+    +'<section class="gd-area gd-area-history" id="area-history"><header class="gd-area-head"><div><h2><span aria-hidden="true">🍂</span> Garden Archive</h2><p>What happened to the setups TRADeden surfaced. Only confirmed setups can hit a target or stop; the rest failed or went stale before confirmation.</p></div><span class="gd-count" id="historyCount"></span></header><div id="historyCards" class="gd-archive"></div></section>'
     +'</div><div class="gd-side"><section class="gd-analyst" id="gardenAnalyst" aria-live="polite">'+analystPanel(null)+'</section>'
     +'<section class="gd-panel gd-markets"><header class="gd-panel-head"><h2>Markets TRADeden watches</h2><span class="gd-count" id="marketCount"></span></header><div id="radarTable" class="gd-market-list"></div></section></div></div>'
     +'<section class="gd-panel performance-panel"><header class="gd-panel-head"><div><h2>📊 Today\'s setup performance</h2><p>Headline uses the 4h market outcome. Other configured horizons remain visible. Trade outcomes are excluded.</p></div></header><div id="dailyPerformance"><div class="macro-empty"><b>Loading performance</b></div></div></section>'
@@ -105,6 +108,7 @@ async function getPerformance(){try{return await engineFetch("/api/market/perfor
 const analysisKey=row=>row?.setup_id?row.setup_id+":"+(row.observation_id||""):null;
 async function getAnalysis(m){if(!m?.setup_id)return null;const observationId=m.observation_id||"";const key=m.setup_id+":"+observationId;if(analystCache.has(key))return analystCache.get(key);try{const suffix=observationId?"?observation_id="+encodeURIComponent(observationId):"";const data=await engineFetch("/api/market/setups/"+encodeURIComponent(m.setup_id)+"/analysis"+suffix);analystCache.set(key,data);return data;}catch(_){analystCache.set(key,null);return null;}}
 async function getSetupEpisodes(){try{return await engineFetch("/api/market/setup-episodes?bucket=all&limit=100");}catch(_){return null;}}
+async function getOutcomes(){try{const data=await engineFetch("/api/market/outcomes");return Array.isArray(data?.outcomes)?data.outcomes:null;}catch(_){return null;}}
 
 // ----- cards ------------------------------------------------------------------
 function cardFor(row,bucket){
@@ -123,7 +127,8 @@ function paintAreas(areas){
   const trackedFirst=(a,b)=>Number(b.tracked)-Number(a.tracked);
   const growing=areas.growing.map(row=>cardFor(row,"growing")).sort(trackedFirst);
   const bloomed=areas.bloomed.map(row=>cardFor(row,"bloomed")).sort(trackedFirst);
-  const history=areas.history.map(row=>cardFor(row,"history"));
+  const archive=paintArchive(areas.history);
+  const history=areas.history.map((row,index)=>({...cardFor(row,"history"),outcome:archive[index]?.kind||null}));
   const offline=radarMode==="OFFLINE";
   const node=id=>document.getElementById(id);
   const toolbar=(total,expanded,key)=>{const summary=total>6?setupCountSummary(total,expanded):null;return summary?'<div class="gd-toolbar"><span>'+esc(summary)+'</span><button type="button" class="gd-link" data-toggle="'+key+'" aria-expanded="'+expanded+'">'+(expanded?"Show less":"View all")+'</button></div>':"";};
@@ -131,13 +136,25 @@ function paintAreas(areas){
     ?toolbar(growing.length,growingExpanded,"growing")+visibleSetupEntries(growing,growingExpanded).map(card=>cardHtml(card)).join("")
     :emptyArea(offline?"The garden is not being watched":"Nothing growing right now",offline?"Engine offline — no setups are being evaluated.":"The engine is scanning; no setup is currently developing. No setup is a valid state.");
   if(node("bloomedCards"))node("bloomedCards").innerHTML=bloomed.length?bloomed.map(card=>cardHtml(card)).join(""):emptyArea("No bloomed setups",offline?"Engine offline.":"No setup currently passes the confirmation rules.");
-  const shownHistory=historyExpanded?history:history.slice(0,HISTORY_LIMIT);
-  if(node("historyCards"))node("historyCards").innerHTML=history.length
-    ?(history.length>HISTORY_LIMIT?'<div class="gd-toolbar"><span>Showing '+shownHistory.length+' of '+history.length+'</span><button type="button" class="gd-link" data-toggle="history" aria-expanded="'+historyExpanded+'">'+(historyExpanded?"Show less":"View all")+'</button></div>':"")+shownHistory.map(card=>cardHtml(card)).join("")
-    :emptyArea("No closed setups yet","Closed, expired and invalidated setups will rest here.");
   const count=(id,n,word)=>{if(node(id))node(id).textContent=n+" "+word;};
-  count("growingCount",growing.length,"growing");count("bloomedCount",bloomed.length,"bloomed");count("historyCount",history.length,"closed");
+  count("growingCount",growing.length,"growing");count("bloomedCount",bloomed.length,"bloomed");count("historyCount",history.length,"latest closed");
   return {growing,bloomed,history};
+}
+
+// The archive: closed episodes and what happened to them (verified outcomes only).
+function confirmationSnapshot(row){
+  const id=row?.setup_id,observation=row?.confirmation?.observation_id;
+  return (confirmedDetailCache.get(id)?.snapshots||[]).find(snapshot=>snapshot.observation_id===observation)||null;
+}
+function paintArchive(rows){
+  const entries=rows.map(row=>archiveEntry(row,latestOutcomes,confirmationSnapshot(row)));
+  // R needs the confirmation snapshot's planned levels: load it only for verified hits.
+  for(const [index,entry] of entries.entries())if((entry.kind==="target"||entry.kind==="stop")&&!confirmationSnapshot(rows[index]))fetchConfirmedDetail(entry.key,()=>repaintCards());
+  latestArchive=entries;
+  const node=document.getElementById("historyCards");
+  if(node)node.innerHTML=entries.length?archivePanel(entries,archiveSummary(entries),{filter:archiveFilter,selectedKey,expanded:historyExpanded})
+    :emptyArea("No closed setups yet","Closed, expired and invalidated setups will rest here with what happened to them.");
+  return entries;
 }
 
 function defaultSelection(cards){
@@ -196,6 +213,7 @@ function select(key,{scrollTo=null}={}){
   selectedKey=key;
   for(const node of document.querySelectorAll(".gd-card"))node.classList.toggle("is-selected",node.dataset.key===key);
   for(const node of document.querySelectorAll(".gd-card"))node.setAttribute("aria-selected",String(node.dataset.key===key));
+  for(const node of document.querySelectorAll("[data-archive-key]"))node.classList.toggle("is-selected",node.dataset.archiveKey===key);
   paintAnalyst();
   garden?.select(key,pinLabel());
   const target=scrollTo&&document.getElementById(scrollTo);
@@ -206,6 +224,10 @@ function bindGardenInteractions(){
   root.onclick=event=>{
     const toggle=event.target.closest("[data-toggle]");
     if(toggle){if(toggle.dataset.toggle==="growing")growingExpanded=!growingExpanded;else historyExpanded=!historyExpanded;repaintCards();return;}
+    const filterButton=event.target.closest("[data-archive-filter]");
+    if(filterButton){archiveFilter=filterButton.dataset.archiveFilter;historyExpanded=false;repaintCards();return;}
+    const archiveRow=event.target.closest("[data-archive-key]");
+    if(archiveRow){select(archiveRow.dataset.archiveKey,{scrollTo:window.innerWidth<1100?"gardenAnalyst":null});return;}
     const marketRow=event.target.closest(".gd-market-row");
     if(marketRow){const m=latestMarkets.find(x=>x.symbol===marketRow.dataset.symbol);if(m){const live=[...lastCards.bloomed,...lastCards.growing].find(c=>c.symbol===m.symbol);select(live?live.key:(m.setup_id||"mkt-"+m.symbol),{scrollTo:window.innerWidth<1100?"gardenAnalyst":null});}return;}
     const card=event.target.closest(".gd-card");if(!card)return;
@@ -388,8 +410,9 @@ function paintFundamentals(data){
 // ----- lifecycle ------------------------------------------------------------------
 const EMPTY_EPISODES={current:[],confirmed:[],closed:[]};
 async function refreshRadar(isCurrent){
-  const [radar,performance,episodes]=await Promise.all([getRadar(),getPerformance(),getSetupEpisodes()]);
+  const [radar,performance,episodes,outcomes]=await Promise.all([getRadar(),getPerformance(),getSetupEpisodes(),getOutcomes()]);
   if(!isCurrent())return;
+  latestOutcomes=radar.mode==="LIVE"||radar.mode==="ENGINE_NO_DATA"?(outcomes||latestOutcomes):[];
   // Engine offline or demo: never show previously fetched engine episodes as if current.
   paint({...radar,performance,episodes:radar.mode==="LIVE"||radar.mode==="ENGINE_NO_DATA"?(episodes||latestEpisodes):EMPTY_EPISODES});
 }

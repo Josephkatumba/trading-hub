@@ -87,10 +87,13 @@ export function createFallbackGarden(container, {onSelect = () => {}, reducedMot
     const next = JSON.stringify(orbs.map(o => [o.id, o.stage, o.direction, o.x.toFixed(2), o.z.toFixed(2)]));
     if (next === signature) return select(selectedId);   // unchanged: keep float phases running
     signature = next;
+    const parent = container.parentElement;
+    const overlaid = parent && getComputedStyle(parent).position === "absolute" && root.clientWidth / Math.max(1, root.clientHeight) > 1.6;
     bed.innerHTML = orbs.map(orb => {
-      const {left, top} = project(orb.x, orb.z, orb.y);
+      const projected = project(orb.x, orb.z, orb.y);
+      const left = overlaid ? 62 + (projected.left - 50) * 0.72 : projected.left, top = projected.top;
       const depth = (orb.z / SPAN + 1) / 2;                 // 0 = back, 1 = front
-      return '<button type="button" role="listitem" class="gd-orb2d gd-o-' + orb.stage + ' gd-o-' + String(orb.direction || "none").toLowerCase()
+      return '<button type="button" role="listitem" class="gd-orb2d gd-o-' + orb.stage + ' gd-o-' + String(orb.direction || "none").toLowerCase() + (orb.outcome ? ' gd-out-' + orb.outcome : '')
         + (orb.id === selectedId ? ' is-selected' : '') + '" data-plant-id="' + esc(orb.id) + '" aria-label="' + esc(orb.symbol + " · " + orb.stage) + '"'
         + ' style="left:' + left.toFixed(1) + '%;top:' + top.toFixed(1) + '%;--k:' + (0.8 + depth * 0.35).toFixed(2) + ';--d:' + (orb.phase % 4).toFixed(2) + 's;z-index:' + Math.round(depth * 100) + '">'
         + '<span class="gd-o-body"></span><span class="gd-o-label">' + esc(orb.symbol) + '</span></button>';
