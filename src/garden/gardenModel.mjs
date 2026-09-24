@@ -192,29 +192,67 @@ export function gardenCounters({markets = [], episodes = null, mode = "LIVE"} = 
   };
 }
 
-/** Rule-based analyst view for one selected setup or market. */
-export function analystModel(row, analysis = null) {
+/**
+ * Rule-based analyst view for one selected setup or market. The wording follows
+ * the setup's real lifecycle: live (developing/confirming), confirmed (bloomed/
+ * active) or history (closed). History is presented as a record, never as live
+ * analysis; `archive` is the archiveEntry for closed setups.
+ */
+export function analystModel(row, analysis = null, archive = null) {
   if (!row) return null;
+  const stage = gardenStage(row);
+  const context = stage === "history" ? "history" : stage === "bloomed" || stage === "active" ? "confirmed" : "live";
   const levels = tradeLevels(row, analysis);
   const claims = items => (items || []).map(item => item?.claim).filter(Boolean);
-  const invalidates = [];
-  if (levels.invalidation) invalidates.push("A move through " + levels.invalidation + " invalidates the setup.");
-  else if (levels.stop) invalidates.push("The calculated stop at " + levels.stop + " marks where the setup is wrong.");
-  invalidates.push(...claims(analysis?.conflicts).map(text => "Conflict: " + text));
+  const conflicts = claims(analysis?.conflicts).map(text => "Conflict: " + text);
   const trigger = row?.trigger || row?.rule_evidence?.trigger;
-  return {
-    symbol: row.symbol || "Unknown symbol",
-    stage: gardenStage(row),
-    direction: direction(row),
-    happening: sentence(analysis?.summary) || sentence(row.insight) || sentence(row.reason || row?.rule_evidence?.reason) || null,
-    matters: sentence(row.reason || row?.rule_evidence?.reason) || null,
+  const reasoning = sentence(row.reason || row?.rule_evidence?.reason);
+  const base = {
+    symbol: row.symbol || "Unknown symbol", stage, context, direction: direction(row), levels,
+    analystVersion: analysis?.analyst_version || null, analysisLoaded: Boolean(analysis),
+    stillNeeded: [], watchingFor: null, outcome: null,
+  };
+  if (context === "history") {
+    const closed = row?.closed_event || {};
+    const lifecycle = upper(row?.lifecycle_state) || "CLOSED";
+    const confirmed = Boolean(row?.confirmation);
+    const when = formatUtc(closed.occurred_at);
+    const confirmedAt = formatUtc(row?.confirmation?.confirmed_at || row?.confirmation_time);
+    const happened = confirmed
+      ? "Confirmed" + (confirmedAt ? " at " + confirmedAt : "") + ", then " + lifecycle.toLowerCase() + (when ? " at " + when : "") + "."
+      : lifecycle.charAt(0) + lifecycle.slice(1).toLowerCase() + " before confirmation" + (when ? " at " + when : "") + ".";
+    const invalidates = [];
+    const closeReason = closed.reason || closed.reason_code;
+    if (closeReason) invalidates.push(sentence(closeReason));
+    invalidates.push(...conflicts);
+    return {...base,
+      titles: {happening: "What happened", matters: "Why the setup formed", confirms: "What confirmed it", invalidates: "What invalidated it"},
+      happening: happened,
+      matters: reasoning,
+      neverConfirmed: !confirmed,
+      confirms: confirmed ? claims(analysis?.confirmations).slice(0, 6) : [],
+      confirmsEmpty: confirmed ? "No confirming evidence was recorded." : "It never passed the confirmation rules, so it was not a TRADeden setup to act on.",
+      invalidates,
+      invalidatesEmpty: "No closing reason was recorded.",
+      outcome: archive ? {icon: archive.icon, label: archive.label, horizon: archive.horizon, rText: archive.rText, confirmed: archive.confirmed, kind: archive.kind} : null,
+    };
+  }
+  const invalidates = [];
+  if (levels.invalidation) invalidates.push("A move through " + levels.invalidation + (context === "confirmed" ? " would invalidate the setup." : " invalidates the setup."));
+  else if (levels.stop) invalidates.push("The calculated stop at " + levels.stop + " marks where the setup is wrong.");
+  invalidates.push(...conflicts);
+  return {...base,
+    titles: context === "confirmed"
+      ? {happening: "What is happening", matters: "Why it matters", confirms: "What confirmed it", invalidates: "What would invalidate it"}
+      : {happening: "What is happening", matters: "Why it matters", confirms: "What confirms it", invalidates: "What invalidates it"},
+    happening: sentence(analysis?.summary) || sentence(row.insight) || reasoning || null,
+    matters: reasoning,
     confirms: claims(analysis?.confirmations).slice(0, 6),
-    stillNeeded: claims(analysis?.missing_confirmations).slice(0, 4),
-    watchingFor: sentence(trigger),
+    confirmsEmpty: analysis ? "No confirming evidence recorded yet." : "Evidence unavailable for this item.",
+    stillNeeded: context === "live" ? claims(analysis?.missing_confirmations).slice(0, 4) : [],
+    watchingFor: context === "live" ? sentence(trigger) : null,
     invalidates,
-    levels,
-    analystVersion: analysis?.analyst_version || null,
-    analysisLoaded: Boolean(analysis),
+    invalidatesEmpty: "No invalidation level has been calculated yet.",
   };
 }
 

@@ -172,3 +172,26 @@ test("focus panel shows the selection with real levels only", async () => {
   assert.doesNotMatch(sparse, /gd-focus-levels/);
   assert.equal(focusPanel(null), "");
 });
+
+test("analyst wording follows the lifecycle: live, confirmed, history", async () => {
+  const {archiveEntry} = await import("../src/garden/gardenModel.mjs");
+  const live = analystModel(episode({lifecycle_state: "DEVELOPING"}), {summary: "watch", missing_confirmations: [{claim: "gate"}]});
+  assert.deepEqual([live.context, live.titles.confirms, live.titles.invalidates], ["live", "What confirms it", "What invalidates it"]);
+  assert.deepEqual(live.stillNeeded, ["gate"]);
+  const confirmed = analystModel(episode({lifecycle_state: "CONFIRMED", confirmation: {confirmed_at: "2026-09-24T09:00:00Z"}}));
+  assert.deepEqual([confirmed.context, confirmed.titles.confirms, confirmed.titles.invalidates], ["confirmed", "What confirmed it", "What would invalidate it"]);
+  const closedRow = episode({lifecycle_state: "INVALIDATED", closed_event: {occurred_at: "2026-09-24T12:00:00Z", reason: "price broke the trendline"}});
+  const history = analystModel(closedRow, {confirmations: [{claim: "should not show"}]}, archiveEntry(closedRow));
+  assert.deepEqual([history.context, history.titles.happening, history.titles.matters], ["history", "What happened", "Why the setup formed"]);
+  assert.equal(history.happening, "Invalidated before confirmation at 12:00 UTC · 24 Sep.");
+  assert.deepEqual(history.confirms, [], "an unconfirmed setup has no 'what confirmed it'");
+  assert.deepEqual(history.invalidates, ["Price broke the trendline."]);
+  assert.equal(history.outcome.label, "Invalidated");
+  const html = analystPanel(history);
+  assert.match(html, /recorded analysis, not a live read/);
+  assert.match(html, /Not a trade: the setup closed before confirmation/);
+  assert.match(html, /never passed the confirmation rules/);
+  assert.match(analystPanel(history, {loading: true}), /never passed the confirmation rules/, "no loading state for a never-confirmed setup");
+  assert.doesNotMatch(html, /What is happening/);
+  assert.match(html, /not an AI or machine-learning prediction/);
+});

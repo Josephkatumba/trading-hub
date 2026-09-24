@@ -187,7 +187,8 @@ function paintAnalyst(){
   const row=selectedRow();
   const key=analysisKey(row);
   const analysis=key?analystCache.get(key):null;
-  node.innerHTML=analystPanel(row?analystModel(row,analysis||null):null,{loading:Boolean(key)&&analysis===undefined,simulated:radarMode==="DEMO"});
+  const archive=row?latestArchive.find(entry=>entry.key&&entry.key===row.setup_id)||null:null;
+  node.innerHTML=analystPanel(row?analystModel(row,analysis||null,archive):null,{loading:Boolean(key)&&analysis===undefined,simulated:radarMode==="DEMO"});
   if(key&&analysis===undefined)getAnalysis(row).then(()=>{if(selectedKey&&analysisKey(selectedRow())===key){paintAnalyst();repaintCards();}});
 }
 function paintFocus(){

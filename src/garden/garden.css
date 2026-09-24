@@ -263,6 +263,11 @@ body.garden-mode .topline b { color: #1c2321; }
 .gd-analyst-method { color: var(--gd-faint); font-size: 12px !important; }
 .gd-disclaimer-strong { padding: 10px 12px; border-radius: 10px; background: var(--gd-surface-2); border: 1px solid var(--gd-border); color: var(--gd-muted); font-size: 12.5px !important; font-weight: 600; }
 .gd-analyst-sim { padding: 8px 10px; border-radius: 10px; background: #fff8e8; border: 1px solid #f0d9a8; color: #8a5a00; font-size: 12.5px; font-weight: 700; }
+.gd-analyst-record { padding: 8px 10px; border-radius: 10px; background: var(--gd-grey-bg); border: 1px solid var(--gd-border); color: var(--gd-muted); font-size: 12.5px !important; }
+.gd-outcome-line { font-size: 14px !important; }
+.gd-outcome-target b { color: var(--gd-long); }
+.gd-outcome-stop b { color: var(--gd-short); }
+.gd-outcome-invalidated b { color: #9a6b12; }
 .gd-analyst-empty { display: grid; justify-items: center; gap: 6px; padding: 26px 12px; text-align: center; color: var(--gd-muted); }
 .gd-analyst-empty span { font-size: 28px; }
 .gd-analyst-empty p { color: var(--gd-faint); font-size: 13px; }

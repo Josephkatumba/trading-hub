@@ -92,23 +92,36 @@ function list(items, emptyText) {
 
 export function analystPanel(model, {loading = false, simulated = false} = {}) {
   if (!model) {
-    return '<div class="gd-analyst-empty"><span aria-hidden="true">🧠</span><b>Select a setup</b><p>Choose any card or plant to see how TRADeden reads it.</p></div>';
+    return '<div class="gd-analyst-empty"><span aria-hidden="true">🧠</span><b>Select a setup</b><p>Choose any card or orb to see how TRADeden reads it.</p></div>';
   }
   const stage = GARDEN_STAGES[model.stage];
   const levels = model.levels;
+  const history = model.context === "history";
   const rr = [["Entry", levels.entry], ["Stop", levels.stop], ["Target", levels.target], ["Reward : risk", levels.rr]];
-  return '<div class="gd-analyst-head"><div><span class="gd-eyebrow">🧠 TRADeden Analyst</span><h3>' + esc(model.symbol) + ' <small>' + stage.icon + ' ' + esc(stage.label)
+  const outcome = model.outcome;
+  const outcomeBlock = !history ? '' : '<section class="gd-analyst-outcome"><h4>Outcome</h4>' + (outcome
+    ? '<p class="gd-outcome-line gd-outcome-' + esc(outcome.kind) + '"><b>' + outcome.icon + ' ' + esc(outcome.label) + '</b>'
+      + (outcome.horizon ? ' within ' + esc(outcome.horizon) : '') + (outcome.rText ? ' · ' + esc(outcome.rText) : '') + '</p>'
+      + '<p class="gd-note">' + (outcome.confirmed
+        ? (outcome.kind === "unverified" || outcome.kind === "pending"
+          ? 'No outcome is shown as known until its timestamps pass TRADeden\'s data-integrity checks.'
+          : 'Market path after confirmation, labelled target-before-stop. Not a trade result.')
+        : 'Not a trade: the setup closed before confirmation.') + '</p>'
+    : '<p class="gd-na">Outcome unavailable.</p>') + '</section>';
+  return '<div class="gd-analyst-head"><div><span class="gd-eyebrow">🧠 TRADeden Analyst' + (history ? ' · record' : '') + '</span><h3>' + esc(model.symbol) + ' <small>' + stage.icon + ' ' + esc(stage.label)
     + (model.direction ? ' · ' + esc(model.direction) : '') + '</small></h3></div></div>'
     + (simulated ? '<p class="gd-analyst-sim">Simulated fixture — not market data.</p>' : '')
-    + '<section><h4>What is happening</h4><p>' + (model.happening ? esc(model.happening) : '<span class="gd-na">No summary recorded.</span>') + '</p></section>'
-    + '<section><h4>Why it matters</h4><p>' + (model.matters ? esc(model.matters) : '<span class="gd-na">No scanner reasoning recorded.</span>') + '</p></section>'
-    + '<section><h4>What confirms it</h4>' + (loading ? '<p class="gd-na">Loading recorded evidence…</p>' : list(model.confirms, model.analysisLoaded ? "No confirming evidence recorded yet." : "Evidence unavailable for this item."))
+    + (history ? '<p class="gd-analyst-record">This setup has closed. What follows is the recorded analysis, not a live read of the market.</p>' : '')
+    + '<section><h4>' + esc(model.titles.happening) + '</h4><p>' + (model.happening ? esc(model.happening) : '<span class="gd-na">No summary recorded.</span>') + '</p></section>'
+    + '<section><h4>' + esc(model.titles.matters) + '</h4><p>' + (model.matters ? esc(model.matters) : '<span class="gd-na">No scanner reasoning recorded.</span>') + '</p></section>'
+    + '<section><h4>' + esc(model.titles.confirms) + '</h4>' + (loading && !model.neverConfirmed ? '<p class="gd-na">Loading recorded evidence…</p>' : list(model.confirms, model.confirmsEmpty))
     + (model.stillNeeded.length ? '<h5>Still missing</h5>' + list(model.stillNeeded, "") : '')
     + (model.watchingFor ? '<h5>Watching for</h5><p>' + esc(model.watchingFor) + '</p>' : '') + '</section>'
-    + '<section><h4>What invalidates it</h4>' + list(model.invalidates, "No invalidation level has been calculated yet.") + '</section>'
-    + '<section><h4>Risk / reward structure</h4><div class="gd-analyst-levels">'
-    + rr.map(([label, value]) => '<div><span>' + label + '</span><b>' + (value == null ? '<span class="gd-na">Not yet calculated</span>' : esc(value)) + '</b></div>').join("")
-    + '</div>' + (levels.planned ? '' : '<p class="gd-note">Levels appear only once the engine calculates both a stop and a target.</p>') + '</section>'
+    + '<section><h4>' + esc(model.titles.invalidates) + '</h4>' + list(model.invalidates, model.invalidatesEmpty) + '</section>'
+    + outcomeBlock
+    + (history && !levels.planned ? '' : '<section><h4>' + (history ? 'Planned risk / reward' : 'Risk / reward structure') + '</h4><div class="gd-analyst-levels">'
+      + rr.map(([label, value]) => '<div><span>' + label + '</span><b>' + (value == null ? '<span class="gd-na">Not yet calculated</span>' : esc(value)) + '</b></div>').join("")
+      + '</div>' + (levels.planned ? '' : '<p class="gd-note">Levels appear only once the engine calculates both a stop and a target.</p>') + '</section>')
     + '<p class="gd-analyst-method">Rule-based analysis' + (model.analystVersion ? ' (' + esc(model.analystVersion) + ')' : '')
     + ' — it restates recorded scanner evidence. It is not an AI or machine-learning prediction and does not forecast outcomes.</p>'
     + '<p class="gd-disclaimer-strong">' + esc(NOT_ADVICE) + '</p>';
