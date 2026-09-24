@@ -1,4 +1,6 @@
 import {IMPORTED_TRADES} from "./importedData.js";
+import {withTimeProvenance,isValidTimeZone,UNVERIFIED_SESSION} from "./tradeTime.mjs";
+import {assignImportIds,tradeOrigin} from "./tradeImport.mjs";
 const DEMO_TRADES = [
   { id:"TH-001", account:"Goldimus Funded", symbol:"XAUUSD", side:"BUY", entry:3342.2, exit:3356.8, volume:0.3, pnl:620, r:1.84, risk:337, time:"2026-09-21 14:32", session:"New York" },
   { id:"TH-002", account:"Personal Futures", symbol:"NAS100", side:"SELL", entry:22780, exit:22690, volume:1, pnl:410, r:1.35, risk:303, time:"2026-09-21 11:08", session:"London" },
@@ -10,9 +12,17 @@ const DEMO_TRADES = [
   { id:"TH-008", account:"Personal Futures", symbol:"NAS100", side:"SELL", entry:22910, exit:22780, volume:1, pnl:590, r:1.72, risk:343, time:"2026-09-15 10:41", session:"London" }
 ];
 
+// Broker/server timezone used to interpret MT5 wall-clock timestamps that were
+// imported without their own basis. Unset means sessions are "Unverified".
+const TZ_KEY="th_broker_timezone";
+export function getBrokerTimeZone(){try{const z=localStorage.getItem(TZ_KEY)||"";return isValidTimeZone(z)||z.toUpperCase()==="UTC"?z:"";}catch{return "";}}
+export function setBrokerTimeZone(zone){const z=String(zone||"").trim();try{if(z)localStorage.setItem(TZ_KEY,z);else localStorage.removeItem(TZ_KEY);}catch{}return z;}
+
+export function normalizeTrades(trades,zone=getBrokerTimeZone()){return trades.map(t=>({...withTimeProvenance(t,zone),origin:tradeOrigin(t)}));}
 export function getTrades() {
-  try { const saved=localStorage.getItem("th_trades"); return saved ? JSON.parse(saved) : IMPORTED_TRADES; }
-  catch { return IMPORTED_TRADES; }
+  let raw=IMPORTED_TRADES;
+  try { const saved=localStorage.getItem("th_trades"); if(saved)raw=JSON.parse(saved); } catch {}
+  return normalizeTrades(raw);
 }
 export function saveTrades(trades){ localStorage.setItem("th_trades",JSON.stringify(trades)); }
 export function resetTrades(){ localStorage.removeItem("th_trades"); }
@@ -34,22 +44,27 @@ const num=value=>Number(String(value??"").replace(/[$,%]/g,"").replace(/,/g,""))
 const aliases={
  account:["account","accountname","accountid","login"],symbol:["symbol","instrument","market"],side:["side","direction","type","action","ordertype"],
  entry:["entry","entryprice","openprice","open"],exit:["exit","exitprice","closeprice","close"],volume:["volume","lots","size","quantity"],
- pnl:["pnl","profit","profitloss","netprofit","netpnl"],r:["r","rr","riskreward"],risk:["risk","riskamount","riskusd","riskmoney"],time:["time","datetime","date","closetime","opentime","timestamp"],session:["session"]
+ id:["id","tradeid"],ticket:["ticket","position","positionid","deal","dealid","order","orderid"],pnl:["pnl","profit","profitloss","netprofit","netpnl"],r:["r","rr","riskreward"],risk:["risk","riskamount","riskusd","riskmoney"],time:["time","datetime","date","closetime","opentime","timestamp"],session:["session"]
 };
-export function parseCSV(text){
+// sourceTimeZone: the broker server timezone for this file (IANA name or "UTC").
+// It is stamped on each row so later settings changes never reinterpret it.
+export function parseCSV(text,{sourceTimeZone=""}={}){
   const lines=String(text).replace(/^\uFEFF/,"").replace(/\r/g,"").split("\n").filter(x=>x.trim());
   if(lines.length<2)return [];
   const delimiter=delimiterFor(lines[0]);
   const headers=splitLine(lines[0],delimiter).map(cleanHeader);
   const find=(row,names)=>{for(const name of names){const i=headers.indexOf(cleanHeader(name));if(i>=0)return row[i]??"";}return "";};
-  const fingerprint=String(text).length.toString(36)+"-"+headers.join("-").slice(0,32);
-  return lines.slice(1).map((line,index)=>{
+  const rows=lines.slice(1).map(line=>{
     const row=splitLine(line,delimiter),rawSide=String(find(row,aliases.side)).toUpperCase(),time=find(row,aliases.time),pnl=num(find(row,aliases.pnl));
     const account=find(row,aliases.account)||"Imported Account",symbol=(find(row,aliases.symbol)||"UNKNOWN").toUpperCase();
-    return {id:"IMP-"+fingerprint+"-"+index,account,symbol,side:rawSide.includes("SELL")?"SELL":"BUY",entry:num(find(row,aliases.entry)),exit:num(find(row,aliases.exit)),volume:num(find(row,aliases.volume)),pnl,r:num(find(row,aliases.r)),risk:num(find(row,aliases.risk)),time:time||new Date().toISOString().slice(0,16).replace("T"," "),session:find(row,aliases.session)||inferSession(time)};
+    const session=find(row,aliases.session);
+    const trade={explicitId:find(row,aliases.id),ticket:find(row,aliases.ticket),account,symbol,side:rawSide.includes("SELL")?"SELL":"BUY",entry:num(find(row,aliases.entry)),exit:num(find(row,aliases.exit)),volume:num(find(row,aliases.volume)),pnl,r:num(find(row,aliases.r)),risk:num(find(row,aliases.risk)),time:time||""};
+    if(session){trade.session=session;trade.session_source="export";}
+    if(sourceTimeZone)trade.source_timezone=sourceTimeZone;
+    return trade;
   }).filter(t=>t.symbol!=="UNKNOWN"&&(t.pnl!==0||t.entry!==0||t.exit!==0));
+  return normalizeTrades(assignImportIds(rows),"");
 }
-function inferSession(time){const hour=Number(String(time).match(/(?:T|\s)(\d{1,2})/)?.[1]??12);if(hour>=13&&hour<18)return "New York";if(hour>=8&&hour<13)return "London";return "Asia";}
 
 export function calculateMetrics(trades){
   const ordered=[...trades].sort((a,b)=>String(a.time).localeCompare(String(b.time)));
@@ -60,7 +75,7 @@ export function calculateMetrics(trades){
   for(const t of ordered){equity+=Number(t.pnl)||0;peak=Math.max(peak,equity);maxDrawdown=Math.max(maxDrawdown,peak-equity);}
   const by=key=>ordered.reduce((m,t)=>(m[t[key]||"Unknown"]=(m[t[key]||"Unknown"]||0)+(Number(t.pnl)||0),m),{});
   const bySymbol=by("symbol"),bySession=by("session");
-  const bestInstrument=Object.entries(bySymbol).sort((a,b)=>b[1]-a[1])[0]?.[0]||"—",bestSession=Object.entries(bySession).sort((a,b)=>b[1]-a[1])[0]?.[0]||"—";
+  const bestInstrument=Object.entries(bySymbol).sort((a,b)=>b[1]-a[1])[0]?.[0]||"—",bestSession=Object.entries(bySession).filter(([name])=>name!==UNVERIFIED_SESSION).sort((a,b)=>b[1]-a[1])[0]?.[0]||"—";
   const avgR=ordered.length?ordered.reduce((s,t)=>s+(Number(t.r)||0),0)/ordered.length:0;
   const expectancy=ordered.length?pnl/ordered.length:0;
   return {pnl,wins:wins.length,losses:losses.length,breakevens:breakevens.length,winRate:ordered.length?wins.length/ordered.length*100:0,profitFactor:grossLoss?grossProfit/grossLoss:0,avgWin,avgLoss,payoffRatio:avgLoss?avgWin/avgLoss:0,expectancy,avgR,maxDrawdown,bestInstrument,bestSession,grossProfit,grossLoss,equityCurve:ordered.map((t,i)=>({i,pnl:Number(t.pnl)||0,equity:ordered.slice(0,i+1).reduce((s,x)=>s+(Number(x.pnl)||0),0)}))};

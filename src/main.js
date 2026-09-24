@@ -1,5 +1,7 @@
 import "./styles.css";
-import {getTrades,saveTrades,resetTrades,parseCSV,calculateMetrics,getAccounts,getTradeContext} from "./data.js";
+import {getTrades,saveTrades,resetTrades,parseCSV,calculateMetrics,getAccounts,getTradeContext,getBrokerTimeZone,setBrokerTimeZone,normalizeTrades} from "./data.js";
+import {mergeImportedTrades} from "./tradeImport.mjs";
+import {isValidTimeZone} from "./tradeTime.mjs";
 import {getReview,saveReview,reviewedCount,DEFAULT_RULES} from "./journal.js";
 import {renderAnalytics,renderInsights,initInsights} from "./behaviorView.js";
 import {renderMarketRadar,initMarketRadar} from "./marketRadar.js";
@@ -57,9 +59,13 @@ function importModal(){return `
 <div class="modal-backdrop" id="modal"><div class="modal">
 <button class="modal-close" id="closeModal">×</button><div class="kicker">DATA CONNECTION</div>
 <h2>Connect your trading history</h2><p class="sub">Start with a CSV from MT5, a broker, prop firm or futures platform. Trading Hub normalizes the execution data inside your workspace.</p>
+<label class="tz-field"><span>BROKER SERVER TIMEZONE</span><input id="brokerTz" list="tzList" value="${esc(getBrokerTimeZone())}" placeholder="e.g. Europe/Athens or UTC — leave empty if unknown" autocomplete="off"/><datalist id="tzList">${timeZoneOptions()}</datalist><small>MT5 exports use broker server time, not UTC. Sessions are only classified when this is set; otherwise they show as <b>Unverified</b>. Check your broker's documentation — Trading Hub does not guess it.</small></label>
 <label class="dropzone" id="dropzone"><input id="csvFile" type="file" accept=".csv,text/csv,.txt"/><span class="upload-icon">↑</span><b>Drop CSV here or click to browse</b><small>CSV · XLS exports can be converted to CSV · browser-local prototype</small></label>
 <div id="importStatus"></div><div class="import-actions"><button class="ghost" id="cancelImport">Cancel</button><button class="primary" id="importDemo">Restore demo dataset</button></div>
 </div></div>`;}
+
+function sessionBasisNote(trades){const n=trades.filter(t=>t.session==="Unverified").length;return n?'<div class="basis-note"><b>'+n+' of '+trades.length+' sessions unverified.</b> MT5 exports use broker server time. Set the broker server timezone in <button class="text-btn" id="importBasis">Import</button> to classify them; the raw timestamps are unchanged.</div>':"";}
+function timeZoneOptions(){let zones=[];try{zones=Intl.supportedValuesOf("timeZone");}catch{}return ["UTC",...zones].map(z=>'<option value="'+esc(z)+'"></option>').join("");}
 
 function tradeDrawer(t,trades){
  const c=getTradeContext(t,trades),similar=trades.filter(x=>x.id!==t.id&&x.symbol===t.symbol).slice(0,3);
@@ -68,7 +74,7 @@ function tradeDrawer(t,trades){
  return `
  <div class="drawer-backdrop" id="drawer"><section class="trade-drawer">
   <button class="modal-close" id="closeDrawer">×</button><div class="kicker">TRADE INTELLIGENCE · ${esc(t.id||"EXECUTION")}</div>
-  <div class="drawer-hero"><div><span class="direction ${t.side==="BUY"?"buy":"sell"}">${t.side}</span><h2>${esc(t.symbol)}</h2><small>${esc(t.time)} · ${esc(t.session)} · ${esc(t.account)}</small></div><strong class="${t.pnl>=0?"up":"down"}">${signed(t.pnl)}</strong></div>
+  <div class="drawer-hero"><div><span class="direction ${t.side==="BUY"?"buy":"sell"}">${t.side}</span><h2>${esc(t.symbol)}</h2><small>${esc(t.time)} · ${esc(t.session)} · ${esc(t.account)}</small><small class="time-basis">${t.time_status==="VERIFIED"?"UTC "+esc(t.time_utc.slice(0,16).replace("T"," "))+" · basis "+esc(t.time_basis):"Time basis unverified — session not classified"}</small></div><strong class="${t.pnl>=0?"up":"down"}">${signed(t.pnl)}</strong></div>
   <div class="trade-facts"><div><span>ENTRY</span><b>${t.entry||"—"}</b></div><div><span>EXIT</span><b>${t.exit||"—"}</b></div><div><span>R MULTIPLE</span><b>${t.r>=0?"+":""}${Number(t.r||0).toFixed(2)}R</b></div><div><span>RISK</span><b>${money(t.risk||0)}</b></div></div>
   <div class="drawer-section"><div class="kicker">YOUR HISTORY · ${esc(t.symbol)}</div><div class="history-strip"><div><b>${c.symbolTrades}</b><span>TRADES</span></div><div><b>${pct(c.symbolWinRate)}</b><span>WIN RATE</span></div><div><b>${c.symbolAvgR>=0?"+":""}${c.symbolAvgR.toFixed(2)}R</b><span>AVG R</span></div></div></div>
   <div class="drawer-section"><div class="kicker">WHY THIS TRADE MATTERED</div><div class="check-list">${checks.map(x=>`<div><i class="${x[1]?"good":"warn"}">${x[1]?"✓":"!"}</i><span>${x[0]}</span></div>`).join("")}</div></div>
@@ -92,11 +98,11 @@ overview:(trades,m,accounts)=>`
 <section class="portfolio-card"><div><div class="tiny">FILTERED EQUITY P&L</div><div class="equity">${signed(m.pnl)}<span class="live-dot"></span></div><div class="equity-meta"><span class="up">${pct(m.winRate)} win rate</span><span>${m.profitFactor.toFixed(2)} profit factor</span><span class="muted">${trades.length} trades</span></div></div><div class="portfolio-spark">${spark(m.equityCurve)}<div class="spark-labels"><span>START</span><span>NOW</span></div></div><div class="portfolio-side"><span>MAX DRAWDOWN</span><strong>${money(m.maxDrawdown)}</strong><div class="meter"><i style="width:${Math.min((m.maxDrawdown/2000)*100,100)}%"></i></div><small>Peak-to-trough P&L</small></div></section>
 <section class="metric-grid"><div class="metric"><span>NET P&L</span><strong class="${m.pnl>=0?"up":"down"}">${signed(m.pnl)}</strong><small>Current filter</small></div><div class="metric"><span>MAX DRAWDOWN</span><strong>${money(m.maxDrawdown)}</strong><small>Peak-to-trough</small></div><div class="metric"><span>WIN RATE</span><strong>${pct(m.winRate)}</strong><small>${m.wins} wins / ${m.losses} losses</small></div><div class="metric"><span>PROFIT FACTOR</span><strong>${m.profitFactor.toFixed(2)}</strong><small>Gross profit / loss</small></div><div class="metric"><span>AVG. R</span><strong>${m.avgR>=0?"+":""}${m.avgR.toFixed(2)}R</strong><small>Observed execution</small></div></section>
 <section class="dashboard-grid"><div class="panel wide"><div class="panel-head"><div><span class="kicker">PERFORMANCE</span><h2>Equity trajectory</h2></div><button class="text-btn" data-view="trades">Inspect trades →</button></div><div class="big-chart">${bigChart(m.equityCurve)}</div></div>
-<div class="panel intelligence"><div class="panel-head"><div><span class="kicker">AI INTELLIGENCE</span><h2>What matters now</h2></div><span class="ai-orb">✦</span></div><div class="signal"><span class="signal-icon">↑</span><div><b>Edge detected</b><p>${m.bestInstrument} is your strongest instrument by net P&L.</p></div></div><div class="signal"><span class="signal-icon">◈</span><div><b>Session pattern</b><p>${m.bestSession} is currently your strongest session.</p></div></div><div class="signal"><span class="signal-icon warn">!</span><div><b>Sample size</b><p>${trades.length<20?"Import more history before trusting a pattern.":"The dataset is large enough for richer behavioral analysis."}</p></div></div><button class="ai-button" id="openAI">Open AI Trading Analyst <span>↗</span></button></div></section>
+<div class="panel intelligence"><div class="panel-head"><div><span class="kicker">AI INTELLIGENCE</span><h2>What matters now</h2></div><span class="ai-orb">✦</span></div><div class="signal"><span class="signal-icon">↑</span><div><b>Edge detected</b><p>${m.bestInstrument} is your strongest instrument by net P&L.</p></div></div><div class="signal"><span class="signal-icon">◈</span><div><b>Session pattern</b><p>${m.bestSession!=="—"?esc(m.bestSession)+" is currently your strongest session.":"Session attribution is unavailable: set the broker server timezone when importing so MT5 times can be converted to UTC."}</p></div></div><div class="signal"><span class="signal-icon warn">!</span><div><b>Sample size</b><p>${trades.length<20?"Import more history before trusting a pattern.":"The dataset is large enough for richer behavioral analysis."}</p></div></div><button class="ai-button" id="openAI">Open AI Trading Analyst <span>↗</span></button></div></section>
 <section class="dashboard-grid lower"><div class="panel"><div class="panel-head"><div><span class="kicker">CONNECTED CAPITAL</span><h2>Accounts</h2></div><button class="text-btn" data-view="accounts">View all →</button></div><div class="account-list">${accounts.map(a=>`<div class="account-row"><div class="account-id"><span class="account-icon">${(a.platform||"I")[0]}</span><div><b>${esc(a.name)}</b><small>${esc(a.platform||"Imported")} · <em>${a.trades} trades</em></small></div></div><div class="account-value"><b>${a.balance?money(a.balance):"Data only"}</b><small class="${a.pnl>=0?"up":"down"}">${signed(a.pnl)}</small></div></div>`).join("")}</div></div>
 <div class="panel"><div class="panel-head"><div><span class="kicker">EXECUTION FEED</span><h2>Recent trades</h2></div><button class="text-btn" data-view="trades">View all →</button></div><div class="trade-list">${trades.slice(0,5).map(t=>`<button class="trade-row clickable" data-trade="${esc(t.id)}"><div><b>${esc(t.symbol)}</b><small><span class="${t.side==="BUY"?"up":"down"}">${t.side}</span> · ${esc(t.time)} · ${esc(t.session)}</small></div><strong class="${t.pnl>=0?"up":"down"}">${signed(t.pnl)}</strong></button>`).join("")}</div></div></section>`,
 accounts:(trades,m,accounts)=>`<div class="page-title"><div><div class="kicker">CAPITAL MAP</div><h1>All accounts</h1><p class="sub">One portfolio view across your trading activity.</p></div><button class="primary" id="importAccounts">+ Import trades</button></div><div class="account-cards">${accounts.map(a=>`<div class="account-card"><div class="account-top"><span class="account-icon big">${(a.platform||"I")[0]}</span><span class="status">${a.status||"IMPORTED"}</span></div><h3>${esc(a.name)}</h3><small>${esc(a.platform||"Imported account")}</small><div class="card-balance">${a.balance?money(a.balance):"Activity linked"}</div><div class="account-bottom"><span>P&L <b class="${a.pnl>=0?"up":"down"}">${signed(a.pnl)}</b></span><span>Trades <b>${a.trades}</b></span></div></div>`).join("")}</div>`,
-trades:(trades,m)=>`<div class="page-title"><div><div class="kicker">EXECUTION LEDGER</div><h1>Trade intelligence</h1><p class="sub">${trades.length} executions · click a trade to inspect the context behind it.</p></div><div><button class="ghost" id="importTrades">Import CSV</button></div></div><div class="filter-bar">${filterSelect("account","ACCOUNT")}${filterSelect("symbol","SYMBOL")}${filterSelect("session","SESSION")}<button class="ghost" id="clearFilters">Clear</button></div><div class="panel table-panel"><div class="table-head"><span>SYMBOL</span><span>SIDE</span><span>SESSION</span><span>TIME</span><span>P&L</span></div>${trades.map(t=>`<button class="table-row clickable" data-trade="${esc(t.id)}"><b>${esc(t.symbol)}</b><span class="${t.side==="BUY"?"up":"down"}">${t.side}</span><span>${esc(t.session)}</span><span>${esc(t.time)}</span><strong class="${t.pnl>=0?"up":"down"}">${signed(t.pnl)}</strong></button>`).join("")||"<div class='empty-state'>No trades match these filters.</div>"}</div>`,
+trades:(trades,m)=>`<div class="page-title"><div><div class="kicker">EXECUTION LEDGER</div><h1>Trade intelligence</h1><p class="sub">${trades.length} executions · click a trade to inspect the context behind it.</p></div><div><button class="ghost" id="importTrades">Import CSV</button></div></div>${sessionBasisNote(trades)}<div class="filter-bar">${filterSelect("account","ACCOUNT")}${filterSelect("symbol","SYMBOL")}${filterSelect("session","SESSION")}<button class="ghost" id="clearFilters">Clear</button></div><div class="panel table-panel"><div class="table-head"><span>SYMBOL</span><span>SIDE</span><span>SESSION</span><span>TIME</span><span>P&L</span></div>${trades.map(t=>`<button class="table-row clickable" data-trade="${esc(t.id)}"><b>${esc(t.symbol)}</b><span class="${t.side==="BUY"?"up":"down"}">${t.side}</span><span>${esc(t.session)}</span><span>${esc(t.time)}</span><strong class="${t.pnl>=0?"up":"down"}">${signed(t.pnl)}</strong></button>`).join("")||"<div class='empty-state'>No trades match these filters.</div>"}</div>`,
 radar:renderMarketRadar,
 analytics:renderAnalytics,
 insights:renderInsights
@@ -114,7 +120,7 @@ function openImport(){state.importOpen=true;render();}
 function bind(){
  document.querySelectorAll("[data-view]").forEach(el=>el.onclick=()=>{state.view=el.dataset.view;state.selectedTrade=null;render();});
  document.querySelectorAll("[data-trade]").forEach(el=>el.onclick=()=>{state.selectedTrade=state.trades.find(t=>String(t.id)===String(el.dataset.trade))||null;render();});
- ["importTop","importAccounts","importTrades","importAI","connectTop"].forEach(id=>{const el=document.getElementById(id);if(el)el.onclick=openImport;});
+ ["importTop","importAccounts","importTrades","importAI","connectTop","importBasis"].forEach(id=>{const el=document.getElementById(id);if(el)el.onclick=openImport;});
  document.querySelectorAll("[data-filter]").forEach(el=>el.onchange=()=>{state.filters[el.dataset.filter]=el.value;render();});
  const clear=document.getElementById("clearFilters");if(clear)clear.onclick=()=>{state.filters={account:"ALL",symbol:"ALL",session:"ALL"};render();};
  const mobileMenu=document.getElementById("mobileMenu");
@@ -151,12 +157,18 @@ function bind(){
  document.querySelectorAll("[data-question]").forEach(el=>el.onclick=()=>{if(coachInput){coachInput.value=el.dataset.question;runQuestion(el.dataset.question);}});
 }
 async function handleFile(file){
- const status=document.getElementById("importStatus");if(status)status.innerHTML='<div class="import-loading">Reading '+esc(file.name)+'…</div>';
- const parsed=parseCSV(await file.text());
+ const status=document.getElementById("importStatus");
+ const tz=(document.getElementById("brokerTz")?.value||"").trim();
+ if(tz&&tz.toUpperCase()!=="UTC"&&!isValidTimeZone(tz)){if(status)status.innerHTML='<div class="import-error">"'+esc(tz)+'" is not a recognised IANA timezone. Use a name such as Europe/Athens, or leave it empty.</div>';return;}
+ setBrokerTimeZone(tz);
+ if(status)status.innerHTML='<div class="import-loading">Reading '+esc(file.name)+'…</div>';
+ const parsed=parseCSV(await file.text(),{sourceTimeZone:tz});
  if(!parsed.length){if(status)status.innerHTML='<div class="import-error">No recognizable executions found. Try a CSV with Symbol, Side, Entry, Exit, Volume or P&L columns.</div>';return;}
- const existing=state.trades.filter(t=>!String(t.id||"").startsWith("TH-"));
- state.trades=[...parsed,...existing];saveTrades(state.trades);
- if(status)status.innerHTML='<div class="import-success">✓ Imported '+parsed.length+' trades. Intelligence updated.</div>';
- setTimeout(()=>{state.importOpen=false;render();},700);
+ const result=mergeImportedTrades(state.trades,parsed);
+ state.trades=normalizeTrades(result.trades);saveTrades(state.trades);
+ const skipped=result.skippedExistingId+result.skippedDuplicateContent;
+ const notes=[skipped?skipped+' already in your workspace (not duplicated)':'',result.sampleExcluded?result.sampleExcluded+' bundled sample trades set aside (restore any time)':'',tz?'':'sessions Unverified until a broker timezone is set'].filter(Boolean);
+ if(status)status.innerHTML='<div class="import-success">✓ Added '+result.added+' new trade'+(result.added===1?'':'s')+'.'+(notes.length?' '+esc(notes.join(' · '))+'.':'')+'</div>';
+ setTimeout(()=>{state.importOpen=false;render();},skipped||result.sampleExcluded?2200:700);
 }
 render();

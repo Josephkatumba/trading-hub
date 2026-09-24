@@ -1,4 +1,5 @@
 import {analyzeBehavior} from "./behavior.js";
+import {UNVERIFIED_SESSION} from "./tradeTime.mjs";
 
 const money=n=>(n<0?"-$":"$")+Math.abs(Number(n)||0).toLocaleString(undefined,{maximumFractionDigits:0});
 const signed=n=>n>=0?"+"+money(n):money(n);
@@ -59,7 +60,7 @@ export function answerQuestion(question,trades){
    const net=total(trades);
    const instrument=b.bySymbol[0];
    const worstInstrument=[...b.bySymbol].sort((a,z)=>a.pnl-z.pnl)[0];
-   const worstSession=[...b.bySession].sort((a,z)=>a.pnl-z.pnl)[0];
+   const worstSession=[...b.bySession].filter(x=>x.name!==UNVERIFIED_SESSION).sort((a,z)=>a.pnl-z.pnl)[0];
    const worstSide=[...b.bySide].sort((a,z)=>a.pnl-z.pnl)[0];
    const largestLoss=b.largestLosses[0];
    const components=[

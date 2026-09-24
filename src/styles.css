@@ -860,3 +860,7 @@ main{position:relative;padding-bottom:90px}.topline{border-bottom-color:rgba(98,
 .confirmation-toast-card .confirmation-toast-note{margin-top:2px;color:#d6c48f;font-size:9px;font-weight:600}
 @keyframes confirmation-toast-in{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.radar-header-tools{justify-items:start;width:100%}.confirmation-alert-controls{flex-wrap:wrap}.confirmation-toast{top:64px;right:10px;width:min(360px,calc(100vw - 20px));max-height:42vh}}
+
+/* Import: explicit broker timezone basis */
+.tz-field{display:flex;flex-direction:column;gap:6px;margin-top:20px}.tz-field span{color:#687486;font-size:8px;letter-spacing:.12em}.tz-field input{background:#0a0f15;border:1px solid #283340;border-radius:7px;color:#dfe7ef;padding:9px 10px;font-size:11px}.tz-field input:focus{outline:none;border-color:#6d8299}.tz-field small{color:#586577;font-size:8.5px;line-height:1.5}.tz-field small b{color:#f6c56b}
+.basis-note{margin:0 0 12px;padding:10px 12px;border:1px solid #4a3d1d;background:#1d180c;border-radius:8px;color:#d9c58f;font-size:10px;line-height:1.5}.basis-note b{color:#f6c56b}.basis-note .text-btn{padding:0;font-size:10px}.time-basis{display:block;margin-top:3px;color:#687486;font-size:9px}
