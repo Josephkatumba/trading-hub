@@ -2,3 +2,4 @@ fastapi
 uvicorn[standard]
 MetaTrader5
 python-dotenv
+tzdata

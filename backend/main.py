@@ -3,33 +3,70 @@ from __future__ import annotations
 from datetime import datetime, timezone, time, timedelta
 from pathlib import Path
 import json
+import logging
 import os
+import threading
+import time as monotonic_time
 from typing import Any
 from zoneinfo import ZoneInfo
+from urllib.parse import urlsplit
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 
 load_dotenv()
 
 from scanner import analyze_symbol
 from macro import fundamentals_snapshot
-from observations import record_markets, recent_observations
+from observations import (all_observations, confirmation_events, record_markets,
+                          recent_observations, setup_history, lifecycle_events,
+                          record_lifecycle_transition, setup_episodes)
+from outcomes import (MARKET_OUTCOMES_FILE, TRADE_OUTCOMES_FILE, append_market_outcome, configured_horizons,
+                      derive_market_outcome, list_records, record_trade_outcome,
+                      resolve_due_market_outcomes)
+from analyst import analyze_snapshot
+from performance import performance_report
+from market_time import combined_normalization_status, mt5_epoch_to_utc_iso, normalize_mt5_epoch, utc_iso
+from ml_dataset import audit_live_dataset
 
 try:
     import MetaTrader5 as mt5
 except ImportError:
     mt5 = None
 
-app = FastAPI(title="Trading Hub Market Engine", version="0.2.0")
+LOGGER = logging.getLogger("trading_hub.engine")
+DEFAULT_CORS_ORIGINS = ("http://localhost:5173", "http://127.0.0.1:5173",
+                        "http://localhost:4173", "http://127.0.0.1:4173")
+
+
+def configured_cors_origins() -> list[str]:
+    raw = os.getenv("TRADING_HUB_CORS_ORIGINS")
+    origins = [part.strip() for part in raw.split(",") if part.strip()] if raw is not None else list(DEFAULT_CORS_ORIGINS)
+    for origin in origins:
+        parsed = urlsplit(origin)
+        if (origin == "*" or parsed.scheme not in {"http", "https"} or not parsed.netloc or
+                parsed.path or parsed.query or parsed.fragment):
+            raise ValueError("TRADING_HUB_CORS_ORIGINS must contain explicit HTTP(S) origins without paths or wildcards")
+    return origins
+
+
+class LifecycleTransitionRequest(BaseModel):
+    to_state: str = Field(min_length=1, max_length=24)
+    reason_code: str = Field(default="MANUAL_REVIEW", min_length=1, max_length=64)
+    reason: str | None = Field(default=None, max_length=500)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+app = FastAPI(title="Trading Hub Market Engine", version="0.3.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=configured_cors_origins(),
     allow_credentials=False,
-    allow_methods=["GET"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Accept", "Content-Type"],
 )
 
 SYMBOL_ALIASES = {
@@ -51,6 +88,10 @@ SYMBOL_ALIASES = {
 }
 WATCHLIST = list(SYMBOL_ALIASES)
 ENGINE_STARTED = datetime.now(timezone.utc)
+_SCAN_LOCK = threading.RLock()
+_LAST_SCAN: dict[str, Any] = {"status": "NOT_SCANNED", "started_at": None,
+                              "completed_at": None, "market_count": 0, "error": None,
+                              "elapsed_ms": None}
 
 LONDON = ZoneInfo("Europe/London")
 NEW_YORK = ZoneInfo("America/New_York")
@@ -199,10 +240,33 @@ def session_context(rows: list[dict[str, Any]], price: float) -> dict[str, Any]:
 
 
 def market_snapshot() -> list[dict[str, Any]]:
-    if mt5 is None or not mt5.initialize():
+    started_clock = datetime.now(timezone.utc)
+    started = monotonic_time.perf_counter()
+    with _SCAN_LOCK:
+        _LAST_SCAN.update(status="SCANNING", started_at=utc_iso(started_clock), error=None)
+    if mt5 is None:
+        with _SCAN_LOCK:
+            _LAST_SCAN.update(status="MT5_UNAVAILABLE", completed_at=utc_iso(datetime.now(timezone.utc)),
+                              market_count=0, error="MetaTrader5 package is unavailable",
+                              elapsed_ms=round((monotonic_time.perf_counter() - started) * 1000, 2))
+        return []
+    try:
+        initialized = bool(mt5.initialize())
+    except Exception as exc:
+        initialized = False
+        LOGGER.exception("MT5 initialization failed")
+        initialize_error = str(exc)
+    else:
+        initialize_error = str(getattr(mt5, "last_error", lambda: "MT5 terminal is unavailable")()) if not initialized else None
+    if not initialized:
+        with _SCAN_LOCK:
+            _LAST_SCAN.update(status="MT5_OFFLINE", completed_at=utc_iso(datetime.now(timezone.utc)),
+                              market_count=0, error=initialize_error,
+                              elapsed_ms=round((monotonic_time.perf_counter() - started) * 1000, 2))
         return []
 
-    markets = []
+    markets: list[dict[str, Any]] = []
+    bars_by_symbol: dict[str, list[dict[str, Any]]] = {}
     try:
         for requested in WATCHLIST:
             actual = mt5_symbol(requested)
@@ -214,6 +278,13 @@ def market_snapshot() -> list[dict[str, Any]]:
             h1_rates = mt5.copy_rates_from_pos(actual, mt5.TIMEFRAME_H1, 0, 160)
             if not tick or not info or rates is None or h1_rates is None:
                 continue
+            received_at = datetime.now(timezone.utc)
+            source_basis = os.getenv("TRADING_HUB_MT5_SOURCE_TIMEZONE")
+            bar_provenance = normalize_mt5_epoch(rates[-1]["time"], source_basis)
+            raw_tick_epoch = (float(tick.time_msc) / 1000 if getattr(tick, "time_msc", 0)
+                              else float(tick.time) if getattr(tick, "time", 0) else None)
+            tick_provenance = normalize_mt5_epoch(raw_tick_epoch, source_basis)
+            source_timestamp_quality = combined_normalization_status(bar_provenance, tick_provenance)
             bid = float(tick.bid or 0)
             ask = float(tick.ask or 0)
             raw_last = float(info.last or 0)
@@ -228,6 +299,19 @@ def market_snapshot() -> list[dict[str, Any]]:
                 "low": float(r["low"]),
                 "close": float(r["close"]),
             } for r in rates]
+            # Outcome bars only enter the UTC outcome engine when the MT5 clock
+            # basis was explicitly verified. Scanner rows remain untouched.
+            normalized_bars = []
+            for raw_rate in rates:
+                stamp = normalize_mt5_epoch(raw_rate["time"], source_basis)
+                if stamp.get("normalization_status") != "VERIFIED":
+                    normalized_bars = []
+                    break
+                normalized_bars.append({"time": datetime.fromisoformat(stamp["normalized_utc"]).timestamp(),
+                    "open": float(raw_rate["open"]), "high": float(raw_rate["high"]),
+                    "low": float(raw_rate["low"]), "close": float(raw_rate["close"])})
+            if normalized_bars:
+                bars_by_symbol[normalize_symbol(requested)] = normalized_bars
             higher_rows = [{
                 "time": float(r["time"]),
                 "open": float(r["open"]),
@@ -246,6 +330,12 @@ def market_snapshot() -> list[dict[str, Any]]:
             )
             reference = float(rows[-97]["close"]) if len(rows) >= 97 else float(rows[0]["close"])
             change_pct = ((price - reference) / reference * 100) if reference else 0.0
+            tick_utc = tick_provenance.get("normalized_utc") if tick_provenance.get("normalization_status") == "VERIFIED" else None
+            tick_age = ((received_at - datetime.fromisoformat(tick_utc)).total_seconds()
+                        if tick_utc else None)
+            candle_age = (raw_tick_epoch - float(rates[-1]["time"])) if raw_tick_epoch is not None else None
+            source_time = (bar_provenance.get("normalized_utc")
+                if source_timestamp_quality == "VERIFIED" else None)
             markets.append({
                 "symbol": normalize_symbol(requested),
                 "broker_symbol": actual,
@@ -256,11 +346,60 @@ def market_snapshot() -> list[dict[str, Any]]:
                 "change_pct": change_pct,
                 **scan,
                 **context,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "source_timestamp": source_time,
+                "backend_received_at": utc_iso(received_at),
+                "tick_age_seconds": tick_age,
+                "candle_age_seconds": candle_age,
+                "time_provenance": {"bar_open_time": bar_provenance,
+                    "tick_time": tick_provenance,
+                    "backend_received_at": utc_iso(received_at),
+                    "observation_time": None,
+                    "source_time_basis": source_basis or "UNVERIFIED",
+                    "timezone_normalization_status": source_timestamp_quality,
+                    "raw_mt5_tick_time_msc": int(tick.time_msc) if getattr(tick, "time_msc", 0) else None},
+                "timeframe": "M15",
+                "higher_timeframes": ["H1"],
+                "received_bars": len(rows),
+                "source": "MT5",
+                "timestamp": utc_iso(datetime.now(timezone.utc)),
             })
+    except Exception as exc:
+        LOGGER.exception("Market scan failed")
+        with _SCAN_LOCK:
+            _LAST_SCAN.update(status="SCAN_ERROR", completed_at=utc_iso(datetime.now(timezone.utc)),
+                              market_count=len(markets), error=str(exc),
+                              elapsed_ms=round((monotonic_time.perf_counter() - started) * 1000, 2))
+        return []
     finally:
-        mt5.shutdown()
-    record_markets(markets)
+        try:
+            mt5.shutdown()
+        except Exception:
+            LOGGER.exception("MT5 shutdown failed")
+    try:
+        record_markets(markets)
+        confirmations = confirmation_events()
+        observations = all_observations()
+        snapshots_by_id = {str(row.get("observation_id")): row for row in observations
+                           if row.get("record_type") == "setup_snapshot"}
+        existing_outcomes = list_records(MARKET_OUTCOMES_FILE)
+        watch_snapshots = [row for row in observations if row.get("record_type") == "setup_snapshot"
+            and (row.get("rule_evidence") or {}).get("strategy_valid") is not True]
+        due = resolve_due_market_outcomes(confirmations, snapshots_by_id, bars_by_symbol,
+                                           existing_outcomes, configured_horizons(),
+                                           watch_snapshots=watch_snapshots)
+        for outcome in due:
+            append_market_outcome(outcome)
+    except Exception as exc:
+        LOGGER.exception("Market scan persistence or outcome resolution failed")
+        with _SCAN_LOCK:
+            _LAST_SCAN.update(status="STORAGE_ERROR", completed_at=utc_iso(datetime.now(timezone.utc)),
+                              market_count=len(markets), error=str(exc),
+                              elapsed_ms=round((monotonic_time.perf_counter() - started) * 1000, 2))
+        return markets
+    with _SCAN_LOCK:
+        _LAST_SCAN.update(status="CONNECTED" if markets else "NO_MARKETS",
+                          completed_at=utc_iso(datetime.now(timezone.utc)), market_count=len(markets),
+                          error=None, elapsed_ms=round((monotonic_time.perf_counter() - started) * 1000, 2))
     return markets
 
 
@@ -288,6 +427,8 @@ def health():
                     "server": str(acct.server) if acct else None,
                 }
                 symbols = int(mt5.symbols_total() or 0)
+            else:
+                error = str(getattr(mt5, "last_error", lambda: "MT5 terminal is unavailable")())
         except Exception as exc:
             error = str(exc)
         finally:
@@ -296,21 +437,136 @@ def health():
             except Exception:
                 pass
 
+    now = datetime.now(timezone.utc)
+    with _SCAN_LOCK:
+        scan = dict(_LAST_SCAN)
+    last_scan = parse_health_time(scan.get("completed_at"))
+    scan_age = max(0.0, (now - last_scan).total_seconds()) if last_scan else None
+    freshness = ("UNKNOWN" if scan_age is None else "FRESH" if scan_age <= 30 else "STALE")
+    data_dir = Path(__file__).resolve().parent / "data"
+    storage = {}
+    for name in ("setup_observations.jsonl", "setup_lifecycle.jsonl", "setup_confirmations.jsonl",
+                 "market_outcomes.jsonl", "trade_outcomes.jsonl"):
+        path = data_dir / name
+        try:
+            stat = path.stat()
+            storage[name] = {"status": "AVAILABLE", "bytes": stat.st_size}
+        except FileNotFoundError:
+            storage[name] = {"status": "NOT_CREATED", "bytes": 0}
+        except OSError as exc:
+            storage[name] = {"status": "UNAVAILABLE", "bytes": None, "error": str(exc)}
+
     return {
         "ok": True,
+        "status": "CONNECTED" if connected else "DEGRADED",
         "service": "trading-hub-market-engine",
-        "engine_version": "0.3.0",
+        "engine_version": "0.4.0",
         "strategy": "trendline-first-v3",
         "execution_enabled": False,
         "mt5_available": mt5 is not None,
         "mt5_connected": connected,
+        "mt5_status": "CONNECTED" if connected else "OFFLINE" if mt5 is not None else "UNAVAILABLE",
+        "scanner_status": "READY" if callable(analyze_symbol) else "UNAVAILABLE",
+        "data_freshness": {"status": freshness, "last_scan_at": scan.get("completed_at"),
+                           "age_seconds": scan_age, "market_count": scan.get("market_count", 0)},
+        "last_scan": scan,
+        "source_time_basis": os.getenv("TRADING_HUB_MT5_SOURCE_TIMEZONE") or "UNVERIFIED",
+        "storage": storage,
         "terminal": terminal,
         "account": account,
         "symbols": symbols,
         "bridge": bridge,
-        "uptime_started": ENGINE_STARTED.isoformat(),
+        "uptime_started": utc_iso(ENGINE_STARTED),
         "error": error,
     }
+
+
+def parse_health_time(value: Any) -> datetime | None:
+    from market_time import parse_aware_utc
+    return parse_aware_utc(value)
+
+
+@app.get("/api/market/diagnostics/mt5-time")
+def mt5_time_diagnostic(symbols: str | None = None, bars: int = 8):
+    """Read-only comparison of MT5 bar/tick epochs against the backend UTC clock."""
+    from fastapi import HTTPException
+    if mt5 is None:
+        raise HTTPException(status_code=503, detail="MetaTrader5 package is unavailable")
+    if not mt5.initialize():
+        raise HTTPException(status_code=503, detail="MT5 terminal is unavailable")
+
+    before = datetime.now(timezone.utc)
+    try:
+        broker_symbols: dict[str, str] = {}
+        for row in reversed(all_observations()):
+            if row.get("symbol") and row.get("broker_symbol"):
+                broker_symbols.setdefault(str(row["symbol"]), str(row["broker_symbol"]))
+        requested = [part.strip().upper() for part in symbols.split(",") if part.strip()] if symbols else [
+            symbol for symbol in ("XAUUSD", "EURUSD", "NAS100", "US500")
+            if symbol in broker_symbols]
+        requested = list(dict.fromkeys(requested))[:8]
+        limit = max(3, min(int(bars), 12))
+        result = []
+        for symbol in requested:
+            actual = broker_symbols.get(symbol)
+            if not actual:
+                continue
+            rates = mt5.copy_rates_from_pos(actual, mt5.TIMEFRAME_M15, 0, limit)
+            tick = mt5.symbol_info_tick(actual)
+            sampled_at = datetime.now(timezone.utc)
+            if rates is None:
+                result.append({"symbol": symbol, "broker_symbol": actual,
+                               "error": "MT5 returned no M15 rates"})
+                continue
+            candle_rows = []
+            source_basis = os.getenv("TRADING_HUB_MT5_SOURCE_TIMEZONE")
+            for rate in rates:
+                opened = datetime.fromtimestamp(float(rate["time"]), tz=timezone.utc)
+                normalized = normalize_mt5_epoch(rate["time"], source_basis)
+                candle_rows.append({"open_epoch": float(rate["time"]),
+                    "open_time_utc": utc_iso(opened),
+                    "interpreted_source_time": normalized["interpreted_source_time"],
+                    "normalized_utc": normalized["normalized_utc"],
+                    "normalization_status": normalized["normalization_status"],
+                    "normalization_reason": normalized.get("normalization_reason"),
+                    "source_time_basis": normalized.get("source_time_basis"),
+                    "scheduled_close_utc": utc_iso(opened + timedelta(minutes=15)),
+                    "open": float(rate["open"]), "high": float(rate["high"]),
+                    "low": float(rate["low"]), "close": float(rate["close"])})
+            tick_epoch = float(tick.time_msc) / 1000 if tick and getattr(tick, "time_msc", 0) else float(tick.time) if tick else None
+            tick_utc = datetime.fromtimestamp(tick_epoch, tz=timezone.utc) if tick_epoch is not None else None
+            tick_normalized = normalize_mt5_epoch(tick_epoch, source_basis)
+            latest = max(candle_rows, key=lambda row: row["open_epoch"]) if candle_rows else None
+            last_returned = candle_rows[-1] if candle_rows else None
+            open_age = (sampled_at - datetime.fromtimestamp(latest["open_epoch"], tz=timezone.utc)).total_seconds() if latest else None
+            result.append({"symbol": symbol, "broker_symbol": actual,
+                "backend_utc_at_sample": utc_iso(sampled_at),
+                "tick_timestamp_utc_epoch_interpretation": utc_iso(tick_utc) if tick_utc else None,
+                "raw_tick_epoch": tick_epoch,
+                "normalized_tick_utc": tick_normalized["normalized_utc"],
+                "tick_normalization_status": tick_normalized["normalization_status"],
+                "tick_normalization_reason": tick_normalized.get("normalization_reason"),
+                "source_time_basis": tick_normalized.get("source_time_basis"),
+                "tick_minus_backend_seconds": (tick_utc - sampled_at).total_seconds() if tick_utc else None,
+                "latest_bar": latest,
+                "last_returned_bar": last_returned,
+                "rates_returned_chronologically": all(candle_rows[i]["open_epoch"] <= candle_rows[i + 1]["open_epoch"]
+                                                        for i in range(len(candle_rows) - 1)),
+                "latest_bar_open_age_seconds": open_age,
+                "latest_bar_expected_close_age_seconds": open_age - 900 if open_age is not None else None,
+                "latest_bar_open_to_tick_seconds": (tick_utc - datetime.fromtimestamp(latest["open_epoch"], tz=timezone.utc)).total_seconds()
+                                                     if tick_utc and latest else None,
+                "candle_timing_note": "MT5 rate time is treated as candle-open epoch; scheduled M15 close is open + 15 minutes.",
+                "candles": candle_rows})
+        after = datetime.now(timezone.utc)
+        return {"diagnostic": "read_only_mt5_time", "source": "MT5",
+                "python_utc_before": utc_iso(before), "python_utc_after": utc_iso(after),
+                "symbols_requested": requested, "bars_per_symbol_requested": limit,
+                  "server_clock_note": "No independent broker-server wall clock is exposed by the current integration; tick epoch is reported separately for comparison.",
+                  "source_time_basis": source_basis or "UNVERIFIED",
+                "markets": result}
+    finally:
+        mt5.shutdown()
 
 
 @app.get("/api/market/radar")
@@ -320,7 +576,10 @@ def radar():
         "source": "MT5",
         "live": bool(markets),
         "markets": markets,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": utc_iso(datetime.now(timezone.utc)),
+        "engine_status": "CONNECTED" if markets else _LAST_SCAN.get("status", "UNKNOWN"),
+        "mt5_status": "CONNECTED" if markets else _LAST_SCAN.get("status", "UNKNOWN"),
+        "error": _LAST_SCAN.get("error"),
     }
 
 
@@ -336,13 +595,163 @@ def context():
         "live": bool(markets),
         "markets": markets,
         "fundamentals": fundamentals_snapshot(),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": utc_iso(datetime.now(timezone.utc)),
     }
 
 @app.get("/api/market/observations")
-def observations(limit: int = 100):
+def observations(limit: int = Query(default=100, ge=1, le=1000)):
     return {
         "observations": recent_observations(limit),
         "limit": max(1, min(limit, 1000)),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": utc_iso(datetime.now(timezone.utc)),
     }
+
+
+@app.get("/api/market/setup-episodes")
+def setup_episode_feed(bucket: str = Query(default="current", pattern="^(current|confirmed|closed|all)$"),
+                       limit: int = Query(default=100, ge=1, le=500)):
+    """Persistent Observatory buckets; existing radar and history routes remain unchanged."""
+    episodes = setup_episodes(bucket, limit)
+    payload = ({name: [row for row in episodes if row.get("bucket") == name]
+                for name in ("current", "confirmed", "closed")} if bucket == "all" else {"episodes": episodes})
+    return {"bucket": bucket, **payload,
+            "timestamp": utc_iso(datetime.now(timezone.utc))}
+
+
+@app.get("/api/market/setups/{setup_id}")
+def setup_detail(setup_id: str):
+    snapshots = setup_history(setup_id)
+    return {"setup_id": setup_id, "snapshots": snapshots,
+            "lifecycle_events": lifecycle_events(setup_id),
+            "confirmation_events": confirmation_events(setup_id),
+            "market_outcomes": list_records(MARKET_OUTCOMES_FILE, setup_id),
+            "trade_outcomes": list_records(TRADE_OUTCOMES_FILE, setup_id)}
+
+
+@app.get("/api/market/setups/{setup_id}/history")
+def setup_event_history(setup_id: str):
+    return {"setup_id": setup_id, "snapshots": setup_history(setup_id),
+            "lifecycle_events": lifecycle_events(setup_id),
+            "confirmation_events": confirmation_events(setup_id)}
+
+
+@app.get("/api/market/setups/{setup_id}/lifecycle")
+def setup_lifecycle_history(setup_id: str):
+    return {"setup_id": setup_id, "lifecycle_events": lifecycle_events(setup_id)}
+
+
+@app.get("/api/market/setups/{setup_id}/analysis")
+def setup_analysis(setup_id: str, observation_id: str | None = None):
+    snapshots = [row for row in setup_history(setup_id)
+                 if row.get("record_type") == "setup_snapshot"]
+    if observation_id:
+        snapshot = next((row for row in snapshots if row.get("observation_id") == observation_id), None)
+    else:
+        snapshot = snapshots[-1] if snapshots else None
+    if not snapshot:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Recorded setup snapshot not found")
+    return analyze_snapshot(snapshot)
+
+
+@app.get("/api/market/performance")
+def setup_performance(date: str | None = Query(default=None, min_length=10, max_length=10),
+                      days: int = Query(default=1, ge=1, le=30)):
+    if date:
+        try:
+            from datetime import date as date_type
+            date_type.fromisoformat(date)
+        except ValueError as exc:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=422, detail="date must use YYYY-MM-DD") from exc
+    return performance_report(confirmation_events(), list_records(MARKET_OUTCOMES_FILE),
+        all_observations(), report_date=date, days=days,
+        horizons=configured_horizons())
+
+
+@app.get("/api/market/ml-dataset/audit")
+def ml_dataset_audit():
+    """Read-only quality and readiness report; does not write or train."""
+    return audit_live_dataset()
+
+
+@app.post("/api/market/setups/{setup_id}/lifecycle")
+def transition_setup(setup_id: str, payload: LifecycleTransitionRequest):
+    try:
+        return record_lifecycle_transition(setup_id, payload.to_state.upper(),
+            payload.reason_code, payload.reason, payload.metadata)
+    except ValueError as exc:
+        from fastapi import HTTPException
+        status = 404 if str(exc) == "Unknown setup_id" else 422
+        raise HTTPException(status_code=status, detail=str(exc)) from exc
+
+
+@app.get("/api/market/outcomes")
+def market_outcomes(setup_id: str | None = None):
+    return {"outcomes": list_records(MARKET_OUTCOMES_FILE, setup_id), "configured_horizons": configured_horizons()}
+
+
+@app.get("/api/market/trade-outcomes")
+def trade_outcomes(setup_id: str | None = None):
+    return {"outcomes": list_records(TRADE_OUTCOMES_FILE, setup_id)}
+
+
+@app.post("/api/market/trade-outcomes")
+def create_trade_outcome(payload: dict[str, Any]):
+    # Explicit execution/simulation payload only; radar snapshots never create these.
+    try:
+        if not setup_history(str(payload.get("setup_id", ""))):
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404, detail="Setup not found")
+        return record_trade_outcome(payload)
+    except ValueError as exc:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.post("/api/market/setups/{setup_id}/market-outcomes/derive")
+def derive_setup_market_outcome(setup_id: str, observation_id: str, horizon: str):
+    if horizon not in configured_horizons():
+        from fastapi import HTTPException
+        raise HTTPException(status_code=422, detail="Unsupported horizon")
+    snapshot = next((row for row in setup_history(setup_id) if row.get("record_type") == "setup_snapshot" and row.get("observation_id") == observation_id), None)
+    if not snapshot:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Setup snapshot not found")
+    if (snapshot.get("time_provenance") or {}).get("timezone_normalization_status") != "VERIFIED":
+        from fastapi import HTTPException
+        raise HTTPException(status_code=409, detail="Snapshot source time is unverified; outcome derivation is quarantined")
+    existing = [row for row in list_records(MARKET_OUTCOMES_FILE, setup_id)
+                if row.get("observation_id") == observation_id and row.get("horizon") == horizon]
+    if existing:
+        return existing[-1]
+    if mt5 is None or not mt5.initialize():
+        from fastapi import HTTPException
+        raise HTTPException(status_code=503, detail="MT5 unavailable")
+    try:
+        actual = mt5_symbol(str(snapshot.get("broker_symbol") or snapshot["symbol"]))
+        if not actual:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404, detail="Broker symbol unavailable")
+        timeframe = str(snapshot.get("timeframe") or "M15")
+        tf = getattr(mt5, "TIMEFRAME_" + timeframe, mt5.TIMEFRAME_M15)
+        observed = datetime.fromisoformat(snapshot["observed_at"].replace("Z", "+00:00"))
+        horizon_minutes = {"15m": 15, "1h": 60, "4h": 240, "24h": 1440}[horizon]
+        rates = mt5.copy_rates_range(actual, tf, observed, observed + timedelta(minutes=horizon_minutes))
+        source_basis = os.getenv("TRADING_HUB_MT5_SOURCE_TIMEZONE")
+        bars = []
+        for rate in (rates or []):
+            normalized = normalize_mt5_epoch(rate["time"], source_basis)
+            if normalized["normalization_status"] != "VERIFIED":
+                bars = []
+                break
+            bars.append({"time": datetime.fromisoformat(normalized["normalized_utc"]).timestamp(),
+                "high": float(rate["high"]), "low": float(rate["low"]), "close": float(rate["close"])})
+    finally:
+        mt5.shutdown()
+    outcome = derive_market_outcome(snapshot, horizon, bars, timeframe)
+    if outcome is None:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=409, detail="No post-observation candles available yet")
+    append_market_outcome(outcome)
+    return outcome

@@ -141,33 +141,40 @@ def _trendline_signal(rows: list[Any], highs, lows, atr: float) -> dict[str, Any
     high = float(rows[-1]["high"])
     low = float(rows[-1]["low"])
 
+    candidate_identity = None
     # Descending resistance: reversal below the line, or a clean break above it.
     if len(highs) >= 2:
         h1, h2 = highs[-2], highs[-1]
         if h2[1] < h1[1]:
+            candidate_identity = {"orientation": "DESCENDING_RESISTANCE", "anchors": [
+                {"time": rows[h1[0]].get("time"), "price": h1[1]},
+                {"time": rows[h2[0]].get("time"), "price": h2[1]}]}
             line = _line_y(h1, h2, idx)
             if atr:
                 distance = abs(close - line)
                 if distance <= atr * 0.8:
                     if close > line + atr * 0.08:
-                        return {"family": "BREAK", "direction": "LONG", "line": line, "label": "Trendline resistance break"}
+                        return {"family": "BREAK", "direction": "LONG", "line": line, "label": "Trendline resistance break", "identity": candidate_identity}
                     if high >= line and close < line:
-                        return {"family": "REVERSAL", "direction": "SHORT", "line": line, "label": "Trendline resistance rejection"}
+                        return {"family": "REVERSAL", "direction": "SHORT", "line": line, "label": "Trendline resistance rejection", "identity": candidate_identity}
 
     # Ascending support: reversal above the line, or a clean break below it.
     if len(lows) >= 2:
         l1, l2 = lows[-2], lows[-1]
         if l2[1] > l1[1]:
+            candidate_identity = {"orientation": "ASCENDING_SUPPORT", "anchors": [
+                {"time": rows[l1[0]].get("time"), "price": l1[1]},
+                {"time": rows[l2[0]].get("time"), "price": l2[1]}]}
             line = _line_y(l1, l2, idx)
             if atr:
                 distance = abs(close - line)
                 if distance <= atr * 0.8:
                     if close < line - atr * 0.08:
-                        return {"family": "BREAK", "direction": "SHORT", "line": line, "label": "Trendline support break"}
+                        return {"family": "BREAK", "direction": "SHORT", "line": line, "label": "Trendline support break", "identity": candidate_identity}
                     if low <= line and close > line:
-                        return {"family": "REVERSAL", "direction": "LONG", "line": line, "label": "Trendline support rejection"}
+                        return {"family": "REVERSAL", "direction": "LONG", "line": line, "label": "Trendline support rejection", "identity": candidate_identity}
 
-    return {"family": None, "direction": None, "line": None, "label": "Trendline sequence developing"}
+    return {"family": None, "direction": None, "line": None, "label": "Trendline sequence developing", "identity": candidate_identity}
 
 
 def _crt_context(rows: list[Any], atr: float) -> dict[str, Any]:
@@ -220,8 +227,6 @@ def _trade_levels(
         if nearest_level_type == "RESISTANCE" and nearest_level > entry + atr * 0.25:
             resistance_candidates.append(nearest_level)
         target = min(resistance_candidates) if resistance_candidates else entry + risk * 2.0
-        if target <= entry + risk:
-            target = entry + risk * 2.0
     else:
         swing = highs[-1][1] if highs else recent_high
         stop = max(swing + atr * 0.15, entry + atr * 0.9)
@@ -230,8 +235,6 @@ def _trade_levels(
         if nearest_level_type == "SUPPORT" and nearest_level < entry - atr * 0.25:
             support_candidates.append(nearest_level)
         target = max(support_candidates) if support_candidates else entry - risk * 2.0
-        if target >= entry - risk:
-            target = entry - risk * 2.0
 
     reward = abs(target - entry)
     rr = reward / risk if risk > 0 else None
@@ -472,6 +475,9 @@ def analyze_symbol(
     invalidation = levels["stop_loss"]
 
     return {
+        "strategy_version": "trendline-first-v3",
+        "timeframe": "M15",
+        "higher_timeframes": ["H1"],
         "state": state,
         "action": action,
         "score": score,
@@ -508,6 +514,7 @@ def analyze_symbol(
         "trendline": trend["label"],
         "trendline_state": trend["family"] or "WATCHING",
         "trendline_line": trend["line"],
+        "trendline_identity": trend.get("identity"),
         "setup_family": trend["family"],
         "sr_context": f"{level_kind} {level:.8f}" if level else "No nearby level",
         "crt_context": crt["label"],

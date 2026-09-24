@@ -5,6 +5,7 @@ import os
 from datetime import datetime, timezone
 from urllib.parse import quote
 from urllib.request import Request, urlopen
+from market_time import utc_iso
 
 TE_BASE = "https://api.tradingeconomics.com"
 
@@ -24,7 +25,7 @@ def fundamentals_snapshot():
             "provider": "Trading Economics",
             "status": "API key not configured",
             "events": [],
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": utc_iso(datetime.now(timezone.utc)),
         }
 
     try:
@@ -47,7 +48,7 @@ def fundamentals_snapshot():
             "provider": "Trading Economics",
             "status": "LIVE",
             "events": events[:30],
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": utc_iso(datetime.now(timezone.utc)),
         }
     except Exception as exc:
         return {
@@ -56,5 +57,5 @@ def fundamentals_snapshot():
             "status": "ERROR",
             "error": str(exc),
             "events": [],
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": utc_iso(datetime.now(timezone.utc)),
         }
