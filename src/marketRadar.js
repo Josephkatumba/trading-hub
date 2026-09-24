@@ -13,6 +13,7 @@ import {analystModel, archiveEntry, archiveSummary, gardenAreas, gardenCounters,
 import {analystPanel, archivePanel, counterTiles, emptyArea, esc, focusPanel, marketOverview, setupCard, stageLegend, strategyFilterBar, strategyLabPanel, strategyPerformanceBlock} from "./garden/gardenCards.mjs";
 import {filterByStrategy, matchesStrategy, strategyFilters, strategyPerformance, strategyStatus, strategyTag} from "./strategyModel.mjs";
 import {mountGarden, prefersReducedMotion} from "./garden/gardenMount.mjs";
+import {evidenceModel, evidencePanel, labReportPanel} from "./garden/strategyLab.mjs";
 
 const DEMO_MARKETS = [
   {symbol:"XAUUSD",price:3348.2,change_pct:0.42,state:"WATCHING",score:74,setup:"Trendline setup",reason:"Trendline is being monitored for a break or rejection, with support/resistance as confirmation.",session:"New York",market_bias:"BEARISH",momentum:"BEARISH",higher_timeframe_bias:"BEARISH",structure:"Lower highs + lower lows",stage:"TRENDLINE TEST",insight:"Bearish structure is active. Confirmation is still required.",rsi:44,action:"WAIT",trigger:"Wait for a confirmed trendline break/retest or a clean rejection at S/R."},
@@ -39,6 +40,10 @@ let historyExpanded = false;
 let archiveFilter = "all";
 let strategyFilter = "all";           // "all" or a strategy_id; applies to setups, archive and performance
 let latestRegistry = null;            // engine strategy registry (null: offline, trendline assumed)
+let labReport = null;                 // /api/market/strategy-lab, fetched only while the Lab is open
+let labSelected = "support_resistance";
+let labFetchedAt = 0;
+const LAB_REFRESH_MS = 60000;
 let latestOutcomes = [];
 let latestArchive = [];
 let selectedKey = null;
@@ -83,7 +88,7 @@ export function renderMarketRadar(){
     +'</div><div class="gd-side"><section class="gd-analyst" id="gardenAnalyst" aria-live="polite">'+analystPanel(null)+'</section>'
     +'<section class="gd-panel gd-markets" id="gardenMarkets"><header class="gd-panel-head"><h2>Markets TRADeden watches</h2><span class="gd-count" id="marketCount"></span></header><div id="radarTable" class="gd-market-list"></div></section></div></div>'
     +'<section class="gd-panel performance-panel" id="gardenPerformance"><header class="gd-panel-head"><div><h2>📊 Today\'s setup performance</h2><p>Headline uses the 4h market outcome. Other configured horizons remain visible. Trade outcomes are excluded.</p></div></header><div id="dailyPerformance"><div class="macro-empty"><b>Loading performance</b></div></div></section>'
-    +'<details class="gd-panel gd-strategy-lab" id="strategyLab"><summary><span>🧪 Strategy Lab</span><span class="historical-expand-hint">Expand</span></summary><p>Registered strategies and their status. Only live strategies produce Garden setups; shadow-mode results are for review here and never appear in the Garden.</p><div id="strategyLabBody"></div></details>'
+    +'<details class="gd-panel gd-strategy-lab" id="strategyLab"><summary><span>🧪 Strategy Lab</span><span class="historical-expand-hint">Expand</span></summary><p>Registered strategies and their status. Only live strategies produce Garden setups; shadow-mode results are for review here and never appear in the Garden.</p><div id="strategyLabBody"></div><div id="strategyLabReport"></div><div id="strategyLabEvidence" aria-live="polite"></div></details>'
     +'<details class="gd-panel historical-confirmations" id="historicalConfirmations"><summary><span>📚 Confirmation event archive · today (<b id="historicalConfirmationCount">0</b>)</span><span class="historical-expand-hint">Expand</span></summary><p class="gd-archive-status" id="confirmedArchiveStatus"></p><div id="historicalConfirmationCards" class="gd-grid"></div></details>'
     +'<section class="gd-panel radar-fundamentals"><header class="gd-panel-head"><h2>Macro events that can change the tape</h2><span class="gd-count">US events</span></header><div id="radarFundamentals" class="macro-list"><div class="macro-empty"><b>Loading macro context</b></div></div></section>'
     +'<footer class="gd-method"><p><b>How TRADeden watches:</b> H1 context → price action → trendline → support/resistance → CRT → session → a transparent 100-point setup score. Breaks and reversals are both valid setup families; the trendline event is the strategy gate.</p><p>TRADeden is decision support, not an auto-trading platform. Not an entry recommendation.</p></footer>'
@@ -249,6 +254,21 @@ function paintStrategyControls(){
   const bar=document.getElementById("strategyFilterBar");if(bar)bar.innerHTML=strategyFilterBar(filters,strategyFilter);
   const lab=document.getElementById("strategyLabBody");if(lab)lab.innerHTML=strategyLabPanel(latestRegistry,{markets:latestMarkets,performance:latestResult?.performance||null});
 }
+// ----- Strategy Lab measurements (on demand, never part of the scan) ----------
+function paintLab(){const node=document.getElementById("strategyLabReport");if(node)node.innerHTML=labReportPanel(labReport,{selected:labSelected});}
+async function refreshLab(force=false){
+  const panel=document.getElementById("strategyLab");
+  if(!panel?.open||(!force&&Date.now()-labFetchedAt<LAB_REFRESH_MS))return;
+  labFetchedAt=Date.now();
+  try{labReport=await engineFetch("/api/market/strategy-lab");}catch(_){labReport=null;}
+  paintLab();
+}
+async function inspectLabSetup(setupId){
+  const node=document.getElementById("strategyLabEvidence");if(!node)return;
+  node.innerHTML='<p class="gd-na">Loading recorded evidence…</p>';
+  try{node.innerHTML=evidencePanel(evidenceModel(await engineFetch("/api/market/setups/"+encodeURIComponent(setupId))));}
+  catch(_){node.innerHTML='<p class="gd-na">Evidence unavailable (engine offline).</p>';}
+}
 function repaintCards(){
   if(!latestResult)return;
   latestCards=new Map();
@@ -278,6 +298,10 @@ function bindGardenInteractions(){
     }
     const toggle=event.target.closest("[data-toggle]");
     if(toggle){if(toggle.dataset.toggle==="growing")growingExpanded=!growingExpanded;else historyExpanded=!historyExpanded;repaintCards();return;}
+    const labTab=event.target.closest("[data-lab-strategy]");
+    if(labTab){labSelected=labTab.dataset.labStrategy;paintLab();return;}
+    const labInspect=event.target.closest("[data-lab-inspect]");
+    if(labInspect){inspectLabSetup(labInspect.dataset.labInspect);return;}
     const strategyButton=event.target.closest("[data-strategy-filter]");
     if(strategyButton){strategyFilter=strategyButton.dataset.strategyFilter;historyExpanded=false;growingExpanded=false;paintStrategyControls();repaintCards();if(latestResult){paintConfirmed(latestMarkets,latestResult.performance);paintPerformance(latestResult.performance);}return;}
     const filterButton=event.target.closest("[data-archive-filter]");
@@ -297,6 +321,7 @@ function bindGardenInteractions(){
     if(action==="view-setup"){select(key,{scrollTo:"gardenStage"});return;}
     select(key);
   };
+  const lab=document.getElementById("strategyLab");if(lab)lab.ontoggle=()=>{if(lab.open)refreshLab(true);};
   root.onkeydown=event=>{const card=event.target.closest?.(".gd-card");if(card&&event.target===card&&(event.key==="Enter"||event.key===" ")){event.preventDefault();select(card.dataset.key);}};
 }
 
@@ -376,6 +401,7 @@ function paint(result){
   document.getElementById("radarUpdated").textContent={LIVE:"Updated "+now,ENGINE_NO_DATA:"No market data · "+now,OFFLINE:"Offline · checked "+now,DEMO:"Simulated · not market data"}[mode];
   const status=document.getElementById("radarEngineStatus");if(status)status.textContent={LIVE:"Live MT5 engine",ENGINE_NO_DATA:"Engine online · MT5 "+String(result.mt5Status||"no data"),OFFLINE:"Engine offline",DEMO:"Demo mode · engine offline"}[mode];
   paintPerformance(result.performance);
+  refreshLab();
   if(pendingAnchor)setTimeout(applyPendingAnchor,0);
 }
 function paintMode(mode,result){

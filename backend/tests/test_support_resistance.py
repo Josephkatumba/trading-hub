@@ -60,6 +60,12 @@ class LevelTests(unittest.TestCase):
             self.assertGreaterEqual(level["zone_high"] - level["zone_low"], tolerance - 1e-9)
             self.assertEqual(set(level["reactions_by_timeframe"]), {"M15", "H1"})
 
+    def test_swing_pivots_match_the_scanner_rule(self):
+        from scanner import _swings
+        for rows in (f.range_m15(), f.range_h1(), f.support_ending("bounce"), f.break_retest()[0], *[fx["rows"] for fx in g.load_fixtures()]):
+            for strength in (2, 3):
+                self.assertEqual(sr.swing_pivots(rows, strength), _swings(rows, strength))
+
     def test_clustering_follows_the_atr_tolerance(self):
         m15, h1 = f.range_m15(), f.range_h1()
         # Perturbed swing lows within the tolerance still form one level.

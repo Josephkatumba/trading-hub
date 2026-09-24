@@ -176,3 +176,23 @@ is a deterministic, rule-based S/R strategy registered in **SHADOW** mode:
   strategy scoping); both may disagree on the same market.
 - The exact level, test, confirmation and plan rules are documented at the top of
   the module; `tests/test_support_resistance.py` covers each rule.
+
+## Strategy Lab (measurement)
+
+`GET /api/market/strategy-lab` (`strategy_lab.py`) reports each strategy on its
+own, never combined: setups by lifecycle state, confirmations, and outcomes of
+confirmed setups classified with the ML dataset's integrity rules (pending,
+unverified, verified target, verified stop, verified other), plus breakdowns by
+instrument, direction, timeframe and setup family and the most recent setups.
+A win rate is withheld until 30 verified target/stop outcomes exist. Individual
+setups are inspected through `/api/market/setups/{id}`, whose snapshots carry the
+strategy's stored `strategy_evidence`.
+
+The ML dataset audit (`/api/market/ml-dataset/audit`) labels its top-level
+figures `strategy_scope: ALL_STRATEGIES_COMBINED` and adds `by_strategy`, the
+same audit run on each strategy's records alone (unjoinable records are
+reported as `UNATTRIBUTED`).
+
+Outcome verification requires a verified MT5 time basis
+(`TRADING_HUB_MT5_SOURCE_TIMEZONE`, see `TIMESTAMP_AUDIT_REPORT.md`). While it is
+unset, no strategy can accumulate verified outcomes.

@@ -8,7 +8,7 @@ the same rules apply to XAUUSD, BTCUSD, EURUSD, USDJPY, NAS100, GER40, ...
 without per-instrument price constants.
 
 LEVELS
-1. Reactions: fractal swing highs/lows (scanner._swings) on every available
+1. Reactions: fractal swing highs/lows (same rule as scanner._swings) on every available
    timeframe, excluding each timeframe's still-forming last bar. Pivot strength
    (bars each side): M15 3, H1 3, H4 2, D1 2.
 2. Clustering: reactions (any timeframe) whose prices lie within one zone
@@ -57,7 +57,7 @@ from __future__ import annotations
 from typing import Any, Mapping, Sequence
 
 from episode_identity import MATCHER_VERSION
-from scanner import _atr, _swings
+from scanner import _atr
 
 from .base import MarketInput, Strategy
 
@@ -92,6 +92,21 @@ def _f(bar: Mapping[str, Any], key: str) -> float:
     return float(bar[key])
 
 
+def swing_pivots(rows: Sequence[Mapping[str, Any]], strength: int) -> tuple[list[tuple[int, float]], list[tuple[int, float]]]:
+    """Fractal swings, identical to scanner._swings (strictly beyond `strength` bars on
+    each side), computed on pre-extracted float lists with slice max/min for speed."""
+    highs = [float(row["high"]) for row in rows]
+    lows = [float(row["low"]) for row in rows]
+    swing_highs, swing_lows = [], []
+    for i in range(strength, len(rows) - strength):
+        high, low = highs[i], lows[i]
+        if high > max(highs[i - strength:i]) and high > max(highs[i + 1:i + strength + 1]):
+            swing_highs.append((i, high))
+        if low < min(lows[i - strength:i]) and low < min(lows[i + 1:i + strength + 1]):
+            swing_lows.append((i, low))
+    return swing_highs, swing_lows
+
+
 def find_levels(bars: Mapping[str, Sequence[Mapping[str, Any]]], tolerance: float) -> list[dict[str, Any]]:
     """Meaningful S/R levels from swing reactions on all available timeframes, sorted by price."""
     pivots = []
@@ -99,7 +114,7 @@ def find_levels(bars: Mapping[str, Sequence[Mapping[str, Any]]], tolerance: floa
         rows = list(bars.get(timeframe) or [])[:-1]          # drop the forming bar
         if len(rows) < 2 * strength + 1:
             continue
-        highs, lows = _swings(rows, strength)
+        highs, lows = swing_pivots(rows, strength)
         for kind, points in (("high", highs), ("low", lows)):
             for index, price in points:
                 pivots.append({"timeframe": timeframe, "price": float(price), "kind": kind, "time": rows[index]["time"]})

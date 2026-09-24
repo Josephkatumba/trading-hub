@@ -403,3 +403,18 @@ body.garden-mode .topline b { color: #1c2321; }
 .gd-lab-shadow { margin: 12px 0; }
 .gd-lab-shadow h4 { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; }
 .gd-lab-shadow .gd-lab-table th, .gd-lab-shadow .gd-lab-table td { font-size: 12px; }
+/* Strategy Lab measurements (Phase 7) */
+.gd-lab-report h4, .gd-lab-evidence h4 { margin: 14px 0 6px; }
+.gd-lab-report h5, .gd-lab-evidence h5 { margin: 12px 0 4px; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--gd-muted); }
+.gd-lab-tabs { display: flex; gap: 6px; margin: 10px 0; }
+.gd-lab-tabs button { padding: 5px 11px; border: 1px solid var(--gd-border); border-radius: 999px; background: var(--gd-surface); color: var(--gd-muted); font-size: 12px; font-weight: 700; cursor: pointer; }
+.gd-lab-tabs button[aria-pressed="true"] { background: #1c2321; border-color: #1c2321; color: #fff; }
+.gd-lab-dl { display: grid; gap: 4px; margin: 0; }
+.gd-lab-dl div { display: flex; gap: 8px; font-size: 13px; }
+.gd-lab-dl dt { min-width: 120px; color: var(--gd-muted); }
+.gd-lab-dl dd { margin: 0; }
+.gd-lab-rules { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; list-style: none; }
+.gd-lab-rules li { padding: 2px 8px; border-radius: 6px; font-size: 12px; background: var(--gd-grey-bg); }
+.gd-lab-rules .is-pass { color: var(--gd-long); }
+.gd-lab-rules .is-fail { color: var(--gd-short); }
+.gd-lab-evidence { margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--gd-border); }

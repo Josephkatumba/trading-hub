@@ -118,12 +118,13 @@ class PersistedStrategyFieldTests(IsolationTestCase):
 
     def test_observation_index_summarizes_the_episode_strategy(self):
         self.store.scan(market("LONG"), market("SHORT", "sr", anchors=None))
-        self.assertEqual(observations._OBSERVATION_INDEX_SCHEMA, "observations-v4")   # v4: Phase 6 shadow flag
+        # v4: Phase 6 shadow flag; v5: Phase 7 strategy_id/timeframe/setup_type for the Strategy Lab.
+        self.assertEqual(observations._OBSERVATION_INDEX_SCHEMA, "observations-v5")
         summaries = observations._observation_index().summaries()
         self.assertEqual(sorted(s["ep"]["st"] for s in summaries if "ep" in s), ["sr", "trendline"])
         sidecar = json.loads(json.loads((self.store.root / ".index" / "setup_observations.jsonl.idx.json")
                                         .read_text(encoding="utf-8"))["body"])
-        self.assertEqual(sidecar["schema"], "observations-v4")
+        self.assertEqual(sidecar["schema"], observations._OBSERVATION_INDEX_SCHEMA)
 
 
 class ScopedSuppressionTests(unittest.TestCase):

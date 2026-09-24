@@ -15,6 +15,7 @@ from typing import Any, Iterable
 from observations import CONFIRMATIONS_FILE, LIFECYCLE_FILE, LOG_FILE
 from outcomes import MARKET_OUTCOMES_FILE, TRADE_OUTCOMES_FILE, configured_horizons
 from market_time import parse_aware_utc
+from strategies import LEGACY_STRATEGY_ID, REGISTRY, record_strategy_id
 
 DATASET_SCHEMA_VERSION = "ml-observation-v1"
 LABEL_DEFINITION = "target-invalidation-first-v1"
@@ -544,6 +545,62 @@ def prepare_dataset(observations: list[dict[str, Any]], outcomes: list[dict[str,
             **({"dataset_rows": projection} if include_projection else {})}
 
 
+UNATTRIBUTED = "UNATTRIBUTED"
+_RECORD_SETS = ("observations", "market_outcomes", "lifecycle_events", "confirmation_events")
+
+
+def split_by_strategy(observations: list[dict[str, Any]], outcomes: list[dict[str, Any]],
+                      lifecycle_events: list[dict[str, Any]], confirmations: list[dict[str, Any]]
+                      ) -> dict[str, dict[str, list[dict[str, Any]]]]:
+    """Records of each strategy, never mixed.
+
+    Snapshots are attributed by strategy_id (records without one are trendline,
+    including pre-episode rows); confirmations by their own strategy_id, else
+    their setup; lifecycle events and outcomes join through setup_id /
+    observation_id. Anything that cannot be joined is reported as UNATTRIBUTED
+    rather than guessed (legacy stp_legacy_* setups are trendline).
+    """
+    groups: dict[str, dict[str, list[dict[str, Any]]]] = defaultdict(lambda: {name: [] for name in _RECORD_SETS})
+    by_setup: dict[str, str] = {}
+    by_observation: dict[str, str] = {}
+    for row in observations:
+        strategy_id = record_strategy_id(row)
+        groups[strategy_id]["observations"].append(row)
+        if row.get("setup_id"):
+            by_setup[str(row["setup_id"])] = strategy_id
+        if row.get("observation_id"):
+            by_observation[str(row["observation_id"])] = strategy_id
+
+    def of_setup(setup_id: Any) -> str:
+        key = str(setup_id or "")
+        return by_setup.get(key) or (LEGACY_STRATEGY_ID if key.startswith("stp_legacy_") else UNATTRIBUTED)
+    for row in confirmations:
+        groups[record_strategy_id(row) if row.get("strategy_id") else of_setup(row.get("setup_id"))]["confirmation_events"].append(row)
+    for row in lifecycle_events:
+        groups[of_setup(row.get("setup_id"))]["lifecycle_events"].append(row)
+    for row in outcomes:
+        groups[by_observation.get(str(row.get("observation_id"))) or of_setup(row.get("setup_id"))]["market_outcomes"].append(row)
+    return dict(groups)
+
+
+def audit_by_strategy(observations: list[dict[str, Any]], outcomes: list[dict[str, Any]],
+                      lifecycle_events: list[dict[str, Any]], confirmations: list[dict[str, Any]]) -> dict[str, Any]:
+    """Per-strategy data-quality statistics (the same audit, run on each strategy's records alone)."""
+    result = {}
+    for strategy_id, records in sorted(split_by_strategy(observations, outcomes, lifecycle_events, confirmations).items()):
+        audit = prepare_dataset(records["observations"], records["market_outcomes"], records["lifecycle_events"],
+                                records["confirmation_events"], include_projection=False)
+        try:
+            mode = REGISTRY.mode(strategy_id)
+        except KeyError:
+            mode = "UNREGISTERED"
+        result[strategy_id] = {"mode": mode, "records": {name: len(rows) for name, rows in records.items()},
+                               "shadow_snapshots": sum(1 for row in records["observations"] if row.get("shadow") is True),
+                               "statistics": audit["statistics"],
+                               "outcome_quarantine": audit["outcome_quarantine"]["reason_counts"]}
+    return result
+
+
 def audit_live_dataset() -> dict[str, Any]:
     """Read existing JSONL files and return audit results without writes."""
     paths = {"observations": LOG_FILE, "market_outcomes": MARKET_OUTCOMES_FILE,
@@ -571,6 +628,10 @@ def audit_live_dataset() -> dict[str, Any]:
     confirmations = loaded["confirmation_events"]
     trade_outcomes = loaded["trade_outcomes"]
     result = prepare_dataset(observations, outcomes, lifecycle, confirmations, include_projection=False)
+    # The top-level figures cover every strategy together; strategy-specific data
+    # quality is only ever read from by_strategy.
+    result["strategy_scope"] = "ALL_STRATEGIES_COMBINED"
+    result["by_strategy"] = audit_by_strategy(observations, outcomes, lifecycle, confirmations)
     result["statistics"]["trade_outcomes_excluded"] = len(trade_outcomes)
     result["statistics"]["malformed_jsonl_lines"] = sum(malformed.values())
     result["statistics"]["malformed_jsonl_by_file"] = malformed

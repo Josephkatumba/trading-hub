@@ -35,6 +35,7 @@ from analyst import analyze_snapshot
 from performance import performance_report
 from market_time import combined_normalization_status, mt5_epoch_to_utc_iso, normalize_mt5_epoch, utc_iso
 from ml_dataset import audit_live_dataset
+from strategy_lab import strategy_lab_report
 
 try:
     import MetaTrader5 as mt5
@@ -798,6 +799,13 @@ def setup_performance(date: str | None = Query(default=None, min_length=10, max_
     return performance_report(confirmation_events(), list_records(MARKET_OUTCOMES_FILE),
         performance_observations(), report_date=date, days=days,
         horizons=configured_horizons())
+
+
+@app.get("/api/market/strategy-lab")
+def strategy_lab(recent: int = Query(default=25, ge=1, le=200)):
+    """Per-strategy setups, confirmations and verified outcomes (read-only; strategies never mixed)."""
+    return {**strategy_lab_report(list_records(MARKET_OUTCOMES_FILE), recent_limit=recent),
+            "timestamp": utc_iso(datetime.now(timezone.utc))}
 
 
 @app.get("/api/market/ml-dataset/audit")

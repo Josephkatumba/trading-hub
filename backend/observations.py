@@ -90,10 +90,11 @@ def _legacy_id(row: dict[str, Any]) -> str:
 # JSONL by byte offset. The k_* keys reproduce the exact matching rules of the
 # former full scans (frozen in tests/legacy_observations.py for comparison).
 _SUMMARY_FIELDS = ("setup_id", "observation_id", "observed_at", "timestamp", "symbol",
-                   "direction", "lifecycle_state", "broker_symbol", "shadow")
+                   "direction", "lifecycle_state", "broker_symbol", "shadow",
+                   "strategy_id", "timeframe", "setup_type")
 _PERFORMANCE_FIELDS = ("setup_id", "observation_id", "observed_at", "timestamp", "symbol",
                        "direction", "lifecycle_state", "shadow")
-_OBSERVATION_INDEX_SCHEMA = "observations-v4"
+_OBSERVATION_INDEX_SCHEMA = "observations-v5"
 _LIFECYCLE_INDEX_SCHEMA = "lifecycle-v1"
 _CONFIRMATION_INDEX_SCHEMA = "confirmations-v1"
 _TERMINAL_STATES = frozenset({"INVALIDATED", "EXPIRED", "RESOLVED"})
