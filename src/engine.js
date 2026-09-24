@@ -1,16 +1,19 @@
 const KEY="th_engine_url";
-const DEFAULT="http://127.0.0.1:8000";
+// Canonical local engine address. Must match backend/start_engine.bat and the READMEs.
+export const DEFAULT_ENGINE_URL="http://127.0.0.1:8000";
+// A previous build silently rewrote saved :8000 URLs to this value. Nothing else
+// ever wrote it (setEngineUrl has no UI yet), so it is app-written, not a user choice.
+const LEGACY_APP_WRITTEN_URLS=new Set(["http://127.0.0.1:8010","http://localhost:8010"]);
 
 export function getEngineUrl(){
   try{
-    const saved=localStorage.getItem(KEY);
-    // Migrate the old local backend port automatically.
-    if(saved && /127\.0\.0\.1:8000$/.test(saved)){
-      localStorage.setItem(KEY,DEFAULT);
-      return DEFAULT;
+    const saved=String(localStorage.getItem(KEY)||"").trim().replace(/\/$/,"");
+    if(LEGACY_APP_WRITTEN_URLS.has(saved)){
+      localStorage.removeItem(KEY);
+      return DEFAULT_ENGINE_URL;
     }
-    return (saved||DEFAULT).replace(/\/$/,"");
-  }catch{return DEFAULT;}
+    return saved||DEFAULT_ENGINE_URL;
+  }catch{return DEFAULT_ENGINE_URL;}
 }
 
 export function setEngineUrl(url){
