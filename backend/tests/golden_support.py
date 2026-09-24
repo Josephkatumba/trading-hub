@@ -105,6 +105,15 @@ def only_trendline_fields(found: list) -> bool:
     return bool(found) and all(item in TRENDLINE_STRATEGY_FIELDS for item in found)
 
 
+def trendline_only_registry():
+    """The registry as it was before shadow strategies: trendline only, LIVE.
+    Used where a test asserts trendline behaviour in isolation."""
+    from strategies import LIVE, StrategyRegistry, TrendlineStrategy
+    registry = StrategyRegistry()
+    registry.register(TrendlineStrategy(), enabled=True, mode=LIVE)
+    return registry
+
+
 def load_fixtures() -> list[dict]:
     return [json.loads(path.read_text(encoding="utf-8")) for path in sorted(SCANNER_FIXTURES.glob("*.json"))]
 

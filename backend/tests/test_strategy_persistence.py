@@ -116,14 +116,14 @@ class PersistedStrategyFieldTests(IsolationTestCase):
             current = observations.setup_episodes("current", 50)
         self.assertEqual(sorted(e["strategy_id"] for e in current), ["fake", "sr", "trendline"])
 
-    def test_observation_index_v3_summarizes_the_episode_strategy(self):
+    def test_observation_index_summarizes_the_episode_strategy(self):
         self.store.scan(market("LONG"), market("SHORT", "sr", anchors=None))
-        self.assertEqual(observations._OBSERVATION_INDEX_SCHEMA, "observations-v3")
+        self.assertEqual(observations._OBSERVATION_INDEX_SCHEMA, "observations-v4")   # v4: Phase 6 shadow flag
         summaries = observations._observation_index().summaries()
         self.assertEqual(sorted(s["ep"]["st"] for s in summaries if "ep" in s), ["sr", "trendline"])
         sidecar = json.loads(json.loads((self.store.root / ".index" / "setup_observations.jsonl.idx.json")
                                         .read_text(encoding="utf-8"))["body"])
-        self.assertEqual(sidecar["schema"], "observations-v3")
+        self.assertEqual(sidecar["schema"], "observations-v4")
 
 
 class ScopedSuppressionTests(unittest.TestCase):
@@ -215,7 +215,7 @@ class ScanLoopIsolationTests(unittest.TestCase):
 
     def test_other_strategies_never_change_the_trendline_market_or_records(self):
         with tempfile.TemporaryDirectory() as tmp:
-            baseline, baseline_files = self.scan(strategies.build_default_registry(), Path(tmp) / "a")
+            baseline, baseline_files = self.scan(g.trendline_only_registry(), Path(tmp) / "a")
             registry = StrategyRegistry()
             registry.register(FailingStrategy(), enabled=True)
             registry.register(TrendlineStrategy(), enabled=True)

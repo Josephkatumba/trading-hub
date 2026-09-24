@@ -89,12 +89,19 @@ class Strategy(ABC):
         """Return this strategy's payload for one symbol. Must not mutate `market`."""
 
 
+# Registry modes. LIVE strategies produce live setups (Garden, alerts, live
+# performance). SHADOW strategies run and are persisted for review and research
+# only: their records are marked shadow and never reach the Garden or alerts.
+LIVE, SHADOW, DISABLED = "LIVE", "SHADOW", "DISABLED"
+
+
 @dataclass(frozen=True)
 class StrategyResult:
     strategy_id: str
     strategy_version: str
     payload: dict[str, Any] | None           # None when the strategy raised
     error: Exception | None = None
+    mode: str = LIVE
 
     @property
     def ok(self) -> bool:

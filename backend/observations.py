@@ -14,7 +14,7 @@ from schemas import DataQuality, SetupConfirmationEvent, SetupLifecycleEvent, Se
 from episode_identity import identity_evidence, rank_candidates
 from market_time import parse_aware_utc, utc_iso
 from jsonl_index import ensure_trailing_newline, index_for, indexed_jsonl_records
-from strategies import EVIDENCE_CONTAINER, REGISTRY as STRATEGIES, record_strategy_id
+from strategies import EVIDENCE_CONTAINER, LIVE, REGISTRY as STRATEGIES, SHADOW, record_strategy_id
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 LOG_FILE = DATA_DIR / "setup_observations.jsonl"
@@ -90,10 +90,10 @@ def _legacy_id(row: dict[str, Any]) -> str:
 # JSONL by byte offset. The k_* keys reproduce the exact matching rules of the
 # former full scans (frozen in tests/legacy_observations.py for comparison).
 _SUMMARY_FIELDS = ("setup_id", "observation_id", "observed_at", "timestamp", "symbol",
-                   "direction", "lifecycle_state", "broker_symbol")
+                   "direction", "lifecycle_state", "broker_symbol", "shadow")
 _PERFORMANCE_FIELDS = ("setup_id", "observation_id", "observed_at", "timestamp", "symbol",
-                       "direction", "lifecycle_state")
-_OBSERVATION_INDEX_SCHEMA = "observations-v3"
+                       "direction", "lifecycle_state", "shadow")
+_OBSERVATION_INDEX_SCHEMA = "observations-v4"
 _LIFECYCLE_INDEX_SCHEMA = "lifecycle-v1"
 _CONFIRMATION_INDEX_SCHEMA = "confirmations-v1"
 _TERMINAL_STATES = frozenset({"INVALIDATED", "EXPIRED", "RESOLVED"})
@@ -491,6 +491,14 @@ def _quality(market: dict[str, Any], observed_at: str) -> DataQuality:
         observation_latency_seconds=latency, timestamp_quality=timestamp_quality)
 
 
+def _strategy_mode(strategy_id: str, market: dict[str, Any]) -> str:
+    """LIVE / SHADOW from the registry; an unregistered id keeps what the market reports (default LIVE)."""
+    try:
+        return STRATEGIES.mode(strategy_id)
+    except KeyError:
+        return str(market.get("strategy_mode") or LIVE)
+
+
 def _strategy_version(strategy_id: str, market: dict[str, Any]) -> str:
     """The registered strategy's version; an unregistered id keeps what the market reports."""
     try:
@@ -518,7 +526,7 @@ def _snapshot(market: dict[str, Any], setup_id: str, state: str, now: str) -> Se
     time_provenance["backend_received_at"] = market.get("backend_received_at")
     time_provenance["backend_observation_time"] = now
     time_provenance["observation_time"] = now
-    return SetupSnapshot(record_type="setup_snapshot", schema_version=SCHEMA_VERSION,
+    snapshot = SetupSnapshot(record_type="setup_snapshot", schema_version=SCHEMA_VERSION,
         setup_id=setup_id, observation_id=observation_id, observed_at=now,
         source_timestamp=source_ts, symbol=str(market.get("symbol", "UNKNOWN")),
         broker_symbol=market.get("broker_symbol"), timeframe=str(market.get("timeframe") or "M15"),
@@ -540,6 +548,11 @@ def _snapshot(market: dict[str, Any], setup_id: str, state: str, now: str) -> Se
         episode_identity={**identity_evidence(market), "strategy_id": strategy_id},
         invalidation_price=market.get("invalidation_hint"), atr=market.get("atr"),
         time_provenance=time_provenance)
+    # Shadow-mode strategies are persisted for review/research only. Live records
+    # carry no flag (unchanged); shadow ones are marked and never presented live.
+    if _strategy_mode(strategy_id, market) == SHADOW:
+        snapshot["shadow"] = True
+    return snapshot
 
 
 def _record_markets(markets: list[dict[str, Any]]) -> int:
@@ -674,7 +687,7 @@ def _record_confirmation_events(current_snapshots: list[dict[str, Any]]) -> int:
         if setup_id in seen:
             continue
         confirmed_at = parse_aware_utc(snapshot.get("observed_at")) or datetime.now(timezone.utc)
-        append.append(SetupConfirmationEvent(record_type="setup_confirmation", schema_version=SCHEMA_VERSION,
+        event = SetupConfirmationEvent(record_type="setup_confirmation", schema_version=SCHEMA_VERSION,
             confirmation_event_id=_uid("cnf"), setup_id=setup_id,
             confirmed_at=utc_iso(confirmed_at),
             observation_id=str(snapshot.get("observation_id") or "legacy"),
@@ -684,7 +697,10 @@ def _record_confirmation_events(current_snapshots: list[dict[str, Any]]) -> int:
             setup_type=snapshot.get("setup_type") or snapshot.get("setup_family"),
             timeframe=str(snapshot.get("timeframe") or "M15"),
             score=snapshot.get("score"), rule_evidence=dict(snapshot.get("rule_evidence") or {}),
-            score_breakdown=dict(snapshot.get("score_breakdown") or {})))
+            score_breakdown=dict(snapshot.get("score_breakdown") or {}))
+        if snapshot.get("shadow") is True:
+            event["shadow"] = True           # a shadow confirmation is never a live alert
+        append.append(event)
     _append(CONFIRMATIONS_FILE, [dict(row) for row in append])
     return len(append)
 
@@ -819,8 +835,12 @@ def lifecycle_events(setup_id: str | None = None) -> list[dict[str, Any]]:
     return _read_jsonl(LIFECYCLE_FILE)
 
 
-def setup_episodes(bucket: str = "current", limit: int = 100) -> list[dict[str, Any]]:
-    """Return a bounded episode view built from append-only snapshots and events."""
+def setup_episodes(bucket: str = "current", limit: int = 100, include_shadow: bool = False) -> list[dict[str, Any]]:
+    """Return a bounded episode view built from append-only snapshots and events.
+
+    Shadow-mode episodes are excluded unless `include_shadow` (they are for
+    review only and never part of the live view); the limit applies afterwards.
+    """
     confirmations = {row.get("setup_id"): row for row in _read_jsonl(CONFIRMATIONS_FILE)}
     events = _read_jsonl(LIFECYCLE_FILE)
     # First and latest snapshot per setup, in first-appearance order.
@@ -836,6 +856,8 @@ def setup_episodes(bucket: str = "current", limit: int = 100) -> list[dict[str, 
     now = datetime.now(timezone.utc)
     output = []
     for sid, snapshot in latest.items():
+        if snapshot.get("shadow") is True and not include_shadow:
+            continue
         timeline = event_map.get(sid, [])
         state = str(timeline[-1].get("to_state")) if timeline else str(snapshot.get("lifecycle_state") or "DETECTED")
         confirmation = confirmations.get(sid)

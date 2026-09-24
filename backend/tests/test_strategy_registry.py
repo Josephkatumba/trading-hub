@@ -126,21 +126,25 @@ class RegistryIsolationTests(unittest.TestCase):
         self.fixture = next(f for f in g.load_fixtures() if f["name"] == "real_XAUUSD")
         self.expected = g.canonical(g.scan(self.fixture))
 
-    def test_default_registry_has_only_trendline_enabled(self):
+    def test_default_registry_has_trendline_live_and_sr_in_shadow(self):
+        # Phase 6 registered Support & Resistance in SHADOW mode; trendline stays the only LIVE strategy.
         for registry in (strategies.REGISTRY, build_default_registry()):
-            self.assertEqual(registry.registered(), ["trendline"])
-            self.assertEqual(registry.enabled(), ["trendline"])
+            self.assertEqual(registry.registered(), ["trendline", "support_resistance"])
+            self.assertEqual(registry.enabled(), ["trendline", "support_resistance"])
+            self.assertEqual(registry.live(), ["trendline"])
+            self.assertEqual([registry.mode(s) for s in registry.registered()], ["LIVE", "SHADOW"])
 
     def test_trendline_runs_through_the_registry(self):
         results = build_default_registry().evaluate(market_input(self.fixture))
-        self.assertEqual(list(results), ["trendline"])
+        self.assertEqual(list(results), ["trendline", "support_resistance"])
+        self.assertEqual([r.mode for r in results.values()], ["LIVE", "SHADOW"])
         self.assertTrue(results["trendline"].ok)
         self.assertEqual(results["trendline"].strategy_version, "trendline-first-v3")
         self.assertEqual(g.canonical(results["trendline"].payload), self.expected)
 
     def test_disabled_strategy_produces_no_output_and_is_not_called(self):
         FailingStrategy.calls = 0
-        registry = build_default_registry()
+        registry = g.trendline_only_registry()
         registry.register(FailingStrategy())                 # registered disabled by default
         registry.disable("trendline")
         with mock.patch.object(scanner, "analyze_symbol", side_effect=AssertionError("called")):
@@ -153,7 +157,7 @@ class RegistryIsolationTests(unittest.TestCase):
         registry = build_default_registry()
         registry.register(FutureStrategy(), enabled=True)
         results = registry.evaluate(market_input(self.fixture))
-        self.assertEqual(list(results), ["trendline", "future"])
+        self.assertEqual(list(results), ["trendline", "support_resistance", "future"])
         self.assertEqual(g.canonical(results["trendline"].payload), self.expected)
         self.assertEqual(results["future"].record()["strategy_id"], "future")
 

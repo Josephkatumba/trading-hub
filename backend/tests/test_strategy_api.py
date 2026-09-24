@@ -37,11 +37,14 @@ class Disabled(Strategy):
 
 class RegistryApiTests(unittest.TestCase):
     def test_describe_lists_status_for_every_registered_strategy(self):
-        self.assertEqual(strategies.REGISTRY.describe(), [{"strategy_id": "trendline", "version": "trendline-first-v3",
-            "timeframe": "M15", "higher_timeframes": ["H1"], "status": "LIVE"}])
+        self.assertEqual(strategies.REGISTRY.describe(), [
+            {"strategy_id": "trendline", "version": "trendline-first-v3", "timeframe": "M15", "higher_timeframes": ["H1"], "status": "LIVE"},
+            {"strategy_id": "support_resistance", "version": "sr-levels-v1", "timeframe": "M15",
+             "higher_timeframes": ["H1", "H4", "D1"], "status": "SHADOW"}])
         registry = strategies.build_default_registry()
         registry.register(Disabled())
-        self.assertEqual([(s["strategy_id"], s["status"]) for s in registry.describe()], [("trendline", "LIVE"), ("smc", "DISABLED")])
+        self.assertEqual([(s["strategy_id"], s["status"]) for s in registry.describe()],
+                         [("trendline", "LIVE"), ("support_resistance", "SHADOW"), ("smc", "DISABLED")])
 
     def test_radar_response_adds_the_registry_and_keeps_every_existing_field(self):
         with mock.patch.object(main, "market_snapshot", return_value=[]):
@@ -51,8 +54,8 @@ class RegistryApiTests(unittest.TestCase):
         registry = strategies.build_default_registry()
         registry.register(Disabled())
         with mock.patch.object(main, "market_snapshot", return_value=[]), mock.patch.object(main, "STRATEGIES", registry):
-            self.assertEqual([s["status"] for s in main.radar()["strategy_registry"]], ["LIVE", "DISABLED"])
-            self.assertEqual([s["strategy_id"] for s in main.strategy_registry()["strategies"]], ["trendline", "smc"])
+            self.assertEqual([s["status"] for s in main.radar()["strategy_registry"]], ["LIVE", "SHADOW", "DISABLED"])
+            self.assertEqual([s["strategy_id"] for s in main.strategy_registry()["strategies"]], ["trendline", "support_resistance", "smc"])
 
 
 class EpisodeApiTests(IsolationTestCase):

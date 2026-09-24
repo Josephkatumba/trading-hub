@@ -56,6 +56,7 @@ class SetupSnapshot(TypedDict):
     invalidation_price: NotRequired[float | None]
     atr: NotRequired[float | None]
     time_provenance: NotRequired[dict[str, Any]]
+    shadow: NotRequired[bool]            # present (True) only for shadow-mode strategies
 
 
 class SetupLifecycleEvent(TypedDict):
@@ -90,6 +91,7 @@ class SetupConfirmationEvent(TypedDict):
     score: float | None
     rule_evidence: dict[str, Any]
     score_breakdown: dict[str, Any]
+    shadow: NotRequired[bool]            # present (True) only for shadow-mode strategies
 
 
 class AnalystEvidence(TypedDict):

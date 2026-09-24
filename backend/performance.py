@@ -76,6 +76,8 @@ def _watch_count(snapshots: list[dict[str, Any]], confirmations: list[dict[str, 
     cutoff = datetime.combine(report_day + timedelta(days=1), time.min, tzinfo=tz).astimezone(timezone.utc)
     latest: dict[str, dict[str, Any]] = {}
     for row in snapshots:
+        if row.get("shadow") is True:
+            continue                         # shadow-mode setups are not on the live watchlist
         stamp = _parse(row.get("observed_at") or row.get("timestamp"))
         if stamp is None or stamp > cutoff:
             continue
@@ -111,6 +113,9 @@ def _daily(events: list[dict[str, Any]], outcomes: list[dict[str, Any]],
     for event in sorted(selected, key=lambda row: str(row.get("confirmed_at") or "")):
         dedup.setdefault(str(event.get("setup_id")), event)
     selected = list(dedup.values())
+    # Live figures (headline, groups, the setups list that drives alerts) count
+    # live confirmations only; shadow-mode strategies appear in by_strategy only.
+    everything, selected = selected, [event for event in selected if event.get("shadow") is not True]
     outcome_index = {}
     for outcome in outcomes:
         if outcome.get("record_type") not in {None, "market_outcome"}:
@@ -123,8 +128,9 @@ def _daily(events: list[dict[str, Any]], outcomes: list[dict[str, Any]],
     by_setup_type = _metrics(selected, outcome_index, PRIMARY_HORIZON, "setup_type")["groups"]
     by_timeframe = _metrics(selected, outcome_index, PRIMARY_HORIZON, "timeframe")["groups"]
     # One group per strategy; confirmations recorded before strategy_id existed map to trendline.
-    by_strategy = _metrics([{**event, "strategy_id": record_strategy_id(event)} for event in selected],
+    by_strategy = _metrics([{**event, "strategy_id": record_strategy_id(event)} for event in everything],
                            outcome_index, PRIMARY_HORIZON, "strategy_id")["groups"]
+    shadow_strategies = sorted({record_strategy_id(event) for event in everything if event.get("shadow") is True})
     setups = []
     for event in selected:
         results = {horizon: _classify(outcome_index.get((str(event.get("setup_id")),
@@ -140,7 +146,7 @@ def _daily(events: list[dict[str, Any]], outcomes: list[dict[str, Any]],
         "watchlist": _watch_count(snapshots, events, report_day, tz),
         "by_horizon": per_horizon, "by_symbol": by_symbol,
         "by_setup_type": by_setup_type, "by_timeframe": by_timeframe,
-        "by_strategy": by_strategy, "setups": setups}
+        "by_strategy": by_strategy, "shadow_strategies": shadow_strategies, "setups": setups}
 
 
 def performance_report(confirmations: list[dict[str, Any]], outcomes: list[dict[str, Any]],
@@ -167,6 +173,7 @@ def performance_report(confirmations: list[dict[str, Any]], outcomes: list[dict[
             "by_horizon": {h: {k: sum(d["by_horizon"][h][k] for d in daily)
                                for k in LABELS_LOWER} for h in horizons},
             "by_symbol": {}, "by_setup_type": {}, "by_timeframe": {}, "by_strategy": {},
+            "shadow_strategies": sorted({sid for day in daily for sid in day["shadow_strategies"]}),
             "setups": [setup for day in daily for setup in day["setups"]]})
         for key in ("by_symbol", "by_setup_type", "by_timeframe", "by_strategy"):
             merged: dict[str, dict[str, int]] = defaultdict(_empty_counts)

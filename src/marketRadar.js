@@ -11,7 +11,7 @@ import {createConfirmationAlertTracker, dispatchConfirmationAlerts, dispatchTest
 import {CONFIRMATION_CHIME_CONFIG, playConfirmationChime} from "./confirmationChime.mjs";
 import {analystModel, archiveEntry, archiveSummary, gardenAreas, gardenCounters, marketOverviewRow, constellationLayout, setupCardModel} from "./garden/gardenModel.mjs";
 import {analystPanel, archivePanel, counterTiles, emptyArea, esc, focusPanel, marketOverview, setupCard, stageLegend, strategyFilterBar, strategyLabPanel, strategyPerformanceBlock} from "./garden/gardenCards.mjs";
-import {filterByStrategy, matchesStrategy, strategyFilters, strategyPerformance, strategyTag} from "./strategyModel.mjs";
+import {filterByStrategy, matchesStrategy, strategyFilters, strategyPerformance, strategyStatus, strategyTag} from "./strategyModel.mjs";
 import {mountGarden, prefersReducedMotion} from "./garden/gardenMount.mjs";
 
 const DEMO_MARKETS = [
@@ -152,6 +152,13 @@ function paintAreas(areas){
   const offline=radarMode==="OFFLINE";
   const node=id=>document.getElementById(id);
   const toolbar=(total,expanded,key)=>{const summary=total>6?setupCountSummary(total,expanded):null;return summary?'<div class="gd-toolbar"><span>'+esc(summary)+'</span><button type="button" class="gd-link" data-toggle="'+key+'" aria-expanded="'+expanded+'">'+(expanded?"Show less":"View all")+'</button></div>':"";};
+  if(strategyFilter!=="all"&&strategyStatus(strategyFilter,latestRegistry)==="SHADOW"){
+    const tag=strategyTag(strategyFilter).tag;
+    const text=tag+" runs in shadow mode: its setups are reviewed in the Strategy Lab and never appear in the Garden.";
+    for(const id of ["growingCards","bloomedCards"])if(node(id))node(id).innerHTML=emptyArea("Shadow strategy",text);
+    for(const [id,text] of [["growingCount","0 growing"],["bloomedCount","0 bloomed"],["historyCount",history.length+" latest closed"]])if(node(id))node(id).textContent=text;
+    return {growing:[],bloomed:[],history};
+  }
   if(node("growingCards"))node("growingCards").innerHTML=growing.length
     ?toolbar(growing.length,growingExpanded,"growing")+visibleSetupEntries(growing,growingExpanded).map(card=>cardHtml(card)).join("")
     :emptyArea(offline?"The garden is not being watched":"Nothing growing right now",offline?"Engine offline — no setups are being evaluated.":"The engine is scanning; no setup is currently developing. No setup is a valid state.");
@@ -240,7 +247,7 @@ function paintStrategyControls(){
   const filters=strategyFilters(latestRegistry);
   if(!filters.some(filter=>filter.key===strategyFilter&&filter.selectable))strategyFilter="all";
   const bar=document.getElementById("strategyFilterBar");if(bar)bar.innerHTML=strategyFilterBar(filters,strategyFilter);
-  const lab=document.getElementById("strategyLabBody");if(lab)lab.innerHTML=strategyLabPanel(latestRegistry);
+  const lab=document.getElementById("strategyLabBody");if(lab)lab.innerHTML=strategyLabPanel(latestRegistry,{markets:latestMarkets,performance:latestResult?.performance||null});
 }
 function repaintCards(){
   if(!latestResult)return;
@@ -455,7 +462,7 @@ function bindConfirmationAlertControls(){
   };}
   if(test)test.onclick=()=>{dispatchTestSound(()=>playConfirmationTone());};
 }
-function paintPerformance(data){const el=document.getElementById("dailyPerformance");if(!el)return;if(!data){el.innerHTML='<div class="macro-empty"><b>Performance unavailable</b><span>Backend performance endpoint did not respond.</span></div>';return;}if(strategyFilter!=="all"){el.innerHTML=strategyPerformanceBlock(strategyPerformance(data,strategyFilter),strategyTag(strategyFilter));return;}const daily=data.daily?.[0]||data.summary||{};const horizons=daily.by_horizon||{};const rows=["15m","1h","4h","24h"].map(h=>{const x=horizons[h]||{};return '<tr><th>'+h+'</th><td>'+Number(x.win||0)+'</td><td>'+Number(x.loss||0)+'</td><td>'+Number(x.pending||0)+'</td><td>'+Number(x.no_hit||0)+'</td><td>'+Number(x.ambiguous||0)+'</td></tr>';}).join("");const h4=horizons["4h"]||{};const wins=Number(h4.win||0),losses=Number(h4.loss||0),denominator=Number(h4.win_rate_denominator??wins+losses);const rate=h4.win_rate;el.innerHTML='<div class="performance-headline"><b>'+wins+'W / '+losses+'L</b><span>4h win rate '+(rate==null?"—":Number(rate).toFixed(1)+"%")+' · denominator '+denominator+' (wins + losses)</span></div><div class="performance-table-wrap"><table class="performance-table"><thead><tr><th>HORIZON</th><th>W</th><th>L</th><th>PENDING</th><th>NO HIT</th><th>AMBIGUOUS</th></tr></thead><tbody>'+rows+'</tbody></table></div><small>Timezone: '+esc(data.timezone||daily.reporting_timezone||"Africa/Nairobi")+' · MarketOutcome records only. NO_HIT and AMBIGUOUS are excluded from win-rate denominator.</small>';}
+function paintPerformance(data){const el=document.getElementById("dailyPerformance");if(!el)return;if(!data){el.innerHTML='<div class="macro-empty"><b>Performance unavailable</b><span>Backend performance endpoint did not respond.</span></div>';return;}if(strategyFilter!=="all"){el.innerHTML=strategyPerformanceBlock(strategyPerformance(data,strategyFilter),strategyTag(strategyFilter),{shadow:strategyStatus(strategyFilter,latestRegistry)==="SHADOW"});return;}const daily=data.daily?.[0]||data.summary||{};const horizons=daily.by_horizon||{};const rows=["15m","1h","4h","24h"].map(h=>{const x=horizons[h]||{};return '<tr><th>'+h+'</th><td>'+Number(x.win||0)+'</td><td>'+Number(x.loss||0)+'</td><td>'+Number(x.pending||0)+'</td><td>'+Number(x.no_hit||0)+'</td><td>'+Number(x.ambiguous||0)+'</td></tr>';}).join("");const h4=horizons["4h"]||{};const wins=Number(h4.win||0),losses=Number(h4.loss||0),denominator=Number(h4.win_rate_denominator??wins+losses);const rate=h4.win_rate;el.innerHTML='<div class="performance-headline"><b>'+wins+'W / '+losses+'L</b><span>4h win rate '+(rate==null?"—":Number(rate).toFixed(1)+"%")+' · denominator '+denominator+' (wins + losses)</span></div><div class="performance-table-wrap"><table class="performance-table"><thead><tr><th>HORIZON</th><th>W</th><th>L</th><th>PENDING</th><th>NO HIT</th><th>AMBIGUOUS</th></tr></thead><tbody>'+rows+'</tbody></table></div><small>Timezone: '+esc(data.timezone||daily.reporting_timezone||"Africa/Nairobi")+' · MarketOutcome records only. NO_HIT and AMBIGUOUS are excluded from win-rate denominator.</small>';}
 function paintFundamentals(data){
   const el=document.getElementById("radarFundamentals");if(!el)return;
   if(!data.configured){el.innerHTML='<div class="macro-empty"><b>Macro layer ready</b><span>Connect a Trading Economics API key on the engine to bring live US economic events into the scanner.</span></div>';return;}

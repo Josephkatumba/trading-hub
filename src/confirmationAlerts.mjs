@@ -1,5 +1,7 @@
 export function isPersistedConfirmation(event) {
-  return Boolean(event?.setup_id &&
+  // Shadow-mode strategy confirmations are research records, never live alerts
+  // (the backend already keeps them out of the live performance setups list).
+  return Boolean(event?.setup_id && event?.shadow !== true &&
     (event?.confirmation_event_id || event?.record_type === "setup_confirmation"));
 }
 

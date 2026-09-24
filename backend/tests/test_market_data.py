@@ -227,8 +227,9 @@ class ContextTests(unittest.TestCase):
         self.assertEqual(market_data.plan_for(strategies.REGISTRY), {"M15": 300, "H1": 160, "H4": 200, "D1": 200})
 
     def test_trendline_markets_and_records_unchanged_by_the_extra_context(self):
-        with_context = run_scan(FakeBroker(IC_MARKETS))
-        without_context = run_scan(FakeBroker(IC_MARKETS, timeframes=("M15", "H1")))
+        # Trendline in isolation (shadow strategies may legitimately use the extra context).
+        with_context = run_scan(FakeBroker(IC_MARKETS), g.trendline_only_registry())
+        without_context = run_scan(FakeBroker(IC_MARKETS, timeframes=("M15", "H1")), g.trendline_only_registry())
         strip = lambda markets: [{k: v for k, v in m.items() if k != "market_data"} for m in markets]  # noqa: E731
         self.assertEqual(g.canonical(strip(with_context[0])), g.canonical(strip(without_context[0])))
         self.assertEqual(with_context[1], without_context[1], "persisted records are byte-identical")

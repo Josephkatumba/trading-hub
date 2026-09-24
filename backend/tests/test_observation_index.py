@@ -184,10 +184,12 @@ class EquivalenceMixin:
     def test_setup_episodes_match_every_bucket_and_limit(self):
         for bucket in ("current", "confirmed", "closed", "all"):
             for limit in (1, 7, 100, 500):
-                new = current.setup_episodes(bucket, limit)
-                # Phase 3 adds strategy_id to each episode (read-time mapped: all trendline here).
-                self.assertEqual({row.pop("strategy_id") for row in new} - {"trendline"}, set(), (bucket, limit))
-                self.assertEqual(new, legacy.setup_episodes(bucket, limit), (bucket, limit))
+                new, old = current.setup_episodes(bucket, limit), legacy.setup_episodes(bucket, limit)
+                # Phase 3 adds strategy_id to each episode: the record's own value, or
+                # "trendline" (read-time mapping) for records written before it existed.
+                self.assertEqual([row["strategy_id"] for row in new], [row.get("strategy_id") or "trendline" for row in old])
+                strip = lambda rows: [{k: v for k, v in row.items() if k != "strategy_id"} for row in rows]  # noqa: E731
+                self.assertEqual(strip(new), strip(old), (bucket, limit))
 
     def test_performance_report_matches(self):
         confirmations = legacy.confirmation_events()
@@ -219,6 +221,9 @@ class EquivalenceMixin:
                             "trendline_identity": (row.get("episode_identity") or {}).get("trendline_identity")})
         markets.append({"symbol": "BRANDNEW", "direction": "LONG", "state": "WATCHING", "timeframe": "M15",
                         "price": 10.0, "atr": 0.1, "score": 40})
+        # Records already in the store are compared byte for byte; only the records
+        # appended here have the Phase 3 strategy fields removed before comparing.
+        initial = {name: (self.h.new_root / name).stat().st_size if (self.h.new_root / name).exists() else 0 for name in FILES}
         for round_number in range(3):
             results = {}
             for module in (legacy, current):
@@ -234,8 +239,10 @@ class EquivalenceMixin:
             for name in FILES:
                 old_bytes = (self.h.old_root / name).read_bytes() if (self.h.old_root / name).exists() else b""
                 new_bytes = (self.h.new_root / name).read_bytes() if (self.h.new_root / name).exists() else b""
-                self.assertEqual(g.without_strategy_bytes(new_bytes), old_bytes, (round_number, name))
-                found = g.jsonl_strategy_fields(new_bytes)
+                cut = initial[name]
+                self.assertEqual(new_bytes[:cut], old_bytes[:cut], (round_number, name))
+                self.assertEqual(g.without_strategy_bytes(new_bytes[cut:]), old_bytes[cut:], (round_number, name))
+                found = g.jsonl_strategy_fields(new_bytes[cut:])
                 self.assertTrue(not found or g.only_trendline_fields(found), (round_number, name))
 
     def test_outcome_resolution_inputs_give_identical_outcomes(self):

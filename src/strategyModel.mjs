@@ -105,7 +105,9 @@ export function strategyMatrix(market, registry) {
   return entries.map(entry => {
     const id = strategyIdOf(entry);
     const direction = ["LONG", "SHORT"].includes(String(entry.direction || "").toUpperCase()) ? String(entry.direction).toUpperCase() : null;
-    return {...strategyTag(id), status: entry.status === "ERROR" ? "ERROR" : "OK", live: strategyStatus(id, registry) === "LIVE",
+    const mode = strategyStatus(id, registry);
+    return {...strategyTag(id), status: entry.status === "ERROR" ? "ERROR" : "OK", live: mode === "LIVE",
+      mode: mode === "UNAVAILABLE" ? String(entry.mode || "LIVE").toUpperCase() : mode,
       state: entry.state ? String(entry.state).toUpperCase() : null, direction, confirmed: entry.confirmed === true,
       setupFamily: entry.setup_family || null, setupId: entry.setup_id || null};
   });
@@ -136,6 +138,23 @@ export function strategyPerformance(report, strategyId) {
   const count = key => Number(group[key] || 0);
   return {strategyId, ...strategyTag(strategyId), horizon: report?.primary_horizon || day?.primary_horizon || "4h",
     win: count("win"), loss: count("loss"), pending: count("pending"), noHit: count("no_hit"), ambiguous: count("ambiguous")};
+}
+
+/**
+ * Current results of SHADOW strategies across markets, for the Strategy Lab
+ * only (never the Garden). One row per market and shadow strategy.
+ */
+export function shadowResults(markets, registry) {
+  const rows = [];
+  for (const market of markets || []) {
+    for (const entry of strategyMatrix(market, registry)) {
+      if (entry.mode !== "SHADOW") continue;
+      rows.push({symbol: market?.symbol || "Unknown", strategy: entry.id, tag: entry.tag, status: entry.status,
+        state: entry.state, direction: entry.direction, confirmed: entry.confirmed, setupFamily: entry.setupFamily});
+    }
+  }
+  const order = {CONFIRMING: 0, DEVELOPING: 1, WATCHING: 2};
+  return rows.sort((a, b) => (Number(b.confirmed) - Number(a.confirmed)) || ((order[a.state] ?? 9) - (order[b.state] ?? 9)) || a.symbol.localeCompare(b.symbol));
 }
 
 /** Group any rows by strategy id (e.g. archive entries); insertion order is first appearance. */

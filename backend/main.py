@@ -333,7 +333,7 @@ _STRATEGY_SETUP_FIELDS = ("setup_id", "observation_id", "lifecycle_state", "epis
 def _strategy_entry(result, setup: dict[str, Any] | None) -> dict[str, Any]:
     """One markets[i].strategies[] item: the strategy's decisions and its episode."""
     entry: dict[str, Any] = {"strategy_id": result.strategy_id, "strategy_version": result.strategy_version,
-                             "status": "OK" if result.ok else "ERROR"}
+                             "mode": result.mode, "status": "OK" if result.ok else "ERROR"}
     if not result.ok:
         entry["error"] = type(result.error).__name__
         return entry
@@ -489,7 +489,7 @@ def market_snapshot() -> list[dict[str, Any]]:
                 strategy = STRATEGIES.get(strategy_id)
                 setups[strategy_id] = {**quote, **result.payload, **provenance, "timeframe": strategy.timeframe,
                     "higher_timeframes": list(strategy.higher_timeframes), "strategy_id": strategy_id,
-                    "strategy_version": result.strategy_version}
+                    "strategy_version": result.strategy_version, "strategy_mode": result.mode}
             markets.append(market)
             strategy_markets.extend(setups.values())
             scanned.append((market, results, setups))
@@ -739,9 +739,10 @@ def observations(limit: int = Query(default=100, ge=1, le=1000)):
 
 @app.get("/api/market/setup-episodes")
 def setup_episode_feed(bucket: str = Query(default="current", pattern="^(current|confirmed|closed|all)$"),
-                       limit: int = Query(default=100, ge=1, le=500)):
-    """Persistent Observatory buckets; existing radar and history routes remain unchanged."""
-    episodes = setup_episodes(bucket, limit)
+                       limit: int = Query(default=100, ge=1, le=500), include_shadow: bool = False):
+    """Persistent Observatory buckets; existing radar and history routes remain unchanged.
+    Shadow-mode strategy episodes are only included on request (Strategy Lab review)."""
+    episodes = setup_episodes(bucket, limit, include_shadow=include_shadow)
     payload = ({name: [row for row in episodes if row.get("bucket") == name]
                 for name in ("current", "confirmed", "closed")} if bucket == "all" else {"episodes": episodes})
     return {"bucket": bucket, **payload,

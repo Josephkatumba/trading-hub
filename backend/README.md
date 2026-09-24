@@ -158,3 +158,21 @@ Persistence and lifecycle are scoped by strategy (`tests/test_strategy_persisten
   `market_data.unavailable_timeframes` on the market, and a strategy whose
   required data is missing is not run. The trendline strategy still reads the
   same M15/H1 OHLC rows. See `tests/test_market_data.py`.
+
+## Support & Resistance (shadow mode)
+
+`strategies/support_resistance.py` (`support_resistance`, version `sr-levels-v1`)
+is a deterministic, rule-based S/R strategy registered in **SHADOW** mode:
+
+- It runs on every scan and its setups are persisted with `shadow: true`
+  (snapshots and confirmation events), follow the normal episode lifecycle and
+  are labelled by the existing outcome engine.
+- Shadow records never reach the live views: `setup-episodes` excludes them
+  unless `include_shadow=true`, the performance headline and its `setups` list
+  (which drives confirmation alerts) count live confirmations only, and the
+  Garden shows live strategies only. S/R research counts appear in
+  `by_strategy` / `shadow_strategies` and in the Strategy Lab.
+- S/R never matches, invalidates or suppresses trendline episodes (Phase 3
+  strategy scoping); both may disagree on the same market.
+- The exact level, test, confirmation and plan rules are documented at the top of
+  the module; `tests/test_support_resistance.py` covers each rule.

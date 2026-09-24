@@ -398,3 +398,8 @@ body.garden-mode .topline b { color: #1c2321; }
 .gd-lab-item em { color: var(--gd-muted); font-style: normal; font-size: 12px; }
 .gd-lab-item small { color: var(--gd-faint); }
 .gd-lab-live b { color: var(--gd-leaf); }
+/* Shadow-mode strategies (Strategy Lab only) */
+.gd-shadow-badge { padding: 1px 7px; border: 1px dashed var(--gd-border-strong); border-radius: 6px; background: var(--gd-grey-bg); color: var(--gd-muted); font-size: 10px; font-weight: 800; letter-spacing: .08em; }
+.gd-lab-shadow { margin: 12px 0; }
+.gd-lab-shadow h4 { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; }
+.gd-lab-shadow .gd-lab-table th, .gd-lab-shadow .gd-lab-table td { font-size: 12px; }

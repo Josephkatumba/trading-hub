@@ -1,7 +1,7 @@
 // TRADeden Garden markup. Pure string renderers (no DOM access) over the view
 // models in gardenModel.mjs. Unavailable values are always shown explicitly.
 import {GARDEN_STAGES} from "./gardenModel.mjs";
-import {STRATEGY_STATUS, normalizeRegistry, strategyTag} from "../strategyModel.mjs";
+import {STRATEGY_STATUS, normalizeRegistry, shadowResults, strategyPerformance, strategyTag} from "../strategyModel.mjs";
 
 export const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"}[c]));
 const orUnavailable = (value, text = "Unavailable") => value == null || value === "" ? '<span class="gd-na">' + text + '</span>' : esc(value);
@@ -101,7 +101,8 @@ export function marketOverview(rows) {
  * A conflict shows both sides; neither is hidden.
  */
 export function strategyMatrixLine(row) {
-  const entries = row?.strategies || [];
+  // Live strategies only: shadow-mode results are reviewed in the Strategy Lab, never here.
+  const entries = (row?.strategies || []).filter(entry => entry.live);
   if (entries.length < 2 && !row?.conflict) return "";
   const cell = entry => '<span class="gd-matrix-cell' + (entry.live ? '' : ' is-not-live') + '">' + esc(entry.tag) + ' '
     + (entry.status === "ERROR" ? 'unavailable' : entry.direction ? (entry.direction === "LONG" ? "▲ BUY" : "▼ SELL") : '—') + '</span>';
@@ -125,24 +126,38 @@ export function strategyFilterBar(filters, selected = "all") {
  * Strategy Lab: every registered strategy and its status. Shadow-mode results
  * (none exist yet) are reviewed here only and never shown as live Garden setups.
  */
-export function strategyLabPanel(registry) {
+export function strategyLabPanel(registry, {markets = [], performance = null} = {}) {
   const entries = normalizeRegistry(registry);
   const shadow = entries.filter(entry => entry.status === "SHADOW");
+  const results = shadowResults(markets, registry);
+  const cell = value => value == null || value === "" ? '<span class="gd-na">—</span>' : esc(value);
+  const table = !shadow.length ? '' : '<div class="gd-lab-shadow"><h4><span class="gd-shadow-badge">SHADOW</span> Current shadow results</h4>'
+    + '<p class="gd-note">Evaluated on every scan and recorded for research. Not live setups, not alerts, not trade signals.</p>'
+    + (results.length ? '<div class="performance-table-wrap"><table class="performance-table gd-lab-table"><thead><tr><th>MARKET</th><th>STRATEGY</th><th>STATE</th><th>DIRECTION</th><th>SHADOW CONFIRMED</th></tr></thead><tbody>'
+      + results.map(row => '<tr><th>' + esc(row.symbol) + '</th><td>' + esc(row.tag) + '</td><td>' + (row.status === "ERROR" ? 'unavailable' : cell(row.state)) + '</td><td>'
+        + cell(row.direction) + '</td><td>' + (row.confirmed ? 'yes' : 'no') + '</td></tr>').join("") + '</tbody></table></div>'
+      : '<p class="gd-na">No shadow results in the latest scan.</p>')
+    + shadow.map(entry => {
+      const perf = strategyPerformance(performance, entry.id);
+      return perf ? '<p class="gd-note"><b>' + esc(perf.tag) + ' research, ' + esc(perf.horizon) + ' market outcome:</b> ' + perf.win + ' target first · ' + perf.loss
+        + ' stop first · ' + perf.pending + ' pending · ' + perf.noHit + ' no hit · ' + perf.ambiguous + ' ambiguous (shadow confirmations only; never mixed with live results)</p>' : '';
+    }).join("") + '</div>';
   return '<ul class="gd-lab-list">' + entries.map(entry => {
     const {tag, label} = strategyTag(entry.id);
     return '<li class="gd-lab-item gd-lab-' + esc(entry.status.toLowerCase()) + '"><b>' + esc(tag) + '</b><span>' + esc(label) + '</span>'
       + '<em>' + esc(STRATEGY_STATUS[entry.status] || entry.status) + (entry.assumed ? ' (engine offline, assumed)' : '') + '</em>'
       + (entry.version ? '<small>' + esc(entry.version) + '</small>' : '') + '</li>';
-  }).join("") + '</ul>'
+  }).join("") + '</ul>' + table
     + '<p class="gd-note">' + (shadow.length
       ? 'Shadow-mode strategies are evaluated for review only. Their results never appear as Garden setups.'
       : 'No shadow-mode strategies are registered. Future strategies are reviewed here before they can produce live Garden setups.') + '</p>';
 }
 
 /** Per-strategy market-outcome counts, straight from the backend report (no derived rates). */
-export function strategyPerformanceBlock(perf, strategy) {
-  if (!perf) return '<div class="macro-empty"><b>No confirmed ' + esc(strategy.label) + ' setups in this period</b><span>Only this strategy&#039;s confirmations are counted here.</span></div>';
-  return '<div class="performance-headline"><b>' + perf.win + 'W / ' + perf.loss + 'L</b><span>' + esc(perf.tag) + ' only · ' + esc(perf.horizon) + ' market outcome</span></div>'
+export function strategyPerformanceBlock(perf, strategy, {shadow = false} = {}) {
+  const label = shadow ? '<p class="gd-note"><span class="gd-shadow-badge">SHADOW</span> Research only: this strategy runs in shadow mode. Not live results.</p>' : '';
+  if (!perf) return label + '<div class="macro-empty"><b>No confirmed ' + esc(strategy.label) + ' setups in this period</b><span>Only this strategy&#039;s confirmations are counted here.</span></div>';
+  return label + '<div class="performance-headline"><b>' + perf.win + 'W / ' + perf.loss + 'L</b><span>' + esc(perf.tag) + ' only · ' + esc(perf.horizon) + ' market outcome</span></div>'
     + '<div class="performance-table-wrap"><table class="performance-table"><thead><tr><th>STRATEGY</th><th>W</th><th>L</th><th>PENDING</th><th>NO HIT</th><th>AMBIGUOUS</th></tr></thead><tbody>'
     + '<tr><th>' + esc(perf.tag) + '</th><td>' + perf.win + '</td><td>' + perf.loss + '</td><td>' + perf.pending + '</td><td>' + perf.noHit + '</td><td>' + perf.ambiguous + '</td></tr></tbody></table></div>'
     + '<small>Per-strategy view shows the ' + esc(perf.horizon) + ' primary horizon only. Strategies are never combined here.</small>';
