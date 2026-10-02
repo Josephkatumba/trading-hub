@@ -110,10 +110,30 @@ def close_mt5() -> None:
         _MT5_SESSION["initialized"] = False
 
 
+def autonomous_market_worker(stop):
+    """Observational scans only; reuse the same engine/MT5 session and storage."""
+    while not stop.is_set():
+        try:
+            market_snapshot()
+        except Exception:
+            LOGGER.exception("Autonomous observational scan failed")
+        stop.wait(30)
+
+
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    yield
-    close_mt5()
+    stop = threading.Event()
+    worker = threading.Thread(target=autonomous_market_worker, args=(stop,),
+                              name="tradeden-market-scanner", daemon=True)
+    worker.start()
+    try:
+        yield
+    finally:
+        stop.set()
+        worker.join(timeout=5)
+        # Serialize shutdown with scans and browser requests.
+        with _SCAN_LOCK:
+            close_mt5()
 
 
 app = FastAPI(title="Trading Hub Market Engine", version="0.3.0", lifespan=lifespan)
@@ -291,6 +311,12 @@ def _attach_strategies(scanned: list[tuple[dict[str, Any], dict[str, Any], dict[
 
 
 def market_snapshot() -> list[dict[str, Any]]:
+    # Browser radar and autonomous worker reuse one scan/session at a time.
+    with _SCAN_LOCK:
+        return _market_snapshot()
+
+
+def _market_snapshot() -> list[dict[str, Any]]:
     started_clock = datetime.now(timezone.utc)
     started = monotonic_time.perf_counter()
     with _SCAN_LOCK:
