@@ -94,27 +94,133 @@ function sentence(text) {
 }
 
 /**
+ * The plan a confirmed setup was confirmed with (backend `confirmed_plan`, read
+ * from the confirmation snapshot). It is immutable: later observations of an
+ * active setup re-evaluate at the live price, so their entry/stop/R:R drift and
+ * are the latest market observation, never the setup's plan.
+ */
+export function confirmedPlan(row) {
+  const plan = row?.confirmed_plan;
+  return plan && typeof plan === "object" ? plan : null;
+}
+
+/**
  * Trade levels, only when the engine produced a full plan (stop AND target).
  * Before that, "entry" is just the live price, so it is deliberately not shown
- * as an entry.
+ * as an entry. A confirmed setup always shows its confirmed plan (basis
+ * "confirmation"); anything else shows the latest observation (basis "latest").
  */
 export function tradeLevels(row, analysis = null) {
-  const risk = analysis?.risk_context || {};
+  const plan = confirmedPlan(row);
+  const risk = plan ? {} : (analysis?.risk_context || {});
   const features = row?.features || {};
-  const stop = risk.stop_loss ?? row?.proposed_stop_loss ?? row?.stop_loss ?? null;
-  const target = risk.take_profit ?? row?.proposed_take_profit ?? row?.take_profit ?? null;
+  const pick = (fromPlan, ...rest) => plan ? (fromPlan ?? null) : (rest.find(value => value !== undefined && value !== null) ?? null);
+  const stop = pick(plan?.stop_loss, risk.stop_loss, row?.proposed_stop_loss, row?.stop_loss);
+  const target = pick(plan?.take_profit, risk.take_profit, row?.proposed_take_profit, row?.take_profit);
   const planned = finite(stop) && finite(target);
-  const entry = planned ? (risk.entry ?? row?.proposed_entry ?? row?.entry ?? null) : null;
-  const rr = planned ? (risk.rr ?? row?.rr ?? features.rr ?? null) : null;
-  const invalidation = risk.invalidation ?? row?.invalidation_price ?? row?.rule_evidence?.invalidation_hint ?? row?.invalidation_hint ?? null;
+  const entry = planned ? pick(plan?.entry, risk.entry, row?.proposed_entry, row?.entry) : null;
+  const rr = planned ? pick(plan?.rr, risk.rr, row?.rr, features.rr) : null;
+  const invalidation = plan ? (plan.invalidation_price ?? plan.stop_loss ?? null)
+    : (risk.invalidation ?? row?.invalidation_price ?? row?.rule_evidence?.invalidation_hint ?? row?.invalidation_hint ?? null);
+  const distance = key => {
+    const value = plan ? plan[key] : features[key];
+    return finite(value) ? Number(value) : null;
+  };
   return {
     planned,
+    basis: plan ? "confirmation" : "latest",
     entry: formatPrice(entry),
     stop: formatPrice(stop),
     target: formatPrice(target),
     rr: formatRiskReward(rr),
     invalidation: formatPrice(invalidation),
+    raw: planned ? {entry: finite(entry) ? Number(entry) : null, stop: Number(stop), target: Number(target),
+      riskDistance: distance("risk_distance"), rewardDistance: distance("reward_distance")} : null,
   };
+}
+
+// Stop-quality labels, only ever read from backend stop evidence (Trend/Momentum v2).
+export const RISK_QUALITY = Object.freeze({
+  NORMAL_RISK: {label: "Normal risk", tone: "ok", help: "Stop distance inside the strategy's normal volatility envelope."},
+  WIDE_STRUCTURE: {label: "Wide structure", tone: "wide", help: "Structural stop is valid but wider than normal."},
+  RISK_REJECTED: {label: "Risk rejected", tone: "reject", help: "Structural invalidation requires excessive risk. Setup rejected."},
+  STOP_TOO_TIGHT: {label: "Stop too tight", tone: "reject", help: "Entry sits inside normal noise of the structural stop. Not confirmed."},
+  INVALID: {label: "Beyond stop", tone: "reject", help: "Price is already beyond the structural invalidation level."},
+});
+
+/** Backend stop evidence for the plan being shown (confirmed plan first), or null. */
+export function stopEvidence(row) {
+  const plan = confirmedPlan(row);
+  const evidence = plan ? plan.stop_evidence : row?.strategy_evidence?.stop;
+  return evidence && typeof evidence === "object" && evidence.risk_quality ? evidence : null;
+}
+
+/**
+ * Geometry of the risk bar, from backend levels only: nothing is recalculated as a
+ * plan. Segments are the backend risk/reward distances (or, for records that
+ * predate them, the plain distances between the backend's own entry, stop and
+ * target). `axis` runs low price -> high price, so a SHORT mirrors a LONG.
+ */
+export function riskModel(row, analysis = null) {
+  const levels = tradeLevels(row, analysis);
+  const dir = direction(row);
+  if (!levels.planned || !levels.raw || levels.raw.entry == null || !dir) return null;
+  const {entry, stop, target} = levels.raw;
+  const risk = levels.raw.riskDistance ?? Math.abs(entry - stop);
+  const reward = levels.raw.rewardDistance ?? Math.abs(target - entry);
+  if (!(risk > 0) || !(reward > 0)) return null;
+  const riskShare = risk / (risk + reward);
+  const stopInfo = stopEvidence(row);
+  const quality = stopInfo ? RISK_QUALITY[stopInfo.risk_quality] || null : null;
+  const stopText = {key: "stop", label: "Stop", value: levels.stop};
+  const entryText = {key: "entry", label: "Entry", value: levels.entry};
+  const targetText = {key: "target", label: "Target", value: levels.target};
+  return {
+    direction: dir, basis: levels.basis, rr: levels.rr, riskShare, rewardShare: 1 - riskShare,
+    axis: dir === "LONG" ? [stopText, entryText, targetText] : [targetText, entryText, stopText],
+    segments: dir === "LONG" ? ["risk", "reward"] : ["reward", "risk"],
+    quality: quality ? {key: stopInfo.risk_quality, ...quality} : null,
+    structural: stopInfo?.basis === "STRUCTURAL",
+    stopAtr: finite(stopInfo?.stop_distance_atr_h1) ? Number(stopInfo.stop_distance_atr_h1) : null,
+    rejection: stopInfo?.rejection_reason || null,
+  };
+}
+
+// The lifecycle as TRADeden shows it. CLOSED stands for any terminal state.
+export const LIFECYCLE_STEPS = ["WATCHING", "DETECTED", "DEVELOPING", "CONFIRMING", "CONFIRMED", "ACTIVE", "CLOSED"];
+
+/**
+ * Lifecycle rail from the backend's own lifecycle events and current state:
+ * reached steps (with event times), the current step, and the terminal state a
+ * closed setup ended in. Nothing is inferred beyond what the events record.
+ */
+export function lifecycleRail(row) {
+  const events = Array.isArray(row?.lifecycle_events) ? row.lifecycle_events : [];
+  const current = upper(row?.lifecycle_state) || (upper(row?.state) === "WATCHING" ? "WATCHING" : "");
+  const terminal = TERMINAL.has(current) ? current : null;
+  const reachedAt = new Map([["WATCHING", null]]);
+  for (const event of events) {
+    const to = upper(event?.to_state);
+    const step = TERMINAL.has(to) ? "CLOSED" : to;
+    if (LIFECYCLE_STEPS.includes(step) && !reachedAt.has(step)) reachedAt.set(step, event.occurred_at || null);
+  }
+  const currentStep = terminal ? "CLOSED" : LIFECYCLE_STEPS.includes(current) ? current : "WATCHING";
+  if (!reachedAt.has(currentStep)) reachedAt.set(currentStep, null);
+  return {
+    current: currentStep, terminal,
+    steps: LIFECYCLE_STEPS.map(step => ({step, label: step === "CLOSED" && terminal ? terminal : step,
+      reached: reachedAt.has(step), current: step === currentStep, time: formatUtc(reachedAt.get(step))})),
+  };
+}
+
+/** Why the setup exists: the reason recorded at confirmation for a confirmed setup, else the latest one. */
+export function setupReason(row) {
+  return confirmedPlan(row)?.reason || row?.reason || row?.rule_evidence?.reason || row?.insight || null;
+}
+
+/** The observation the analyst should explain: a confirmed setup's confirmation snapshot. */
+export function analysisObservationId(row) {
+  return row?.confirmation?.observation_id || row?.observation_id || null;
 }
 
 const CONTEXT_TYPES = new Set(["WATCHING", "GENERAL"]);
@@ -141,13 +247,15 @@ export function setupCardModel(row, {bucket = null, analysis = null, tracked = f
   const dir = direction(row);
   const confirmedAt = row?.confirmation?.confirmed_at || row?.confirmation_time || row?.confirmed_at || null;
   const closed = row?.closed_event || null;
-  const reason = row?.reason || row?.rule_evidence?.reason || row?.insight || null;
+  const reason = setupReason(row);
   const stageInfo = GARDEN_STAGES[stage];
   const headline = stage === "bloomed" || stage === "active"
     ? (upper(row?.lifecycle_state) || "CONFIRMED") + (dir ? " " + dir : "")
     : stage === "history"
       ? (upper(row?.lifecycle_state) || "CLOSED") + (dir ? " · " + dir : "")
       : stageInfo.label.toUpperCase() + (dir ? " · " + dir : "");
+  const levels = tradeLevels(row, analysis);
+  const plan = confirmedPlan(row);
   return {
     id: row?.setup_id || null,
     key: row?.setup_id || (row?.symbol ? "mkt-" + row.symbol : null),
@@ -159,12 +267,19 @@ export function setupCardModel(row, {bucket = null, analysis = null, tracked = f
     headline,
     tone: cardTone(stage, dir),
     bucket: bucket || (stage === "history" ? "history" : stage === "bloomed" || stage === "active" ? "bloomed" : "growing"),
-    score: finite(row?.score) ? Math.round(Number(row.score)) : null,
+    // A confirmed setup keeps the score it was confirmed with; the latest observation's score drifts.
+    score: finite(plan?.score ?? row?.score) ? Math.round(Number(plan?.score ?? row.score)) : null,
     setupType: setupFamilyLabel(setupTypeOf(row), dir),
     latestObservation: latestObservationNote(row),
     strategy: strategyTag(strategyIdOf(row)),
+    strategyVersion: row?.confirmation?.strategy_version || row?.strategy_version || null,
     timeframe: row?.timeframe || null,
-    levels: tradeLevels(row, analysis),
+    levels,
+    risk: riskModel(row, analysis),
+    rail: lifecycleRail(row),
+    watching: stage === "growing" && ["DETECTED", "WATCHING"].includes(upper(row?.lifecycle_state || row?.state)),
+    // A confirmed setup whose latest observation re-planned at the live price.
+    planDrift: Boolean(plan && finite(row?.proposed_entry) && finite(plan.entry) && Number(row.proposed_entry) !== Number(plan.entry)),
     why: sentence(reason) || sentence(analysis?.summary) || null,
     confirmationTime: formatUtc(confirmedAt),
     detectedTime: formatUtc(row?.detected_at || row?.observed_at || row?.timestamp),
@@ -214,17 +329,41 @@ export function gardenAreas(episodes, markets = [], {registry = null} = {}) {
 
 /** Live hero counters. null means "unavailable" (engine offline), never a fake 0. */
 export function gardenCounters({markets = [], episodes = null, mode = "LIVE", registry = null} = {}) {
-  if (mode === "OFFLINE") return {watched: null, growing: null, confirming: null, bloomed: null, active: null, byStrategy: null};
+  if (mode === "OFFLINE") return {watched: null, watching: null, developing: null, confirmed: null, growing: null, confirming: null, bloomed: null, active: null, byStrategy: null};
   const areas = gardenAreas(episodes, markets, {registry});
   const live = [...areas.growing, ...areas.bloomed];
   const count = stage => live.filter(row => gardenStage(row) === stage).length;
+  const watching = live.filter(row => gardenStage(row) === "growing" && ["DETECTED", "WATCHING", ""].includes(upper(row?.lifecycle_state || row?.state))).length;
   return {
     watched: markets.length,
+    watching,
+    developing: count("growing") - watching + count("shaping"),
+    confirmed: count("bloomed") + count("active"),
     growing: count("growing"),
     confirming: count("shaping"),
     bloomed: count("bloomed"),
     active: count("active"),
     byStrategy: strategyBreakdown(live),
+  };
+}
+
+/**
+ * The compact Garden header: LIVE strategies with their versions, instruments
+ * monitored, confirmed / developing / watching setups (each setup_id once), the
+ * last scan and the engine status. null values mean "unavailable", never 0.
+ */
+export function gardenHeaderModel({markets = [], episodes = null, mode = "LIVE", registry = null, lastScan = null} = {}) {
+  const counters = gardenCounters({markets, episodes, mode, registry});
+  const live = (Array.isArray(registry) ? registry : []).filter(item => String(item?.status).toUpperCase() === "LIVE")
+    .map(item => ({...strategyTag(item.strategy_id), version: item.version || null}));
+  return {
+    mode,
+    engine: {LIVE: "Engine live", ENGINE_NO_DATA: "Engine online · no market data", OFFLINE: "Engine offline", DEMO: "Demo · not scanning"}[mode] || mode,
+    strategies: live,
+    instruments: mode === "OFFLINE" ? null : markets.length,
+    confirmed: counters.confirmed, developing: counters.developing, watching: counters.watching,
+    lastScan: mode === "OFFLINE" ? null : formatUtc(lastScan),
+    byStrategy: counters.byStrategy,
   };
 }
 
@@ -242,9 +381,11 @@ export function analystModel(row, analysis = null, archive = null) {
   const claims = items => (items || []).map(item => item?.claim).filter(Boolean);
   const conflicts = claims(analysis?.conflicts).map(text => "Conflict: " + text);
   const trigger = row?.trigger || row?.rule_evidence?.trigger;
-  const reasoning = sentence(row.reason || row?.rule_evidence?.reason);
+  const reasoning = sentence(confirmedPlan(row)?.reason || row.reason || row?.rule_evidence?.reason);
   const base = {
     symbol: row.symbol || "Unknown symbol", stage, context, direction: direction(row), levels,
+    strategy: strategyTag(strategyIdOf(row)), strategyVersion: row?.confirmation?.strategy_version || row?.strategy_version || null,
+    risk: riskModel(row, analysis), stop: stopEvidence(row), rail: lifecycleRail(row), setupId: row?.setup_id || null,
     analystVersion: analysis?.analyst_version || null, analysisLoaded: Boolean(analysis),
     stillNeeded: [], watchingFor: null, outcome: null,
   };
@@ -292,6 +433,123 @@ export function analystModel(row, analysis = null, archive = null) {
   };
 }
 
+// ----- market research: the deeper, read-only view of one setup or market ----------
+// Each research section lists recorded scanner fields and the analyst evidence of
+// the matching categories. Nothing is derived: a missing field is simply absent,
+// and an empty section renders as "Not available".
+const RESEARCH_FIELDS = Object.freeze({
+  structure: [["structure", "Structure"], ["price_action_state", "Price action state"], ["price_action", "Price action"]],
+  trend: [["higher_timeframe_bias", "Higher-timeframe bias"], ["market_bias", "Market bias"], ["trendline", "Trendline"],
+    ["trendline_state", "Trendline state"], ["ema20", "EMA 20"], ["ema50", "EMA 50"]],
+  momentum: [["momentum", "Momentum"], ["rsi", "RSI"]],
+  levels: [["nearest_level_type", "Nearest level"], ["nearest_level", "Level price"], ["nearest_level_atr", "Distance to level"], ["atr", "ATR"]],
+});
+const RESEARCH_CATEGORY = Object.freeze({structure: "structure", price_action: "structure", higher_timeframe: "trend", trendline: "trend",
+  momentum: "momentum", support_resistance: "levels"});
+const PRICE_FIELDS = new Set(["ema20", "ema50", "nearest_level", "atr"]);
+
+function researchValue(key, value) {
+  if (value === null || value === undefined || value === "") return null;
+  if (typeof value === "object") return null;                 // e.g. trendline_line geometry: not a display fact
+  if (PRICE_FIELDS.has(key)) return formatPrice(value);
+  if (key === "rsi") return finite(value) ? Number(value).toFixed(1) : null;
+  if (key === "nearest_level_atr") return finite(value) ? Number(value).toFixed(2) + " ATR" : null;
+  return String(value);
+}
+
+// Strategies that keep their own recorded context in `strategy_evidence` (S/R and
+// Trend/Momentum). Paths into that record, per research section, with a display format.
+const STRATEGY_RESEARCH = Object.freeze({
+  trend_momentum: {
+    structure: [["trend.h4.structure", "H4 structure", "text"], ["pullback.retracement", "Pullback retracement", "percent"],
+      ["pullback.controlled", "Pullback controlled", "bool"], ["pullback.pullback_bars", "Pullback bars", "number"]],
+    trend: [["trend.h4.direction", "H4 trend", "text"], ["trend.h4.ema50_slope_atr", "H4 EMA50 slope", "atr"], ["trend.d1.status", "D1 context", "text"],
+      ["trend.h1.aligned", "H1 aligned", "bool"], ["trend.h1.ema20", "H1 EMA 20", "price"], ["trend.h1.ema50", "H1 EMA 50", "price"]],
+    momentum: [["momentum.impulse_atr", "Impulse", "atr"], ["momentum.efficiency", "Efficiency ratio", "ratio"], ["momentum.impulse_bars", "Impulse bars", "number"],
+      ["trigger.resumption", "Resumption trigger", "bool"]],
+    levels: [["trend.h4.last_swing_highs", "H4 swing highs", "prices"], ["trend.h4.last_swing_lows", "H4 swing lows", "prices"],
+      ["trigger.break_level", "Trigger break level", "price"], ["plan.structure_invalidation", "Structural invalidation", "price"]],
+  },
+  support_resistance: {
+    structure: [["family", "Setup family", "text"], ["touch.clean_test", "Clean test of the level", "bool"], ["rejection.confirmed", "Rejection confirmed", "bool"]],
+    trend: [],
+    momentum: [["confirmation.rules.momentum", "Momentum rule", "bool"]],
+    levels: [["level.type", "Level", "text"], ["level.price", "Level price", "price"], ["level.zone_low", "Zone low", "price"], ["level.zone_high", "Zone high", "price"],
+      ["level.reactions", "Reactions", "number"], ["level.strength", "Strength", "number"], ["level.role_reversal", "Role reversal", "bool"],
+      ["level.higher_timeframe_confluence", "Higher-timeframe confluence", "bool"], ["distance_atr_h1", "Distance to level", "atr"]],
+  },
+});
+const humanize = text => { const s = String(text).replace(/_/g, " ").toLowerCase(); return s.charAt(0).toUpperCase() + s.slice(1); };
+const atPath = (object, path) => path.split(".").reduce((value, key) => (value == null ? undefined : value[key]), object);
+function formatEvidence(value, kind) {
+  if (value === null || value === undefined || value === "") return null;
+  if (kind === "bool") return typeof value === "boolean" ? (value ? "Yes" : "No") : null;
+  if (kind === "prices") return Array.isArray(value) && value.length ? value.map(formatPrice).filter(Boolean).join(", ") || null : null;
+  if (typeof value === "object") return null;
+  if (kind === "price") return formatPrice(value);
+  if (kind === "atr") return finite(value) ? Number(value).toFixed(2) + " ATR" : null;
+  if (kind === "percent") return finite(value) ? (Number(value) * 100).toFixed(1) + "%" : null;
+  if (kind === "ratio") return finite(value) ? Number(value).toFixed(2) : null;
+  if (kind === "number") return finite(value) ? String(Number(value)) : null;
+  return /^[A-Z0-9_]+$/.test(String(value)) ? humanize(value) : String(value);
+}
+
+/** A strategy's own confirmation rules as recorded (passed / not passed), or []. */
+export function strategyRules(row) {
+  const table = row?.strategy_evidence?.confirmation?.rules;
+  if (!table || typeof table !== "object") return [];
+  return Object.entries(table).filter(([, passed]) => typeof passed === "boolean").map(([rule, passed]) => ({rule: humanize(rule), passed}));
+}
+
+/**
+ * Everything the Market Research drawer shows for one row (an episode or a live
+ * market). Setup facts come from what the setup recorded: snapshot `features`
+ * (trendline) or the strategy's own `strategy_evidence` (S/R, Trend/Momentum).
+ * `market` (the latest scan of the same symbol) fills a section only when the
+ * setup recorded nothing for it, and only for setups that are still open; those
+ * facts are marked as scan context.
+ */
+export function researchModel(row, {analysis = null, archive = null, simulated = false, market = null} = {}) {
+  if (!row) return null;
+  const features = row.features && typeof row.features === "object" ? row.features : {};
+  const hasFeatures = RESEARCH_FIELDS.structure.concat(RESEARCH_FIELDS.trend, RESEARCH_FIELDS.momentum).some(([key]) => features[key] != null);
+  const own = row.setup_id ? features : row;             // a bare market row carries its fields at the top level
+  const strategyFields = STRATEGY_RESEARCH[strategyIdOf(row)] || null;
+  const evidenceRecord = row.strategy_evidence && typeof row.strategy_evidence === "object" ? row.strategy_evidence : null;
+  const closed = gardenStage(row) === "history";
+  const scan = !closed && row.setup_id && market && market !== row ? market : null;
+  const evidenceIn = (list, tone) => (list || []).filter(item => item?.claim).map(item => ({tone, claim: item.claim, category: item.category || null}));
+  const supporting = evidenceIn(analysis?.confirmations, "support");
+  const opposing = evidenceIn(analysis?.conflicts, "oppose");
+  const missing = evidenceIn(analysis?.missing_confirmations, "missing");
+  const fromFields = (source, fields) => fields.map(([key, label]) => ({label, value: researchValue(key, source?.[key])})).filter(fact => fact.value != null);
+  const sections = {};
+  for (const [name, fields] of Object.entries(RESEARCH_FIELDS)) {
+    const facts = fromFields(own, fields);
+    if (strategyFields && evidenceRecord) {
+      for (const [path, label, kind] of strategyFields[name] || []) {
+        const value = formatEvidence(atPath(evidenceRecord, path), kind);
+        if (value != null) facts.push({label, value});
+      }
+    }
+    sections[name] = {
+      facts,
+      scan: facts.length || !scan ? [] : fromFields(scan, fields),
+      evidence: [...supporting, ...opposing].filter(item => RESEARCH_CATEGORY[item.category] === name),
+    };
+  }
+  return {
+    card: setupCardModel(row, {analysis, simulated}),
+    analyst: analystModel(row, analysis, archive),
+    sections,
+    rules: strategyRules(row),
+    evidence: {supporting, opposing, missing},
+    basis: !row.setup_id ? "live" : hasFeatures || evidenceRecord ? "recorded" : "live",
+    analysisLoaded: Boolean(analysis),
+    hasSetup: Boolean(row.setup_id),
+  };
+}
+
 export function marketOverviewRow(market, registry = null) {
   const move = finite(market?.change_pct) ? Number(market.change_pct) : null;
   const bias = upper(market?.direction) || upper(market?.market_bias) || null;
@@ -302,6 +560,7 @@ export function marketOverviewRow(market, registry = null) {
     changeTone: move == null ? "flat" : move >= 0 ? "up" : "down",
     direction: bias,
     state: upper(market?.state) || null,
+    lifecycle: upper(market?.lifecycle_state) || upper(market?.state) || null,
     setupStatus: market?.lifecycle_state ? GARDEN_STAGES[gardenStage(market)].label : "No setup",
     stage: market?.lifecycle_state ? gardenStage(market) : null,
     score: finite(market?.score) ? Math.round(Number(market.score)) : null,
@@ -329,6 +588,41 @@ export const BANDS = Object.freeze({
 });
 export const MAX_ORBS = {history: 18, growing: 18, shaping: 10, bloomed: 10, active: 8};
 
+// Each live strategy grows in its own sector ("branch") of the garden, so strategy
+// identity is visible in the constellation itself. Unknown strategies share a sector.
+export const STRATEGY_SECTORS = Object.freeze({trendline: 0, trendline_v5: 0, support_resistance: 1, trend_momentum: 2});
+const SECTOR_WIDTH = (Math.PI * 2) / 3;
+const SECTOR_SPREAD = SECTOR_WIDTH * 0.42;          // half-width used by orbs (a gap between sectors)
+export function sectorAngle(strategyId) {
+  const index = STRATEGY_SECTORS[strategyId];
+  return (index === undefined ? 3.5 : index) * SECTOR_WIDTH - Math.PI / 2;
+}
+const wrap = angle => Math.atan2(Math.sin(angle), Math.cos(angle));
+// Strategy identity colours: muted, distinct from the long/short/stage colours.
+export const STRATEGY_COLORS = Object.freeze({trendline: "#4f86a8", trendline_v5: "#4f86a8", support_resistance: "#b3843a", trend_momentum: "#7c6bbf"});
+export const OTHER_STRATEGY_COLOR = "#8fa396";
+
+/** Sector labels and trunks for the strategies that have orbs (for either renderer). */
+export function strategySectors(orbs) {
+  const ids = [...new Set(orbs.filter(orb => orb.stage !== "history").map(orb => orb.strategy))];
+  return ids.map(id => ({id, tag: strategyTag(id).tag, label: strategyTag(id).label, angle: sectorAngle(id),
+    color: STRATEGY_COLORS[id] || OTHER_STRATEGY_COLOR}));
+}
+
+/**
+ * Branch geometry in layout units: a trunk from the centre along the strategy's
+ * sector, and a curve from the trunk to each live orb. Purely visual structure.
+ */
+export function branchCurves(orbs) {
+  return orbs.filter(orb => orb.stage !== "history").map(orb => {
+    const radius = Math.hypot(orb.x, orb.z);
+    const hub = {x: Math.cos(orb.centre) * 0.7, z: Math.sin(orb.centre) * 0.7};
+    const control = {x: Math.cos(orb.centre) * radius * 0.62, z: Math.sin(orb.centre) * radius * 0.62};
+    return {id: orb.id, strategy: orb.strategy, stage: orb.stage, color: STRATEGY_COLORS[orb.strategy] || OTHER_STRATEGY_COLOR,
+      hub, control, end: {x: orb.x, y: orb.y, z: orb.z}};
+  });
+}
+
 /**
  * Orb positions for the garden visual. A pure function of setup key and stage,
  * so orbs never jump between refreshes; a relaxation pass keeps orbs apart and a
@@ -342,10 +636,12 @@ export function constellationLayout(cards, selectedId = null) {
     counts[card.stage] = (counts[card.stage] || 0) + 1;
     if (counts[card.stage] > (MAX_ORBS[card.stage] || 10)) continue;
     const band = BANDS[card.stage] || BANDS.growing;
-    const angle = hash(card.key + ":a") * Math.PI * 2;
+    const strategy = card.strategy?.id || null;
+    const centre = sectorAngle(strategy);
+    const angle = centre + (hash(card.key + ":a") * 2 - 1) * SECTOR_SPREAD;
     const radius = band.r[0] + hash(card.key + ":r") * (band.r[1] - band.r[0]);
     orbs.push({
-      id: card.key, symbol: card.symbol, stage: card.stage, direction: card.direction,
+      id: card.key, symbol: card.symbol, stage: card.stage, direction: card.direction, strategy, centre,
       score: card.score, selected: card.key === selectedId, outcome: card.outcome || null,
       x: Math.cos(angle) * radius, z: Math.sin(angle) * radius,
       y: band.y[0] + hash(card.key + ":y") * (band.y[1] - band.y[0]),
@@ -364,10 +660,11 @@ export function constellationLayout(cards, selectedId = null) {
         }
       }
     }
-    for (const orb of orbs) {                 // stay inside the lifecycle band
+    for (const orb of orbs) {                 // stay inside the lifecycle band and the strategy's sector
       const band = BANDS[orb.stage], radius = Math.hypot(orb.x, orb.z) || 0.001;
       const clamped = Math.max(band.r[0], Math.min(band.r[1], radius));
-      orb.x *= clamped / radius; orb.z *= clamped / radius;
+      const offset = Math.max(-SECTOR_SPREAD, Math.min(SECTOR_SPREAD, wrap(Math.atan2(orb.z, orb.x) - orb.centre)));
+      orb.x = Math.cos(orb.centre + offset) * clamped; orb.z = Math.sin(orb.centre + offset) * clamped;
     }
   }
   return orbs;

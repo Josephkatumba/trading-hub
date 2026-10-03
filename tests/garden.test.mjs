@@ -88,7 +88,7 @@ test("counters come from data and are unavailable (not zero) when offline", () =
     confirmed: [episode({setup_id: "c", lifecycle_state: "CONFIRMED", confirmation: {}}), episode({setup_id: "d", lifecycle_state: "ACTIVE", confirmation: {}})],
     closed: [episode({setup_id: "e", lifecycle_state: "EXPIRED"})]};
   assert.deepEqual(gardenCounters({markets: new Array(15).fill({}), episodes, mode: "LIVE"}),
-    {watched: 15, growing: 1, confirming: 1, bloomed: 1, active: 1,
+    {watched: 15, watching: 1, developing: 1, confirmed: 2, growing: 1, confirming: 1, bloomed: 1, active: 1,
       byStrategy: [{id: "trendline", tag: "TRENDLINE", label: "Trendline", count: 4}]});
   const offline = gardenCounters({markets: [], episodes: null, mode: "OFFLINE"});
   assert.ok(Object.values(offline).every(value => value === null));
@@ -168,7 +168,7 @@ test("focus panel shows the selection with real levels only", async () => {
   const {focusPanel} = await import("../src/garden/gardenCards.mjs");
   const planned = focusPanel(setupCardModel(episode({lifecycle_state: "CONFIRMED", confirmation: {confirmed_at: "2026-09-24T09:42:10Z"},
     proposed_entry: 4272.4, proposed_stop_loss: 4285.2, proposed_take_profit: 4234, features: {rr: 3}})));
-  assert.match(planned, /XAUUSD/); assert.match(planned, /4,285.20/); assert.match(planned, /1:3/); assert.match(planned, /View analysis/);
+  assert.match(planned, /XAUUSD/); assert.match(planned, /4,285.20/); assert.match(planned, /1:3/); assert.match(planned, /View market research/);
   const sparse = focusPanel(setupCardModel(episode()));
   assert.doesNotMatch(sparse, /gd-focus-levels/);
   assert.equal(focusPanel(null), "");

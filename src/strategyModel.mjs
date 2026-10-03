@@ -11,10 +11,14 @@ export const LEGACY_STRATEGY_ID = "trendline";
 // does NOT make a strategy active; the registry decides that.
 export const STRATEGY_CATALOG = Object.freeze({
   trendline: Object.freeze({id: "trendline", tag: "TRENDLINE", label: "Trendline"}),
+  // The live trendline since the v5 replacement: its own strategy_id (so its records never mix
+  // with the retired v4 "trendline" history), shown as TRENDLINE; the version is on every record.
+  trendline_v5: Object.freeze({id: "trendline_v5", tag: "TRENDLINE", label: "Trendline"}),
   support_resistance: Object.freeze({id: "support_resistance", tag: "S/R", label: "Support & Resistance"}),
   // gardenResearch: a SHADOW (research) strategy whose current results are shown, labelled
   // RESEARCH, in the Garden's market overview. Never as Garden setups, counters or alerts.
   trend_momentum: Object.freeze({id: "trend_momentum", tag: "TREND/MOM", label: "Trend / Momentum", gardenResearch: true}),
+  // Not registered strategies: never evaluated, never selectable, never shown in the Garden.
   smc: Object.freeze({id: "smc", tag: "SMC", label: "Smart Money Concepts"}),
   crt: Object.freeze({id: "crt", tag: "CRT", label: "Candle Range Theory"}),
   ict: Object.freeze({id: "ict", tag: "ICT", label: "ICT"}),
@@ -72,9 +76,10 @@ export function strategyFilters(registry) {
   const ids = [...Object.keys(STRATEGY_CATALOG), ...entries.map(item => item.id).filter(id => !STRATEGY_CATALOG[id])];
   return [{key: "all", tag: "ALL", label: "All strategies", status: "LIVE", selectable: true},
     ...ids.map(id => {
-      const status = entries.find(item => item.id === id)?.status || "UNAVAILABLE";
+      const entry = entries.find(item => item.id === id);
+      const status = entry?.status || "UNAVAILABLE";
       const {tag, label} = strategyTag(id);
-      return {key: id, tag, label, status, selectable: status !== "UNAVAILABLE"};
+      return {key: id, tag, label, status, version: entry?.version || null, selectable: status !== "UNAVAILABLE"};
     })];
 }
 

@@ -34,13 +34,15 @@ test("strategy tags: catalog names, unknown ids and old records", () => {
 
 test("strategy filters: only registered strategies are selectable; catalog names are not live", () => {
   const filters = strategyFilters(TRENDLINE_ONLY);
-  assert.deepEqual(filters.map(f => f.key), ["all", "trendline", "support_resistance", "trend_momentum", "smc", "crt", "ict"]);
+  assert.deepEqual(filters.map(f => f.key), ["all", "trendline", "trendline_v5", "support_resistance", "trend_momentum", "smc", "crt", "ict"]);
   assert.deepEqual(filters.filter(f => f.selectable).map(f => f.key), ["all", "trendline"]);
   assert.equal(filters.find(f => f.key === "smc").status, "UNAVAILABLE");
   const bar = strategyFilterBar(filters, "trendline");
   assert.match(bar, /data-strategy-filter="trendline" aria-pressed="true"/);
-  assert.match(bar, /data-strategy-filter="smc" aria-pressed="false" disabled/);
-  assert.match(bar, /S\/R<small>not live<\/small>/);
+  // Not registered at all (S/R, SMC, CRT, ICT here): not part of the Garden's filter bar.
+  assert.doesNotMatch(bar, /data-strategy-filter="(trendline_v5|support_resistance|smc|crt|ict)"/);
+  // Registered but disabled: shown and labelled not live.
+  assert.match(strategyFilterBar(strategyFilters(WITH_SHADOW)), /SMC<small>not live<\/small>/);
   const shadow = strategyFilters(WITH_SHADOW);
   assert.equal(shadow.find(f => f.key === "support_resistance").status, "SHADOW");
   assert.equal(shadow.find(f => f.key === "support_resistance").selectable, true, "shadow results can be reviewed");
@@ -150,4 +152,18 @@ test("per-strategy performance passes backend counts through and never mixes str
   assert.match(html, /2W \/ 1L/);
   assert.doesNotMatch(html, /SMC|%/);
   assert.match(strategyPerformanceBlock(null, strategyTag("crt")), /No confirmed Candle Range Theory setups/);
+});
+
+test("the live trendline (trendline_v5) is shown as TRENDLINE, distinct from the retired v4 history", () => {
+  const live = [{strategy_id: "trendline_v5", version: "trendline-first-v5", status: "LIVE"},
+    {strategy_id: "support_resistance", version: "sr-levels-v1", status: "LIVE"}, {strategy_id: "trend_momentum", version: "tm-pullback-v2", status: "LIVE"}];
+  assert.equal(strategyTag("trendline_v5").tag, "TRENDLINE");
+  assert.equal(strategyTag("trendline").tag, "TRENDLINE", "old records still read as Trendline");
+  const filters = strategyFilters(live);
+  assert.deepEqual(filters.filter(f => f.selectable).map(f => f.key), ["all", "trendline_v5", "support_resistance", "trend_momentum"]);
+  assert.equal(filters.find(f => f.key === "trendline").status, "UNAVAILABLE", "the retired v4 is not live");
+  const bar = strategyFilterBar(filters, "all");
+  assert.equal((bar.match(/>TRENDLINE</g) || []).length, 1, "one Trendline filter, never two");
+  assert.equal(strategyIdOf({strategy_id: "trendline_v5"}), "trendline_v5");
+  assert.equal(strategyIdOf({}), "trendline", "records without an id stay the old trendline");
 });

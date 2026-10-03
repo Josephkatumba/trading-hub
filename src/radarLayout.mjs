@@ -12,16 +12,16 @@ export function currentWatchSetups(markets) {
   });
 }
 
-export function visibleSetupEntries(entries, expanded = false) {
+export function visibleSetupEntries(entries, expanded = false, limit = MAIN_SETUP_LIMIT) {
   const rows = entries || [];
-  return expanded ? rows : rows.slice(0, MAIN_SETUP_LIMIT);
+  return expanded ? rows : rows.slice(0, limit);
 }
 
-export function setupCountSummary(total, expanded = false) {
-  if (total <= MAIN_SETUP_LIMIT) return null;
+export function setupCountSummary(total, expanded = false, limit = MAIN_SETUP_LIMIT) {
+  if (total <= limit) return null;
   return expanded
     ? `Showing ${total} of ${total}`
-    : `Showing ${MAIN_SETUP_LIMIT} of ${total}`;
+    : `Showing ${limit} of ${total}`;
 }
 
 export function partitionConfirmations(entries) {

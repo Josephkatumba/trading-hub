@@ -2,10 +2,12 @@
 // gardenMount.mjs, so the Three.js chunk only downloads when the 3D garden shows.
 //
 // Every orb is a real setup, placed by lifecycle stage (see gardenModel BANDS):
-// developing orbs are small and sage, confirming orbs gain an energy ring, a
-// confirmed setup matures into a mint (long) or coral (short) orb with a soft
-// bloom crown, active setups hold a stable field ring, and closed setups settle
-// as quiet grey points on the outer archive ring. The environment — drifting
+// developing orbs are small, softly tinted by direction and gently breathing;
+// confirming orbs gain an energy ring and a stronger pulse; a confirmed setup
+// matures into a mint (long) or coral (short) orb with a bloom crown and a slow
+// ripple; active setups hold a stable field ring; closed setups settle on the
+// outer archive ring coloured by outcome (target blue, stop red, invalidated
+// amber, expired grey), the failed-before-confirmation ones fading. The environment — drifting
 // dust, flowing currents, lifecycle rings and a slow scanning sweep — is
 // ambient only and never represents data, so the garden stays alive without
 // inventing anything.
@@ -15,13 +17,18 @@
 // <=1.5, ~30 fps cap, paused while the tab is hidden or the canvas is off-screen,
 // static frames under reduced motion, full dispose on navigation.
 import * as THREE from "three";
-import {shouldBloom} from "./gardenModel.mjs";
+import {branchCurves, shouldBloom, strategySectors} from "./gardenModel.mjs";
 
 const PALETTE = {
   growing: 0x8fbba0, shaping: 0x4fa37c, long: 0x2ebd82, short: 0xec6f63,
+  // Developing / confirming setups carry a softer version of their direction.
+  growingLong: 0x86cba3, growingShort: 0xe8a198, shapingLong: 0x45b47c, shapingShort: 0xe0776d,
   confirmed: 0x8a7fc2, history: 0xa9b0ac, ink: 0x1c2321,
+  target: 0x4f86d9, stop: 0xe0685f, invalidated: 0xd9a441,
   dust: 0x8fae9c, current: 0x6fae8e, ring: 0x9fb3a6, sweep: 0x7fb896,
 };
+// Closed setups: outcomes that are known stay visible; failed-before-confirmation ones fade.
+const HISTORY_OPACITY = {target: 0.75, stop: 0.75, invalidated: 0.42, expired: 0.32};
 const ORB_SIZE = {growing: 0.14, shaping: 0.21, bloomed: 0.3, active: 0.34, history: 0.065};
 
 const ORB_VERTEX = `
@@ -109,12 +116,14 @@ export function copyOverlaysStage(container) {
   return Boolean(parent) && getComputedStyle(parent).position === "absolute";
 }
 
-function stageColor(orb) {
-  if (orb.stage === "history") return orb.outcome === "target" ? 0x9fcbb2 : orb.outcome === "stop" ? 0xdca7a1 : PALETTE.history;
+export function stageColor(orb) {
+  if (orb.stage === "history") return PALETTE[orb.outcome] || PALETTE.history;
   if (orb.stage === "bloomed" || orb.stage === "active") {
     return orb.direction === "LONG" ? PALETTE.long : orb.direction === "SHORT" ? PALETTE.short : PALETTE.confirmed;
   }
-  return PALETTE[orb.stage] || PALETTE.growing;
+  const side = orb.direction === "LONG" ? "Long" : orb.direction === "SHORT" ? "Short" : "";
+  if (orb.stage === "shaping") return PALETTE["shaping" + side] || PALETTE.shaping;
+  return PALETTE["growing" + side] || PALETTE.growing;
 }
 
 export function createGardenScene(container, {reducedMotion = false, onSelect = () => {}} = {}) {
@@ -232,11 +241,11 @@ export function createGardenScene(container, {reducedMotion = false, onSelect = 
     const group = new THREE.Group();
     const color = stageColor(orb);
     const size = ORB_SIZE[orb.stage] * (orb.stage === "history" ? 1 : 0.85 + (Number(orb.score) || 50) / 330);
-    const body = new THREE.Mesh(sphere, orbMaterial(color, orb.stage === "history" ? 0.55 : 0.92,
+    const body = new THREE.Mesh(sphere, orbMaterial(color, orb.stage === "history" ? (HISTORY_OPACITY[orb.outcome] ?? 0.55) : 0.92,
       orb.stage === "growing" ? 0.12 : 0));
     body.scale.setScalar(size);
     group.add(body);
-    const parts = {body, spin: []};
+    const parts = {body, spin: [], ripple: null};
     if (orb.stage !== "history") {
       const glow = new THREE.Sprite(haloMaterial(color, orb.stage === "growing" ? 0.35 : 0.5));
       glow.scale.setScalar(size * (orb.stage === "bloomed" ? 5.6 : orb.stage === "active" ? 4.8 : 3.4));
@@ -250,6 +259,12 @@ export function createGardenScene(container, {reducedMotion = false, onSelect = 
         group.add(ring);
         parts.spin.push(ring);
       }
+    }
+    if (orb.stage === "bloomed" && animate) {  // a slow ripple spreading from a confirmed node
+      const ripple = new THREE.Mesh(torus, new THREE.MeshBasicMaterial({color, transparent: true, opacity: 0, depthWrite: false}));
+      ripple.rotation.x = Math.PI / 2;
+      group.add(ripple);
+      parts.ripple = ripple;
     }
     if (orb.stage === "bloomed") {             // matured: a still, bloom-like crown
       for (let p = 0; p < 6; p++) {
@@ -273,27 +288,56 @@ export function createGardenScene(container, {reducedMotion = false, onSelect = 
     return group;
   }
 
-  // Constellation links (faint): live orbs to their nearest live neighbour.
-  let links = null;
-  const linkMaterial = keep(new THREE.LineBasicMaterial({color: PALETTE.ring, transparent: true, opacity: 0.35, depthWrite: false}));
+  // Strategy branches: each live strategy is a trunk from the centre along its own
+  // sector, branching to each of its live setups (rebuilt only when orbs change).
+  const links = [];
+  const branchMaterials = new Map();
+  const branchMaterial = (color, opacity) => {
+    const key = color + ":" + opacity;
+    if (!branchMaterials.has(key)) branchMaterials.set(key, keep(new THREE.LineBasicMaterial({color: new THREE.Color(color), transparent: true, opacity, depthWrite: false})));
+    return branchMaterials.get(key);
+  };
+  const sectorLabels = document.createElement("div");
+  sectorLabels.className = "gd-sector-labels";
+  sectorLabels.setAttribute("aria-hidden", "true");
+  container.appendChild(sectorLabels);
+  let sectors = [];
   function rebuildLinks(orbList) {
-    if (links) { world.remove(links); links.geometry.dispose(); links = null; }
-    const live = orbList.filter(orb => orb.stage !== "history");
-    const segments = [];
-    for (const a of live) {
-      let best = null, bestDistance = Infinity;
-      for (const b of live) {
-        if (a === b) continue;
-        const distance = Math.hypot(a.x - b.x, a.z - b.z);
-        if (distance < bestDistance) { bestDistance = distance; best = b; }
-      }
-      if (best && bestDistance < 3.2) segments.push(a.x, a.y, a.z, best.x, best.y, best.z);
+    for (const line of links) { world.remove(line); line.geometry.dispose(); }
+    links.length = 0;
+    const byColor = new Map();
+    for (const curve of branchCurves(orbList)) {
+      const points = new THREE.QuadraticBezierCurve3(new THREE.Vector3(curve.hub.x, 0.12, curve.hub.z),
+        new THREE.Vector3(curve.control.x, curve.end.y * 0.55, curve.control.z), new THREE.Vector3(curve.end.x, curve.end.y, curve.end.z)).getPoints(14);
+      const list = byColor.get(curve.color) || [];
+      for (let i = 1; i < points.length; i++) list.push(points[i - 1].x, points[i - 1].y, points[i - 1].z, points[i].x, points[i].y, points[i].z);
+      byColor.set(curve.color, list);
     }
-    if (!segments.length) return;
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute("position", new THREE.Float32BufferAttribute(segments, 3));
-    links = new THREE.LineSegments(geometry, linkMaterial);
-    world.add(links);
+    sectors = strategySectors(orbList);
+    for (const sector of sectors) {
+      const list = byColor.get(sector.color) || [];
+      list.push(0, 0.05, 0, Math.cos(sector.angle) * 0.7, 0.12, Math.sin(sector.angle) * 0.7);
+      byColor.set(sector.color, list);
+    }
+    for (const [color, segments] of byColor) {
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.Float32BufferAttribute(segments, 3));
+      const line = new THREE.LineSegments(geometry, branchMaterial(color, 0.42));
+      links.push(line);
+      world.add(line);
+    }
+    sectorLabels.innerHTML = sectors.map(sector => '<span class="gd-sector-label" data-strategy="' + sector.id + '"><i class="gd-glyph"></i>' + sector.tag + '</span>').join("");
+  }
+  function placeSectorLabels() {
+    const nodes = sectorLabels.children;
+    sectors.forEach((sector, index) => {
+      const node = nodes[index];
+      if (!node) return;
+      scratch.set(Math.cos(sector.angle) * 5.35, 0.1, Math.sin(sector.angle) * 5.35);
+      world.localToWorld(scratch);
+      scratch.project(camera);
+      node.style.transform = "translate(" + ((scratch.x * 0.5 + 0.5) * container.clientWidth).toFixed(1) + "px," + ((-scratch.y * 0.5 + 0.5) * container.clientHeight).toFixed(1) + "px) translate(-50%,-50%)";
+    });
   }
 
   // Selection ring (camera-facing) and one-shot bloom effects.
@@ -369,8 +413,11 @@ export function createGardenScene(container, {reducedMotion = false, onSelect = 
     scratch.y += entry.group.userData.size * entry.group.scale.y * 1.7 + 0.12;
     scratch.project(camera);
     if (scratch.z > 1) { pin.hidden = true; return; }
-    const x = (scratch.x * 0.5 + 0.5) * container.clientWidth, y = (-scratch.y * 0.5 + 0.5) * container.clientHeight;
     pin.hidden = false;
+    // Keep the whole pin inside the stage: an orb near an edge must not clip its label.
+    const half = pin.offsetWidth / 2 + 6, width = container.clientWidth;
+    const x = Math.min(Math.max((scratch.x * 0.5 + 0.5) * width, half), Math.max(half, width - half));
+    const y = Math.max((-scratch.y * 0.5 + 0.5) * container.clientHeight, pin.offsetHeight + 6);
     pin.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px) translate(-50%,-100%)";
   }
 
@@ -385,11 +432,22 @@ export function createGardenScene(container, {reducedMotion = false, onSelect = 
         if (data.stage !== "history") group.position.y = data.baseY + Math.sin(t * 0.55 + data.phase) * 0.05;
         for (const ring of data.parts.spin) ring.rotation.z += 0.004;
         let scale = data.emphasis;
+        // Developing nodes breathe gently; confirming nodes a little more; active nodes hold still.
+        if (data.stage === "growing") scale *= 1 + Math.sin(t * 1.15 + data.phase) * 0.035;
+        else if (data.stage === "shaping") scale *= 1 + Math.sin(t * 1.9 + data.phase) * 0.07;
+        const ripple = data.parts.ripple;
+        if (ripple) {
+          const k = ((t * 0.28 + data.phase) % 1 + 1) % 1;
+          ripple.scale.setScalar(data.size * (1.3 + k * 3.2));
+          ripple.material.opacity = 0.42 * (1 - k) * (1 - k);
+        }
         if (data.bornAt != null) {
           const k = Math.min(1, (now - data.bornAt) / 1600);
           scale *= 0.35 + 0.65 * (1 - Math.pow(1 - k, 3));
           if (k >= 1) data.bornAt = null;
           group.scale.setScalar(scale);
+        } else if (data.stage === "growing" || data.stage === "shaping") {
+          group.scale.setScalar(Math.abs(group.scale.x - scale) > 0.12 ? group.scale.x + (scale - group.scale.x) * 0.12 : scale);
         } else {
           group.scale.setScalar(group.scale.x + (scale - group.scale.x) * 0.12);
         }
@@ -411,6 +469,7 @@ export function createGardenScene(container, {reducedMotion = false, onSelect = 
     }
     renderer.render(scene, camera);
     placePin();
+    placeSectorLabels();
   }
 
   function loop(now) {
@@ -467,18 +526,19 @@ export function createGardenScene(container, {reducedMotion = false, onSelect = 
   // ----- public API ------------------------------------------------------------
   function update(nextOrbs) {
     const next = new Map(nextOrbs.map(orb => [orb.id, orb]));
+    const discard = group => { world.remove(group); group.userData.parts.ripple?.material.dispose(); };
     for (const [id, entry] of orbs) {
-      if (!next.has(id)) { world.remove(entry.group); orbs.delete(id); }
+      if (!next.has(id)) { discard(entry.group); orbs.delete(id); }
     }
     for (const orb of nextOrbs) {
-      const key = orb.stage + "|" + orb.direction + "|" + Math.round((Number(orb.score) || 0) / 10);
+      const key = orb.stage + "|" + orb.direction + "|" + orb.strategy + "|" + orb.outcome + "|" + Math.round((Number(orb.score) || 0) / 10);
       const existing = orbs.get(orb.id);
       if (existing && existing.key === key) {
         existing.group.position.set(orb.x, existing.group.position.y, orb.z);
         existing.group.userData.baseY = orb.y;
         continue;
       }
-      if (existing) world.remove(existing.group);
+      if (existing) discard(existing.group);
       const group = buildOrb(orb);
       // A real transition into CONFIRMED observed while the garden is open: one
       // restrained bloom. Never on the first paint, never for replayed history.
@@ -523,7 +583,9 @@ export function createGardenScene(container, {reducedMotion = false, onSelect = 
     renderer.domElement.removeEventListener("pointermove", onPointerMove);
     renderer.domElement.removeEventListener("click", onClick);
     for (const effect of effects) { effect.ring.material.dispose(); effect.burst.material.dispose(); effect.burst.geometry.dispose(); }
-    if (links) links.geometry.dispose();
+    for (const {group} of orbs.values()) group.userData.parts.ripple?.material.dispose();
+    for (const line of links) line.geometry.dispose();
+    sectorLabels.remove();
     for (const item of disposables) item.dispose?.();
     renderer.dispose();
     renderer.forceContextLoss();

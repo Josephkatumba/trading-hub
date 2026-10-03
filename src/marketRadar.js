@@ -3,17 +3,20 @@
 // the previous radar; presentation lives in ./garden/* (view models, markup and
 // the optional 3D/2D garden visual, which can fail or be disabled independently).
 import "./garden/garden.css";
+import "./garden/garden-observatory.css";
+import "./garden/garden-command.css";
 import {engineFetch,getEngineUrl} from "./engine.js";
 import {createPoller} from "./radarPolling.mjs";
-import {confirmationDisplay, renderAnalystEvidence} from "./analystPresentation.mjs";
+import {confirmationDisplay} from "./analystPresentation.mjs";
 import {setupCountSummary, visibleSetupEntries} from "./radarLayout.mjs";
 import {createConfirmationAlertTracker, dispatchConfirmationAlerts, dispatchTestSound, persistedConfirmationEvents} from "./confirmationAlerts.mjs";
 import {CONFIRMATION_CHIME_CONFIG, playConfirmationChime} from "./confirmationChime.mjs";
-import {analystModel, archiveEntry, archiveSummary, gardenAreas, gardenCounters, marketOverviewRow, constellationLayout, setupCardModel} from "./garden/gardenModel.mjs";
-import {analystPanel, archivePanel, confirmationToastHtml, counterTiles, emptyArea, esc, focusPanel, marketOverview, setupCard, stageLegend, strategyFilterBar, strategyLabPanel, strategyPerformanceBlock} from "./garden/gardenCards.mjs";
+import {analysisObservationId, archiveEntry, archiveSummary, gardenAreas, gardenHeaderModel, constellationLayout, researchModel, setupCardModel} from "./garden/gardenModel.mjs";
+import {archivePanel, compactCard, confirmationToastHtml, emptyArea, esc, evaluationPanel, focusPanel, headerStats, headerStrategies, marketWatchAll, priorityWatch, researchPanel, setupCard, stageLegend, strategyFilterBar, strategyLabPanel, strategyPerformanceBlock} from "./garden/gardenCards.mjs";
 import {filterByStrategy, matchesStrategy, strategyFilters, strategyPerformance, strategyStatus, strategyTag} from "./strategyModel.mjs";
 import {mountGarden, prefersReducedMotion} from "./garden/gardenMount.mjs";
 import {evidenceModel, evidencePanel, labReportPanel} from "./garden/strategyLab.mjs";
+import {marketWatchGroups, priorityWatchSlots, rankMarkets, trackScanEvents} from "./garden/priorityWatch.mjs";
 
 const DEMO_MARKETS = [
   {symbol:"XAUUSD",price:3348.2,change_pct:0.42,state:"WATCHING",score:74,setup:"Trendline setup",reason:"Trendline is being monitored for a break or rejection, with support/resistance as confirmation.",session:"New York",market_bias:"BEARISH",momentum:"BEARISH",higher_timeframe_bias:"BEARISH",structure:"Lower highs + lower lows",stage:"TRENDLINE TEST",insight:"Bearish structure is active. Confirmation is still required.",rsi:44,action:"WAIT",trigger:"Wait for a confirmed trendline break/retest or a clean rejection at S/R."},
@@ -36,20 +39,35 @@ let latestResult = null;
 let latestMarkets = [];
 let latestEpisodes = {current:[],confirmed:[],closed:[]};
 let growingExpanded = false;
+let bloomedExpanded = false;
 let historyExpanded = false;
+const DEVELOPING_LIMIT = 10;          // compact cards shown before "View all"
+const CONFIRMED_LIMIT = 8;
+const HISTORY_LIMIT = 8;
+let researchOpen = false;             // Market Research drawer for the selected row
+let researchReturnFocus = null;
+let watchAllOpen = false;             // full Market Watch overlay ("View all")
+let watchAllReturnFocus = null;
+let latestRanking = [];               // every scanned market in attention order (priorityWatch.mjs)
+let scanEvents = null;                // when each live strategy scan last changed while open (priorityWatch.trackScanEvents)
+let shownWatchSymbols = null;         // symbols in the 4 slots last paint (null before the first paint)
+const headerValues = new Map();       // data-stat -> last shown value (for change transitions)
 let archiveFilter = "all";
 let strategyFilter = "all";           // "all" or a strategy_id; applies to setups, archive and performance
 let latestRegistry = null;            // engine strategy registry (null: offline, trendline assumed)
 let labReport = null;                 // /api/market/strategy-lab, fetched only while the Lab is open
 let labSelected = "support_resistance";
 let labFetchedAt = 0;
+let evalReport = null;                // /api/market/evaluation, fetched with the Lab
+let evalSelected = "trend_momentum";
+const similarCache = new Map();       // setup_id -> {data, state, at}: /api/market/setups/{id}/similar
+const SIMILAR_REFRESH_MS = 120000;
 const LAB_REFRESH_MS = 60000;
 let latestOutcomes = [];
 let latestArchive = [];
 let selectedKey = null;
 let analystCache = new Map();
 let latestCards = new Map();          // key -> {row, card}
-const expandedEvidence = new Set();
 let garden = null;                    // mounted garden visual controller
 let gardenMountToken = 0;
 let confirmationAlertsEnabled = false;
@@ -68,30 +86,39 @@ let tracked = readTracked();
 export function renderMarketRadar(){
   return '<div id="radarRoot" class="radar-root garden-root">'
     +'<div id="radarModeBanner" class="radar-mode-banner" role="status" hidden></div>'
-    +'<header class="gd-topbar"><div class="gd-brand"><span class="gd-brand-mark" aria-hidden="true">🌿</span><div><b>TRAD<span>eden</span></b><small>Market intelligence garden</small></div></div>'
+    +'<header class="gd-topbar gd-observatory gd-command-head"><div class="gd-brand"><span class="gd-brand-mark" aria-hidden="true"><i></i></span><div><b>TRAD<span>eden</span></b><small>Market Garden</small></div></div>'
+    +'<div class="gd-hmid"><div class="gd-header-live" id="gardenHeaderStrategies"></div></div>'
+    +'<div class="gd-hright"><div id="gardenHeaderStats"></div>'
     +'<div class="gd-top-tools"><div class="gd-engine"><i class="gd-status-dot" aria-hidden="true"></i><span id="radarEngineStatus">Connecting engine</span></div><span class="gd-updated" id="radarUpdated">Waiting…</span>'
     +'<div class="confirmation-alert-controls" id="gardenAlerts"><button type="button" id="confirmationAlertsToggle" class="alert-control" aria-pressed="false" title="Enable Alerts">🔇 Alerts OFF</button><button type="button" id="testConfirmationSound" class="alert-test-control">Test sound</button></div></div>'
+    +'</div>'
     +'<div id="confirmationToast" class="confirmation-toast" role="status" aria-live="polite" hidden></div></header>'
+    +'<section class="gd-command" aria-label="Garden and market watch">'
     +'<section class="gd-world" id="gardenWorld" aria-label="The TRADeden Garden">'
-    +'<div class="gd-world-stage"><div class="gd-stage" id="gardenStage"></div><div class="gd-stage-overlay" id="gardenOverlay" hidden></div><div class="gd-focus" id="gardenFocus" role="region" aria-label="Selected setup" aria-live="polite" hidden></div>'
+    +'<div class="gd-world-stage"><div class="gd-stage" id="gardenStage"></div><div class="gd-stage-overlay" id="gardenOverlay" hidden></div><div class="gd-focus" id="gardenFocus" role="region" aria-label="Selected market" aria-live="polite" hidden></div>'
     +'<div class="gd-legend">'+stageLegend()+'</div><small class="gd-stage-mode" id="gardenModeNote"></small></div>'
-    +'<div class="gd-world-copy"><span class="gd-eyebrow" id="radarEyebrow">🌿 The TRADeden Garden</span>'
-    +'<h1>The market is always moving.<br><span>TRADeden is always watching.</span></h1>'
-    +'<p>TRADeden continuously watches the markets for developing structures, confirmations and invalidations so you don\'t have to stare at charts all day.</p>'
-    +'<div class="gd-counters" id="gardenCounters">'+counterTiles(null)+'</div>'
-    +'<p class="gd-hero-note" id="gardenHeroNote">Every orb is a real setup from the existing strategy and lifecycle. Execution stays manual — TRADeden never places orders.</p></div></section>'
+    +'<div class="gd-world-caption"><span class="gd-eyebrow" id="radarEyebrow">The TRADeden Garden</span>'
+    +'<p class="gd-hero-note" id="gardenHeroNote">Every node is a real setup from a live strategy and its lifecycle. Execution stays manual — TRADeden never places orders.</p></div></section>'
+    +'<section class="gd-panel gd-watch" id="gardenMarkets" aria-label="TRADeden priority watch"><header class="gd-panel-head"><div><h2>TRADeden priority watch</h2><p id="watchSubtitle">Markets demanding attention</p></div><span class="gd-count" id="marketCount"></span></header>'
+    +'<div id="radarTable" class="gd-watch-list gd-pw-list" aria-live="polite"></div>'
+    +'<footer class="gd-pw-foot"><span id="watchScanned"></span><button type="button" class="gd-link" id="watchViewAll" data-watch-action="all" aria-haspopup="dialog">View all →</button></footer></section>'
+    +'</section>'
     +'<div class="gd-strategy-bar" id="strategyFilterBar"></div>'
-    +'<div class="gd-layout"><div class="gd-main">'
-    +area("growing","🌱","Growing Garden","Current and developing setups. Evidence is still accumulating.")
-    +area("bloomed","🌸","Bloomed Setups","Confirmed by the existing strategy rules, including setups now being tracked as active.")
-    +'<section class="gd-area gd-area-history" id="area-history"><header class="gd-area-head"><div><h2><span aria-hidden="true">🍂</span> Garden Archive</h2><p>What happened to the setups TRADeden surfaced. Only confirmed setups can hit a target or stop; the rest failed or went stale before confirmation.</p></div><span class="gd-count" id="historyCount"></span></header><div id="historyCards" class="gd-archive"></div></section>'
-    +'</div><div class="gd-side"><section class="gd-analyst" id="gardenAnalyst" aria-live="polite">'+analystPanel(null)+'</section>'
-    +'<section class="gd-panel gd-markets" id="gardenMarkets"><header class="gd-panel-head"><h2>Markets TRADeden watches</h2><span class="gd-count" id="marketCount"></span></header><div id="radarTable" class="gd-market-list"></div></section></div></div>'
+    +'<div class="gd-main">'
+    +area("growing","🌱","Developing","Evidence still accumulating. Select a card for its market research.")
+    +area("bloomed","🟢","Confirmed","Passed their strategy's confirmation rules. A confirmation is a historical event: its plan never changes.")
+    +'<section class="gd-area gd-area-history" id="area-history"><header class="gd-area-head"><div><h2><span aria-hidden="true">📚</span> Recently closed</h2><p>What happened to the setups TRADeden surfaced. Only confirmed setups can hit a target or stop.</p></div><span class="gd-count" id="historyCount"></span></header><div id="historyCards" class="gd-archive"></div></section>'
+    +'</div>'
+    +'<div class="gd-research-backdrop" id="gardenResearchBackdrop" data-research-action="close" hidden></div>'
+    +'<section class="gd-research" id="gardenResearch" role="dialog" aria-modal="true" aria-labelledby="gardenResearchTitle" tabindex="-1" hidden></section>'
+    +'<div class="gd-research-backdrop" id="gardenWatchAllBackdrop" data-watch-action="close" hidden></div>'
+    +'<section class="gd-research gd-watch-all" id="gardenWatchAll" role="dialog" aria-modal="true" aria-labelledby="gardenWatchAllTitle" tabindex="-1" hidden></section>'
     +'<section class="gd-panel performance-panel" id="gardenPerformance"><header class="gd-panel-head"><div><h2>📊 Today\'s setup performance</h2><p>Headline uses the 4h market outcome. Other configured horizons remain visible. Trade outcomes are excluded.</p></div></header><div id="dailyPerformance"><div class="macro-empty"><b>Loading performance</b></div></div></section>'
-    +'<details class="gd-panel gd-strategy-lab" id="strategyLab"><summary><span>🧪 Strategy Lab</span><span class="historical-expand-hint">Expand</span></summary><p>Registered strategies and their status. Live strategies (Trendline, S/R, Trend/Momentum) each produce their own Garden setups, notifications and outcomes and are measured separately here. Live does not mean proven profitable. Shadow-mode (research) strategies, if any, are reviewed here only and never become Garden setups or alerts.</p><div id="strategyLabBody"></div><div id="strategyLabReport"></div><div id="strategyLabEvidence" aria-live="polite"></div></details>'
+    +'<details class="gd-panel gd-strategy-lab" id="strategyLab"><summary><span>🧪 Strategy Lab</span><span class="historical-expand-hint">Expand</span></summary><p>Registered strategies and their status. Live strategies (Trendline, S/R, Trend/Momentum) each produce their own Garden setups, notifications and outcomes and are measured separately here. Live does not mean proven profitable. Shadow-mode (research) strategies, if any, are reviewed here only and never become Garden setups or alerts.</p><div id="strategyLabBody"></div><div id="strategyLabReport"></div><div id="strategyLabEvidence" aria-live="polite"></div>'
+    +'<section class="gd-lab-evaluation"><h4>Historical evaluation · verified outcomes by condition</h4><p class="gd-note">The foundation of TRADeden\'s evaluation layer: what has happened to confirmed setups sharing a recorded condition. Deterministic, per strategy, verified outcomes only. It never creates or changes a setup.</p><div id="strategyLabEvaluation"></div></section></details>'
     +'<details class="gd-panel historical-confirmations" id="historicalConfirmations"><summary><span>📚 Confirmation event archive · today (<b id="historicalConfirmationCount">0</b>)</span><span class="historical-expand-hint">Expand</span></summary><p class="gd-archive-status" id="confirmedArchiveStatus"></p><div id="historicalConfirmationCards" class="gd-grid"></div></details>'
     +'<section class="gd-panel radar-fundamentals"><header class="gd-panel-head"><h2>Macro events that can change the tape</h2><span class="gd-count">US events</span></header><div id="radarFundamentals" class="macro-list"><div class="macro-empty"><b>Loading macro context</b></div></div></section>'
-    +'<footer class="gd-method"><p><b>How TRADeden watches:</b> H1 context → price action → trendline → support/resistance → CRT → session → a transparent 100-point setup score. Breaks and reversals are both valid setup families; the trendline event is the strategy gate.</p><p>TRADeden is decision support, not an auto-trading platform. Not an entry recommendation.</p></footer>'
+    +'<footer class="gd-method"><p><b>How TRADeden watches:</b> three independent LIVE strategies — Trendline, Support &amp; Resistance and Trend / Momentum — each evaluate every market on MT5 closed bars with deterministic rules. Each keeps its own setups, lifecycle, confirmations and outcomes; one strategy never suppresses or rewrites another\'s setup. A confirmed setup is a historical event: its confirmed plan never changes.</p><p>TRADeden is decision support, not an auto-trading platform. Not an entry recommendation.</p></footer>'
     +'</div>';
 }
 function area(key,icon,title,text){
@@ -116,13 +143,14 @@ async function getRadar(){
   return radarDemoEnabled()?{mode:"DEMO",markets:demoData(),live:false,source:"DEMO"}:{mode:"OFFLINE",markets:[],live:false,source:"OFFLINE"};
 }
 async function getPerformance(){try{return await engineFetch("/api/market/performance");}catch(_){return null;}}
-const analysisKey=row=>row?.setup_id?row.setup_id+":"+(row.observation_id||""):null;
+// A confirmed setup is explained from its confirmation snapshot, never from a later observation.
+const analysisKey=row=>row?.setup_id?row.setup_id+":"+(analysisObservationId(row)||""):null;
 // One request per analysis: concurrent callers share the in-flight promise.
 // (Caching only on completion let every repaint re-request pending analyses.)
 const analysisInFlight=new Map();
 function getAnalysis(m){
   if(!m?.setup_id)return Promise.resolve(null);
-  const observationId=m.observation_id||"";const key=m.setup_id+":"+observationId;
+  const observationId=analysisObservationId(m)||"";const key=m.setup_id+":"+observationId;
   if(analystCache.has(key))return Promise.resolve(analystCache.get(key));
   if(analysisInFlight.has(key))return analysisInFlight.get(key);
   const suffix=observationId?"?observation_id="+encodeURIComponent(observationId):"";
@@ -132,7 +160,7 @@ function getAnalysis(m){
   analysisInFlight.set(key,request);
   return request;
 }
-async function getSetupEpisodes(){try{return await engineFetch("/api/market/setup-episodes?bucket=all&limit=100");}catch(_){return null;}}
+async function getSetupEpisodes(){try{return await engineFetch("/api/market/setup-episodes?bucket=all&limit=40&per_strategy=true");}catch(_){return null;}}
 async function getOutcomes(){try{const data=await engineFetch("/api/market/outcomes");return Array.isArray(data?.outcomes)?data.outcomes:null;}catch(_){return null;}}
 
 // ----- cards ------------------------------------------------------------------
@@ -140,13 +168,6 @@ function cardFor(row,bucket){
   const card=setupCardModel(row,{bucket,analysis:analystCache.get(analysisKey(row))||null,tracked:tracked.has(row?.setup_id),simulated:radarMode==="DEMO"});
   if(card.key)latestCards.set(card.key,{row,card});
   return card;
-}
-function cardHtml(card,extraFoot=""){
-  const expanded=expandedEvidence.has(card.key);
-  const row=latestCards.get(card.key)?.row;
-  const key=analysisKey(row);
-  const analysis=key?analystCache.get(key):undefined;
-  return setupCard(card,{selected:card.key===selectedKey,expanded,evidenceHtml:analysis?renderAnalystEvidence(analysis):null,evidenceState:expanded&&key&&analysis===undefined?"loading":"idle",extraFoot});
 }
 function paintAreas(areas){
   const trackedFirst=(a,b)=>Number(b.tracked)-Number(a.tracked);
@@ -156,26 +177,35 @@ function paintAreas(areas){
   const history=areas.history.map((row,index)=>({...cardFor(row,"history"),outcome:archive[index]?.kind||null}));
   const offline=radarMode==="OFFLINE";
   const node=id=>document.getElementById(id);
-  const toolbar=(total,expanded,key)=>{const summary=total>6?setupCountSummary(total,expanded):null;return summary?'<div class="gd-toolbar"><span>'+esc(summary)+'</span><button type="button" class="gd-link" data-toggle="'+key+'" aria-expanded="'+expanded+'">'+(expanded?"Show less":"View all")+'</button></div>':"";};
+  const toolbar=(total,expanded,key,limit)=>{const summary=setupCountSummary(total,expanded,limit);return summary?'<div class="gd-toolbar"><span>'+esc(summary)+'</span><button type="button" class="gd-link" data-toggle="'+key+'" aria-expanded="'+expanded+'">'+(expanded?"Show less":"View all "+total)+'</button></div>':"";};
   if(strategyFilter!=="all"&&strategyStatus(strategyFilter,latestRegistry)==="SHADOW"){
     const tag=strategyTag(strategyFilter).tag;
     const text=tag+" runs in shadow mode: its setups are reviewed in the Strategy Lab and never appear in the Garden.";
     for(const id of ["growingCards","bloomedCards"])if(node(id))node(id).innerHTML=emptyArea("Shadow strategy",text);
-    for(const [id,text] of [["growingCount","0 growing"],["bloomedCount","0 bloomed"],["historyCount",history.length+" latest closed"]])if(node(id))node(id).textContent=text;
+    for(const [id,text] of [["growingCount","0 developing"],["bloomedCount","0 confirmed"],["historyCount",history.length+" recently closed"]])if(node(id))node(id).textContent=text;
     return {growing:[],bloomed:[],history};
   }
+  const developing=growing.filter(card=>!card.watching),seeds=growing.filter(card=>card.watching);
+  const seedStrip=seeds.length?'<div class="gd-seeds" aria-label="Watching"><span class="gd-seeds-label">Watching · '+seeds.length+'</span>'+seeds.slice(0,24).map(card=>setupCard(card,{compact:true,selected:card.key===selectedKey})).join("")+(seeds.length>24?'<span class="gd-na">+'+(seeds.length-24)+' more</span>':'')+'</div>':"";
   if(node("growingCards"))node("growingCards").innerHTML=growing.length
-    ?toolbar(growing.length,growingExpanded,"growing")+visibleSetupEntries(growing,growingExpanded).map(card=>cardHtml(card)).join("")
-    :emptyArea(offline?"The garden is not being watched":"Nothing growing right now",offline?"Engine offline — no setups are being evaluated.":"The engine is scanning; no setup is currently developing. No setup is a valid state.");
-  if(node("bloomedCards"))node("bloomedCards").innerHTML=bloomed.length?bloomed.map(card=>cardHtml(card)).join(""):emptyArea("No bloomed setups",offline?"Engine offline.":"No setup currently passes the confirmation rules.");
-  const count=(id,n,word)=>{if(node(id))node(id).textContent=n+" "+word;};
-  count("growingCount",growing.length,"growing");count("bloomedCount",bloomed.length,"bloomed");count("historyCount",history.length,"latest closed");
+    ?toolbar(developing.length,growingExpanded,"growing",DEVELOPING_LIMIT)+visibleSetupEntries(developing,growingExpanded,DEVELOPING_LIMIT).map(card=>compactCard(card,{selected:card.key===selectedKey})).join("")+seedStrip
+    :emptyArea(offline?"The garden is not being watched":"Nothing developing right now",offline?"Engine offline — no setups are being evaluated.":"The engine is scanning; no setup is currently developing. No setup is a valid state.");
+  if(node("bloomedCards"))node("bloomedCards").innerHTML=bloomed.length
+    ?toolbar(bloomed.length,bloomedExpanded,"bloomed",CONFIRMED_LIMIT)+visibleSetupEntries(bloomed,bloomedExpanded,CONFIRMED_LIMIT).map(card=>compactCard(card,{selected:card.key===selectedKey,variant:"confirmed"})).join("")
+    :emptyArea("No confirmed setups",offline?"Engine offline.":"No setup currently passes the confirmation rules.");
+  if(node("growingCount"))node("growingCount").textContent=developing.length+" developing"+(seeds.length?" · "+seeds.length+" watching":"");
+  if(node("bloomedCount"))node("bloomedCount").textContent=bloomed.length+" confirmed";
+  if(node("historyCount"))node("historyCount").textContent=history.length+" recently closed";
   return {growing,bloomed,history};
 }
 
 // The archive: closed episodes and what happened to them (verified outcomes only).
 function confirmationSnapshot(row){
   const id=row?.setup_id,observation=row?.confirmation?.observation_id;
+  const plan=row?.confirmed_plan;
+  // The backend's confirmed plan IS the confirmation snapshot's levels: no extra request needed.
+  if(plan&&plan.observation_id===observation)return {observation_id:plan.observation_id,proposed_entry:plan.entry,proposed_stop_loss:plan.stop_loss,
+    proposed_take_profit:plan.take_profit,reference_price:plan.reference_price,invalidation_price:plan.invalidation_price};
   return (confirmedDetailCache.get(id)?.snapshots||[]).find(snapshot=>snapshot.observation_id===observation)||null;
 }
 function paintArchive(rows){
@@ -184,29 +214,59 @@ function paintArchive(rows){
   for(const [index,entry] of entries.entries())if((entry.kind==="target"||entry.kind==="stop")&&!confirmationSnapshot(rows[index]))fetchConfirmedDetail(entry.key,()=>repaintCards());
   latestArchive=entries;
   const node=document.getElementById("historyCards");
-  if(node)node.innerHTML=entries.length?archivePanel(entries,archiveSummary(entries),{filter:archiveFilter,selectedKey,expanded:historyExpanded})
+  if(node)node.innerHTML=entries.length?archivePanel(entries,archiveSummary(entries),{filter:archiveFilter,selectedKey,expanded:historyExpanded,limit:HISTORY_LIMIT})
     :emptyArea("No closed setups yet","Closed, expired and invalidated setups will rest here with what happened to them.");
   return entries;
 }
 
-function defaultSelection(cards){
-  return (cards.bloomed[0]||cards.growing[0]||null)?.key||null;
-}
 function selectedRow(){
   if(!selectedKey)return null;
   const entry=latestCards.get(selectedKey);
   if(entry)return entry.row;
   return latestMarkets.find(m=>m.setup_id===selectedKey||"mkt-"+m.symbol===selectedKey)||null;
 }
-function paintAnalyst(){
-  const node=document.getElementById("gardenAnalyst");if(!node)return;
-  if(radarMode==="OFFLINE"&&!selectedRow()){node.innerHTML=offlineDetail(radarMode);return;}
-  const row=selectedRow();
+// ----- Market Research drawer ---------------------------------------------------
+function paintResearch(){
+  const panel=document.getElementById("gardenResearch"),backdrop=document.getElementById("gardenResearchBackdrop");if(!panel)return;
+  const row=researchOpen?selectedRow():null;
+  panel.hidden=!row;if(backdrop)backdrop.hidden=!row;
+  syncOverlayLock();
+  if(!row){panel.innerHTML="";return;}
   const key=analysisKey(row);
   const analysis=key?analystCache.get(key):null;
-  const archive=row?latestArchive.find(entry=>entry.key&&entry.key===row.setup_id)||null:null;
-  node.innerHTML=analystPanel(row?analystModel(row,analysis||null,archive):null,{loading:Boolean(key)&&analysis===undefined,simulated:radarMode==="DEMO"});
-  if(key&&analysis===undefined)getAnalysis(row).then(()=>{if(selectedKey&&analysisKey(selectedRow())===key){paintAnalyst();repaintCards();}});
+  const archive=latestArchive.find(entry=>entry.key&&entry.key===row.setup_id)||null;
+  const similar=row.setup_id?similarCache.get(row.setup_id):null;
+  const scroll=panel.scrollTop;          // repaints every scan must not jump the reader back to the top
+  panel.innerHTML=researchPanel(researchModel(row,{analysis:analysis||null,archive,simulated:radarMode==="DEMO",market:latestMarkets.find(m=>m.symbol===row.symbol)||null}),
+    {loading:Boolean(key)&&analysis===undefined,similar:similar?.data||null,similarState:similar?.state||"loading",tracked:tracked.has(row.setup_id)});
+  panel.scrollTop=scroll;
+  if(key&&analysis===undefined)getAnalysis(row).then(()=>{if(analysisKey(selectedRow())===key){paintResearch();paintFocus();}});
+  if(row.setup_id&&radarMode!=="DEMO"&&radarMode!=="OFFLINE")fetchSimilar(row.setup_id);
+}
+function openResearch(key){
+  if(!key)return;
+  if(!researchOpen)researchReturnFocus=document.activeElement;
+  select(key);
+  if(!selectedRow())return;
+  researchOpen=true;
+  paintResearch();
+  document.getElementById("gardenResearch")?.focus({preventScroll:true});
+}
+function closeResearch(){
+  if(!researchOpen)return;
+  researchOpen=false;
+  paintResearch();
+  const back=researchReturnFocus;researchReturnFocus=null;
+  if(back?.isConnected)back.focus({preventScroll:true});
+}
+// Historical evidence for the selected setup: fetched on selection only, cached, refreshed rarely.
+function fetchSimilar(setupId){
+  const cached=similarCache.get(setupId);
+  if(cached&&(cached.state==="loading"||Date.now()-cached.at<SIMILAR_REFRESH_MS))return;
+  similarCache.set(setupId,{data:cached?.data||null,state:cached?.data?"ready":"loading",at:Date.now()});
+  engineFetch("/api/market/setups/"+encodeURIComponent(setupId)+"/similar")
+    .then(data=>similarCache.set(setupId,{data,state:"ready",at:Date.now()}),()=>similarCache.set(setupId,{data:null,state:"error",at:Date.now()}))
+    .finally(()=>{if(researchOpen&&selectedRow()?.setup_id===setupId)paintResearch();});
 }
 function paintFocus(){
   const node=document.getElementById("gardenFocus");if(!node)return;
@@ -255,12 +315,16 @@ function paintStrategyControls(){
   const lab=document.getElementById("strategyLabBody");if(lab)lab.innerHTML=strategyLabPanel(latestRegistry,{markets:latestMarkets,performance:latestResult?.performance||null});
 }
 // ----- Strategy Lab measurements (on demand, never part of the scan) ----------
-function paintLab(){const node=document.getElementById("strategyLabReport");if(node)node.innerHTML=labReportPanel(labReport,{selected:labSelected});}
+function paintLab(){
+  const node=document.getElementById("strategyLabReport");if(node)node.innerHTML=labReportPanel(labReport,{selected:labSelected});
+  const evaluation=document.getElementById("strategyLabEvaluation");if(evaluation)evaluation.innerHTML=evaluationPanel(evalReport,{selected:evalSelected});
+}
 async function refreshLab(force=false){
   const panel=document.getElementById("strategyLab");
   if(!panel?.open||(!force&&Date.now()-labFetchedAt<LAB_REFRESH_MS))return;
   labFetchedAt=Date.now();
-  try{labReport=await engineFetch("/api/market/strategy-lab");}catch(_){labReport=null;}
+  const [lab,evaluation]=await Promise.all([engineFetch("/api/market/strategy-lab").catch(()=>null),engineFetch("/api/market/evaluation").catch(()=>null)]);
+  labReport=lab;evalReport=evaluation;
   paintLab();
 }
 async function inspectLabSetup(setupId){
@@ -275,54 +339,138 @@ function repaintCards(){
   lastCards=paintAreas(visibleAreas());
   paintGarden(lastCards);
 }
+function markSelection(){
+  const key=selectedKey,symbol=selectedRow()?.symbol||null;
+  for(const node of document.querySelectorAll("#radarRoot .gd-card,#radarRoot .gd-mini,#radarRoot .gd-seed"))node.classList.toggle("is-selected",Boolean(key)&&node.dataset.key===key);
+  for(const node of document.querySelectorAll("#radarRoot .gd-card"))node.setAttribute("aria-selected",String(Boolean(key)&&node.dataset.key===key));
+  for(const node of document.querySelectorAll("[data-archive-key]"))node.classList.toggle("is-selected",Boolean(key)&&node.dataset.archiveKey===key);
+  for(const node of document.querySelectorAll("#radarRoot .gd-pw-row")){const on=Boolean(symbol)&&node.dataset.symbol===symbol;node.classList.toggle("is-selected",on);node.setAttribute("aria-pressed",String(on));}
+}
 function select(key,{scrollTo=null}={}){
-  selectedKey=key;
-  for(const node of document.querySelectorAll(".gd-card"))node.classList.toggle("is-selected",node.dataset.key===key);
-  for(const node of document.querySelectorAll(".gd-card"))node.setAttribute("aria-selected",String(node.dataset.key===key));
-  for(const node of document.querySelectorAll("[data-archive-key]"))node.classList.toggle("is-selected",node.dataset.archiveKey===key);
-  paintAnalyst();
+  selectedKey=key||null;
+  markSelection();
   paintFocus();
-  garden?.select(key,pinLabel());
+  if(researchOpen)paintResearch();
+  garden?.select(selectedKey,pinLabel());
   const target=scrollTo&&document.getElementById(scrollTo);
   if(target)target.scrollIntoView({behavior:prefersReducedMotion()?"auto":"smooth",block:"start"});
+}
+const stackedLayout=()=>window.innerWidth<1100;
+// A market row selects the setup that gives the market its priority (its lead), else
+// the market's most advanced live setup, else the market itself.
+function selectMarket(symbol,leadKey,{scrollTo=null}={}){
+  const m=latestMarkets.find(x=>x.symbol===symbol);if(!m)return;
+  const live=[...lastCards.bloomed,...lastCards.growing].find(c=>c.symbol===symbol);
+  const key=leadKey&&latestCards.has(leadKey)?leadKey:live?live.key:(m.setup_id||"mkt-"+m.symbol);
+  select(key,{scrollTo});
+}
+function syncOverlayLock(){document.body.classList.toggle("gd-research-open",researchOpen||watchAllOpen);}
+
+// ----- Priority Watch (4 slots) and the full Market Watch -------------------------
+function paintPriorityWatch(mode){
+  const table=document.getElementById("radarTable");if(!table)return;
+  const areas=gardenAreas(latestEpisodes,latestMarkets,{registry:latestRegistry});
+  const episodes=[...(latestEpisodes.current||[]),...(latestEpisodes.confirmed||[]),...(latestEpisodes.closed||[])];
+  // Scan changes are only dated from live data; offline/demo never creates attention events.
+  if(mode==="LIVE")scanEvents=trackScanEvents(scanEvents,latestMarkets,latestRegistry);
+  try{latestRanking=rankMarkets(latestMarkets,[...areas.bloomed,...areas.growing],latestRegistry,{episodes,scanEvents:mode==="LIVE"?scanEvents:null});}
+  catch(error){console.warn("TRADeden: priority ranking failed; showing markets in scan order",error);latestRanking=rankMarkets(latestMarkets,[],null);}
+  const slots=priorityWatchSlots(latestRanking);
+  const shown=[...slots.priority,...(slots.core?[slots.core]:[])].map(entry=>entry.symbol);
+  const entering=new Set(shownWatchSymbols?shown.filter(symbol=>!shownWatchSymbols.has(symbol)):[]);
+  shownWatchSymbols=new Set(shown);
+  const total=latestMarkets.length;
+  table.innerHTML=total?priorityWatch(slots,{selectedSymbol:selectedRow()?.symbol||null,entering})
+    :emptyArea(mode==="OFFLINE"?"Engine offline":"No market data",mode==="OFFLINE"?"No market data is shown while the engine is offline.":"The engine returned no markets.");
+  const text=(id,value)=>{const node=document.getElementById(id);if(node)node.textContent=value;};
+  text("watchSubtitle",total?shown.length+" markets demanding attention":"Markets demanding attention");
+  text("marketCount",total?total+" scanned":"");
+  text("watchScanned",total?total+" scanned":"");
+  const all=document.getElementById("watchViewAll");if(all){all.hidden=!total;all.textContent="View all "+total+" →";}
+  if(watchAllOpen)paintWatchAll();
+}
+function paintWatchAll(){
+  const panel=document.getElementById("gardenWatchAll"),backdrop=document.getElementById("gardenWatchAllBackdrop");if(!panel)return;
+  panel.hidden=!watchAllOpen;if(backdrop)backdrop.hidden=!watchAllOpen;
+  syncOverlayLock();
+  if(!watchAllOpen){panel.innerHTML="";return;}
+  const scroll=panel.scrollTop;
+  panel.innerHTML=marketWatchAll(marketWatchGroups(latestRanking),{total:latestMarkets.length,selectedSymbol:selectedRow()?.symbol||null});
+  panel.scrollTop=scroll;
+}
+function openWatchAll(){
+  if(researchOpen)closeResearch();
+  watchAllReturnFocus=document.activeElement;
+  watchAllOpen=true;
+  paintWatchAll();
+  document.getElementById("gardenWatchAll")?.focus({preventScroll:true});
+}
+function closeWatchAll({restoreFocus=true}={}){
+  if(!watchAllOpen)return;
+  watchAllOpen=false;
+  paintWatchAll();
+  const back=watchAllReturnFocus;watchAllReturnFocus=null;
+  if(restoreFocus&&back?.isConnected)back.focus({preventScroll:true});
 }
 function bindGardenInteractions(){
   const root=document.getElementById("radarRoot");if(!root)return;
   root.onclick=event=>{
+    const watchAction=event.target.closest("[data-watch-action]")?.dataset.watchAction;
+    if(watchAction==="all"){openWatchAll();return;}
+    if(watchAction==="close"){closeWatchAll();return;}
+    const researchAction=event.target.closest("[data-research-action]")?.dataset.researchAction;
+    if(researchAction==="close"){closeResearch();return;}
+    if(researchAction==="track"){const id=selectedRow()?.setup_id;if(id){if(tracked.has(id))tracked.delete(id);else tracked.add(id);writeTracked(tracked);repaintCards();paintResearch();}return;}
+    if(event.target.closest("#gardenResearch"))return;      // reading inside the drawer never changes the selection
     const focusAction=event.target.closest("[data-focus-action]")?.dataset.focusAction;
-    if(focusAction==="view-analysis"){document.getElementById("gardenAnalyst")?.scrollIntoView({behavior:prefersReducedMotion()?"auto":"smooth",block:"start"});return;}
+    if(focusAction==="research"||focusAction==="view-analysis"){openResearch(selectedKey);return;}
+    if(focusAction==="close"){select(null);return;}
     if(focusAction==="view-setup"){
-      const target=[...document.querySelectorAll(".gd-card[data-key],[data-archive-key]")].find(node=>(node.dataset.key||node.dataset.archiveKey)===selectedKey);
+      const target=[...document.querySelectorAll(".gd-mini[data-key],.gd-seed[data-key],[data-archive-key]")].find(node=>(node.dataset.key||node.dataset.archiveKey)===selectedKey);
       if(target){target.scrollIntoView({behavior:prefersReducedMotion()?"auto":"smooth",block:"center"});target.classList.remove("is-flash");void target.offsetWidth;target.classList.add("is-flash");}
       return;
     }
     const toggle=event.target.closest("[data-toggle]");
-    if(toggle){if(toggle.dataset.toggle==="growing")growingExpanded=!growingExpanded;else historyExpanded=!historyExpanded;repaintCards();return;}
+    if(toggle){const which=toggle.dataset.toggle;if(which==="growing")growingExpanded=!growingExpanded;else if(which==="bloomed")bloomedExpanded=!bloomedExpanded;else historyExpanded=!historyExpanded;repaintCards();return;}
+    const mini=event.target.closest(".gd-mini");
+    if(mini){openResearch(mini.dataset.key);return;}
+    const evalTab=event.target.closest("[data-eval-strategy]");
+    if(evalTab){evalSelected=evalTab.dataset.evalStrategy;paintLab();return;}
+    const seed=event.target.closest("[data-seed]");
+    if(seed){select(seed.dataset.key);return;}
     const labTab=event.target.closest("[data-lab-strategy]");
     if(labTab){labSelected=labTab.dataset.labStrategy;paintLab();return;}
     const labInspect=event.target.closest("[data-lab-inspect]");
     if(labInspect){inspectLabSetup(labInspect.dataset.labInspect);return;}
     const strategyButton=event.target.closest("[data-strategy-filter]");
-    if(strategyButton){strategyFilter=strategyButton.dataset.strategyFilter;historyExpanded=false;growingExpanded=false;paintStrategyControls();repaintCards();if(latestResult){paintConfirmed(latestMarkets,latestResult.performance);paintPerformance(latestResult.performance);}return;}
+    if(strategyButton){strategyFilter=strategyButton.dataset.strategyFilter;historyExpanded=false;growingExpanded=false;bloomedExpanded=false;paintStrategyControls();repaintCards();if(latestResult){paintConfirmed(latestMarkets,latestResult.performance);paintPerformance(latestResult.performance);}return;}
     const filterButton=event.target.closest("[data-archive-filter]");
     if(filterButton){archiveFilter=filterButton.dataset.archiveFilter;historyExpanded=false;repaintCards();return;}
     const archiveRow=event.target.closest("[data-archive-key]");
-    if(archiveRow){select(archiveRow.dataset.archiveKey,{scrollTo:window.innerWidth<1100?"gardenAnalyst":null});return;}
+    if(archiveRow){openResearch(archiveRow.dataset.archiveKey);return;}
+    // Market Watch: focus the market's most advanced live setup in the Garden (or the bare market).
     const marketRow=event.target.closest(".gd-market-row");
-    if(marketRow){const m=latestMarkets.find(x=>x.symbol===marketRow.dataset.symbol);if(m){const live=[...lastCards.bloomed,...lastCards.growing].find(c=>c.symbol===m.symbol);select(live?live.key:(m.setup_id||"mkt-"+m.symbol),{scrollTo:window.innerWidth<1100?"gardenAnalyst":null});}return;}
-    const card=event.target.closest(".gd-card");if(!card)return;
-    const key=card.dataset.key,action=event.target.closest("[data-action]")?.dataset.action;
-    if(action==="view-evidence"){
-      if(expandedEvidence.has(key))expandedEvidence.delete(key);else{expandedEvidence.add(key);const row=latestCards.get(key)?.row;if(row&&!analystCache.has(analysisKey(row)))getAnalysis(row).then(()=>repaintCards());}
-      repaintCards();return;
+    if(marketRow){
+      const fromFullView=Boolean(marketRow.closest("#gardenWatchAll"));
+      if(fromFullView)closeWatchAll({restoreFocus:false});
+      selectMarket(marketRow.dataset.symbol,marketRow.dataset.key,{scrollTo:stackedLayout()||fromFullView?"gardenWorld":null});
+      return;
     }
+    const card=event.target.closest(".gd-card");if(!card)return;
+    // Full setup cards remain in the confirmation event archive ("archive-<setup_id>").
+    const key=card.dataset.key,action=event.target.closest("[data-action]")?.dataset.action;
+    const setupKey=card.dataset.setupId||key;
     if(action==="track"){const id=card.dataset.setupId;if(id){if(tracked.has(id))tracked.delete(id);else tracked.add(id);writeTracked(tracked);repaintCards();}return;}
-    if(action==="view-analysis"){select(key,{scrollTo:"gardenAnalyst"});return;}
-    if(action==="view-setup"){select(key,{scrollTo:"gardenStage"});return;}
-    select(key);
+    if(action==="view-setup"){select(setupKey,{scrollTo:"gardenWorld"});return;}
+    openResearch(setupKey);
   };
   const lab=document.getElementById("strategyLab");if(lab)lab.ontoggle=()=>{if(lab.open)refreshLab(true);};
-  root.onkeydown=event=>{const card=event.target.closest?.(".gd-card");if(card&&event.target===card&&(event.key==="Enter"||event.key===" ")){event.preventDefault();select(card.dataset.key);}};
+  root.onkeydown=event=>{
+    if(event.key==="Escape"&&researchOpen){event.preventDefault();closeResearch();return;}
+    if(event.key==="Escape"&&watchAllOpen){event.preventDefault();closeWatchAll();return;}
+    const card=event.target.closest?.(".gd-card,.gd-mini");
+    if(card&&event.target===card&&(event.key==="Enter"||event.key===" ")){event.preventDefault();openResearch(card.classList.contains("gd-mini")?card.dataset.key:(card.dataset.setupId||card.dataset.key));}
+  };
 }
 
 // ----- confirmation archive (today's confirmation events) -----------------------
@@ -378,24 +526,21 @@ function paint(result){
   latestEpisodes=result.episodes||latestEpisodes;
   latestRegistry=result.registry||null;
   processConfirmationEvents(result.performance);
-  const table=document.getElementById("radarTable");
-  if(!table)return;
+  if(!document.getElementById("radarTable"))return;
   const mode=result.mode||"LIVE";
   radarMode=mode;
   paintMode(mode,result);
-  const counters=document.getElementById("gardenCounters");
-  if(counters)counters.innerHTML=counterTiles(gardenCounters({markets:latestMarkets,episodes:latestEpisodes,mode,registry:latestRegistry}));
+  paintHeader(gardenHeaderModel({markets:latestMarkets,episodes:latestEpisodes,mode,registry:latestRegistry,lastScan:result.timestamp||null}));
   paintStrategyControls();
-  const sorted=[...latestMarkets].sort((a,b)=>(b.score||0)-(a.score||0));
-  table.innerHTML=sorted.length?marketOverview(sorted.map(market=>marketOverviewRow(market,latestRegistry))):emptyArea(mode==="OFFLINE"?"Engine offline":"No market data",mode==="OFFLINE"?"No market data is shown while the engine is offline.":"The engine returned no markets.");
-  const marketCount=document.getElementById("marketCount");if(marketCount)marketCount.textContent=sorted.length?sorted.length+" instruments":"";
   latestCards=new Map();
   lastCards=paintAreas(visibleAreas());
-  if(!selectedKey||!selectedRow())selectedKey=defaultSelection(lastCards);
-  for(const node of document.querySelectorAll(".gd-card"))node.classList.toggle("is-selected",node.dataset.key===selectedKey);
+  // Nothing is auto-selected: the overlay appears only once the trader picks a market or node.
+  if(selectedKey&&!selectedRow()){selectedKey=null;researchOpen=false;}
+  paintPriorityWatch(mode);
+  markSelection();
   paintGarden(lastCards);
-  paintAnalyst();
   paintFocus();
+  paintResearch();
   paintConfirmed(latestMarkets,result.performance);
   const now=new Date().toLocaleTimeString();
   document.getElementById("radarUpdated").textContent={LIVE:"Updated "+now,ENGINE_NO_DATA:"No market data · "+now,OFFLINE:"Offline · checked "+now,DEMO:"Simulated · not market data"}[mode];
@@ -404,14 +549,25 @@ function paint(result){
   refreshLab();
   if(pendingAnchor)setTimeout(applyPendingAnchor,0);
 }
+// Header numbers: repainted each scan; a value that changed gets a brief transition.
+function paintHeader(model){
+  const strategies=document.getElementById("gardenHeaderStrategies"),stats=document.getElementById("gardenHeaderStats");
+  if(strategies)strategies.innerHTML=headerStrategies(model);
+  if(stats)stats.innerHTML=headerStats(model);
+  for(const node of document.querySelectorAll("#radarRoot .gd-command-head [data-stat]")){
+    const key=node.dataset.stat,value=node.textContent;
+    if(headerValues.has(key)&&headerValues.get(key)!==value)node.classList.add("is-changed");
+    headerValues.set(key,value);
+  }
+}
 function paintMode(mode,result){
   const root=document.getElementById("radarRoot"),banner=document.getElementById("radarModeBanner");
   if(root){root.classList.toggle("is-simulated",mode==="DEMO");root.classList.toggle("is-offline",mode==="OFFLINE"||mode==="ENGINE_NO_DATA");root.dataset.mode=mode;}
   const note=document.getElementById("gardenHeroNote");
-  if(note)note.textContent=mode==="DEMO"?"Demo mode: every orb here is a simulated fixture, not a real setup and not market data."
-    :"Every orb is a real setup from the existing strategy and lifecycle. Execution stays manual — TRADeden never places orders.";
+  if(note)note.textContent=mode==="DEMO"?"Demo mode: every node here is a simulated fixture, not a real setup and not market data."
+    :"Every node is a real setup from a live strategy and its lifecycle. Execution stays manual — TRADeden never places orders.";
   const eyebrow=document.getElementById("radarEyebrow");
-  if(eyebrow)eyebrow.textContent={LIVE:"🌿 The TRADeden Garden · live",ENGINE_NO_DATA:"🌿 The TRADeden Garden · engine online, no market data",OFFLINE:"🌿 The TRADeden Garden · scanner offline",DEMO:"🌿 The TRADeden Garden · simulated, not scanning"}[mode];
+  if(eyebrow)eyebrow.textContent={LIVE:"The TRADeden Garden · live",ENGINE_NO_DATA:"The TRADeden Garden · engine online, no market data",OFFLINE:"The TRADeden Garden · scanner offline",DEMO:"The TRADeden Garden · simulated, not scanning"}[mode];
   if(!banner)return;
   if(mode==="LIVE"){banner.hidden=true;banner.innerHTML="";return;}
   banner.hidden=false;banner.dataset.mode=mode;
@@ -421,7 +577,6 @@ function paintMode(mode,result){
     ?'<b>ENGINE OFFLINE</b><span>No market data. Start the engine with backend/start_engine.bat (expected at '+esc(getEngineUrl())+'). Retrying every 10 seconds.</span>'
     :'<b>ENGINE ONLINE</b><b>NO MARKET DATA</b><span>MT5 status: '+esc(result.mt5Status||"UNKNOWN")+(result.error?' · '+esc(result.error):'')+'. Check that MetaTrader 5 is open and logged in.</span>';
 }
-function offlineDetail(mode){return '<div class="gd-analyst-empty"><span aria-hidden="true">⌁</span><b>'+(mode==="OFFLINE"?"Engine offline":"No market data")+'</b><p>'+(mode==="OFFLINE"?"The scanner is not running, so no setups are being evaluated. Nothing on this page reflects the current market.":"The engine is reachable but MT5 returned no markets.")+'</p></div>';}
 
 // ----- confirmation alerts (unchanged behaviour) -------------------------------
 function readSeenConfirmationIds(){
@@ -484,7 +639,7 @@ function bindConfirmationAlertControls(){
   };}
   if(test)test.onclick=()=>{dispatchTestSound(()=>playConfirmationTone());};
 }
-function paintPerformance(data){const el=document.getElementById("dailyPerformance");if(!el)return;if(!data){el.innerHTML='<div class="macro-empty"><b>Performance unavailable</b><span>Backend performance endpoint did not respond.</span></div>';return;}if(strategyFilter!=="all"){el.innerHTML=strategyPerformanceBlock(strategyPerformance(data,strategyFilter),strategyTag(strategyFilter),{shadow:strategyStatus(strategyFilter,latestRegistry)==="SHADOW"});return;}const daily=data.daily?.[0]||data.summary||{};const horizons=daily.by_horizon||{};const rows=["15m","1h","4h","24h"].map(h=>{const x=horizons[h]||{};return '<tr><th>'+h+'</th><td>'+Number(x.win||0)+'</td><td>'+Number(x.loss||0)+'</td><td>'+Number(x.pending||0)+'</td><td>'+Number(x.no_hit||0)+'</td><td>'+Number(x.ambiguous||0)+'</td></tr>';}).join("");const h4=horizons["4h"]||{};const wins=Number(h4.win||0),losses=Number(h4.loss||0),denominator=Number(h4.win_rate_denominator??wins+losses);const rate=h4.win_rate;el.innerHTML='<div class="performance-headline"><b>'+wins+'W / '+losses+'L</b><span>All live strategies combined; select a strategy for its own results · 4h win rate '+(rate==null?"—":Number(rate).toFixed(1)+"%")+' · denominator '+denominator+' (wins + losses)</span></div><div class="performance-table-wrap"><table class="performance-table"><thead><tr><th>HORIZON</th><th>W</th><th>L</th><th>PENDING</th><th>NO HIT</th><th>AMBIGUOUS</th></tr></thead><tbody>'+rows+'</tbody></table></div><small>Timezone: '+esc(data.timezone||daily.reporting_timezone||"Africa/Nairobi")+' · MarketOutcome records only. NO_HIT and AMBIGUOUS are excluded from win-rate denominator.</small>';}
+function paintPerformance(data){const el=document.getElementById("dailyPerformance");if(!el)return;if(!data){el.innerHTML='<div class="macro-empty"><b>Performance unavailable</b><span>Backend performance endpoint did not respond.</span></div>';return;}if(strategyFilter!=="all"){el.innerHTML=strategyPerformanceBlock(strategyPerformance(data,strategyFilter),strategyTag(strategyFilter),{shadow:strategyStatus(strategyFilter,latestRegistry)==="SHADOW"});return;}const daily=data.daily?.[0]||data.summary||{};const horizons=daily.by_horizon||{};const rows=["15m","1h","4h","24h"].map(h=>{const x=horizons[h]||{};return '<tr><th>'+h+'</th><td>'+Number(x.win||0)+'</td><td>'+Number(x.loss||0)+'</td><td>'+Number(x.pending||0)+'</td><td>'+Number(x.no_hit||0)+'</td><td>'+Number(x.ambiguous||0)+'</td></tr>';}).join("");const h4=horizons["4h"]||{};const wins=Number(h4.win||0),losses=Number(h4.loss||0),denominator=Number(h4.win_rate_denominator??wins+losses);const rate=h4.win_rate;el.innerHTML='<div class="performance-headline"><b>'+wins+'W / '+losses+'L</b><span><b class="gd-combined">ALL LIVE STRATEGIES COMBINED</b> Select a strategy for its own results · 4h win rate '+(rate==null?"—":Number(rate).toFixed(1)+"%")+' · denominator '+denominator+' (wins + losses)</span></div><div class="performance-table-wrap"><table class="performance-table"><thead><tr><th>HORIZON</th><th>W</th><th>L</th><th>PENDING</th><th>NO HIT</th><th>AMBIGUOUS</th></tr></thead><tbody>'+rows+'</tbody></table></div><small>Timezone: '+esc(data.timezone||daily.reporting_timezone||"Africa/Nairobi")+' · MarketOutcome records only. NO_HIT and AMBIGUOUS are excluded from win-rate denominator.</small>';}
 function paintFundamentals(data){
   const el=document.getElementById("radarFundamentals");if(!el)return;
   if(!data.configured){el.innerHTML='<div class="macro-empty"><b>Macro layer ready</b><span>Connect a Trading Economics API key on the engine to bring live US economic events into the scanner.</span></div>';return;}
@@ -532,5 +687,5 @@ function applyPendingAnchor(){
   pendingAnchor=null;
   if(target)target.scrollIntoView({block:"start"});
 }
-export function stopMarketRadar(){radarPoller?.stop();disposeGarden();}
+export function stopMarketRadar(){radarPoller?.stop();disposeGarden();researchOpen=false;watchAllOpen=false;shownWatchSymbols=null;scanEvents=null;document.body.classList.remove("gd-research-open");}
 
