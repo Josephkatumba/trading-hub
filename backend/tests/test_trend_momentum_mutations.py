@@ -60,7 +60,7 @@ MUTATIONS = {
                              ["RejectionTests.test_higher_timeframe_disagreement"]),
     "shorts never qualify (mirror broken)": ([wrap(tm, "h4_trend", lambda h: {**h, "direction": h["direction"] if h["direction"] == "LONG" else None})],
                                              ["ContinuationTests.test_bearish_continuation_is_the_exact_mirror"]),
-    "stop placed at the pullback extreme": ([mock.patch.object(tm, "STOP_BUFFER_ATR", 0.0)],
+    "stop placed at the pullback extreme": ([mock.patch.object(tm, "stop_buffer", lambda *args: 0.0)],
                                             ["PlanTests.test_entry_stop_target_and_rr_long", "PlanTests.test_entry_stop_target_and_rr_short"]),
     "minimum R:R removed": ([mock.patch.object(tm, "MIN_RR", 0.0)],
                             ["PlanTests.test_insufficient_reward_blocks_confirmation"]),

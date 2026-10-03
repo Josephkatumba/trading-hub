@@ -216,7 +216,7 @@ class ClosedEpisodeIndexTests(unittest.TestCase):
             self.assertSameRun(21, 75, legacy_rows(), between=restart)
         self.assertTrue(any("version/schema mismatch" in line for line in logs.output))
         index_dir = self.root / "current21" / ".index"
-        for name, schema in (("setup_observations.jsonl", current._OBSERVATION_INDEX_SCHEMA), ("setup_lifecycle.jsonl", "lifecycle-v1")):
+        for name, schema in (("setup_observations.jsonl", current._OBSERVATION_INDEX_SCHEMA), ("setup_lifecycle.jsonl", current._LIFECYCLE_INDEX_SCHEMA)):
             body = json.loads(json.loads((index_dir / (name + ".idx.json")).read_text(encoding="utf-8"))["body"])
             self.assertEqual(body["schema"], schema)
 

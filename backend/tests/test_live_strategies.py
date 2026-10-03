@@ -31,7 +31,7 @@ from test_strategy_isolation import IsolationTestCase, Store, market  # noqa: E4
 from test_support_resistance import evaluate as sr_evaluate, sr_market  # noqa: E402
 from test_trend_momentum import ScenarioBroker, evaluate as tm_evaluate, tm_market  # noqa: E402
 
-LIVE_IDS = ["trendline", "support_resistance", "trend_momentum"]
+LIVE_IDS = [strategies.TRENDLINE, "support_resistance", "trend_momentum"]   # trendline_v5 since the v5 replacement
 
 
 def ids(rows):
@@ -40,7 +40,7 @@ def ids(rows):
 
 class RegistryTests(unittest.TestCase):
     def test_three_live_strategies_and_nothing_else_registered(self):
-        self.assertEqual(strategies.REGISTRY.registered(), LIVE_IDS)
+        self.assertEqual(strategies.REGISTRY.registered(), LIVE_IDS + g.SHADOW_EXPERIMENT)   # + the v5 SHADOW experiment
         self.assertEqual(strategies.REGISTRY.live(), LIVE_IDS)
         for name in ("smc", "crt", "ict"):
             with self.assertRaises(KeyError):
@@ -48,12 +48,14 @@ class RegistryTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             strategies.StrategyRegistry().register(strategies.TrendMomentumStrategy(), mode="RESEARCH")   # modes: LIVE / SHADOW
         self.assertEqual([(d["strategy_id"], d["version"]) for d in strategies.REGISTRY.describe()],
-                         [("trendline", "trendline-first-v4"), ("support_resistance", "sr-levels-v1"), ("trend_momentum", "tm-pullback-v1")])
+                         [("trendline_v5", "trendline-first-v5"), ("support_resistance", "sr-levels-v1"), ("trend_momentum", "tm-pullback-v2")])
+        self.assertNotIn("trendline", strategies.REGISTRY.registered(), "the retired v4 trendline is never registered")
 
 
 class LivePersistenceTests(IsolationTestCase):
     def scan_all(self):
-        return self.store.scan(market("LONG", state="CONFIRMING", valid=True, invalidation=2600.0),
+        # The live trendline market as main.market_snapshot stamps it (strategy_id trendline_v5).
+        return self.store.scan(market("LONG", strategies.TRENDLINE, state="CONFIRMING", valid=True, invalidation=2600.0),
                                sr_market(sr_evaluate(srf.support_ending("bounce"))),
                                tm_market(tm_evaluate(), verified=True))
 
@@ -65,7 +67,7 @@ class LivePersistenceTests(IsolationTestCase):
         self.assertEqual(len({m["setup_id"] for m in batch}), 3, "three independent episodes on XAUUSD")
         confirmations = self.store.records("setup_confirmations.jsonl")
         self.assertEqual(sorted((c["strategy_id"], c["symbol"], c["direction"]) for c in confirmations),
-                         [("support_resistance", "XAUUSD", "LONG"), ("trend_momentum", "XAUUSD", "LONG"), ("trendline", "XAUUSD", "LONG")])
+                         [("support_resistance", "XAUUSD", "LONG"), ("trend_momentum", "XAUUSD", "LONG"), ("trendline_v5", "XAUUSD", "LONG")])
         self.assertFalse(any("shadow" in c for c in confirmations))
         for confirmation in confirmations:                     # what a notification shows is on the record
             for key in ("strategy_id", "strategy_version", "symbol", "direction", "setup_type", "score", "confirmed_at", "rule_evidence"):
@@ -112,7 +114,7 @@ class LivePersistenceTests(IsolationTestCase):
         # under its own strategy; the trendline record has unverified time provenance: pending.
         self.assertEqual(report["support_resistance"]["outcomes"]["verified_stop"], 1)
         self.assertEqual(report["trend_momentum"]["outcomes"]["verified_stop"], 1)
-        self.assertEqual(report["trendline"]["outcomes"]["pending"], 1)
+        self.assertEqual(report[strategies.TRENDLINE]["outcomes"]["pending"], 1)
 
     def test_one_strategy_never_invalidates_or_suppresses_another(self):
         sr_short = sr_evaluate(srf.resistance_rejection())
@@ -184,10 +186,11 @@ class ScanLoopTests(unittest.TestCase):
         strip = lambda rows: [{k: v for k, v in m.items() if k != "strategies"} for m in rows]  # noqa: E731
         self.assertEqual(g.canonical(strip(markets)), g.canonical(strip(base)))
         lines = files["setup_observations.jsonl"].splitlines(keepends=True)
-        trend = [line for line in lines if json.loads(line)["strategy_id"] == "trendline"]
+        trend = [line for line in lines if json.loads(line)["strategy_id"] == strategies.TRENDLINE]
         self.assertEqual(b"".join(trend), base_files["setup_observations.jsonl"])
         for row in markets:
-            self.assertEqual([(e["strategy_id"], e["mode"]) for e in row["strategies"]], [(s, "LIVE") for s in LIVE_IDS])
+            self.assertEqual([(e["strategy_id"], e["mode"]) for e in row["strategies"]],
+                             [(s, "LIVE") for s in LIVE_IDS] + [(s, "SHADOW") for s in g.SHADOW_EXPERIMENT])
 
     def test_promotion_changes_the_mode_only_never_the_calculations(self):
         # Same scans with S/R and Trend/Momentum LIVE vs SHADOW: identical strategy results and records,

@@ -209,7 +209,7 @@ class ContextTests(unittest.TestCase):
         self.assertEqual(market["market_data"]["unavailable_timeframes"], {"D1": "NO_DATA", "X9": "UNSUPPORTED_TIMEFRAME"})
         entries = {entry["strategy_id"]: entry for entry in market["strategies"]}
         self.assertEqual((entries["needs_more"]["status"], entries["needs_more"]["error"]), ("ERROR", "MissingMarketData"))
-        self.assertEqual(entries["trendline"]["status"], "OK", "a strategy's missing data never blocks another")
+        self.assertEqual(entries[strategies.TRENDLINE]["status"], "OK", "a strategy's missing data never blocks another")
         self.assertEqual(Capture.seen, [], "a strategy is not run without its declared data")
         # Fetch failures are reported too; an older terminal without H4/D1 constants marks them unsupported.
         failing = SimpleNamespace(TIMEFRAME_H4=240, copy_rates_from_pos=mock.Mock(side_effect=RuntimeError("IPC")))
@@ -220,8 +220,10 @@ class ContextTests(unittest.TestCase):
         fixture = fixture_for("XAUUSD")
         legacy_input = MarketInput(fixture["symbol"], fixture["rows"], higher_rows=fixture["higher_rows"])
         self.assertEqual((dict(legacy_input.bars), dict(legacy_input.unavailable_timeframes)), ({}, {}))
-        results = self.registry(Capture()).evaluate(legacy_input)
-        self.assertTrue(results["trendline"].ok and results["capture"].ok, "no context collected: requirements unchecked")
+        live = self.registry(Capture()).evaluate(legacy_input)
+        self.assertTrue(live[strategies.TRENDLINE].ok and live["capture"].ok, "no context collected: requirements unchecked")
+        # The v4 payload against its golden scan, pinned explicitly (v5 is the live trendline).
+        results = g.v4_lineup_registry().evaluate(legacy_input)
         self.assertEqual(g.canonical(results["trendline"].payload),
                          g.canonical(g.as_version(g.scan({**fixture, "spread": 0.0, "session_context": None}), TrendlineStrategy.version)))
         self.assertEqual(TrendlineStrategy.data_requirements, {"M15": 300, "H1": 160})
@@ -242,7 +244,8 @@ class ContextTests(unittest.TestCase):
 
         def spy(*args, **kwargs):
             payload = real(*args, **kwargs)
-            spy_calls.append(copy.deepcopy(payload))
+            if kwargs.get("strategy_version") != "trendline-first-v5":        # the v5 SHADOW experiment reuses the scanner
+                spy_calls.append(copy.deepcopy(payload))
             return payload
         with mock.patch("scanner.analyze_symbol", side_effect=spy):
             markets, _ = run_scan(FakeBroker(IC_MARKETS))

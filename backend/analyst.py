@@ -228,6 +228,23 @@ def analyze_snapshot(snapshot: dict[str, Any], generated_at: str | None = None) 
     if risk_context["invalidation"] is not None and invalidation_source:
         evidence.append(_evidence("risk", "Recorded invalidation level.",
                                   invalidation_source, _value(snapshot, invalidation_source)))
+    stop = (snapshot.get("strategy_evidence") or {}).get("stop")
+    if isinstance(stop, dict) and stop.get("stop") is not None:
+        # Trend/Momentum v2 stop evidence: every number below is the stored value.
+        base = "strategy_evidence.stop."
+        atr_h1 = stop.get("stop_distance_atr_h1")
+        for key, claim in (
+                ("structural_invalidation", f"Structural invalidation ({stop.get('structure_source')}) recorded at {stop.get('structural_invalidation')}."),
+                ("buffer", f"Stop buffer {stop.get('buffer')} beyond structure = {stop.get('buffer_rule')} ({stop.get('buffer_atr_h1')} ATR(H1))."),
+                ("stop_distance", f"Stop distance {stop.get('stop_distance')} ({atr_h1} ATR(H1)); permitted range "
+                                  f"{stop.get('min_stop_distance')} to {stop.get('max_stop_distance')}."),
+                ("risk_quality", f"Recorded stop quality: {stop.get('risk_quality')}.")):
+            evidence.append(_evidence("stop", claim, base + key, stop.get(key)))
+        if stop.get("rejection_reason"):
+            missing.append(_evidence("stop", str(stop["rejection_reason"]), base + "rejection_reason", stop["rejection_reason"]))
+        risk_context["risk_quality"] = stop.get("risk_quality")
+        risk_context["stop_basis"] = stop.get("basis")
+        risk_context["stop_distance_atr_h1"] = atr_h1
     summary = (f"CONFIRMED {direction or ''}: scanner strategy validation passed. "
                f"{len(confirmations)} snapshot-backed supporting evidence items and "
                f"{len(conflicts)} opposing evidence items are recorded."

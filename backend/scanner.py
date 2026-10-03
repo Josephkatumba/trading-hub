@@ -212,12 +212,24 @@ def _trade_levels(
     lows,
     nearest_level: float,
     nearest_level_type: str,
+    structural_levels: tuple[list[tuple[int, float]], list[tuple[int, float]]] | None = None,
 ) -> dict[str, Any]:
+    """Entry/stop/target. Default (trendline v3/v4): target = the nearest M15 swing or
+    level beyond 0.25 ATR, else a 2R projection. With `structural_levels` (the swing
+    highs/lows of closed H1 bars, trendline v5) the target is the nearest such swing
+    strictly beyond entry: M15 minor swings are not targets, an H1 swing just ahead
+    is never jumped (no target through a structural barrier) and nothing is
+    projected; without one there is no target (rr None, so the setup cannot confirm).
+    The stop is the same in both models."""
     if not direction or entry <= 0 or atr <= 0:
-        return {"entry": entry, "stop_loss": None, "take_profit": None, "risk_distance": None, "reward_distance": None, "rr": None}
+        empty = {"entry": entry, "stop_loss": None, "take_profit": None, "risk_distance": None, "reward_distance": None, "rr": None}
+        return empty if structural_levels is None else {**empty, "target_basis": None}
 
     recent_high = max((float(r["high"]) for r in rows[-20:]), default=entry)
     recent_low = min((float(r["low"]) for r in rows[-20:]), default=entry)
+
+    if structural_levels is not None:
+        return _structural_levels(direction, entry, atr, lows, highs, recent_low, recent_high, structural_levels)
 
     if direction == "LONG":
         swing = lows[-1][1] if lows else recent_low
@@ -248,6 +260,35 @@ def _trade_levels(
     }
 
 
+def _structural_levels(direction: str, entry: float, atr: float, lows, highs, recent_low: float, recent_high: float,
+                       structural_levels) -> dict[str, Any]:
+    """Stop exactly as the default model; target = nearest structural (H1) swing beyond entry, or none."""
+    structural_highs, structural_lows = structural_levels
+    if direction == "LONG":
+        swing = lows[-1][1] if lows else recent_low
+        stop = min(swing - atr * 0.15, entry - atr * 0.9)
+        risk = entry - stop
+        beyond = [float(price) for _, price in structural_highs if float(price) > entry]
+        target = min(beyond) if beyond else None
+    else:
+        swing = highs[-1][1] if highs else recent_high
+        stop = max(swing + atr * 0.15, entry + atr * 0.9)
+        risk = stop - entry
+        beyond = [float(price) for _, price in structural_lows if float(price) < entry]
+        target = max(beyond) if beyond else None
+    reward = abs(target - entry) if target is not None else None
+    rr = reward / risk if reward is not None and risk > 0 else None
+    return {
+        "entry": round(entry, 8),
+        "stop_loss": round(stop, 8),
+        "take_profit": round(target, 8) if target is not None else None,
+        "risk_distance": round(risk, 8),
+        "reward_distance": round(reward, 8) if reward is not None else None,
+        "rr": round(rr, 2) if rr is not None else None,
+        "target_basis": "H1_SWING" if target is not None else None,
+    }
+
+
 def analyze_symbol(
     symbol: str,
     rows: list[Any],
@@ -255,9 +296,11 @@ def analyze_symbol(
     session_context: dict[str, Any] | None = None,
     higher_rows: list[Any] | None = None,
     strategy_version: str = "trendline-first-v3",
+    target_model: str = "nearest-swing",
 ) -> dict[str, Any]:
     # strategy_version only labels the output; it changes no calculation. The
     # trendline strategy passes its own version (strategies/trendline.py).
+    # target_model: "nearest-swing" (v3/v4, default) or "h1-structure" (v5): see _trade_levels.
     if len(rows) < 60:
         return {
             "state": "NO SETUP", "score": 0, "setup": "Insufficient data",
@@ -438,7 +481,10 @@ def analyze_symbol(
     else:
         trigger = "Wait for clean trendline structure"
 
-    levels = _trade_levels(rows, direction, close, atr, highs, lows, level, level_kind)
+    structural = None
+    if target_model == "h1-structure":
+        structural = _swings(higher_rows) if higher_rows else ([], [])
+    levels = _trade_levels(rows, direction, close, atr, highs, lows, level, level_kind, structural_levels=structural)
 
     # Levels are useful for planning, but the UI should not imply they are
     # actionable while the scanner is only watching directional context.
@@ -448,10 +494,15 @@ def analyze_symbol(
         levels["risk_distance"] = None
         levels["reward_distance"] = None
         levels["rr"] = None
+        if "target_basis" in levels:
+            levels["target_basis"] = None
     if state in {"CONFIRMING", "DEVELOPING"} and direction and levels["rr"] is not None and levels["rr"] < 1.5:
         # A nearby opposing level can create poor asymmetry. Keep the levels
         # visible, but downgrade the setup rather than pretending the target is attractive.
         reasons.append("risk/reward is below the preferred 1.5R threshold")
+    if (structural is not None and state in {"CONFIRMING", "DEVELOPING"} and trendline_gate
+            and levels["stop_loss"] is not None and levels["take_profit"] is None):
+        reasons.append("no higher-timeframe structural target in the trade direction")
 
     if state == "NO SETUP":
         reason = "; ".join(reasons[:2]) if reasons else "No clean trendline sequence detected."
@@ -529,4 +580,5 @@ def analyze_symbol(
         "spread": spread,
         "spread_atr": spread / atr if atr else 0.0,
         "score_breakdown": breakdown,
+        **({"target_basis": levels.get("target_basis")} if structural is not None else {}),
     }

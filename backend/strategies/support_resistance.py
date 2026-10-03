@@ -56,7 +56,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Sequence
 
-from episode_identity import MATCHER_VERSION
+from episode_identity import LEVEL_EPISODES_LIFECYCLE
 from scanner import _atr
 
 from .base import MarketInput, Strategy
@@ -342,7 +342,9 @@ class SupportResistanceStrategy(Strategy):
     version = STRATEGY_VERSION
     timeframe = "M15"
     higher_timeframes = ("H1", "H4", "D1")
-    lifecycle = MATCHER_VERSION         # the existing episode matcher/lifecycle, scoped to this strategy
+    # Episodes are identified by level: the scanner's other candidate (the other side, or
+    # NO SETUP) never closes an open S/R episode; see episode_identity.LEVEL_EPISODES_LIFECYCLE.
+    lifecycle = LEVEL_EPISODES_LIFECYCLE
     data_requirements = {"M15": 300, "H1": 160}   # H4/D1 context is used when available, never required
 
     def evaluate(self, market: MarketInput) -> dict[str, Any]:

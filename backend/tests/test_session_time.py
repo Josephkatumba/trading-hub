@@ -76,7 +76,8 @@ class LegacyEquivalenceTests(unittest.TestCase):
         self.assertFalse(hasattr(main, "_bar_dt"), "production no longer reads raw epochs as UTC")
 
     def test_production_uses_the_corrected_path_of_the_live_trendline_version(self):
-        self.assertEqual(main.STRATEGIES.get("trendline").version, "trendline-first-v4")
+        # The live trendline (v5) inherits v4's corrected session path for the scan-level context.
+        self.assertEqual(main.STRATEGIES.get(main.TRENDLINE).version, "trendline-first-v5")
         for fixture, rows, now in self.samples():
             with self.subTest(fixture=fixture["name"], now=now), mock.patch.object(main, "datetime", frozen(now)),                  mock.patch.dict("os.environ", {"TRADING_HUB_MT5_SOURCE_TIMEZONE": BASIS}):
                 production = main.session_context(rows, rows[-1]["close"])

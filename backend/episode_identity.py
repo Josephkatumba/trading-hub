@@ -10,6 +10,91 @@ from market_time import parse_aware_utc
 
 MATCHER_VERSION = "episode-match-v2"
 TERMINAL_STATES = {"INVALIDATED", "EXPIRED", "RESOLVED"}
+# Lifecycle policies (Strategy.lifecycle). MATCHER_VERSION is the original policy.
+# CONFIRMED_EVENTS_LIFECYCLE adds: a confirmed setup is a historical event. Once an
+# episode is CONFIRMED/ACTIVE, a later observation of its strategy in the other
+# direction (or another setup family) is a separate, competing hypothesis: it never
+# closes the confirmed episode, which resolves on its own confirmed levels (see
+# CONFIRMED_LEVELS): INVALIDATED at the confirmed stop, RESOLVED at the confirmed target.
+CONFIRMED_EVENTS_LIFECYCLE = MATCHER_VERSION + "+confirmed-events-v1"
+CONFIRMED_STATES = {"CONFIRMED", "ACTIVE"}
+# Keys a caller puts on a confirmed candidate: the stop/target recorded on the
+# confirmation snapshot. They replace the latest observation's (live, drifting) plan.
+CONFIRMED_LEVELS = ("confirmed_invalidation_price", "confirmed_target_price")
+# LEVEL_EPISODES_LIFECYCLE (Support & Resistance) = CONFIRMED_EVENTS_LIFECYCLE plus a
+# level identity. The S/R scanner reports only its best candidate per symbol: the
+# nearest support (LONG), the nearest resistance (SHORT), or NO SETUP. A different
+# report is another hypothesis, not evidence against the open one:
+# - another direction or NO SETUP never closes an episode (COMPETING); an unconfirmed
+#   one still EXPIREs when price has moved away (SIGNIFICANT_PRICE_DISPLACEMENT);
+# - same direction, another level: the unconfirmed episode is replaced (EXPIRED);
+# - same direction, same level, another family label (SR_BOUNCE <-> SR_BREAK_RETEST as
+#   the break window rolls): the same test of the same level, so it continues.
+# An episode ends on the market itself (INVALIDATED at its stop, RESOLVED at a confirmed
+# target) or by expiry. A market-ended episode records its level and closing bar
+# (LEVEL_CLOSURE) and suppresses only the same level/direction until a NEW test of it:
+# a touch on a bar that opened after the closing bar. Closures without that record
+# (every historical S/R closure, expiries) suppress nothing.
+LEVEL_EPISODES_LIFECYCLE = CONFIRMED_EVENTS_LIFECYCLE + "+level-episodes-v1"
+LEVEL_CLOSURE = "level_closure"          # lifecycle event metadata key
+_M15_SECONDS = 900
+
+
+def is_confirmed(episode: dict[str, Any]) -> bool:
+    return str(episode.get("lifecycle_state") or "").upper() in CONFIRMED_STATES
+
+
+def level_identity(record: dict[str, Any]) -> dict[str, float] | None:
+    """The S/R zone a market observation or episode row refers to (strategy_evidence.level)."""
+    level = (record.get("strategy_evidence") or {}).get("level") if isinstance(record.get("strategy_evidence"), dict) else None
+    if not isinstance(level, dict):
+        return None
+    try:
+        low, high = float(level["zone_low"]), float(level["zone_high"])
+    except (KeyError, TypeError, ValueError):
+        return None
+    return {"zone_low": low, "zone_high": high} if low <= high else None
+
+
+def same_level(old: dict[str, Any] | None, new: dict[str, Any] | None) -> bool:
+    """Overlapping zones are the same level: a level's weighted price drifts as swings are added."""
+    return bool(old and new and float(old["zone_low"]) <= float(new["zone_high"])
+                and float(new["zone_low"]) <= float(old["zone_high"]))
+
+
+def closing_bar_time(market: dict[str, Any]) -> float | None:
+    """Open time (raw MT5 epoch, the bars' own clock) of the bar forming when an episode closed."""
+    value = ((market.get("time_provenance") or {}).get("bar_open_time") or {}).get("raw_mt5_epoch")
+    if value is None:
+        candle = ((market.get("strategy_evidence") or {}).get("rejection") or {}).get("candle_time")
+        value = float(candle) + _M15_SECONDS if candle is not None else None
+    try:
+        return float(value) if value is not None else None
+    except (TypeError, ValueError):
+        return None
+
+
+def tested_bar_time(market: dict[str, Any]) -> float | None:
+    """Open time of the bar that touched the level in a clean test, or None when there is no test."""
+    evidence = market.get("strategy_evidence") or {}
+    touch, rejection = evidence.get("touch") or {}, evidence.get("rejection") or {}
+    if not (touch.get("touched") and touch.get("clean_test")) or touch.get("bars_ago") is None or rejection.get("candle_time") is None:
+        return None
+    return float(rejection["candle_time"]) - int(touch["bars_ago"]) * _M15_SECONDS
+
+
+def level_closure(episode: dict[str, Any], market: dict[str, Any]) -> dict[str, Any] | None:
+    """What a market-ended level episode records so that only its own level is suppressed."""
+    level = level_identity(episode)
+    return {"level": level, "bar_time": closing_bar_time(market)} if level else None
+
+
+def level_suppresses(closure: Any, market: dict[str, Any]) -> bool:
+    """Same level (direction already matched) and no new test since the closing bar."""
+    if not isinstance(closure, dict) or not same_level(closure.get("level"), level_identity(market)):
+        return False
+    tested, closed_bar = tested_bar_time(market), closure.get("bar_time")
+    return not (tested is not None and (closed_bar is None or tested > float(closed_bar)))
 
 
 def _dt(value: Any) -> datetime | None:
@@ -68,7 +153,9 @@ def evaluate_episode(market: dict[str, Any], previous: dict[str, Any], now: date
         return "EXPIRE", "INACTIVITY_TIMEOUT", float("inf")
 
     price = market.get("price")
-    invalidation = previous.get("invalidation_price")
+    invalidation = previous.get("confirmed_invalidation_price")
+    if invalidation is None:
+        invalidation = previous.get("invalidation_price")
     if invalidation is None:
         invalidation = (previous.get("rule_evidence") or {}).get("invalidation_hint")
     direction = str(previous.get("direction") or "").upper()
@@ -76,6 +163,11 @@ def evaluate_episode(market: dict[str, Any], previous: dict[str, Any], now: date
         crossed = (direction == "LONG" and float(price) <= float(invalidation)) or (direction == "SHORT" and float(price) >= float(invalidation))
         if crossed:
             return "INVALIDATE", "INVALIDATION_PRICE_CROSSED", abs(float(price) - float(previous.get("reference_price") or price))
+    target = previous.get("confirmed_target_price")
+    if price is not None and target is not None:
+        reached = (direction == "LONG" and float(price) >= float(target)) or (direction == "SHORT" and float(price) <= float(target))
+        if reached:
+            return "RESOLVE", "TARGET_PRICE_CROSSED", abs(float(price) - float(previous.get("reference_price") or price))
 
     if str(market.get("direction") or "").upper() != direction:
         return "NO_MATCH", "DIRECTION_CHANGED", float("inf")
@@ -101,11 +193,44 @@ def evaluate_episode(market: dict[str, Any], previous: dict[str, Any], now: date
     return "CONTINUE", None, distance
 
 
-def rank_candidates(market: dict[str, Any], candidates: list[dict[str, Any]], now: datetime) -> tuple[dict[str, Any] | None, list[tuple[dict[str, Any], str, str | None, float]]]:
+def _level_decision(market: dict[str, Any], candidate: dict[str, Any], reason: str | None,
+                    confirmed: bool) -> tuple[dict[str, Any], str, str | None, float]:
+    """LEVEL_EPISODES_LIFECYCLE for a NO_MATCH/CONTINUE evaluation (see above)."""
+    old_price = candidate.get("reference_price", candidate.get("price"))
+    price = market.get("price")
+    moved = abs(float(price) - float(old_price)) if price is not None and old_price is not None else 0.0
+    # Why this observation is not the candidate's setup; None when it is.
+    if reason == "DIRECTION_CHANGED":
+        other = "DIRECTION_CHANGED"
+    elif not same_level(level_identity(candidate), level_identity(market)) and level_identity(candidate) and level_identity(market):
+        other = "LEVEL_CHANGED"
+    else:
+        other = None
+    if moved > _price_limit(market, candidate) and other != "LEVEL_CHANGED":
+        other = other or "SIGNIFICANT_PRICE_DISPLACEMENT"
+        if not confirmed:        # an unconfirmed hypothesis price has left behind
+            return candidate, "EXPIRE", "EPISODE_REPLACED:SIGNIFICANT_PRICE_DISPLACEMENT", moved
+    if other:
+        # A confirmed setup resolves only on its confirmed levels; another direction or
+        # NO SETUP is a competing hypothesis; another level replaces an unconfirmed one.
+        if confirmed or other == "DIRECTION_CHANGED":
+            return candidate, "COMPETING", other, moved
+        return candidate, "EXPIRE", "EPISODE_REPLACED:" + other, moved
+    family = _specific_family(candidate.get("setup_family") or candidate.get("setup_type")) == _specific_family(market.get("setup_family"))
+    return candidate, "MATCH", "SAME_LEVEL" if family else "SAME_LEVEL_FAMILY_REVISED", moved - (1e6 if family else 0)
+
+
+def rank_candidates(market: dict[str, Any], candidates: list[dict[str, Any]], now: datetime,
+                    confirmed_events: bool = False,
+                    level_episodes: bool = False) -> tuple[dict[str, Any] | None, list[tuple[dict[str, Any], str, str | None, float]]]:
+    """`confirmed_events`: the CONFIRMED_EVENTS_LIFECYCLE policy; `level_episodes`: LEVEL_EPISODES_LIFECYCLE (see above)."""
     evaluated = []
     for candidate in candidates:
         decision, reason, distance = evaluate_episode(market, candidate, now)
-        if decision in {"INVALIDATE", "EXPIRE"}:
+        if level_episodes and decision in {"NO_MATCH", "CONTINUE"} and reason != "SCOPE_CHANGED":
+            evaluated.append(_level_decision(market, candidate, reason, confirmed_events and is_confirmed(candidate)))
+            continue
+        if decision in {"INVALIDATE", "EXPIRE", "RESOLVE"}:
             evaluated.append((candidate, decision, reason, distance))
         elif decision == "NO_MATCH" and reason == "TRENDLINE_GEOMETRY_CHANGED":
             # Trendline anchors can move as the scanner adds candles. Preserve the
@@ -119,7 +244,9 @@ def rank_candidates(market: dict[str, Any], candidates: list[dict[str, Any]], no
             else:
                 evaluated.append((candidate, "EXPIRE", "EPISODE_REPLACED:" + str(reason), distance))
         elif decision == "NO_MATCH" and reason in {"DIRECTION_CHANGED", "SETUP_FAMILY_CHANGED"}:
-            evaluated.append((candidate, "INVALIDATE", reason, distance))
+            # A confirmed episode stays open: the new observation is a competing episode.
+            evaluated.append((candidate, "COMPETING" if confirmed_events and is_confirmed(candidate) else "INVALIDATE",
+                              reason, distance))
         elif decision == "NO_MATCH" and reason == "SIGNIFICANT_PRICE_DISPLACEMENT":
             evaluated.append((candidate, "EXPIRE", "EPISODE_REPLACED:" + str(reason), distance))
         elif decision == "CONTINUE":

@@ -20,7 +20,8 @@ load_dotenv()
 
 import market_data
 from scanner import analyze_symbol
-from strategies import CORE_FIELDS, REGISTRY as STRATEGIES, TRENDLINE, MarketInput
+from strategies import CORE_FIELDS, REGISTRY as STRATEGIES, SHADOW, TRENDLINE, TRENDLINE_V5_SHADOW, MarketInput
+from shadow_report import load_shadow_report
 from macro import fundamentals_snapshot
 from observations import (confirmation_events, record_markets,
                           recent_observations, setup_history, lifecycle_events,
@@ -35,6 +36,8 @@ from performance import performance_report
 from market_time import combined_normalization_status, mt5_epoch_to_utc_iso, normalize_mt5_epoch, utc_iso
 from ml_dataset import audit_live_dataset
 from strategy_lab import strategy_lab_report
+import evaluation
+import observations as observation_store
 
 try:
     import MetaTrader5 as mt5
@@ -343,6 +346,7 @@ def _market_snapshot() -> list[dict[str, Any]]:
     bars_by_symbol: dict[str, list[dict[str, Any]]] = {}
     # Timeframes to collect: enabled strategies' declared needs + shared H4/D1 context.
     data_plan = market_data.plan_for(STRATEGIES)
+    strategy_results: dict[str, dict[str, int]] = {}
     try:
         for requested in WATCHLIST:
             actual = mt5_symbol(requested)
@@ -407,6 +411,9 @@ def _market_snapshot() -> list[dict[str, Any]]:
             results = STRATEGIES.evaluate(MarketInput(actual, rows, spread=current_spread,
                                                       session_context=context, higher_rows=higher_rows,
                                                       bars=bars, unavailable_timeframes=unavailable))
+            for strategy_id, result in results.items():
+                tally = strategy_results.setdefault(strategy_id, {"ok": 0, "error": 0})
+                tally["ok" if result.ok else "error"] += 1
             trendline = results[TRENDLINE]
             if trendline.error is not None:
                 raise trendline.error
@@ -448,7 +455,9 @@ def _market_snapshot() -> list[dict[str, Any]]:
                 "timestamp": utc_iso(datetime.now(timezone.utc)),
                 "market_data": market_data.summary(bars, unavailable, requested in OFFICIAL_UNIVERSE),
             }
-            market = {**quote, **scan, **provenance}
+            # The top-level market is the live trendline's result; its strategy_id is stamped so
+            # its records are never attributed to the retired "trendline" (v4) by default.
+            market = {**quote, **scan, **provenance, "strategy_id": TRENDLINE}
             setups: dict[str, dict[str, Any]] = {}
             for strategy_id, result in results.items():
                 if strategy_id == TRENDLINE or not result.ok:
@@ -498,7 +507,8 @@ def _market_snapshot() -> list[dict[str, Any]]:
     with _SCAN_LOCK:
         _LAST_SCAN.update(status="CONNECTED" if markets else "NO_MARKETS",
                           completed_at=utc_iso(datetime.now(timezone.utc)), market_count=len(markets),
-                          error=None, elapsed_ms=round((monotonic_time.perf_counter() - started) * 1000, 2))
+                          error=None, elapsed_ms=round((monotonic_time.perf_counter() - started) * 1000, 2),
+                          strategy_results=strategy_results)
     return markets
 
 
@@ -548,12 +558,15 @@ def health():
         except OSError as exc:
             storage[name] = {"status": "UNAVAILABLE", "bytes": None, "error": str(exc)}
 
+    shadow = shadow_diagnostics(scan)
     return {
         "ok": True,
         "status": "CONNECTED" if connected else "DEGRADED",
         "service": "trading-hub-market-engine",
         "engine_version": "0.4.0",
         "strategy": STRATEGIES.get(TRENDLINE).version,
+        "strategy_id": TRENDLINE,
+        "strategies": [{"strategy_id": item["strategy_id"], "version": item["version"], "status": item["status"]} for item in STRATEGIES.describe()],
         "execution_enabled": False,
         "mt5_available": mt5 is not None,
         "mt5_connected": connected,
@@ -570,7 +583,27 @@ def health():
         "bridge": bridge,
         "uptime_started": utc_iso(ENGINE_STARTED),
         "error": error,
+        # Additive: SHADOW (observational) strategies and whether the last scan ran them.
+        "shadow_strategies": shadow,
+        "trendline_v5_shadow": next((item["state"] for item in shadow if item["strategy_id"] == TRENDLINE_V5_SHADOW), "NOT_REGISTERED"),
     }
+
+
+def shadow_state(strategy_id: str, scan: dict[str, Any]) -> str:
+    """RUNNING when the last completed scan evaluated the shadow strategy without errors."""
+    tally = (scan.get("strategy_results") or {}).get(strategy_id)
+    if not tally:
+        return "WAITING_FOR_SCAN"
+    if tally.get("error") and not tally.get("ok"):
+        return "ERROR"
+    return "PARTIAL_ERRORS" if tally.get("error") else "RUNNING"
+
+
+def shadow_diagnostics(scan: dict[str, Any]) -> list[dict[str, Any]]:
+    return [{"strategy_id": item["strategy_id"], "version": item["version"], "mode": item["status"],
+             "state": shadow_state(str(item["strategy_id"]), scan),
+             "last_scan_results": (scan.get("strategy_results") or {}).get(item["strategy_id"])}
+            for item in STRATEGIES.describe() if item["status"] == SHADOW]
 
 
 def parse_health_time(value: Any) -> datetime | None:
@@ -674,6 +707,16 @@ def radar():
     }
 
 
+@app.get("/api/market/shadow/trendline-v5")
+def trendline_v5_shadow_report():
+    """Read-only experiment metrics of the trendline-first-v5 SHADOW strategy (never live, never traded)."""
+    with _SCAN_LOCK:
+        scan = dict(_LAST_SCAN)
+    registered = TRENDLINE_V5_SHADOW in STRATEGIES.registered()
+    status = shadow_state(TRENDLINE_V5_SHADOW, scan) if registered else "NOT_REGISTERED"
+    return load_shadow_report(TRENDLINE_V5_SHADOW, status=status, outcomes=list_records(MARKET_OUTCOMES_FILE))
+
+
 @app.get("/api/market/strategies")
 def strategy_registry():
     """Registered strategies and their status (LIVE / DISABLED); only LIVE ones produce setups."""
@@ -706,10 +749,13 @@ def observations(limit: int = Query(default=100, ge=1, le=1000)):
 
 @app.get("/api/market/setup-episodes")
 def setup_episode_feed(bucket: str = Query(default="current", pattern="^(current|confirmed|closed|all)$"),
-                       limit: int = Query(default=100, ge=1, le=500), include_shadow: bool = False):
+                       limit: int = Query(default=100, ge=1, le=500), include_shadow: bool = False,
+                       per_strategy: bool = False):
     """Persistent Observatory buckets; existing radar and history routes remain unchanged.
-    Shadow-mode strategy episodes are only included on request (Strategy Lab review)."""
-    episodes = setup_episodes(bucket, limit, include_shadow=include_shadow)
+    Shadow-mode strategy episodes are only included on request (Strategy Lab review).
+    per_strategy: bound each bucket per strategy_id, so one busy strategy cannot push
+    another strategy's recent history out of the Garden's memory."""
+    episodes = setup_episodes(bucket, limit, include_shadow=include_shadow, per_strategy=per_strategy)
     payload = ({name: [row for row in episodes if row.get("bucket") == name]
                 for name in ("current", "confirmed", "closed")} if bucket == "all" else {"episodes": episodes})
     return {"bucket": bucket, **payload,
@@ -772,6 +818,50 @@ def strategy_lab(recent: int = Query(default=25, ge=1, le=200)):
     """Per-strategy setups, confirmations and verified outcomes (read-only; strategies never mixed)."""
     return {**strategy_lab_report(list_records(MARKET_OUTCOMES_FILE), recent_limit=recent),
             "timestamp": utc_iso(datetime.now(timezone.utc))}
+
+
+_EVALUATION_CACHE: dict[str, Any] = {"key": None, "records": None}
+_EVALUATION_LOCK = threading.Lock()
+
+
+def _evaluation_records() -> list[dict[str, Any]]:
+    """Evaluation records, rebuilt only when the confirmation or outcome store changed."""
+    files = (observation_store.CONFIRMATIONS_FILE, MARKET_OUTCOMES_FILE)
+    key = tuple((str(path), path.stat().st_size, path.stat().st_mtime_ns) if path.exists() else (str(path), None, None)
+                for path in files)
+    with _EVALUATION_LOCK:
+        if _EVALUATION_CACHE["key"] != key:
+            confirmations = confirmation_events()
+            snapshots = observation_store.snapshots_by_observation_id(str(row.get("observation_id")) for row in confirmations)
+            _EVALUATION_CACHE.update(key=key, records=evaluation.setup_records(confirmations, snapshots,
+                                                                               list_records(MARKET_OUTCOMES_FILE)))
+        return _EVALUATION_CACHE["records"]
+
+
+@app.get("/api/market/evaluation")
+def historical_evaluation():
+    """Verified outcomes of confirmed setups by recorded condition, per strategy (read-only, never mixed)."""
+    return {**evaluation.condition_report(_evaluation_records(), STRATEGIES.registered()),
+            "timestamp": utc_iso(datetime.now(timezone.utc))}
+
+
+@app.get("/api/market/setups/{setup_id}/similar")
+def similar_setups(setup_id: str):
+    """What happened to the same strategy's earlier confirmed setups sharing each of this setup's conditions."""
+    confirmation = next(iter(confirmation_events(setup_id)), None)
+    snapshot = None
+    if confirmation:
+        snapshot = observation_store.snapshots_by_observation_id([str(confirmation.get("observation_id"))]).get(
+            str(confirmation.get("observation_id")))
+    if snapshot is None:
+        rows = [row for row in setup_history(setup_id) if row.get("record_type") == "setup_snapshot"]
+        snapshot = rows[-1] if rows else None
+    if snapshot is None:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Recorded setup snapshot not found")
+    before = str(confirmation.get("confirmed_at")) if confirmation else None
+    return {**evaluation.similar_setups(snapshot, _evaluation_records(), before=before),
+            "basis": "confirmation snapshot" if confirmation else "latest observation (not confirmed)"}
 
 
 @app.get("/api/market/ml-dataset/audit")

@@ -11,7 +11,8 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from schemas import DataQuality, SetupConfirmationEvent, SetupLifecycleEvent, SetupSnapshot
-from episode_identity import identity_evidence, rank_candidates
+from episode_identity import (CONFIRMED_EVENTS_LIFECYCLE, LEVEL_CLOSURE, LEVEL_EPISODES_LIFECYCLE, identity_evidence,
+                              is_confirmed, level_closure, level_suppresses, rank_candidates)
 from market_time import parse_aware_utc, utc_iso
 from jsonl_index import ensure_trailing_newline, index_for, indexed_jsonl_records
 from strategies import EVIDENCE_CONTAINER, LIVE, REGISTRY as STRATEGIES, SHADOW, record_strategy_id
@@ -95,7 +96,7 @@ _SUMMARY_FIELDS = ("setup_id", "observation_id", "observed_at", "timestamp", "sy
 _PERFORMANCE_FIELDS = ("setup_id", "observation_id", "observed_at", "timestamp", "symbol",
                        "direction", "lifecycle_state", "shadow")
 _OBSERVATION_INDEX_SCHEMA = "observations-v5"
-_LIFECYCLE_INDEX_SCHEMA = "lifecycle-v1"
+_LIFECYCLE_INDEX_SCHEMA = "lifecycle-v2"
 _CONFIRMATION_INDEX_SCHEMA = "confirmations-v1"
 _TERMINAL_STATES = frozenset({"INVALIDATED", "EXPIRED", "RESOLVED"})
 
@@ -171,7 +172,11 @@ def observation_index_stats() -> dict[str, Any]:
 
 
 def _lifecycle_summary(event: dict[str, Any]) -> dict[str, Any]:
-    return {"sid": event.get("setup_id", ""), "to": event.get("to_state")}
+    summary = {"sid": event.get("setup_id", ""), "to": event.get("to_state")}
+    metadata = event.get("metadata")
+    if isinstance(metadata, dict) and metadata.get(LEVEL_CLOSURE) is not None:
+        summary["cl"] = metadata[LEVEL_CLOSURE]    # what a market-ended level episode suppresses
+    return summary
 
 
 def _lifecycle_index():
@@ -190,6 +195,65 @@ def _confirmation_summary(row: dict[str, Any]) -> dict[str, Any]:
 def _confirmation_index():
     return index_for(CONFIRMATIONS_FILE, _confirmation_summary, ("sid", "unhashable"),
                      schema=_CONFIRMATION_INDEX_SCHEMA)
+
+
+# ----- confirmed plans --------------------------------------------------------
+# A confirmation is an immutable historical event: the plan it was confirmed with
+# (the confirmation snapshot's entry/stop/target) never changes, whatever later
+# observations of the same episode report. Later observations of an active setup
+# re-evaluate the strategy at the current price (entry = live price), so their
+# plan drifts; they are the latest market observation, not the setup's plan.
+_CONFIRMED_PLANS: dict[tuple[str, str], dict[str, Any]] = {}
+
+
+def confirmed_plan(snapshot: dict[str, Any] | None) -> dict[str, Any] | None:
+    """The plan recorded on a confirmation snapshot, as stored (nothing recomputed)."""
+    if not snapshot:
+        return None
+    evidence = snapshot.get("strategy_evidence") or {}
+    stop = evidence.get("stop") if isinstance(evidence.get("stop"), dict) else None
+    features = snapshot.get("features") or {}
+    return {"observation_id": snapshot.get("observation_id"), "observed_at": snapshot.get("observed_at"),
+            "strategy_version": snapshot.get("strategy_version"), "direction": snapshot.get("direction"),
+            "reference_price": snapshot.get("reference_price"), "entry": snapshot.get("proposed_entry"),
+            "stop_loss": snapshot.get("proposed_stop_loss"), "take_profit": snapshot.get("proposed_take_profit"),
+            "invalidation_price": snapshot.get("invalidation_price"),
+            "rr": features.get("rr"), "risk_distance": features.get("risk_distance"),
+            "reward_distance": features.get("reward_distance"), "score": snapshot.get("score"),
+            "reason": (snapshot.get("rule_evidence") or {}).get("reason"), "stop_evidence": stop}
+
+
+def confirmed_plans(setup_ids: Iterable[str]) -> dict[str, dict[str, Any]]:
+    """{setup_id: confirmed_plan} for the confirmed ones among `setup_ids` (cached: immutable)."""
+    store = str(CONFIRMATIONS_FILE)
+    wanted = [str(sid) for sid in dict.fromkeys(setup_ids) if sid]
+    missing = [sid for sid in wanted if (store, sid) not in _CONFIRMED_PLANS]
+    if missing:
+        index = _confirmation_index()
+        with index.lock:
+            if index.lookup("unhashable", True):
+                events = {str(row.get("setup_id")): row for row in reversed(_read_jsonl(CONFIRMATIONS_FILE))}
+            else:
+                positions = [(sid, index.lookup("sid", sid)) for sid in missing]
+                loaded = index.load(found[0] for _, found in positions if found)
+                events = dict(zip([sid for sid, found in positions if found], loaded))
+        snapshots = snapshots_by_observation_id(str(event.get("observation_id")) for event in events.values())
+        for sid, event in events.items():
+            plan = confirmed_plan(snapshots.get(str(event.get("observation_id"))))
+            if plan is not None:
+                _CONFIRMED_PLANS[(store, sid)] = plan
+    return {sid: _CONFIRMED_PLANS[(store, sid)] for sid in wanted if (store, sid) in _CONFIRMED_PLANS}
+
+
+def _with_confirmed_levels(episode: dict[str, Any], plans: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """A confirmed candidate carries its confirmation's stop/target for the matcher."""
+    plan = plans.get(str(episode.get("setup_id")))
+    if not plan or not is_confirmed(episode):
+        return episode
+    invalidation = plan.get("invalidation_price")
+    if invalidation is None:
+        invalidation = plan.get("stop_loss")
+    return {**episode, "confirmed_invalidation_price": invalidation, "confirmed_target_price": plan.get("take_profit")}
 
 
 # ----- episode state for _record_markets ------------------------------------
@@ -212,13 +276,17 @@ def _episode_from_row(key: Any, row: dict[str, Any], record_type: Any) -> dict[s
         "episode_identity": {"trendline_identity": row.get("trendline_identity")}}
 
 
-def _suppresses(episode: dict[str, Any], market: dict[str, Any], terminal_state) -> bool:
+def _suppresses(episode: dict[str, Any], market: dict[str, Any], terminal_state,
+                closure=lambda episode: None) -> bool:
     """The terminal-suppression rule, evaluated exactly as the former walk did,
     within one strategy: another strategy's closed episode never suppresses."""
     if record_strategy_id(episode) != record_strategy_id(market):
         return False
     if episode.get("symbol") != market.get("symbol") or episode.get("direction") != market.get("direction"):
         return False
+    if _level_episodes_policy(record_strategy_id(market)):
+        # Level episodes: only a market-ended episode on the same level, until a new test.
+        return level_suppresses(closure(episode), market)
     # Terminal episodes suppress exact trendline recurrence and near-price
     # repeats; new anchors or a material price displacement are eligible.
     old_tl = (episode.get("episode_identity") or {}).get("trendline_identity")
@@ -236,6 +304,7 @@ class _ClosedBucket:
         self.count = 0
         self.by_fingerprint: dict[Any, list[int]] = {}  # non-EXPIRED, with trendline
         self.unlined: list[tuple[float, int]] = []     # non-EXPIRED, no trendline, priced
+        self.leveled: list[tuple[int, Any]] = []       # (rank, closure) of market-ended level episodes
 
     def _lists(self, rank: int, fields: dict[str, Any], to_state: Any):
         if to_state == "EXPIRED":
@@ -245,15 +314,19 @@ class _ClosedBucket:
         elif fields["px"] is not None:
             yield self.unlined, (fields["px"], rank)
 
-    def add(self, rank: int, fields: dict[str, Any], to_state: Any) -> None:
+    def add(self, rank: int, fields: dict[str, Any], to_state: Any, closure: Any = None) -> None:
         self.count += 1
         for target, item in self._lists(rank, fields, to_state):
             insort(target, item)
+        if closure is not None:
+            insort(self.leveled, (rank, closure), key=lambda item: item[0])
 
-    def remove(self, rank: int, fields: dict[str, Any], to_state: Any) -> None:
+    def remove(self, rank: int, fields: dict[str, Any], to_state: Any, closure: Any = None) -> None:
         self.count -= 1
         for target, item in self._lists(rank, fields, to_state):
             target.remove(item)
+        if closure is not None:
+            self.leveled.remove((rank, closure))
         if "fp" in fields and not self.by_fingerprint.get(fields["fp"], True):
             del self.by_fingerprint[fields["fp"]]
 
@@ -284,8 +357,9 @@ class _EpisodeTable:
         self.keys: list[str] = []            # rank -> episode key
         self.latest: dict[str, tuple[int, dict[str, Any]]] = {}  # key -> latest (position, summary)
         self.last_to: dict[Any, Any] = {}    # setup_id -> to_state of its last lifecycle event
+        self.last_closure: dict[Any, Any] = {}  # setup_id -> level closure on its last lifecycle event
         self.open: set[str] = set()
-        self.closed: dict[str, tuple[tuple[Any, Any], int, dict[str, Any], Any]] = {}
+        self.closed: dict[str, tuple[tuple[Any, Any], int, dict[str, Any], Any, Any]] = {}
         self.buckets: dict[tuple[Any, Any], _ClosedBucket] = {}
         self.irregular: set[str] = set()     # keys whose latest row has no exact compact form
         self.broken = False                  # a key or event only the full-row path can reproduce
@@ -321,6 +395,7 @@ class _EpisodeTable:
                 self.broken = True
                 continue
             self.last_to[setup_id] = to_state
+            self.last_closure[setup_id] = summary.get("cl")
             if setup_id in self.latest:
                 dirty.add(setup_id)
         for key in dirty:
@@ -329,8 +404,8 @@ class _EpisodeTable:
     def _place(self, key: str) -> None:
         self.open.discard(key)
         if key in self.closed:
-            bucket_key, rank, fields, to_state = self.closed.pop(key)
-            self.buckets[bucket_key].remove(rank, fields, to_state)
+            bucket_key, rank, fields, to_state, closure = self.closed.pop(key)
+            self.buckets[bucket_key].remove(rank, fields, to_state, closure)
         summary = self.latest[key][1]
         fields = summary.get("ep")
         if fields is None:
@@ -343,8 +418,9 @@ class _EpisodeTable:
             return
         bucket_key = (fields["st"], summary.get("symbol"), summary.get("direction"))
         rank = self.rank[key]
-        self.buckets.setdefault(bucket_key, _ClosedBucket()).add(rank, fields, to_state)
-        self.closed[key] = (bucket_key, rank, fields, to_state)
+        closure = self.last_closure.get(key)
+        self.buckets.setdefault(bucket_key, _ClosedBucket()).add(rank, fields, to_state, closure)
+        self.closed[key] = (bucket_key, rank, fields, to_state, closure)
 
 
 class _IndexedEpisodeView:
@@ -369,6 +445,9 @@ class _IndexedEpisodeView:
             return None  # unhashable market fields never equal a stored symbol/direction
         if bucket is None or not bucket.count:
             return None
+        if _level_episodes_policy(record_strategy_id(market)):
+            match = next((rank for rank, closure in bucket.leveled if level_suppresses(closure, market)), None)
+            return None if match is None else (self.table.keys[match], self.table.last_to[self.table.keys[match]])
         new_tl = identity_evidence(market).get("trendline_identity")
         match = None
         if new_tl:
@@ -416,9 +495,12 @@ class _FullEpisodeView:
     def _terminal_state(self, episode: dict[str, Any]) -> Any:
         return episode.get("_terminal_state") or self.event_state.get(episode["setup_id"], {}).get("to_state")
 
+    def _closure(self, episode: dict[str, Any]) -> Any:
+        return (self.event_state.get(episode["setup_id"], {}).get("metadata") or {}).get(LEVEL_CLOSURE)
+
     def persisted_match(self, market: dict[str, Any]) -> tuple[Any, Any] | None:
         for episode in self.terminal_episodes:
-            if _suppresses(episode, market, self._terminal_state):
+            if _suppresses(episode, market, self._terminal_state, self._closure):
                 return episode["setup_id"], (episode.get("_terminal_state") or
                     self.event_state.get(episode["setup_id"], {}).get("to_state", "EXPIRED"))
         return None
@@ -498,6 +580,23 @@ def _strategy_mode(strategy_id: str, market: dict[str, Any]) -> str:
         return STRATEGIES.mode(strategy_id)
     except KeyError:
         return str(market.get("strategy_mode") or LIVE)
+
+
+def _confirmed_events_policy(strategy_id: str) -> bool:
+    """Whether the strategy's episodes follow CONFIRMED_EVENTS_LIFECYCLE (Strategy.lifecycle);
+    LEVEL_EPISODES_LIFECYCLE includes it."""
+    try:
+        return STRATEGIES.get(strategy_id).lifecycle in {CONFIRMED_EVENTS_LIFECYCLE, LEVEL_EPISODES_LIFECYCLE}
+    except KeyError:
+        return False
+
+
+def _level_episodes_policy(strategy_id: str) -> bool:
+    """Whether the strategy's episodes follow LEVEL_EPISODES_LIFECYCLE (Support & Resistance)."""
+    try:
+        return STRATEGIES.get(strategy_id).lifecycle == LEVEL_EPISODES_LIFECYCLE
+    except KeyError:
+        return False
 
 
 def _strategy_version(strategy_id: str, market: dict[str, Any]) -> str:
@@ -599,17 +698,35 @@ def _record_markets(markets: list[dict[str, Any]]) -> int:
                       if record_strategy_id(episode) == record_strategy_id(market)
                       and episode.get("symbol") == market.get("symbol")
                       and str(episode.get("timeframe") or "M15") == str(market.get("timeframe") or "M15")]
-        previous, evaluated = rank_candidates(market, candidates, now_dt)
+        # Under CONFIRMED_EVENTS_LIFECYCLE, confirmed candidates are matched on their
+        # confirmation's stop/target (a copy; `originals` maps it back to the open row).
+        policy = _confirmed_events_policy(record_strategy_id(market))
+        leveled = _level_episodes_policy(record_strategy_id(market))
+        confirmed = [episode["setup_id"] for episode in candidates if policy and is_confirmed(episode)]
+        plans = confirmed_plans(confirmed) if confirmed else {}
+        pinned_candidates = [_with_confirmed_levels(episode, plans) for episode in candidates]
+        originals = {id(pinned): episode for pinned, episode in zip(pinned_candidates, candidates)}
+        previous, evaluated = rank_candidates(market, pinned_candidates, now_dt, confirmed_events=policy,
+                                              level_episodes=leveled)
+        previous = originals.get(id(previous), previous) if previous is not None else None
         # Close episodes explicitly when their continuity breaks or they expire.
-        for episode, decision, reason, _ in evaluated:
-            if decision not in {"INVALIDATE", "EXPIRE"}:
+        for pinned, decision, reason, _ in evaluated:
+            if decision not in {"INVALIDATE", "EXPIRE", "RESOLVE"}:
                 continue
+            episode = originals.get(id(pinned), pinned)
             from_state = str(episode.get("lifecycle_state") or "DETECTED")
-            to_state = "INVALIDATED" if decision == "INVALIDATE" else "EXPIRED"
+            to_state = {"INVALIDATE": "INVALIDATED", "EXPIRE": "EXPIRED", "RESOLVE": "RESOLVED"}[decision]
+            metadata: dict[str, Any] = {"matcher_version": "episode-match-v1"}
+            if pinned is not episode:
+                metadata["levels"] = "confirmation"    # judged on the confirmed stop/target, not the latest plan
+            closure = level_closure(episode, market) if leveled and decision in {"INVALIDATE", "RESOLVE"} else None
+            if closure is not None:
+                metadata[LEVEL_CLOSURE] = closure      # the market ended it: this level waits for a new test
+                episode["_closure"] = closure
             lifecycle.append(SetupLifecycleEvent(record_type="setup_lifecycle_event", schema_version=SCHEMA_VERSION,
                 event_id=_uid("evt"), setup_id=episode["setup_id"], occurred_at=now,
                 from_state=from_state, to_state=to_state, reason_code=reason or decision,
-                reason=reason, triggering_observation_id=None, metadata={"matcher_version": "episode-match-v1"}))
+                reason=reason, triggering_observation_id=None, metadata=metadata))
             episode["_terminal_state"] = to_state
             open_episodes = [item for item in open_episodes if item.get("setup_id") != episode.get("setup_id")]
             closed_now.append(episode)
@@ -619,10 +736,13 @@ def _record_markets(markets: list[dict[str, Any]]) -> int:
 
         # Do not immediately recreate a just-terminal episode on the same unchanged
         # trendline/price evidence. A materially new trendline can start a new one.
-        match = view.persisted_match(market)
-        if match is None:
+        # Level episodes: an open episode that this observation continues is never suppressed
+        # by an older closure of its level (it began with a new test after that closure).
+        match = None if leveled and previous is not None else view.persisted_match(market)
+        if match is None and not (leveled and previous is not None):
             match = next(((episode["setup_id"], episode["_terminal_state"]) for episode in closed_now
-                          if _suppresses(episode, market, lambda item: item["_terminal_state"])), None)
+                          if _suppresses(episode, market, lambda item: item["_terminal_state"],
+                                         lambda item: item.get("_closure"))), None)
         if match is not None:
             market.update({"setup_id": match[0], "lifecycle_state": match[1], "episode_suppressed": True})
             continue
@@ -836,11 +956,13 @@ def lifecycle_events(setup_id: str | None = None) -> list[dict[str, Any]]:
     return _read_jsonl(LIFECYCLE_FILE)
 
 
-def setup_episodes(bucket: str = "current", limit: int = 100, include_shadow: bool = False) -> list[dict[str, Any]]:
+def setup_episodes(bucket: str = "current", limit: int = 100, include_shadow: bool = False,
+                   per_strategy: bool = False) -> list[dict[str, Any]]:
     """Return a bounded episode view built from append-only snapshots and events.
 
     Shadow-mode episodes are excluded unless `include_shadow` (they are for
-    review only and never part of the live view); the limit applies afterwards.
+    review only and never part of the live view); the limit applies afterwards,
+    per strategy_id when `per_strategy`.
     """
     confirmations = {row.get("setup_id"): row for row in _read_jsonl(CONFIRMATIONS_FILE)}
     events = _read_jsonl(LIFECYCLE_FILE)
@@ -855,6 +977,7 @@ def setup_episodes(bucket: str = "current", limit: int = 100, include_shadow: bo
     for event in events:
         event_map.setdefault(str(event.get("setup_id")), []).append(event)
     now = datetime.now(timezone.utc)
+    plans = confirmed_plans(sid for sid in latest if sid in confirmations)
     output = []
     for sid, snapshot in latest.items():
         if snapshot.get("shadow") is True and not include_shadow:
@@ -886,6 +1009,9 @@ def setup_episodes(bucket: str = "current", limit: int = 100, include_shadow: bo
             "lifecycle_state": state, "detected_at": detected,
             "duration_seconds": duration, "confirmation": confirmation,
             "confirmation_time": confirmation.get("confirmed_at") if confirmation else None,
+            # The plan the setup was confirmed with (immutable). The row's own entry/stop/
+            # target fields are the LATEST observation, which re-evaluates at the live price.
+            "confirmed_plan": plans.get(sid),
             "closed_event": timeline[-1] if state in {"INVALIDATED", "EXPIRED", "RESOLVED"} and timeline else None,
             "bucket": row_bucket,
             "lifecycle_events": timeline})
@@ -897,10 +1023,22 @@ def setup_episodes(bucket: str = "current", limit: int = 100, include_shadow: bo
         return str(row.get("observed_at") or "")
     output.sort(key=recency, reverse=True)
     bounded = max(1, min(int(limit), 500))
+
+    def cap(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        if not per_strategy:
+            return rows[:bounded]
+        taken: dict[str, int] = {}
+        kept = []
+        for row in rows:                      # keeps the recency order
+            strategy = str(row.get("strategy_id"))
+            if taken.get(strategy, 0) < bounded:
+                taken[strategy] = taken.get(strategy, 0) + 1
+                kept.append(row)
+        return kept
     if bucket == "all":
         return [row for name in ("current", "confirmed", "closed")
-                for row in [item for item in output if item.get("bucket") == name][:bounded]]
-    return output[:bounded]
+                for row in cap([item for item in output if item.get("bucket") == name])]
+    return cap(output)
 
 
 def record_lifecycle_transition(setup_id: str, to_state: str, reason_code: str,

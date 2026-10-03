@@ -26,6 +26,7 @@ import observations  # noqa: E402
 import strategy_lab  # noqa: E402
 from outcomes import resolve_due_market_outcomes  # noqa: E402
 from performance import performance_report  # noqa: E402
+from strategies import TRENDLINE  # noqa: E402  (the live trendline id)
 from strategies import (LIVE, SHADOW, REGISTRY, StrategyRegistry, SupportResistanceStrategy,  # noqa: E402
                         TrendMomentumStrategy, build_default_registry)
 from strategies import trend_momentum as tm  # noqa: E402
@@ -74,7 +75,7 @@ class ContinuationTests(unittest.TestCase):
         result = evaluate()
         self.assertEqual((result["state"], result["direction"], result["strategy_valid"]), ("CONFIRMING", "LONG", True))
         self.assertEqual(result["setup_family"], "TM_PULLBACK_CONTINUATION")
-        self.assertEqual(result["strategy_version"], "tm-pullback-v1")
+        self.assertEqual(result["strategy_version"], "tm-pullback-v2")
         rules = result["strategy_evidence"]["confirmation"]["rules"]
         self.assertEqual(tuple(rules), tm.CONFIRMATION_RULES)
         self.assertTrue(all(rules.values()))
@@ -176,9 +177,11 @@ class PlanTests(unittest.TestCase):
         long = not bearish
         extreme, origin, pullback = h1_structure(frames, long)
         unit = tm.atr(closed(frames, "H1"))
+        unit_m15 = tm.atr(closed(frames, "M15"))
         impulse = abs(extreme - origin)
         entry = frames["M15"][-1]["close"]
-        stop = pullback - 0.25 * unit if long else pullback + 0.25 * unit
+        buffer = min(max(1.0 * unit_m15, 0.25 * unit), 0.5 * unit)                # v2: clamp(ATR(M15), 0.25-0.5 ATR(H1))
+        stop = pullback - buffer if long else pullback + buffer
         target = pullback + impulse if long else pullback - impulse
         self.assertEqual(result["entry"], entry)                                   # entry: the current (forming M15) price
         self.assertAlmostEqual(result["stop_loss"], stop, places=9)                # stop: beyond the pullback extreme
@@ -284,7 +287,7 @@ class PersistenceLifecycleTests(IsolationTestCase):
         batch = self.store.scan(tm_market(evaluate(trigger=False)))
         snapshot = self.store.records("setup_observations.jsonl")[0]
         self.assertEqual((snapshot["strategy_id"], snapshot["strategy_version"], snapshot.get("shadow")),
-                         ("trend_momentum", "tm-pullback-v1", None))                      # LIVE: no research flag
+                         ("trend_momentum", "tm-pullback-v2", None))                      # LIVE: no research flag
         self.assertEqual(snapshot["episode_identity"]["strategy_id"], "trend_momentum")
         self.assertEqual(snapshot["setup_type"], "TM_PULLBACK_CONTINUATION")
         self.assertEqual(snapshot["timeframe"], "M15")
@@ -306,7 +309,7 @@ class PersistenceLifecycleTests(IsolationTestCase):
         self.assertEqual((broken[0]["setup_id"], broken[0]["episode_suppressed"]), (first, True))
         confirmations = self.store.records("setup_confirmations.jsonl")
         self.assertEqual([(c["setup_id"], c["strategy_id"], c["strategy_version"], c.get("shadow")) for c in confirmations],
-                         [(first, "trend_momentum", "tm-pullback-v1", None)])
+                         [(first, "trend_momentum", "tm-pullback-v2", None)])
 
     def test_watching_is_a_candidate_never_a_confirmation(self):
         self.store.scan(tm_market(evaluate(pullback_bars=1, retracement=0.1), price=115.0))
@@ -338,7 +341,7 @@ class ResearchModeTests(IsolationTestCase):
     def test_registered_live_and_research_mode_still_available(self):
         self.assertEqual(REGISTRY.mode("trend_momentum"), LIVE)
         self.assertIn("trend_momentum", REGISTRY.live())
-        self.assertEqual(REGISTRY.get("trend_momentum").version, "tm-pullback-v1")
+        self.assertEqual(REGISTRY.get("trend_momentum").version, "tm-pullback-v2")
         self.assertEqual(self.registry.mode("trend_momentum"), SHADOW)
 
     def test_research_confirmations_are_never_live(self):
@@ -427,7 +430,7 @@ class OutcomeTests(IsolationTestCase):
         with g.isolated_store(observations, self.store.root):
             report = {item["strategy_id"]: item for item in strategy_lab.strategy_lab_report(outcomes)["strategies"]}
         research = report["trend_momentum"]
-        self.assertEqual((research["mode"], research["version"]), ("LIVE", "tm-pullback-v1"))
+        self.assertEqual((research["mode"], research["version"]), ("LIVE", "tm-pullback-v2"))
         self.assertEqual(research["setups"]["total"], 3)
         self.assertEqual(research["confirmations"], 2)
         self.assertEqual((research["outcomes"]["verified_target"], research["outcomes"]["verified_stop"]), (1, 1))
@@ -509,11 +512,17 @@ class EndToEndTests(unittest.TestCase):
         self.assertEqual(g.canonical(strip(markets)), g.canonical(strip(base)), "top-level markets are the trendline result")
         for name in g.PERSISTED_FILES:
             lines = files.get(name, b"").splitlines(keepends=True)
-            ids = {r["setup_id"] for r in self.records(files) if r["strategy_id"] == "trendline"}
+            ids = {r["setup_id"] for r in self.records(files) if r["strategy_id"] == TRENDLINE}
             own = [line for line in lines if json.loads(line).get("setup_id") in ids]
+            if name == "setup_confirmations.jsonl":
+                # A confirmation event's id comes from the temp store's shared counter, which the
+                # other strategies' records advance; the event itself is compared field for field.
+                strip = lambda blob: [{k: v for k, v in json.loads(l).items() if k != "confirmation_event_id"} for l in blob.splitlines()]  # noqa: E731
+                self.assertEqual(strip(b"".join(own)), strip(base_files.get(name, b"")), name)
+                continue
             self.assertEqual(b"".join(own), base_files.get(name, b""), name)
         for market_row, base_row in zip(markets, base):
-            trend = next(e for e in market_row["strategies"] if e["strategy_id"] == "trendline")
+            trend = next(e for e in market_row["strategies"] if e["strategy_id"] == TRENDLINE)
             self.assertEqual(trend, base_row["strategies"][0])
 
     def test_support_resistance_results_are_unchanged(self):
@@ -533,7 +542,7 @@ class EndToEndTests(unittest.TestCase):
         day = report["daily"][0]
         live = [(s["strategy_id"], s["symbol"], s["direction"]) for s in day["setups"] if s.get("strategy_id") == "trend_momentum"]
         self.assertEqual(sorted(live), [("trend_momentum", "EURUSD", "SHORT"), ("trend_momentum", "XAUUSD", "LONG")])
-        self.assertEqual(day["shadow_strategies"], [])
+        self.assertEqual(set(day["shadow_strategies"]) - set(g.SHADOW_EXPERIMENT), set())   # only the v5 SHADOW experiment, never T/M
         self.assertIn("trend_momentum", day["by_strategy"])
 
 

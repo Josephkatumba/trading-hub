@@ -29,6 +29,11 @@ PERSISTENCE_GOLDEN_V4 = FIXTURES / "golden" / "persistence_trendline-first-v4"
 TRENDLINE_V3, TRENDLINE_V4 = "trendline-first-v3", "trendline-first-v4"
 OFFICIAL_SCAN = ["XAUUSD", "BTCUSD", "ETHUSD", "EURUSD", "GBPUSD", "GBPJPY", "USDJPY", "NAS100", "US500", "GER40"]
 PERSISTED_FILES = ("setup_observations.jsonl", "setup_lifecycle.jsonl", "setup_confirmations.jsonl")
+# The Trendline v5 SHADOW experiment ended when v5 replaced v4 as the live trendline: nothing is
+# registered in SHADOW mode by default any more (its historical records remain).
+SHADOW_EXPERIMENT: list[str] = []
+SHADOW_EXPERIMENT_DESCRIPTION = {"strategy_id": "trendline-first-v5-shadow", "version": "trendline-first-v5", "timeframe": "M15",
+                                 "higher_timeframes": ["H1"], "status": "SHADOW"}
 BASE_NOW = datetime(2026, 9, 24, 12, 0, 0, tzinfo=timezone.utc)
 
 
@@ -110,12 +115,45 @@ def only_trendline_fields(found: list) -> bool:
 
 
 def trendline_only_registry():
-    """The registry as it was before shadow strategies: trendline only, LIVE.
-    Used where a test asserts trendline behaviour in isolation."""
-    from strategies import LIVE, StrategyRegistry, TrendlineStrategy
+    """The live trendline alone (LIVE), whichever version is registered in production
+    (trendline-first-v5, strategy_id "trendline_v5", since the replacement).
+    Used where a test asserts the live trendline's behaviour in isolation."""
+    from strategies import LIVE, TRENDLINE, StrategyRegistry, build_default_registry
+    registry = StrategyRegistry()
+    registry.register(build_default_registry().get(TRENDLINE), enabled=True, mode=LIVE)
+    return registry
+
+
+def v4_lineup_registry(trendline_only: bool = False):
+    """The production lineup before the v5 replacement: trendline-first-v4 under
+    strategy_id "trendline" (LIVE), plus S/R and Trend / Momentum. Historical
+    reproducibility tests (v4 goldens, v3 -> v4) pin this explicitly instead of
+    following whatever trendline is live today."""
+    from strategies import LIVE, StrategyRegistry, SupportResistanceStrategy, TrendMomentumStrategy, TrendlineStrategy
     registry = StrategyRegistry()
     registry.register(TrendlineStrategy(), enabled=True, mode=LIVE)
+    if not trendline_only:
+        registry.register(SupportResistanceStrategy(), enabled=True, mode=LIVE)
+        registry.register(TrendMomentumStrategy(), enabled=True, mode=LIVE)
     return registry
+
+
+@contextmanager
+def v4_lineup(*modules, trendline_only: bool = False):
+    """Run `modules` (observations, main, ...) with v4_lineup_registry() as their STRATEGIES."""
+    registry = v4_lineup_registry(trendline_only)
+    # The frozen pre-strategy implementation (legacy_observations) has no registry to pin.
+    patches = [mock.patch.object(module, "STRATEGIES" if hasattr(module, "STRATEGIES") else "REGISTRY", registry)
+               for module in modules if hasattr(module, "STRATEGIES") or hasattr(module, "REGISTRY")]
+    # main picks the top-level market from its TRENDLINE id: the retired "trendline" here.
+    patches += [mock.patch.object(module, "TRENDLINE", "trendline") for module in modules if hasattr(module, "TRENDLINE")]
+    for patch in patches:
+        patch.start()
+    try:
+        yield registry
+    finally:
+        for patch in patches:
+            patch.stop()
 
 
 def legacy_registry(shadow: bool = True):
@@ -138,6 +176,8 @@ def legacy_registry(shadow: bool = True):
 def legacy_trendline(*modules):
     """Run `modules` (observations, main) with legacy_registry() as their STRATEGIES."""
     patches = [mock.patch.object(module, "STRATEGIES", legacy_registry()) for module in modules]
+    # main picks the top-level market from its TRENDLINE id: the historical "trendline" here.
+    patches += [mock.patch.object(module, "TRENDLINE", "trendline") for module in modules if hasattr(module, "TRENDLINE")]
     for patch in patches:
         patch.start()
     try:
@@ -265,8 +305,9 @@ def isolated_store(module, root: Path):
 
 
 def run_persistence(module, root: Path, legacy: bool = False) -> dict[str, bytes]:
-    """The golden scan rounds through `module`; legacy=True runs trendline-first-v3."""
-    with isolated_store(module, root), (legacy_trendline(module) if legacy else _nothing()):
+    """The golden scan rounds through `module`; legacy=True runs trendline-first-v3, otherwise
+    trendline-first-v4 (the v4 goldens), pinned explicitly (v5 is live since the replacement)."""
+    with isolated_store(module, root), (legacy_trendline(module) if legacy else v4_lineup(module)):
         for index, markets in enumerate(persistence_rounds()):
             FrozenClock.current = BASE_NOW + timedelta(minutes=15 * index)
             module.record_markets(json.loads(json.dumps(markets)))

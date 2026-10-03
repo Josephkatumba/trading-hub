@@ -236,7 +236,8 @@ class EquivalenceMixin:
         # episode: the current module's equivalent is include_shadow=True. The default (live)
         # view equals the frozen implementation on the store without shadow strategies'
         # records. (Both are the same comparison when a store has no shadow records.)
-        strip = lambda rows: [{k: v for k, v in row.items() if k != "strategy_id"} for row in rows]  # noqa: E731
+        # Phase 11 adds confirmed_plan (the confirmation snapshot's levels), checked below.
+        strip = lambda rows: [{k: v for k, v in row.items() if k not in ("strategy_id", "confirmed_plan")} for row in rows]  # noqa: E731
         shadow = {str(row.get("setup_id")) for row in legacy.all_observations() if row.get("shadow") is True}
         views = []
         for bucket in ("current", "confirmed", "closed", "all"):
@@ -246,6 +247,14 @@ class EquivalenceMixin:
                 # "trendline" (read-time mapping) for records written before it existed.
                 self.assertEqual([row["strategy_id"] for row in new], [row.get("strategy_id") or "trendline" for row in old])
                 self.assertEqual(strip(new), strip(old), (bucket, limit))
+                for row in new:
+                    plan = row["confirmed_plan"]
+                    if row["confirmation"] is None:
+                        self.assertIsNone(plan)
+                    elif plan is not None:
+                        snapshot = current.snapshots_by_observation_id([row["confirmation"]["observation_id"]])[row["confirmation"]["observation_id"]]
+                        self.assertEqual((plan["entry"], plan["stop_loss"], plan["take_profit"]),
+                                         (snapshot.get("proposed_entry"), snapshot.get("proposed_stop_loss"), snapshot.get("proposed_take_profit")))
                 views.append((bucket, limit, current.setup_episodes(bucket, limit)))
         trendline_only(self.h.old_root)
         for bucket, limit, live in views:

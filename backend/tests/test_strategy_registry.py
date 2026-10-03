@@ -131,42 +131,47 @@ class AdapterEquivalenceTests(unittest.TestCase):
 class RegistryIsolationTests(unittest.TestCase):
     def setUp(self):
         self.fixture = next(f for f in g.load_fixtures() if f["name"] == "real_XAUUSD")
-        self.expected = g.canonical(g.as_version(g.scan(self.fixture), TrendlineStrategy.version))
+        self.expected = g.canonical(g.as_version(g.scan(self.fixture), TrendlineStrategy.version))   # v4 golden
+        # The live trendline (v5) evaluated directly: the registry must run it unchanged.
+        self.expected_live = g.canonical(strategies.TrendlineV5Strategy().evaluate(market_input(self.fixture)))
 
     def test_default_registry_has_three_live_strategies(self):
         # Trendline, Support & Resistance (Phase 6) and Trend / Momentum (Phase 10) are all LIVE
         # since Phase 10b; each stays independent (scoped by strategy_id).
+        # The trendline is trendline-first-v5 (strategy_id trendline_v5) since the v5 replacement.
         for registry in (strategies.REGISTRY, build_default_registry()):
-            self.assertEqual(registry.registered(), ["trendline", "support_resistance", "trend_momentum"])
-            self.assertEqual(registry.enabled(), ["trendline", "support_resistance", "trend_momentum"])
-            self.assertEqual(registry.live(), ["trendline", "support_resistance", "trend_momentum"])
+            self.assertEqual(registry.registered(), ["trendline_v5", "support_resistance", "trend_momentum"])
+            self.assertEqual(registry.enabled(), ["trendline_v5", "support_resistance", "trend_momentum"])
+            self.assertEqual(registry.live(), ["trendline_v5", "support_resistance", "trend_momentum"])
             self.assertEqual([registry.mode(s) for s in registry.registered()], ["LIVE", "LIVE", "LIVE"])
 
     def test_trendline_runs_through_the_registry(self):
         results = build_default_registry().evaluate(market_input(self.fixture))
-        self.assertEqual(list(results), ["trendline", "support_resistance", "trend_momentum"])
+        self.assertEqual(list(results), ["trendline_v5", "support_resistance", "trend_momentum"])
         self.assertEqual([r.mode for r in results.values()], ["LIVE", "LIVE", "LIVE"])
-        self.assertTrue(results["trendline"].ok)
-        self.assertEqual(results["trendline"].strategy_version, "trendline-first-v4")
-        self.assertEqual(g.canonical(results["trendline"].payload), self.expected)
+        self.assertTrue(results["trendline_v5"].ok)
+        self.assertEqual(results["trendline_v5"].strategy_version, "trendline-first-v5")
+        self.assertEqual(g.canonical(results["trendline_v5"].payload), self.expected_live)
+        # The retired v4 still reproduces its golden output when pinned explicitly.
+        self.assertEqual(g.canonical(g.v4_lineup_registry().evaluate(market_input(self.fixture))["trendline"].payload), self.expected)
 
     def test_disabled_strategy_produces_no_output_and_is_not_called(self):
         FailingStrategy.calls = 0
         registry = g.trendline_only_registry()
         registry.register(FailingStrategy())                 # registered disabled by default
-        registry.disable("trendline")
+        registry.disable(strategies.TRENDLINE)
         with mock.patch.object(scanner, "analyze_symbol", side_effect=AssertionError("called")):
             self.assertEqual(registry.evaluate(market_input(self.fixture)), {})
-        registry.enable("trendline")
-        self.assertEqual(list(registry.evaluate(market_input(self.fixture))), ["trendline"])
+        registry.enable(strategies.TRENDLINE)
+        self.assertEqual(list(registry.evaluate(market_input(self.fixture))), [strategies.TRENDLINE])
         self.assertEqual(FailingStrategy.calls, 0)
 
     def test_registering_a_future_strategy_leaves_trendline_unchanged(self):
         registry = build_default_registry()
         registry.register(FutureStrategy(), enabled=True)
         results = registry.evaluate(market_input(self.fixture))
-        self.assertEqual(list(results), ["trendline", "support_resistance", "trend_momentum", "future"])
-        self.assertEqual(g.canonical(results["trendline"].payload), self.expected)
+        self.assertEqual(list(results), ["trendline_v5", "support_resistance", "trend_momentum", "future"])
+        self.assertEqual(g.canonical(results["trendline_v5"].payload), self.expected_live)
         self.assertEqual(results["future"].record()["strategy_id"], "future")
 
     def test_failing_future_strategy_cannot_affect_trendline(self):
@@ -196,7 +201,7 @@ class RegistryIsolationTests(unittest.TestCase):
     def test_duplicate_and_unknown_ids_are_rejected(self):
         registry = build_default_registry()
         with self.assertRaises(ValueError):
-            registry.register(TrendlineStrategy())
+            registry.register(strategies.TrendlineV5Strategy())    # the live trendline id, twice
         with self.assertRaises(KeyError):
             registry.enable("unknown")
 
@@ -255,11 +260,11 @@ class ScanLoopTests(unittest.TestCase):
         for market, (args, kwargs, payload) in zip(markets, direct_calls):
             # Same call the scan loop made before, and every payload field lands unchanged.
             self.assertEqual(args[0], market["broker_symbol"])
-            # Same call as before plus the version label (Phase 9: trendline-first-v4).
-            self.assertEqual(set(kwargs), {"spread", "session_context", "higher_rows", "strategy_version"})
-            self.assertEqual(kwargs["strategy_version"], "trendline-first-v4")
+            # The live trendline (v5): closed-bar session context and the H1 structural target model.
+            self.assertEqual(set(kwargs), {"spread", "session_context", "higher_rows", "strategy_version", "target_model"})
+            self.assertEqual((kwargs["strategy_version"], kwargs["target_model"]), ("trendline-first-v5", "h1-structure"))
             self.assertEqual(g.canonical({key: market[key] for key in payload}), g.canonical(payload))
-            self.assertNotIn("strategy_id", market)
+            self.assertEqual(market["strategy_id"], "trendline_v5", "stamped: never attributed to the retired trendline")
         self.assertEqual(len(recorded), 1)
 
     def test_trendline_failure_still_fails_the_scan_as_before(self):

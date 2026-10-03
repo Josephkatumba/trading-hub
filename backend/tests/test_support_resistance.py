@@ -235,12 +235,12 @@ class ShadowPersistenceTests(IsolationTestCase):
 
     def test_registry_identity_and_research_mode_still_available(self):
         self.assertEqual(strategies.REGISTRY.mode("support_resistance"), "LIVE")
-        self.assertEqual(strategies.REGISTRY.live(), ["trendline", "support_resistance", "trend_momentum"])
+        self.assertEqual(strategies.REGISTRY.live(), [strategies.TRENDLINE, "support_resistance", "trend_momentum"])
         self.assertEqual((SupportResistanceStrategy.strategy_id, SupportResistanceStrategy.version), ("support_resistance", "sr-levels-v1"))
         self.assertNotEqual(SupportResistanceStrategy.version, strategies.TrendlineStrategy.version)
         m15 = f.support_ending("bounce")
         results = self.registry.evaluate(MarketInput("SYN", m15, higher_rows=f.range_h1(), bars={"M15": m15, "H1": f.range_h1()}))
-        self.assertEqual({sid: r.mode for sid, r in results.items()}, {"trendline": "LIVE", "support_resistance": "SHADOW", "trend_momentum": "SHADOW"})
+        self.assertEqual({sid: r.mode for sid, r in results.items()}, {strategies.TRENDLINE: "LIVE", "support_resistance": "SHADOW", "trend_momentum": "SHADOW"})
 
     def test_lifecycle_evidence_and_single_confirmation(self):
         developing = evaluate(f.support_ending("no_rejection"))
@@ -344,15 +344,15 @@ class ScanLoopShadowTests(unittest.TestCase):
         self.assertEqual(g.canonical(strip(markets)), g.canonical(strip(baseline)), "top-level markets are the trendline result")
         for market_row in markets:
             modes = {entry["strategy_id"]: entry["mode"] for entry in market_row["strategies"]}
-            self.assertEqual(modes, {"trendline": "LIVE", "support_resistance": "SHADOW", "trend_momentum": "SHADOW"})
+            self.assertEqual(modes, {strategies.TRENDLINE: "LIVE", "support_resistance": "SHADOW", "trend_momentum": "SHADOW"})
         lines = files["setup_observations.jsonl"].splitlines(keepends=True)
-        trend = [line for line in lines if json.loads(line)["strategy_id"] == "trendline"]
+        trend = [line for line in lines if json.loads(line)["strategy_id"] == strategies.TRENDLINE]
         self.assertEqual(b"".join(trend), baseline_files["setup_observations.jsonl"], "trendline records byte-identical")
         shadow = [json.loads(line) for line in lines if json.loads(line)["strategy_id"] == "support_resistance"]
         self.assertTrue(all(row.get("shadow") is True for row in shadow))
         for line in files.get("setup_confirmations.jsonl", b"").splitlines():
             event = json.loads(line)
-            self.assertEqual(event.get("shadow") is True, event["strategy_id"] == "support_resistance")
+            self.assertEqual(event.get("shadow") is True, event["strategy_id"] in ["support_resistance"] + g.SHADOW_EXPERIMENT)
 
 
 if __name__ == "__main__":

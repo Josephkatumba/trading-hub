@@ -73,7 +73,8 @@ def scan(now: datetime, legacy: bool, root: Path | None = None, basis: str | Non
     env = {"TRADING_HUB_MT5_SOURCE_TIMEZONE": basis} if basis else {}
     main._MT5_SESSION.update(initialized=False, initializations=0)
     try:
-        with g.isolated_store(observations, store), (g.legacy_trendline(main, observations) if legacy else g._nothing()), \
+        # v4 is retired from live use: the v4 configuration is pinned explicitly (v3 via legacy_trendline).
+        with g.isolated_store(observations, store), (g.legacy_trendline(main, observations) if legacy else g.v4_lineup(main, observations)), \
              mock.patch.dict(os.environ, env), mock.patch.object(main, "mt5", FakeBroker(IC_MARKETS)), \
              mock.patch.object(main, "datetime", g.FrozenClock.make()), \
              mock.patch.object(main, "WATCHLIST", list(main.OFFICIAL_UNIVERSE)), \
@@ -119,19 +120,23 @@ class TrendlineV4EndToEndTests(unittest.TestCase):
             cls.runs.append((now, scan(now, legacy=True), scan(now, legacy=False)))
 
     # D ----------------------------------------------------------------------------------------
-    def test_v4_is_the_live_trendline_and_v3_stays_available_unregistered(self):
+    def test_v4_is_retired_but_reproducible_and_v3_stays_available_unregistered(self):
+        # v5 (strategy_id trendline_v5) replaced v4 as the live trendline; v4 and v3 share the
+        # historical id "trendline" and are both kept, unregistered, for reproducibility.
         self.assertEqual((TrendlineStrategy.version, LegacyTrendlineStrategy.version), ("trendline-first-v4", "trendline-first-v3"))
         self.assertEqual(TrendlineStrategy.strategy_id, LegacyTrendlineStrategy.strategy_id)
-        self.assertEqual(REGISTRY.get("trendline").version, "trendline-first-v4")
-        self.assertEqual(REGISTRY.live(), ["trendline", "support_resistance", "trend_momentum"])
-        self.assertEqual(REGISTRY.get("trendline").version, "trendline-first-v4")
-        self.assertEqual(REGISTRY.registered(), ["trendline", "support_resistance", "trend_momentum"])
+        self.assertEqual(TrendlineStrategy.strategy_id, "trendline")
+        self.assertNotIn("trendline", REGISTRY.registered())
+        self.assertEqual(REGISTRY.live(), ["trendline_v5", "support_resistance", "trend_momentum"])
+        self.assertEqual(REGISTRY.get("trendline_v5").version, "trendline-first-v5")
+        self.assertEqual(REGISTRY.registered(), ["trendline_v5", "support_resistance", "trend_momentum"])
         # Everything but the version label and the session reader is the same strategy.
         for name in ("timeframe", "higher_timeframes", "lifecycle", "data_requirements", "evaluate"):
             self.assertEqual(getattr(TrendlineStrategy, name), getattr(LegacyTrendlineStrategy, name), name)
         # (index stats stubbed: health must not build index sidecars in the real data directory)
         with mock.patch.object(main, "mt5", None), mock.patch.object(main, "observation_index_stats", return_value={}):
-            self.assertEqual(main.health()["strategy"], "trendline-first-v4")
+            health = main.health()
+        self.assertEqual((health["strategy"], health["strategy_id"]), ("trendline-first-v5", "trendline_v5"))
 
     def test_v4_records_and_markets_carry_v4_and_the_v3_configuration_carries_v3(self):
         for now, (old, old_files), (new, new_files) in self.runs:

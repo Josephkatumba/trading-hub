@@ -53,10 +53,32 @@ CONFIRMATION (strategy_valid needs every rule in CONFIRMATION_RULES):
 
 PLAN
   entry  = current price (the forming M15 close)
-  stop   = P - 0.25 ATR(H1)                 (beyond the pullback low: the structure that
+  stop   = P - buffer                       (beyond the pullback low: the structure that
                                              invalidates the continuation idea)
   target = P + (H - L)                       (measured move: the impulse projected from P)
   invalidation = stop
+
+STOP MODEL, by version (the setup rules above are identical in both versions)
+  tm-pullback-v1  buffer = 0.25 ATR(H1)                          ("fixed-h1-buffer-v1")
+  tm-pullback-v2  buffer = clamp(1.0 ATR(M15), 0.25 ATR(H1), 0.5 ATR(H1))
+                                                                  ("structure-atr-guard-v2")
+    The structural invalidation is the H1 pullback extreme P: the level whose break
+    means the pullback was not a pullback. The buffer puts the stop one typical M15
+    bar range (closed-bar ATR(M15), the bars the stop is tested on) beyond that level,
+    so the stop does not sit on the obvious swing where ordinary M15 noise tags it.
+    It is never less than v1's 0.25 ATR(H1) and never more than 0.5 ATR(H1), so a
+    volatile M15 cannot widen the stop without limit. Both ATRs are closed-bar.
+  Risk envelope (both versions; unchanged values): the stop distance from entry must
+  lie within [0.5, 3.0] ATR(H1) (rule stop_ok). In v2 the result is classified and
+  recorded as strategy_evidence.stop.risk_quality:
+    RISK_REJECTED   risk > 3.0 ATR(H1): "Structural invalidation requires excessive
+                    risk. Setup rejected." The stop is NOT moved closer to force a trade.
+    STOP_TOO_TIGHT  risk < 0.5 ATR(H1): entry sits so close to structural invalidation
+                    that the stop is inside normal noise; not confirmed. The stop is
+                    NOT moved further away to force a trade.
+    WIDE_STRUCTURE  2.0 < risk <= 3.0 ATR(H1)   (label only; decides nothing)
+    NORMAL_RISK     0.5 <= risk <= 2.0 ATR(H1)  (label only; decides nothing)
+  R:R is never targeted: it follows from entry, stop and target.
 
 SCORE (0-100): a transparent quality measure of a setup that already meets the
 definition; it never decides a state or a confirmation (the rules above do). Each
@@ -77,12 +99,16 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Sequence
 
-from episode_identity import MATCHER_VERSION
+from episode_identity import CONFIRMED_EVENTS_LIFECYCLE, MATCHER_VERSION
 
 from .base import MarketInput, Strategy
 
-STRATEGY_VERSION = "tm-pullback-v1"
+STRATEGY_VERSION = "tm-pullback-v2"
+LEGACY_VERSION = "tm-pullback-v1"
 SETUP_FAMILY = "TM_PULLBACK_CONTINUATION"
+STOP_MODEL_V1 = "fixed-h1-buffer-v1"
+STOP_MODEL_V2 = "structure-atr-guard-v2"
+STOP_MODELS = {LEGACY_VERSION: STOP_MODEL_V1, STRATEGY_VERSION: STOP_MODEL_V2}
 
 EMA_FAST, EMA_SLOW, ATR_PERIOD = 20, 50, 14
 # H4 trend bias
@@ -107,9 +133,12 @@ COLLAPSE_BAR_ATR = 2.5
 # M15 trigger
 TRIGGER_BREAK_BARS = 4
 # Plan
-STOP_BUFFER_ATR = 0.25
+STOP_BUFFER_ATR = 0.25          # v1 buffer (ATR(H1)); also v2's lower buffer bound
+M15_BUFFER_ATR = 1.0            # v2: buffer = this many closed-bar ATR(M15) beyond structure ...
+MAX_BUFFER_ATR = 0.5            # ... clamped to [STOP_BUFFER_ATR, MAX_BUFFER_ATR] ATR(H1)
 MIN_RISK_ATR = 0.5
 MAX_RISK_ATR = 3.0
+NORMAL_RISK_ATR = 2.0           # v2 label boundary NORMAL_RISK / WIDE_STRUCTURE (decides nothing)
 MIN_RR = 1.5
 # History needed (closed bars) for the EMAs/pivots to be meaningful.
 MIN_BARS = {"M15": 60, "H1": 100, "H4": 60, "D1": 60}
@@ -120,6 +149,9 @@ PARAMETERS = {"ema": [EMA_FAST, EMA_SLOW], "atr_period": ATR_PERIOD, "min_h4_slo
               "min_impulse_atr": MIN_IMPULSE_ATR, "min_efficiency": MIN_EFFICIENCY,
               "retracement": [MIN_RETRACEMENT, MAX_RETRACEMENT], "pullback_bars": [MIN_PULLBACK_BARS, MAX_PULLBACK_BARS],
               "stop_buffer_atr": STOP_BUFFER_ATR, "risk_atr": [MIN_RISK_ATR, MAX_RISK_ATR], "min_rr": MIN_RR}
+PARAMETERS_V2 = {**PARAMETERS, "stop_model": STOP_MODEL_V2, "stop_buffer_atr_m15": M15_BUFFER_ATR,
+                 "stop_buffer_atr_h1": [STOP_BUFFER_ATR, MAX_BUFFER_ATR], "normal_risk_atr": NORMAL_RISK_ATR}
+del PARAMETERS_V2["stop_buffer_atr"]
 
 
 # ---------------------------------------------------------------- indicators
@@ -302,42 +334,90 @@ def _score(h4: dict[str, Any], h1: dict[str, Any] | None, d1: dict[str, Any], co
     return breakdown, detail
 
 
-def _no_setup(reason: str, **extra: Any) -> dict[str, Any]:
-    return {"strategy_version": STRATEGY_VERSION, "timeframe": "M15", "higher_timeframes": ["H1", "H4", "D1"],
+def stop_buffer(version: str, unit: float, unit_m15: float) -> float:
+    """Distance beyond the structural invalidation level (see STOP MODEL)."""
+    if version == LEGACY_VERSION:
+        return STOP_BUFFER_ATR * unit
+    return min(max(M15_BUFFER_ATR * unit_m15, STOP_BUFFER_ATR * unit), MAX_BUFFER_ATR * unit)
+
+
+def risk_quality(risk: float, unit: float) -> str:
+    """v2 classification of the stop distance against the risk envelope (ATR(H1) units)."""
+    if risk <= 0:
+        return "INVALID"                   # price is already beyond the stop
+    if risk > MAX_RISK_ATR * unit:
+        return "RISK_REJECTED"
+    if risk < MIN_RISK_ATR * unit:
+        return "STOP_TOO_TIGHT"
+    return "WIDE_STRUCTURE" if risk > NORMAL_RISK_ATR * unit else "NORMAL_RISK"
+
+
+def stop_evidence(long: bool, entry: float, stop: float, target: float, structure: float, structure_time: Any,
+                  unit: float, unit_m15: float, buffer: float, risk: float, rr: float | None) -> dict[str, Any]:
+    """Everything needed to explain a v2 stop from stored data alone."""
+    quality = risk_quality(risk, unit)
+    rejection = None
+    if quality == "RISK_REJECTED":
+        rejection = (f"Structural invalidation requires excessive risk ({risk / unit:.2f} ATR(H1), "
+                     f"max {MAX_RISK_ATR}). Setup rejected.")
+    elif quality == "STOP_TOO_TIGHT":
+        rejection = (f"Entry is only {risk / unit:.2f} ATR(H1) from structural invalidation (min {MIN_RISK_ATR}): "
+                     "the stop would sit inside normal noise. Not confirmed.")
+    elif quality == "INVALID":
+        rejection = "Price is already beyond the structural invalidation level."
+    return {"model": STOP_MODEL_V2, "basis": "STRUCTURAL",
+            "structure_source": "H1 pullback " + ("low" if long else "high"),
+            "structural_invalidation": structure, "structure_time": structure_time,
+            "atr_h1": unit, "atr_m15": unit_m15, "buffer": buffer,
+            "buffer_atr_h1": round(buffer / unit, 4) if unit > 0 else None,
+            "buffer_rule": f"clamp({M15_BUFFER_ATR} ATR(M15), {STOP_BUFFER_ATR} ATR(H1), {MAX_BUFFER_ATR} ATR(H1))",
+            "stop": stop, "entry": entry, "target": target, "stop_distance": risk,
+            "stop_distance_atr_h1": round(risk / unit, 4) if unit > 0 else None,
+            "min_stop_distance": MIN_RISK_ATR * unit, "max_stop_distance": MAX_RISK_ATR * unit,
+            "normal_risk_limit": NORMAL_RISK_ATR * unit, "rr": rr,
+            "risk_quality": quality, "rejection_reason": rejection}
+
+
+def _no_setup(reason: str, version: str = STRATEGY_VERSION, **extra: Any) -> dict[str, Any]:
+    return {"strategy_version": version, "timeframe": "M15", "higher_timeframes": ["H1", "H4", "D1"],
             "state": "NO SETUP", "direction": None, "setup": "No trend/momentum setup", "setup_family": None,
             "strategy_valid": False, "reason": reason, "score": 0, "score_breakdown": {},
             "entry": None, "stop_loss": None, "take_profit": None, "invalidation_hint": None, "rr": None, **extra}
 
 
-def analyze_trend_momentum(market: MarketInput) -> dict[str, Any]:
+def analyze_trend_momentum(market: MarketInput, version: str = STRATEGY_VERSION) -> dict[str, Any]:
+    if version not in STOP_MODELS:
+        raise ValueError(f"unknown trend/momentum version {version!r}")
+    v2 = version == STRATEGY_VERSION
     bars = dict(market.bars) if market.bars else {"M15": list(market.rows), "H1": list(market.higher_rows or [])}
     closed = {tf: list(bars.get(tf) or [])[:-1] for tf in ("M15", "H1", "H4", "D1")}
-    context = {"method": STRATEGY_VERSION, "setup_timeframe": "H1", "trigger_timeframe": "M15", "parameters": PARAMETERS,
+    context = {"method": version, "setup_timeframe": "H1", "trigger_timeframe": "M15",
+               "parameters": PARAMETERS_V2 if v2 else PARAMETERS,
                "timeframes_used": sorted(tf for tf in closed if closed[tf]),
                "unavailable_timeframes": dict(market.unavailable_timeframes)}
     for tf in ("M15", "H1", "H4"):
         if len(closed[tf]) < MIN_BARS[tf]:
             return _no_setup(f"Insufficient {tf} history for trend/momentum ({len(closed[tf])} closed bars, needs {MIN_BARS[tf]}).",
-                             strategy_evidence=context)
+                             version, strategy_evidence=context)
     unit = atr(closed["H1"])
     if unit <= 0:
-        return _no_setup("No H1 volatility (ATR) available.", strategy_evidence=context)
+        return _no_setup("No H1 volatility (ATR) available.", version, strategy_evidence=context)
     price = _f(bars["M15"][-1], "close")
     h4 = h4_trend(closed["H4"])
     evidence: dict[str, Any] = {**context, "trend": {"h4": h4}, "atr": {"H1": unit, "H4": h4["atr"]}}
     if h4["direction"] is None:
         return _no_setup(f"No H4 trend (structure {h4['structure']}, EMA50 slope {h4['ema50_slope_atr']:.2f} ATR).",
-                         atr=unit, strategy_evidence=evidence)
+                         version, atr=unit, strategy_evidence=evidence)
     direction = h4["direction"]
     long = direction == "LONG"
     d1 = d1_context(closed["D1"], direction)
     evidence["trend"]["d1"] = d1
     if d1["opposes"]:
-        return _no_setup(f"D1 opposes the H4 {'up' if long else 'down'}trend.", atr=unit, strategy_evidence=evidence)
+        return _no_setup(f"D1 opposes the H4 {'up' if long else 'down'}trend.", version, atr=unit, strategy_evidence=evidence)
     h1 = h1_setup(closed["H1"], direction, unit)
     evidence["trend"]["h1"] = {key: h1[key] for key in ("aligned", "ema20", "ema50", "ema50_rising")}
     if not h1["aligned"]:
-        return _no_setup(f"H1 is not aligned with the H4 {'up' if long else 'down'}trend (EMA20/EMA50).", atr=unit,
+        return _no_setup(f"H1 is not aligned with the H4 {'up' if long else 'down'}trend (EMA20/EMA50).", version, atr=unit,
                          strategy_evidence=evidence)
 
     gates: dict[str, bool] = {"h4_trend": True, "d1_not_opposed": True, "h1_aligned": True}
@@ -364,11 +444,13 @@ def analyze_trend_momentum(market: MarketInput) -> dict[str, Any]:
     if gates["impulse"] and gates["persistence"] and pullback_started and not stale and failed_reasons:
         breakdown, detail = _score(h4, h1, d1, False, None)
         evidence["score_components"] = detail
-        return _no_setup("Pullback failed: " + "; ".join(failed_reasons) + ".", atr=unit, strategy_evidence=evidence)
+        return _no_setup("Pullback failed: " + "; ".join(failed_reasons) + ".", version, atr=unit, strategy_evidence=evidence)
 
     extreme, pullback, impulse = h1["impulse_extreme"], h1["pullback_extreme"], h1["impulse"]
     entry = price
-    stop = pullback - STOP_BUFFER_ATR * unit if long else pullback + STOP_BUFFER_ATR * unit
+    unit_m15 = atr(closed["M15"])                                  # closed-bar ATR(M15); v2 buffer input
+    buffer = stop_buffer(version, unit, unit_m15)
+    stop = pullback - buffer if long else pullback + buffer
     target = pullback + impulse if long else pullback - impulse
     risk = (entry - stop) if long else (stop - entry)
     reward = (target - entry) if long else (entry - target)
@@ -393,18 +475,26 @@ def analyze_trend_momentum(market: MarketInput) -> dict[str, Any]:
         state, reason = "CONFIRMING", "M15 continuation after a controlled pullback"
     valid = state == "CONFIRMING" and all(gates[name] for name in CONFIRMATION_RULES)
     failed = [name for name in CONFIRMATION_RULES if not gates[name]]
+    planned = state in {"DEVELOPING", "CONFIRMING"} and gates["target"] and risk > 0
+    stop_record = (stop_evidence(long, entry, stop, target, pullback, h1["pullback_time"], unit, unit_m15, buffer, risk, rr)
+                   if v2 and planned else None)
     if state == "CONFIRMING":
         reason += "; all confirmation rules passed." if valid else "; not confirmed: " + ", ".join(failed) + "."
-    planned = state in {"DEVELOPING", "CONFIRMING"} and gates["target"] and risk > 0
+        if stop_record and stop_record["rejection_reason"]:
+            reason += " " + stop_record["rejection_reason"]
     breakdown, detail = _score(h4, h1, d1, gates["pullback_controlled"], rr if planned else None)
     evidence["score_components"] = detail
     evidence["confirmation"] = {"rules": {name: gates[name] for name in CONFIRMATION_RULES}, "passed": valid, "failed": failed}
     evidence["plan"] = {"entry": entry if planned else None, "stop": stop if planned else None, "target": target if planned else None,
                         "risk": risk if planned else None, "reward": reward if planned else None, "rr": rr if planned else None,
                         "min_rr": MIN_RR, "structure_invalidation": pullback,
-                        "method": "stop beyond the pullback extreme by 0.25 ATR(H1); target = impulse projected from the pullback extreme"}
+                        "method": ("stop beyond the pullback extreme by clamp(1.0 ATR(M15), 0.25-0.5 ATR(H1)); "
+                                   "target = impulse projected from the pullback extreme") if v2 else
+                                  "stop beyond the pullback extreme by 0.25 ATR(H1); target = impulse projected from the pullback extreme"}
+    if v2:
+        evidence["stop"] = stop_record
     setup = ("Bullish" if long else "Bearish") + " pullback continuation"
-    return {"strategy_version": STRATEGY_VERSION, "timeframe": "M15", "higher_timeframes": ["H1", "H4", "D1"],
+    return {"strategy_version": version, "timeframe": "M15", "higher_timeframes": ["H1", "H4", "D1"],
             "state": state, "direction": direction, "setup": setup, "setup_family": SETUP_FAMILY,
             "strategy_valid": valid, "reason": reason,
             "trigger": None if valid else ("M15 close above the last 4 highs and EMA20 after the pullback low" if long
@@ -422,9 +512,19 @@ class TrendMomentumStrategy(Strategy):
     version = STRATEGY_VERSION
     timeframe = "M15"                   # trigger/entry bars (see TIMEFRAMES); the setup structure is H1
     higher_timeframes = ("H1", "H4", "D1")
-    lifecycle = MATCHER_VERSION         # the existing episode matcher/lifecycle, scoped to this strategy
+    # The existing episode matcher, scoped to this strategy, plus (since v2) immutable confirmed
+    # events: a confirmed episode resolves on its confirmed stop/target and is never closed by
+    # an opposite-direction observation (that becomes a competing episode).
+    lifecycle = CONFIRMED_EVENTS_LIFECYCLE
     # H4 is required (the trend bias); D1 is context, used when available, never required.
     data_requirements = {"M15": 300, "H1": 160, "H4": 200}
 
     def evaluate(self, market: MarketInput) -> dict[str, Any]:
-        return analyze_trend_momentum(market)
+        return analyze_trend_momentum(market, self.version)
+
+
+class LegacyTrendMomentumStrategy(TrendMomentumStrategy):
+    """tm-pullback-v1: the fixed 0.25 ATR(H1) stop buffer. Not registered; kept so historical
+    behaviour stays reproducible (the Phase 11 A/B replay runs it as model A)."""
+    version = LEGACY_VERSION
+    lifecycle = MATCHER_VERSION

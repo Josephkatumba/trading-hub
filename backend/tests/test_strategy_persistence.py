@@ -68,8 +68,9 @@ class OldRecordMappingTests(unittest.TestCase):
 class PersistedStrategyFieldTests(IsolationTestCase):
     def test_snapshots_carry_strategy_id_version_evidence_and_identity(self):
         evidence = {"zone": [2630.0, 2640.0], "touches": 3, "note": "fake strategy evidence"}
-        self.store.scan(market("LONG"), {**market("SHORT", "sr", anchors=None), "strategy_evidence": evidence,
-                                         "strategy_version": "sr-v1"})
+        with g.v4_lineup(observations, trendline_only=True):   # the v4-era "trendline" record, pinned explicitly
+            self.store.scan(market("LONG"), {**market("SHORT", "sr", anchors=None), "strategy_evidence": evidence,
+                                             "strategy_version": "sr-v1"})
         snapshots = {s["strategy_id"]: s for s in self.store.records("setup_observations.jsonl")}
         self.assertEqual(set(snapshots), {"trendline", "sr"})
         self.assertEqual(snapshots["trendline"]["strategy_evidence"], {})
@@ -86,7 +87,7 @@ class PersistedStrategyFieldTests(IsolationTestCase):
 
             def evaluate(self, market):
                 return {}
-        registry = strategies.build_default_registry()
+        registry = g.v4_lineup_registry()          # the v4-era "trendline" record, pinned explicitly
         registry.register(Fake())
         with mock.patch.object(observations, "STRATEGIES", registry):
             self.store.scan({**market("LONG"), "strategy_version": "bogus"},
@@ -220,7 +221,7 @@ class ScanLoopIsolationTests(unittest.TestCase):
             baseline, baseline_files = self.scan(g.trendline_only_registry(), Path(tmp) / "a")
             registry = StrategyRegistry()
             registry.register(FailingStrategy(), enabled=True)
-            registry.register(TrendlineStrategy(), enabled=True)
+            registry.register(strategies.TrendlineV5Strategy(), enabled=True)      # the live trendline
             registry.register(FakeStrategy(), enabled=True)
             with self.assertLogs("trading_hub.strategies", "WARNING"):
                 markets, files = self.scan(registry, Path(tmp) / "b")
@@ -228,23 +229,23 @@ class ScanLoopIsolationTests(unittest.TestCase):
         self.assertEqual(g.canonical(strip(markets)), g.canonical(strip(baseline)))
         for market_row in markets:
             entries = {entry["strategy_id"]: entry for entry in market_row["strategies"]}
-            self.assertEqual(list(entries), ["failing", "trendline", "fake"])
+            self.assertEqual(list(entries), ["failing", strategies.TRENDLINE, "fake"])
             self.assertEqual((entries["failing"]["status"], entries["failing"]["error"]), ("ERROR", "RuntimeError"))
-            self.assertEqual(entries["trendline"]["setup_id"], market_row["setup_id"])
-            self.assertEqual(entries["trendline"]["state"], market_row["state"])
+            self.assertEqual(entries[strategies.TRENDLINE]["setup_id"], market_row["setup_id"])
+            self.assertEqual(entries[strategies.TRENDLINE]["state"], market_row["state"])
             self.assertEqual(entries["fake"]["direction"], "SHORT")
             self.assertNotEqual(entries["fake"]["setup_id"], market_row["setup_id"])
-        self.assertEqual([m["strategies"] for m in baseline][0][0]["strategy_id"], "trendline")
+        self.assertEqual([m["strategies"] for m in baseline][0][0]["strategy_id"], strategies.TRENDLINE)
         # Trendline records are unchanged; the fake strategy's records are separate and tagged.
         snapshots = [json.loads(line) for line in files["setup_observations.jsonl"].splitlines()]
         trendline_lines = [line for line in files["setup_observations.jsonl"].splitlines(keepends=True)
-                           if json.loads(line)["strategy_id"] == "trendline"]
+                           if json.loads(line)["strategy_id"] == strategies.TRENDLINE]
         self.assertEqual(b"".join(trendline_lines), baseline_files["setup_observations.jsonl"])
         trendline_ids = {json.loads(line)["setup_id"] for line in trendline_lines}
         trendline_events = [line for line in files["setup_lifecycle.jsonl"].splitlines(keepends=True)
                             if json.loads(line)["setup_id"] in trendline_ids]
         self.assertEqual(b"".join(trendline_events), baseline_files["setup_lifecycle.jsonl"])
-        self.assertEqual(sorted({s["strategy_id"] for s in snapshots}), ["fake", "trendline"])
+        self.assertEqual(sorted({s["strategy_id"] for s in snapshots}), ["fake", strategies.TRENDLINE])
         fake = [s for s in snapshots if s["strategy_id"] == "fake"]
         self.assertEqual({s["strategy_version"] for s in fake}, {"fake-v1"})
         self.assertTrue(all(s["strategy_evidence"]["fake_level"] for s in fake))

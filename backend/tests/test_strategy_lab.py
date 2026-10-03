@@ -15,6 +15,7 @@ from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import golden_support as g  # noqa: E402
+from strategies import TRENDLINE  # noqa: E402  (the live trendline id)
 import sr_fixtures as f  # noqa: E402
 
 import main  # noqa: E402
@@ -39,7 +40,7 @@ class StrategyLabTests(IsolationTestCase):
         # S/R shadow: a confirmed LONG (XAUUSD), a confirmed SHORT (EURUSD), a developing LONG (GBPUSD).
         self.sr_long = evaluate(f.support_ending("bounce"))
         self.sr_short = evaluate(f.resistance_rejection())
-        batch = self.store.scan(market("LONG", state="CONFIRMING", valid=True, invalidation=2600.0),
+        batch = self.store.scan(market("LONG", TRENDLINE, state="CONFIRMING", valid=True, invalidation=2600.0),
                                 sr_market(self.sr_long, "XAUUSD"), sr_market(self.sr_short, "EURUSD"),
                                 sr_market(evaluate(f.support_ending("no_rejection")), "GBPUSD"))
         self.trend_id, self.sr_long_id, self.sr_short_id, self.sr_dev_id = (m["setup_id"] for m in batch)
@@ -60,8 +61,8 @@ class StrategyLabTests(IsolationTestCase):
 
     def test_counts_are_per_strategy_and_never_mixed(self):
         report = self.report()
-        self.assertEqual(list(report), ["trendline", "support_resistance", "trend_momentum"])
-        sr, trend = report["support_resistance"], report["trendline"]
+        self.assertEqual(list(report), [TRENDLINE, "support_resistance", "trend_momentum"])
+        sr, trend = report["support_resistance"], report[TRENDLINE]
         self.assertEqual((sr["mode"], sr["version"], trend["mode"]), ("LIVE", "sr-levels-v1", "LIVE"))
         self.assertEqual((sr["setups"]["total"], trend["setups"]["total"]), (3, 1))
         self.assertEqual((sr["setups"]["by_state"]["CONFIRMED"], sr["setups"]["by_state"]["DEVELOPING"]), (2, 1))
@@ -77,7 +78,7 @@ class StrategyLabTests(IsolationTestCase):
 
     def test_verified_outcomes_are_grouped_by_strategy_and_unverified_never_count(self):
         report = self.report()
-        sr, trend = report["support_resistance"], report["trendline"]
+        sr, trend = report["support_resistance"], report[TRENDLINE]
         self.assertEqual({k: sr["outcomes"][k] for k in strategy_lab.OUTCOME_KINDS},
                          {"pending": 0, "unverified": 0, "verified_target": 1, "verified_stop": 1, "verified_other": 0})
         self.assertEqual({k: trend["outcomes"][k] for k in strategy_lab.OUTCOME_KINDS},
@@ -88,14 +89,14 @@ class StrategyLabTests(IsolationTestCase):
                          ("verified_target", "verified_stop", None))
         # Without the unverified record the trendline setup is pending, still never a win.
         self.outcomes = list(self.resolved)
-        self.assertEqual(self.report()["trendline"]["outcomes"]["pending"], 1)
+        self.assertEqual(self.report()[TRENDLINE]["outcomes"]["pending"], 1)
 
     def test_win_rate_only_with_enough_verified_outcomes(self):
         report = self.report()
         self.assertIsNone(report["support_resistance"]["win_rate"])
         self.assertIn("needs 30", report["support_resistance"]["win_rate_note"])
         self.assertEqual(self.report(min_verified_for_rate=2)["support_resistance"]["win_rate"], 50.0)
-        self.assertIsNone(self.report(min_verified_for_rate=2)["trendline"]["win_rate"], "an unverified WIN is no sample")
+        self.assertIsNone(self.report(min_verified_for_rate=2)[TRENDLINE]["win_rate"], "an unverified WIN is no sample")
 
     def test_classification_uses_the_first_barrier_and_verification(self):
         confirmation = {"observation_id": "o1"}
@@ -115,25 +116,26 @@ class StrategyLabTests(IsolationTestCase):
             response = main.strategy_lab(recent=25)
             detail = main.setup_detail(self.sr_long_id)
             garden = main.setup_episode_feed(bucket="all", limit=100)
-        self.assertEqual([s["strategy_id"] for s in response["strategies"]], ["trendline", "support_resistance", "trend_momentum"])
+        self.assertEqual([s["strategy_id"] for s in response["strategies"]], [TRENDLINE, "support_resistance", "trend_momentum"])
         evidence = detail["snapshots"][-1]["strategy_evidence"]
         self.assertEqual(evidence["level"]["type"], "SUPPORT")
         self.assertTrue(evidence["confirmation"]["passed"])
         self.assertEqual(evidence["plan"]["rr"], self.sr_long["rr"])
         # LIVE S/R setups are Garden setups; each keeps its own strategy identity.
-        self.assertEqual({r["strategy_id"] for b in ("current", "confirmed", "closed") for r in garden[b]}, {"trendline", "support_resistance"})
+        self.assertEqual({r["strategy_id"] for b in ("current", "confirmed", "closed") for r in garden[b]}, {TRENDLINE, "support_resistance"})
 
 
 class MlDatasetSeparationTests(IsolationTestCase):
     def test_audit_separates_strategies_and_never_mixes_them(self):
-        self.store.scan(market("LONG", state="CONFIRMING", valid=True, invalidation=2600.0), sr_market(evaluate(f.support_ending("bounce"))))
+        self.store.scan(market("LONG", TRENDLINE, state="CONFIRMING", valid=True, invalidation=2600.0), sr_market(evaluate(f.support_ending("bounce"))))
         rows = {name: self.store.records(name) for name in g.PERSISTED_FILES}
         legacy_row = {"symbol": "EURUSD", "direction": "SHORT", "state": "DEVELOPING", "price": 1.17, "timestamp": g.BASE_NOW.isoformat()}
         legacy_event = {"setup_id": "stp_legacy_abc", "to_state": "EXPIRED"}
         stray_outcome = {"record_type": "market_outcome", "setup_id": "stp_unknown", "observation_id": "obs_unknown", "horizon": "4h", "label": "WIN"}
         split = ml_dataset.split_by_strategy(rows["setup_observations.jsonl"] + [legacy_row], [stray_outcome],
                                              rows["setup_lifecycle.jsonl"] + [legacy_event], rows["setup_confirmations.jsonl"])
-        self.assertEqual(set(split), {"trendline", "support_resistance", "UNATTRIBUTED"})
+        # The live trendline's rows under trendline_v5; the unlabelled legacy row/event stay the old "trendline".
+        self.assertEqual(set(split), {TRENDLINE, "trendline", "support_resistance", "UNATTRIBUTED"})
         self.assertEqual(len(split["support_resistance"]["observations"]), 1)
         self.assertFalse(any(r.get("shadow") is True for r in split["support_resistance"]["observations"]))
         self.assertIn(legacy_row, split["trendline"]["observations"])
@@ -142,7 +144,7 @@ class MlDatasetSeparationTests(IsolationTestCase):
         self.assertEqual([c["strategy_id"] for c in split["support_resistance"]["confirmation_events"]], ["support_resistance"])
         audit = ml_dataset.audit_by_strategy(rows["setup_observations.jsonl"], [], rows["setup_lifecycle.jsonl"], rows["setup_confirmations.jsonl"])
         self.assertEqual({k: (v["mode"], v["records"]["observations"], v["shadow_snapshots"]) for k, v in audit.items()},
-                         {"trendline": ("LIVE", 1, 0), "support_resistance": ("LIVE", 1, 0)})
+                         {TRENDLINE: ("LIVE", 1, 0), "support_resistance": ("LIVE", 1, 0)})
         self.assertIn("statistics", audit["support_resistance"])
 
     def test_live_audit_labels_its_scope(self):
@@ -152,10 +154,10 @@ class MlDatasetSeparationTests(IsolationTestCase):
                                      CONFIRMATIONS_FILE=self.store.root / "setup_confirmations.jsonl",
                                      MARKET_OUTCOMES_FILE=self.store.root / "market_outcomes.jsonl",
                                      TRADE_OUTCOMES_FILE=self.store.root / "trade_outcomes.jsonl"):
-                self.store.scan(market("LONG"), sr_market(evaluate(f.support_ending("bounce"))))
+                self.store.scan(market("LONG", TRENDLINE), sr_market(evaluate(f.support_ending("bounce"))))
                 audit = ml_dataset.audit_live_dataset()
         self.assertEqual(audit["strategy_scope"], "ALL_STRATEGIES_COMBINED")
-        self.assertEqual(set(audit["by_strategy"]), {"trendline", "support_resistance"})
+        self.assertEqual(set(audit["by_strategy"]), {TRENDLINE, "support_resistance"})
         self.assertEqual(audit["by_strategy"]["support_resistance"]["shadow_snapshots"], 0)
 
 
