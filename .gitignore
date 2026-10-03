@@ -148,3 +148,9 @@ backend/data/.index/
 # Python bytecode (never commit compiled files)
 __pycache__/
 *.pyc
+
+# Live engine store (observations, lifecycle, outcomes): local runtime data, never committed
+backend/data/
+
+# Local backup copies of engine files
+backend/*.before-*
