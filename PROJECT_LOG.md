@@ -29,6 +29,8 @@ claimed for it unless a file records one.
   Every strategy runs on all of them.
 - **Company HQ** is a separate project. Its TradeDen bridge reads `/api/health`,
   `/api/market/performance` and the observation records only. TradeDen executes nothing.
+  Since 2026-10-03, HQ's paper Trading Floor consumes all four strategies across the 16-symbol
+  universe; desk P04 consumes SMC. HQ is paper only, and everything is gated by its Risk Desk.
 
 ## History
 
@@ -99,7 +101,7 @@ Report: `backend/STRATEGY_UPGRADE_PHASE1_REPORT.md`.
   - a close 0.08 ATR back through the line fails the break.
 
   REVERSAL output is byte-identical.
-- **SMC `smc-confluence-v1`** (new, LIVE, TradeDen signals only): requires all of
+- **SMC `smc-confluence-v1`** (new, LIVE; TradeDen signals only at the time, consumed by HQ desk P04 since Trading Floor V2): requires all of
   - H4 structure in the trade direction;
   - an M15 BOS/CHoCH within 48 bars, with an FVG in the break leg and an order block before it
     (a CHoCH also needs a liquidity sweep);
@@ -122,6 +124,17 @@ Report: `backend/STRATEGY_UPGRADE_PHASE1_REPORT.md`.
   - Outcome tracking is verified for all four strategies (`tests/test_live_strategies.py`).
   - The golden persistence and scanner snapshot suites pass unchanged.
   - The targeted backend and frontend strategy suites pass; the full suite was not run.
+
+### 2026-10-03 — Company HQ Trading Floor V2 (in the Company HQ repository)
+- HQ's paper Trading Floor now scans the full 16-symbol TradeDen universe. Non-USD quote
+  currencies convert to USD via fresh same-feed quotes and fail closed when stale.
+- The new desk P04 consumes TradeDen `smc-confluence-v1` setups through the Central Risk Desk
+  (paper only, USD 10,000).
+- TradeDen side: the TradeDen engine was restarted on the committed Phase 1 code, so SMC is live.
+- The read-only tool `backend/tests/tools/smc_hq_replay_fixture.py` exports genuine historical
+  SMC observations for HQ's acceptance replay. It runs TradeDen's own recorder on real MT5
+  history in an isolated store and writes nothing to the live store.
+- No TradeDen strategy logic changed.
 
 ## Current limitations
 - Replay results exclude spread, slippage and commission; they are small samples over one 180-day
