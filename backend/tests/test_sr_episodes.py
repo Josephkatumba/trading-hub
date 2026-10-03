@@ -104,7 +104,8 @@ class PolicyTests(unittest.TestCase):
 
     def test_confirmation_rules_and_thresholds_are_unchanged(self):
         self.assertEqual(sr.CONFIRMATION_RULES, ("touched", "clean_test", "held", "rejection", "momentum",
-                                                 "not_chasing", "stop_ok", "target", "min_rr"))
+                                                 "not_chasing", "stop_ok", "target", "min_rr", "pattern"))   # pattern: sr-levels-v2
+        self.assertEqual(sr.CONFIRMATION_RULES_V1, sr.CONFIRMATION_RULES[:-1])
         self.assertEqual((sr.MIN_RR, sr.REJECTION_CLOSE_POSITION, sr.TEST_DISTANCE_ATR_H1, sr.MAX_CHASE_ATR_H1),
                          (1.5, 0.6, 1.0, 1.0))
 

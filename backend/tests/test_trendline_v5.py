@@ -194,7 +194,7 @@ class RiskRewardGateTests(unittest.TestCase):
 class V4UnchangedTests(unittest.TestCase):
     def test_v5_is_the_registered_live_trendline_and_v4_is_retired(self):
         registry = build_default_registry()
-        self.assertEqual((TRENDLINE, registry.get(TRENDLINE).version, registry.mode(TRENDLINE)), ("trendline_v5", "trendline-first-v5", "LIVE"))
+        self.assertEqual((TRENDLINE, registry.get(TRENDLINE).version, registry.mode(TRENDLINE)), ("trendline_v5", "trendline-first-v5.1", "LIVE"))
         self.assertIsInstance(registry.get(TRENDLINE), TrendlineV5Strategy)
         # One trendline only: the retired v4 ("trendline") and the ended shadow experiment are not registered.
         self.assertEqual([i for i in registry.registered() if "trendline" in i], ["trendline_v5"])

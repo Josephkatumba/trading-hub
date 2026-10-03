@@ -112,12 +112,49 @@ observation log per request.
 ## Strategies
 
 `strategies/` holds the strategy contract (`base.py`), the registry
-(`registry.py`) and the registered strategies. Only `TrendlineStrategy`
-(`trendline.py`) exists and is enabled; it is a pure adapter over
-`scanner.analyze_symbol`, whose rules are unchanged. The scan loop runs the
-enabled strategies through the registry and builds each market from the
-unmodified trendline payload; a failing or disabled strategy cannot affect
-another's result. See `tests/test_strategy_registry.py`.
+(`registry.py`) and the registered strategies. All four are LIVE in TradeDen
+(LIVE means evaluated on live data, Garden setups, lifecycle, notifications and
+tracked outcomes; it is not a claim of profitability):
+
+| strategy_id | version | module | lifecycle |
+|---|---|---|---|
+| `trendline_v5` | `trendline-first-v5.1` | `trendline.py` over `scanner.analyze_symbol` | confirmed events |
+| `support_resistance` | `sr-levels-v2` | `support_resistance.py` | level episodes |
+| `trend_momentum` | `tm-pullback-v2` | `trend_momentum.py` | confirmed events |
+| `smc` | `smc-confluence-v1` | `smc.py` | confirmed events |
+
+Every strategy runs on the full scanned universe (official ten + extras, see below)
+with the same fresh-data requirements; none is restricted to the Trading Floor's
+pairs. SMC produces TradeDen setups/signals only: it is not connected to Company HQ,
+the Trading Floor or any paper execution (`strategy_evidence.scope`). Previous
+versions stay reproducible and unregistered (`TrendlineV5Strategy`,
+`LegacySupportResistanceStrategy`, `LegacyTrendMomentumStrategy`, ...); records keep
+the version that produced them. The scan loop runs the enabled strategies through the
+registry; a failing or disabled strategy cannot affect another's result. See
+`tests/test_strategy_registry.py`.
+
+Candle confirmation (`strategies/price_action.py`, shared by S/R v2, Trendline v5.1
+and SMC): a touched level confirms only when the last closed candle closes on the
+trade side of the level with ANY ONE of: `wick_rejection` (that candle touched the
+level and its level-side wick is >= 50% of its range), `engulfing` (opposite previous
+candle's body engulfed; either candle touched the level) or `close_away` (one of the
+two previous candles touched the level and this candle closes beyond that candle's
+whole range). One pattern is enough; all three are recorded in the evidence.
+
+- S/R `sr-levels-v2` = v1 + gate `pattern` (above). Without it a clean test that
+  closes back with momentum stays DEVELOPING. Levels, stops and targets unchanged.
+- Trendline `trendline-first-v5.1` = v5 + break-and-retest: the break candle is
+  only the event (it must cross the line); within 12 closed M15 bars a later candle
+  must retest the line (within 0.15 ATR) and the last closed candle must close back
+  on the break side with a rejection pattern. A close 0.08 ATR back through the
+  line fails the break. REVERSAL setups are unchanged. Evidence: `trendline_retest`.
+- SMC `smc-confluence-v1`: H4 structure (BOS/CHoCH) gives the direction; an M15
+  BOS/CHoCH in that direction within 48 bars, with a fair value gap in the break leg
+  and an order block before it (a CHoCH also needs a liquidity sweep at the leg
+  origin); price retraces into the order block and a rejection candle closes back
+  out of it. Full rules at the top of `strategies/smc.py`.
+- Replay comparison: `STRATEGY_UPGRADE_PHASE1_REPORT.md`
+  (`tests/tools/strategy_upgrade_report.py`).
 
 Persistence and lifecycle are scoped by strategy (`tests/test_strategy_persistence.py`):
 
@@ -159,10 +196,11 @@ Persistence and lifecycle are scoped by strategy (`tests/test_strategy_persisten
   required data is missing is not run. The trendline strategy still reads the
   same M15/H1 OHLC rows. See `tests/test_market_data.py`.
 
-## Support & Resistance (shadow mode)
+## Support & Resistance (shadow mode, Phases 6-10; LIVE since Phase 10b)
 
-`strategies/support_resistance.py` (`support_resistance`, version `sr-levels-v1`)
-is a deterministic, rule-based S/R strategy registered in **SHADOW** mode:
+`strategies/support_resistance.py` (`support_resistance`, now `sr-levels-v2`) is a
+deterministic, rule-based S/R strategy. It was first registered in **SHADOW** mode;
+what that meant (and still means for any SHADOW strategy):
 
 - It runs on every scan and its setups are persisted with `shadow: true`
   (snapshots and confirmation events), follow the normal episode lifecycle and

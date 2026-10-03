@@ -187,7 +187,7 @@ class VersioningTests(unittest.TestCase):
         self.assertEqual(TrendlineStrategy.lifecycle, MATCHER_VERSION, "trendline lifecycle unchanged")
         self.assertEqual(SupportResistanceStrategy.lifecycle, LEVEL_EPISODES_LIFECYCLE, "S/R: level episodes (tests/test_sr_episodes.py)")
         self.assertEqual((REGISTRY.get("trendline_v5").version, REGISTRY.get("support_resistance").version),
-                         ("trendline-first-v5", "sr-levels-v1"))
+                         ("trendline-first-v5.1", "sr-levels-v2"))
         self.assertEqual(REGISTRY.get("trendline_v5").lifecycle, CONFIRMED_EVENTS_LIFECYCLE, "the live trendline (v5)")
         self.assertNotIn("trendline", REGISTRY.registered(), "the retired v4 trendline is not registered")
 

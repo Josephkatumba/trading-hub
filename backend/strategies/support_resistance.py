@@ -46,6 +46,16 @@ CONFIRMATION (all required for strategy_valid; see CONFIRMATION_RULES)
   stop_ok     : risk between 0.5 ATR(M15) and 2.5 ATR(H1)
   target      : a further meaningful level exists in the trade direction
   min_rr      : reward / risk >= 1.5
+  pattern     : (sr-levels-v2 only) candle confirmation AT the level, by any ONE of
+                wick_rejection / engulfing / close_away (strategies/price_action.py).
+                The touch must be inside the touch window. Without it the setup stays
+                DEVELOPING: a bullish close somewhere after a touch is not enough.
+
+VERSIONS
+  sr-levels-v1  the rules above without `pattern` (LegacySupportResistanceStrategy,
+                unregistered; kept so historical records stay reproducible).
+  sr-levels-v2  (LIVE) adds the `pattern` gate. Levels, tests, stops and targets are
+                unchanged; only weak level-touch confirmations are removed.
 
 PLAN
   entry  = current price (the forming bar's close, after the confirmed rejection)
@@ -60,8 +70,11 @@ from episode_identity import LEVEL_EPISODES_LIFECYCLE
 from scanner import _atr
 
 from .base import MarketInput, Strategy
+from .price_action import confirm_rejection
 
-STRATEGY_VERSION = "sr-levels-v1"
+STRATEGY_VERSION = "sr-levels-v2"
+LEGACY_VERSION = "sr-levels-v1"
+VERSIONS = (LEGACY_VERSION, STRATEGY_VERSION)
 
 PIVOT_STRENGTH = {"M15": 3, "H1": 3, "H4": 2, "D1": 2}
 TIMEFRAME_WEIGHT = {"M15": 1, "H1": 2, "H4": 3, "D1": 4}
@@ -84,7 +97,12 @@ REJECTION_CLOSE_POSITION = 0.6
 MIN_RR = 1.5
 MIN_M15_BARS = 60
 
-CONFIRMATION_RULES = ("touched", "clean_test", "held", "rejection", "momentum", "not_chasing", "stop_ok", "target", "min_rr")
+CONFIRMATION_RULES_V1 = ("touched", "clean_test", "held", "rejection", "momentum", "not_chasing", "stop_ok", "target", "min_rr")
+CONFIRMATION_RULES = CONFIRMATION_RULES_V1 + ("pattern",)
+
+
+def confirmation_rules(version: str = STRATEGY_VERSION) -> tuple[str, ...]:
+    return CONFIRMATION_RULES_V1 if version == LEGACY_VERSION else CONFIRMATION_RULES
 STATE_RANK = {"NO SETUP": 0, "WATCHING": 1, "DEVELOPING": 2, "CONFIRMING": 3}
 
 
@@ -172,7 +190,7 @@ def _crossed(closed: Sequence[Mapping[str, Any]], level: dict[str, Any], directi
 
 
 def evaluate_level(level: dict[str, Any], side: str, levels: list[dict[str, Any]], closed: Sequence[Mapping[str, Any]],
-                   price: float, atr_m15: float, atr_h1: float) -> dict[str, Any]:
+                   price: float, atr_m15: float, atr_h1: float, version: str = STRATEGY_VERSION) -> dict[str, Any]:
     """All S/R rules for one level in one direction ("LONG" at support, "SHORT" at resistance)."""
     long = side == "LONG"
     zl, zh = level["zone_low"], level["zone_high"]
@@ -211,23 +229,33 @@ def evaluate_level(level: dict[str, Any], side: str, levels: list[dict[str, Any]
     gates["target"] = target is not None and reward is not None and reward > 0
     gates["min_rr"] = rr is not None and rr >= MIN_RR
     family = "SR_BREAK_RETEST" if _crossed(closed, level, "UP" if long else "DOWN", buffer) else "SR_BOUNCE"
+    rules = confirmation_rules(version)
+    candle = None
+    if "pattern" in rules:
+        candle = confirm_rejection(
+            closed, long,
+            touched=lambda i: (_f(closed[i], "low") <= zh) if long else (_f(closed[i], "high") >= zl),
+            closed_outside=lambda i: (_f(closed[i], "close") > zh) if long else (_f(closed[i], "close") < zl),
+            earliest=len(closed) - TOUCH_LOOKBACK)
+        gates["pattern"] = candle["confirmed"]
 
     if not gates["near_level"] or not gates["held"]:
         state = "NO SETUP"
     elif not (gates["touched"] and gates["clean_test"]):
         state = "WATCHING"
-    elif gates["rejection"] and gates["momentum"]:
+    elif gates["rejection"] and gates["momentum"] and gates.get("pattern", True):
         state = "CONFIRMING"
     else:
         state = "DEVELOPING"
-    valid = state == "CONFIRMING" and all(gates[name] for name in CONFIRMATION_RULES)
+    valid = state == "CONFIRMING" and all(gates[name] for name in rules)
     planned = state in {"DEVELOPING", "CONFIRMING"} and gates["target"] and risk > 0
     return {"side": side, "level": level, "family": family, "state": state, "valid": valid, "gates": gates,
             "distance": distance, "touch_bars_ago": touch_bars[0] if touch_bars else None,
             "approach_atr_h1": round(excursion / atr_h1, 3),
             "close_position": round(position, 3), "entry": entry, "stop": stop if planned else None,
             "target": target if planned else None, "target_level": target_level, "risk": risk if planned else None,
-            "reward": reward if planned else None, "rr": rr if planned else None, "confirm_time": confirm["time"]}
+            "reward": reward if planned else None, "rr": rr if planned else None, "confirm_time": confirm["time"],
+            "candle": candle, "rules": rules}
 
 
 def failed_level(levels: list[dict[str, Any]], closed: Sequence[Mapping[str, Any]], price: float,
@@ -250,18 +278,20 @@ def _rank(candidate: dict[str, Any]) -> tuple:
     return (candidate["valid"], STATE_RANK[candidate["state"]], candidate["level"]["strength"], -candidate["distance"])
 
 
-def _no_setup(reason: str, **extra: Any) -> dict[str, Any]:
-    return {"strategy_version": STRATEGY_VERSION, "timeframe": "M15", "higher_timeframes": ["H1", "H4", "D1"],
+def _no_setup(reason: str, version: str = STRATEGY_VERSION, **extra: Any) -> dict[str, Any]:
+    return {"strategy_version": version, "timeframe": "M15", "higher_timeframes": ["H1", "H4", "D1"],
             "state": "NO SETUP", "direction": None, "setup": "No S/R setup", "setup_family": None,
             "strategy_valid": False, "reason": reason, "score": 0, "score_breakdown": {},
             "entry": None, "stop_loss": None, "take_profit": None, "invalidation_hint": None, "rr": None, **extra}
 
 
-def analyze_support_resistance(market: MarketInput) -> dict[str, Any]:
+def analyze_support_resistance(market: MarketInput, version: str = STRATEGY_VERSION) -> dict[str, Any]:
+    if version not in VERSIONS:
+        raise ValueError(f"unknown support/resistance version {version!r}")
     bars = dict(market.bars) if market.bars else {"M15": list(market.rows), "H1": list(market.higher_rows or [])}
     m15 = list(bars.get("M15") or [])
     if len(m15) < MIN_M15_BARS:
-        return _no_setup("Insufficient M15 history for S/R levels.")
+        return _no_setup("Insufficient M15 history for S/R levels.", version)
     closed = m15[:-1]
     price = _f(m15[-1], "close")
     atr_m15 = _atr(m15)
@@ -271,16 +301,16 @@ def analyze_support_resistance(market: MarketInput) -> dict[str, Any]:
     if atr_h1 <= 0:
         atr_h1, atr_basis = 2 * atr_m15, "2xM15 (H1 unavailable)"
     if atr_m15 <= 0 or atr_h1 <= 0:
-        return _no_setup("No volatility (ATR) available to size S/R zones.", atr=atr_m15)
+        return _no_setup("No volatility (ATR) available to size S/R zones.", version, atr=atr_m15)
     tolerance = TOLERANCE_ATR_H1 * atr_h1
     levels = find_levels(bars, tolerance)
     supports = [level for level in levels if level["price"] <= price + tolerance / 2]
     resistances = [level for level in levels if level["price"] >= price - tolerance / 2]
     candidates = []
     if supports:
-        candidates.append(evaluate_level(max(supports, key=lambda level: level["price"]), "LONG", levels, closed, price, atr_m15, atr_h1))
+        candidates.append(evaluate_level(max(supports, key=lambda level: level["price"]), "LONG", levels, closed, price, atr_m15, atr_h1, version))
     if resistances:
-        candidates.append(evaluate_level(min(resistances, key=lambda level: level["price"]), "SHORT", levels, closed, price, atr_m15, atr_h1))
+        candidates.append(evaluate_level(min(resistances, key=lambda level: level["price"]), "SHORT", levels, closed, price, atr_m15, atr_h1, version))
     context = {"levels_found": len(levels), "tolerance": tolerance, "atr": {"M15": atr_m15, "H1": atr_h1, "H1_basis": atr_basis},
                "timeframes_used": sorted(tf for tf in PIVOT_STRENGTH if bars.get(tf)),
                "unavailable_timeframes": dict(market.unavailable_timeframes)}
@@ -289,7 +319,7 @@ def analyze_support_resistance(market: MarketInput) -> dict[str, Any]:
         failed = failed_level(levels, closed, price, BREAK_BUFFER_ATR_M15 * atr_m15)
         reason = (f"Price closed through {failed['type'].lower()} at {failed['price']:.8g} (failed rejection)." if failed
                   else "No meaningful level near price." if levels else "No repeated reactions form a meaningful level.")
-        return _no_setup(reason, atr=atr_m15, strategy_evidence={"method": STRATEGY_VERSION, **context,
+        return _no_setup(reason, version, atr=atr_m15, strategy_evidence={"method": version, **context,
                          "failed_level": failed})
 
     level, long = best["level"], best["side"] == "LONG"
@@ -303,12 +333,13 @@ def analyze_support_resistance(market: MarketInput) -> dict[str, Any]:
     }
     setup = {"SR_BOUNCE": "Support bounce" if long else "Resistance rejection",
              "SR_BREAK_RETEST": "Resistance break/retest" if long else "Support break/retest"}[best["family"]]
-    failed_gates = [name for name in CONFIRMATION_RULES if not best["gates"][name]]
+    rules = best["rules"]
+    failed_gates = [name for name in rules if not best["gates"][name]]
     reason = (f"{setup} at {kind.lower()} {level['price']:.8g} ({level['reactions']} reactions, strength {level['strength']}"
               + (f", {level['higher_timeframe_reactions']} H4/D1" if level["higher_timeframe_reactions"] else "") + ")"
               + ("; all confirmation rules passed" if best["valid"] else "; waiting for: " + ", ".join(failed_gates)))
     evidence = {
-        "method": STRATEGY_VERSION, **context,
+        "method": version, **context,
         "level": {"type": kind, "price": level["price"], "zone_low": level["zone_low"], "zone_high": level["zone_high"],
                   "reactions": level["reactions"], "strength": level["strength"],
                   "reactions_by_timeframe": level["reactions_by_timeframe"],
@@ -321,16 +352,25 @@ def analyze_support_resistance(market: MarketInput) -> dict[str, Any]:
                   "clean_test": best["gates"]["clean_test"], "approach_atr_h1": best["approach_atr_h1"]},
         "rejection": {"confirmed": best["gates"]["rejection"], "close_position": best["close_position"],
                       "candle_time": best["confirm_time"]},
-        "confirmation": {"rules": {name: best["gates"][name] for name in CONFIRMATION_RULES},
+        "confirmation": {"rules": {name: best["gates"][name] for name in rules},
                          "near_level": best["gates"]["near_level"], "passed": best["valid"], "failed": failed_gates},
         "plan": {"entry": best["entry"], "stop": best["stop"], "target": best["target"],
                  "target_level_price": best["target_level"]["price"] if best["target_level"] else None,
                  "risk": best["risk"], "reward": best["reward"], "rr": best["rr"], "min_rr": MIN_RR},
     }
-    return {"strategy_version": STRATEGY_VERSION, "timeframe": "M15", "higher_timeframes": ["H1", "H4", "D1"],
+    if best["candle"] is not None:
+        candle = best["candle"]
+        evidence["candle_confirmation"] = {
+            "confirmed": candle["confirmed"], "pattern": candle["pattern"], "patterns": candle["patterns"],
+            "candle_time": candle["candle_time"],
+            "touch_time": closed[candle["touch_index"]]["time"] if candle["touch_index"] is not None else None,
+            "rule": "any one of wick_rejection / engulfing / close_away at the level (strategies/price_action.py)"}
+    return {"strategy_version": version, "timeframe": "M15", "higher_timeframes": ["H1", "H4", "D1"],
             "state": best["state"], "direction": best["side"], "setup": setup, "setup_family": best["family"],
             "strategy_valid": best["valid"], "reason": reason,
-            "trigger": "Close back " + ("above" if long else "below") + " the zone with momentum" if not best["valid"] else None,
+            "trigger": ("Close back " + ("above" if long else "below") + " the zone with momentum"
+                        + (" and a rejection candle (wick, engulfing or close beyond the test candle)" if "pattern" in rules else "")
+                        if not best["valid"] else None),
             "entry": best["entry"] if best["stop"] is not None else None,
             "stop_loss": best["stop"], "take_profit": best["target"], "invalidation_hint": best["stop"],
             "rr": best["rr"], "risk_distance": best["risk"], "reward_distance": best["reward"], "atr": atr_m15,
@@ -348,4 +388,10 @@ class SupportResistanceStrategy(Strategy):
     data_requirements = {"M15": 300, "H1": 160}   # H4/D1 context is used when available, never required
 
     def evaluate(self, market: MarketInput) -> dict[str, Any]:
-        return analyze_support_resistance(market)
+        return analyze_support_resistance(market, self.version)
+
+
+class LegacySupportResistanceStrategy(SupportResistanceStrategy):
+    """sr-levels-v1: no candle-pattern gate. Not registered; kept so historical records stay
+    reproducible (the sr-levels-v1 vs v2 replay runs it as the baseline)."""
+    version = LEGACY_VERSION

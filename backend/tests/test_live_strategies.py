@@ -17,6 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import golden_support as g  # noqa: E402
+import smc_fixtures as smcf  # noqa: E402
 import sr_fixtures as srf  # noqa: E402
 import tm_fixtures as tmf  # noqa: E402
 
@@ -28,10 +29,11 @@ from outcomes import resolve_due_market_outcomes  # noqa: E402
 from performance import performance_report  # noqa: E402
 from test_market_data import IC_MARKETS, FakeBroker, run_scan  # noqa: E402
 from test_strategy_isolation import IsolationTestCase, Store, market  # noqa: E402
+from test_smc import evaluate as smc_evaluate, smc_market  # noqa: E402
 from test_support_resistance import evaluate as sr_evaluate, sr_market  # noqa: E402
 from test_trend_momentum import ScenarioBroker, evaluate as tm_evaluate, tm_market  # noqa: E402
 
-LIVE_IDS = [strategies.TRENDLINE, "support_resistance", "trend_momentum"]   # trendline_v5 since the v5 replacement
+LIVE_IDS = [strategies.TRENDLINE, "support_resistance", "trend_momentum", "smc"]   # trendline_v5 since the v5 replacement
 
 
 def ids(rows):
@@ -42,13 +44,14 @@ class RegistryTests(unittest.TestCase):
     def test_three_live_strategies_and_nothing_else_registered(self):
         self.assertEqual(strategies.REGISTRY.registered(), LIVE_IDS + g.SHADOW_EXPERIMENT)   # + the v5 SHADOW experiment
         self.assertEqual(strategies.REGISTRY.live(), LIVE_IDS)
-        for name in ("smc", "crt", "ict"):
+        for name in ("crt", "ict"):
             with self.assertRaises(KeyError):
                 strategies.REGISTRY.mode(name)                  # not implemented: never evaluated, never shown
         with self.assertRaises(ValueError):
             strategies.StrategyRegistry().register(strategies.TrendMomentumStrategy(), mode="RESEARCH")   # modes: LIVE / SHADOW
         self.assertEqual([(d["strategy_id"], d["version"]) for d in strategies.REGISTRY.describe()],
-                         [("trendline_v5", "trendline-first-v5"), ("support_resistance", "sr-levels-v1"), ("trend_momentum", "tm-pullback-v2")])
+                         [("trendline_v5", "trendline-first-v5.1"), ("support_resistance", "sr-levels-v2"), ("trend_momentum", "tm-pullback-v2"),
+                          ("smc", "smc-confluence-v1")])
         self.assertNotIn("trendline", strategies.REGISTRY.registered(), "the retired v4 trendline is never registered")
 
 
@@ -57,17 +60,19 @@ class LivePersistenceTests(IsolationTestCase):
         # The live trendline market as main.market_snapshot stamps it (strategy_id trendline_v5).
         return self.store.scan(market("LONG", strategies.TRENDLINE, state="CONFIRMING", valid=True, invalidation=2600.0),
                                sr_market(sr_evaluate(srf.support_ending("bounce"))),
-                               tm_market(tm_evaluate(), verified=True))
+                               tm_market(tm_evaluate(), verified=True),
+                               smc_market(smc_evaluate(smcf.bullish_bos("reaction"))))
 
     def test_every_live_strategy_persists_live_records_and_confirmations(self):
         batch = self.scan_all()
         snapshots = self.store.records("setup_observations.jsonl")
         self.assertEqual([s["strategy_id"] for s in snapshots], LIVE_IDS)
         self.assertFalse(any("shadow" in s for s in snapshots))
-        self.assertEqual(len({m["setup_id"] for m in batch}), 3, "three independent episodes on XAUUSD")
+        self.assertEqual(len({m["setup_id"] for m in batch}), 4, "four independent episodes on XAUUSD")
         confirmations = self.store.records("setup_confirmations.jsonl")
         self.assertEqual(sorted((c["strategy_id"], c["symbol"], c["direction"]) for c in confirmations),
-                         [("support_resistance", "XAUUSD", "LONG"), ("trend_momentum", "XAUUSD", "LONG"), ("trendline_v5", "XAUUSD", "LONG")])
+                         [("smc", "XAUUSD", "LONG"), ("support_resistance", "XAUUSD", "LONG"), ("trend_momentum", "XAUUSD", "LONG"),
+                          ("trendline_v5", "XAUUSD", "LONG")])
         self.assertFalse(any("shadow" in c for c in confirmations))
         for confirmation in confirmations:                     # what a notification shows is on the record
             for key in ("strategy_id", "strategy_version", "symbol", "direction", "setup_type", "score", "confirmed_at", "rule_evidence"):
@@ -82,7 +87,7 @@ class LivePersistenceTests(IsolationTestCase):
             snapshots = observations.performance_observations()
         self.assertEqual(ids(episodes), set(LIVE_IDS))
         self.assertEqual({r["strategy_id"] for b in ("current", "confirmed", "closed") for r in api[b]}, set(LIVE_IDS))
-        self.assertEqual(len(api["confirmed"]), 3, "each strategy's episode once")
+        self.assertEqual(len(api["confirmed"]), 4, "each strategy's episode once")
         report = performance_report(confirmations, [], snapshots, report_date=g.BASE_NOW.date().isoformat(), timezone_name="UTC")
         day = report["daily"][0]
         # The live setups list drives confirmation notifications.

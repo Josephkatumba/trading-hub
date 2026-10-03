@@ -221,7 +221,7 @@ class ScanLoopIsolationTests(unittest.TestCase):
             baseline, baseline_files = self.scan(g.trendline_only_registry(), Path(tmp) / "a")
             registry = StrategyRegistry()
             registry.register(FailingStrategy(), enabled=True)
-            registry.register(strategies.TrendlineV5Strategy(), enabled=True)      # the live trendline
+            registry.register(strategies.TrendlineV51Strategy(), enabled=True)     # the live trendline
             registry.register(FakeStrategy(), enabled=True)
             with self.assertLogs("trading_hub.strategies", "WARNING"):
                 markets, files = self.scan(registry, Path(tmp) / "b")

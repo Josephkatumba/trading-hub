@@ -267,7 +267,7 @@ class NoTradingNoAlertsTests(IsolationTestCase):
             health = main.health()
         self.assertIs(health["execution_enabled"], False)
         # The experiment ended: v5 is the live trendline, nothing runs in SHADOW mode.
-        self.assertEqual((health["strategy"], health["strategy_id"]), ("trendline-first-v5", "trendline_v5"))
+        self.assertEqual((health["strategy"], health["strategy_id"]), ("trendline-first-v5.1", "trendline_v5"))
         self.assertEqual((health["trendline_v5_shadow"], health["shadow_strategies"]), ("NOT_REGISTERED", []))
         with mock.patch.object(main, "mt5", None), mock.patch.object(main, "STRATEGIES", experiment_registry()), \
              mock.patch.object(main, "TRENDLINE", "trendline"):
@@ -304,8 +304,8 @@ class ExperimentEndedTests(unittest.TestCase):
     def test_v5_is_live_and_the_shadow_copy_is_no_longer_registered(self):
         registry = build_default_registry()
         self.assertNotIn(TRENDLINE_V5_SHADOW, registry.registered(), "no duplicate v5 evaluation")
-        self.assertEqual(registry.live(), ["trendline_v5", "support_resistance", "trend_momentum"])
-        self.assertEqual(registry.get("trendline_v5").version, TrendlineV5ShadowStrategy.version)
+        self.assertEqual(registry.live(), ["trendline_v5", "support_resistance", "trend_momentum", "smc"])
+        self.assertEqual((registry.get("trendline_v5").version, TrendlineV5ShadowStrategy.version), ("trendline-first-v5.1", "trendline-first-v5"))
         # Same decisions under both identities: the shadow records measured what now runs live.
         self.assertEqual(TrendlineV5ShadowStrategy.evaluate, strategies.TrendlineV5Strategy.evaluate)
         self.assertEqual(TrendlineV5ShadowStrategy.lifecycle, strategies.TrendlineV5Strategy.lifecycle)

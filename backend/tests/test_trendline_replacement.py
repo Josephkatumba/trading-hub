@@ -29,7 +29,7 @@ from strategies import REGISTRY, TRENDLINE, TrendlineStrategy, TrendlineV5Strate
 from test_strategy_isolation import IsolationTestCase, market  # noqa: E402
 from test_strategy_registry import FakeMT5  # noqa: E402
 
-LIVE_IDS = ["trendline_v5", "support_resistance", "trend_momentum"]
+LIVE_IDS = ["trendline_v5", "support_resistance", "trend_momentum", "smc"]
 
 
 def production_scan(root: Path):
@@ -54,7 +54,7 @@ class ProductionLineupTests(unittest.TestCase):
     def test_a_exactly_one_live_trendline_and_it_is_v5(self):
         self.assertEqual(REGISTRY.registered(), LIVE_IDS)
         self.assertEqual(REGISTRY.live(), LIVE_IDS)
-        self.assertEqual((TRENDLINE, REGISTRY.get(TRENDLINE).version), ("trendline_v5", "trendline-first-v5"))
+        self.assertEqual((TRENDLINE, REGISTRY.get(TRENDLINE).version), ("trendline_v5", "trendline-first-v5.1"))
         self.assertIsInstance(REGISTRY.get(TRENDLINE), TrendlineV5Strategy)
         self.assertEqual([sid for sid in REGISTRY.registered() if "trendline" in sid], ["trendline_v5"], "no duplicate trendline")
         with self.assertRaises(KeyError):
@@ -68,14 +68,14 @@ class ProductionLineupTests(unittest.TestCase):
             snapshots = [json.loads(line) for line in (root / "setup_observations.jsonl").read_text().splitlines()]
         self.assertTrue(markets)
         for row in markets:
-            self.assertEqual((row["strategy_id"], row["strategy_version"]), ("trendline_v5", "trendline-first-v5"))
+            self.assertEqual((row["strategy_id"], row["strategy_version"]), ("trendline_v5", "trendline-first-v5.1"))
             self.assertEqual([entry["strategy_id"] for entry in row["strategies"]], LIVE_IDS)
             trend = [entry for entry in row["strategies"] if "trendline" in entry["strategy_id"]]
             self.assertEqual(len(trend), 1, "one trendline result per market")
         self.assertNotIn("trendline", {s["strategy_id"] for s in snapshots}, "the retired v4 writes nothing")
         v5 = [s for s in snapshots if s["strategy_id"] == "trendline_v5"]
         self.assertTrue(v5)
-        self.assertEqual({s["strategy_version"] for s in v5}, {"trendline-first-v5"})
+        self.assertEqual({s["strategy_version"] for s in v5}, {"trendline-first-v5.1"})
         per_symbol = {}
         for s in v5:
             per_symbol.setdefault(s["symbol"], set()).add(s["setup_id"])
@@ -98,7 +98,7 @@ class HistoryIsolationTests(IsolationTestCase):
         self.assertEqual({(s["strategy_id"], s["strategy_version"]) for s in snapshots if s["setup_id"] == v4_long["setup_id"]},
                          {("trendline", "trendline-first-v4")}, "v4 records are never relabelled")
         self.assertEqual({(s["strategy_id"], s["strategy_version"]) for s in snapshots if s["setup_id"] == v5["setup_id"]},
-                         {("trendline_v5", "trendline-first-v5")})
+                         {("trendline_v5", "trendline-first-v5.1")})
         self.assertEqual([e["to_state"] for e in self.store.events_for(v4_long["setup_id"])], ["DEVELOPING", "INVALIDATED"])
 
     def test_c_an_open_v4_episode_is_never_continued_by_v5(self):
@@ -114,7 +114,7 @@ class HistoryIsolationTests(IsolationTestCase):
         self.store.scan(market("LONG", TRENDLINE, state="CONFIRMING", valid=True, invalidation=2600.0))
         confirmations = self.store.records("setup_confirmations.jsonl")
         self.assertEqual(sorted((c["strategy_id"], c["strategy_version"]) for c in confirmations),
-                         [("trendline", "trendline-first-v4"), ("trendline_v5", "trendline-first-v5")])
+                         [("trendline", "trendline-first-v4"), ("trendline_v5", "trendline-first-v5.1")])
         report = performance_report(confirmations, [], self.store.records("setup_observations.jsonl"),
                                     report_date=g.BASE_NOW.date().isoformat(), timezone_name="UTC")
         by_strategy = report["daily"][0]["by_strategy"]

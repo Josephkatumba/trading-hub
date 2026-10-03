@@ -130,7 +130,7 @@ class OtherStrategiesUnchangedTests(IsolationTestCase):
         self.assertEqual(TrendlineStrategy.lifecycle, MATCHER_VERSION)
         self.assertEqual(TrendlineV5Strategy.lifecycle, CONFIRMED_EVENTS_LIFECYCLE)
         registry = build_default_registry()
-        self.assertEqual(registry.get("trendline_v5").version, "trendline-first-v5")
+        self.assertEqual(registry.get("trendline_v5").version, "trendline-first-v5.1")
         self.assertNotIn("trendline", registry.registered())
         # v4 records (strategy_id "trendline") still follow v4's lifecycle when v4 is pinned.
         with golden_support.v4_lineup(observations):

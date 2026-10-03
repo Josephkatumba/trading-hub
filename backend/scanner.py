@@ -177,6 +177,74 @@ def _trendline_signal(rows: list[Any], highs, lows, atr: float) -> dict[str, Any
     return {"family": None, "direction": None, "line": None, "label": "Trendline sequence developing", "identity": candidate_identity}
 
 
+# Break-and-retest confirmation (trendline-first-v5.1, break_confirmation="retest-rejection").
+# Parameters are round values chosen before looking at any outcome; nothing is fitted.
+RETEST_WINDOW = 12             # closed M15 bars after the break in which the retest must confirm
+RETEST_TOUCH_ATR = 0.15        # a retest reaches within this many ATR of the broken line
+BREAK_FAIL_ATR = 0.08          # a close this far back through the line fails the break (= the break threshold)
+
+
+def _break_events(rows: list[Any]) -> dict[str, Any] | None:
+    """The most recent genuine trendline break among the last RETEST_WINDOW + 1 closed bars.
+
+    A bar j is a break when _trendline_signal, evaluated on the bars up to j only (its own
+    swings and ATR, so nothing after j is used), returns BREAK and the previous close was
+    not yet beyond that same line (a crossing, not price merely riding above it). The
+    line is fixed by its two anchors at j, so later swings cannot redraw it.
+    """
+    last = len(rows) - 1
+    for j in range(last, max(last - RETEST_WINDOW, 60) - 1, -1):
+        prefix = rows[:j + 1]
+        atr = _atr(prefix)
+        highs, lows = _swings(prefix)
+        signal = _trendline_signal(prefix, highs, lows, atr)
+        if signal["family"] != "BREAK":
+            continue
+        a, b = (highs[-2], highs[-1]) if signal["direction"] == "LONG" else (lows[-2], lows[-1])
+        prev_close = float(rows[j - 1]["close"])
+        line_prev = _line_y(a, b, j - 1)
+        crossed = prev_close <= line_prev if signal["direction"] == "LONG" else prev_close >= line_prev
+        if crossed:
+            return {"index": j, "direction": signal["direction"], "anchors": (a, b), "atr": atr,
+                    "label": signal["label"], "identity": signal["identity"]}
+    return None
+
+
+def _retest_state(rows: list[Any], brk: dict[str, Any], atr: float) -> dict[str, Any]:
+    """Whether the broken line has been retested and the retest rejected (see _break_events).
+
+    LONG (resistance broken upward; SHORT mirrors):
+      failed    : any close after the break more than BREAK_FAIL_ATR x ATR back below the line
+      touched(i): bar i (after the break bar) traded down to within RETEST_TOUCH_ATR x ATR
+                  of the line, or through it
+      confirmed : the last closed bar closes above the line AND shows a candle rejection
+                  (strategies/price_action.py: wick_rejection / engulfing / close_away)
+                  with the touch after the break bar.
+    """
+    from strategies.price_action import confirm_rejection   # local: strategies imports scanner
+
+    long = brk["direction"] == "LONG"
+    a, b = brk["anchors"]
+    j, last = brk["index"], len(rows) - 1
+    line = lambda i: _line_y(a, b, i)  # noqa: E731
+    failed = any((float(rows[i]["close"]) < line(i) - BREAK_FAIL_ATR * atr) if long
+                 else (float(rows[i]["close"]) > line(i) + BREAK_FAIL_ATR * atr) for i in range(j + 1, last + 1))
+    touched = lambda i: i > j and ((float(rows[i]["low"]) <= line(i) + RETEST_TOUCH_ATR * atr) if long  # noqa: E731
+                                   else (float(rows[i]["high"]) >= line(i) - RETEST_TOUCH_ATR * atr))
+    retested = any(touched(i) for i in range(j + 1, last + 1))
+    candle = {"confirmed": False, "pattern": None, "patterns": {}, "touch_index": None}
+    if not failed and last > j:
+        candle = confirm_rejection(
+            rows, long, touched,
+            closed_outside=lambda i: float(rows[i]["close"]) > line(i) if long else float(rows[i]["close"]) < line(i),
+            earliest=j + 1)
+    return {"break_index": j, "break_time": rows[j].get("time"), "bars_since_break": last - j,
+            "line": line(last), "failed": failed, "retested": retested,
+            "confirmed": bool(candle["confirmed"] and not failed), "pattern": candle["pattern"],
+            "patterns": candle["patterns"],
+            "touch_time": rows[candle["touch_index"]].get("time") if candle.get("touch_index") is not None else None}
+
+
 def _crt_context(rows: list[Any], atr: float) -> dict[str, Any]:
     if len(rows) < 4:
         return {"state": "UNKNOWN", "label": "Waiting for range context", "direction": None}
@@ -297,10 +365,14 @@ def analyze_symbol(
     higher_rows: list[Any] | None = None,
     strategy_version: str = "trendline-first-v3",
     target_model: str = "nearest-swing",
+    break_confirmation: str = "break-bar",
 ) -> dict[str, Any]:
     # strategy_version only labels the output; it changes no calculation. The
     # trendline strategy passes its own version (strategies/trendline.py).
     # target_model: "nearest-swing" (v3/v4, default) or "h1-structure" (v5): see _trade_levels.
+    # break_confirmation: "break-bar" (v3/v4/v5, default: a BREAK can confirm on the break
+    # candle itself) or "retest-rejection" (v5.1: a BREAK confirms only when a later candle
+    # retests the broken line and rejects it; see _break_events / _retest_state).
     if len(rows) < 60:
         return {
             "state": "NO SETUP", "score": 0, "setup": "Insufficient data",
@@ -324,6 +396,24 @@ def analyze_symbol(
 
     pa = _price_action(rows, atr)
     trend = _trendline_signal(rows, highs, lows, atr)
+    retest = None
+    if break_confirmation == "retest-rejection" and trend["family"] != "REVERSAL":
+        brk = _break_events(rows)
+        if brk is not None:
+            retest = _retest_state(rows, brk, atr)
+            if retest["failed"]:
+                trend = {"family": None, "direction": None, "line": None, "identity": brk["identity"],
+                         "label": "Trendline break failed: price closed back through the broken line"}
+            else:
+                suffix = (" retest rejected" if retest["confirmed"] else
+                          " retest touched, waiting for a rejection candle" if retest["retested"] else
+                          " - waiting for a retest of the broken line")
+                trend = {"family": "BREAK", "direction": brk["direction"], "line": retest["line"],
+                         "label": brk["label"] + suffix, "identity": brk["identity"]}
+        elif trend["family"] == "BREAK":
+            # Price sits beyond the line but did not cross it within the retest window: no fresh break.
+            trend = {"family": None, "direction": None, "line": None, "identity": trend["identity"],
+                     "label": f"No trendline crossing in the last {RETEST_WINDOW} bars"}
     crt = _crt_context(rows, atr)
     level, level_atr_distance, level_kind = _nearest_level(rows, close, atr)
 
@@ -437,6 +527,8 @@ def analyze_symbol(
         and score >= 65
         and pa["direction"] == trendline_direction
         and confirmation_support
+        and (break_confirmation != "retest-rejection" or trend["family"] != "BREAK"
+             or bool(retest and retest["confirmed"]))
     ):
         state, setup = "CONFIRMING", (
             "Trendline break" if trend["family"] == "BREAK" else "Trendline reversal"
@@ -452,6 +544,8 @@ def analyze_symbol(
 
     if trendline_gate and not confirmation_alignment:
         reasons.append("trendline event is not fully aligned with price action and higher-timeframe bias")
+    if break_confirmation == "retest-rejection" and trend["family"] == "BREAK" and not (retest and retest["confirmed"]):
+        reasons.append("break is not confirmed until a retest of the broken line rejects it")
 
     momentum = "BULLISH" if rsi >= 55 else "BEARISH" if rsi <= 45 else "NEUTRAL"
 
@@ -581,4 +675,5 @@ def analyze_symbol(
         "spread_atr": spread / atr if atr else 0.0,
         "score_breakdown": breakdown,
         **({"target_basis": levels.get("target_basis")} if structural is not None else {}),
+        **({"trendline_retest": retest} if break_confirmation == "retest-rejection" else {}),
     }

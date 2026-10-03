@@ -18,8 +18,10 @@ export const STRATEGY_CATALOG = Object.freeze({
   // gardenResearch: a SHADOW (research) strategy whose current results are shown, labelled
   // RESEARCH, in the Garden's market overview. Never as Garden setups, counters or alerts.
   trend_momentum: Object.freeze({id: "trend_momentum", tag: "TREND/MOM", label: "Trend / Momentum", gardenResearch: true}),
-  // Not registered strategies: never evaluated, never selectable, never shown in the Garden.
+  // LIVE in TradeDen since Strategy Upgrade Phase 1 (smc-confluence-v1): Garden setups only,
+  // not connected to Company HQ or paper execution.
   smc: Object.freeze({id: "smc", tag: "SMC", label: "Smart Money Concepts"}),
+  // Not registered strategies: never evaluated, never selectable, never shown in the Garden.
   crt: Object.freeze({id: "crt", tag: "CRT", label: "Candle Range Theory"}),
   ict: Object.freeze({id: "ict", tag: "ICT", label: "ICT"}),
 });
@@ -184,6 +186,8 @@ const FAMILY_LABELS = Object.freeze({
   SR_BOUNCE: {LONG: "Support bounce", SHORT: "Resistance rejection", any: "S/R bounce"},
   SR_BREAK_RETEST: {LONG: "Resistance break/retest", SHORT: "Support break/retest", any: "S/R break/retest"},
   TM_PULLBACK_CONTINUATION: {LONG: "Trend continuation · pullback", SHORT: "Trend continuation · pullback", any: "Trend continuation · pullback"},
+  SMC_BOS_CONTINUATION: {LONG: "SMC · bullish BOS order block", SHORT: "SMC · bearish BOS order block", any: "SMC · BOS order block"},
+  SMC_CHOCH_SWEEP_REVERSAL: {LONG: "SMC · sweep + bullish CHoCH", SHORT: "SMC · sweep + bearish CHoCH", any: "SMC · sweep + CHoCH"},
 });
 
 export function setupFamilyLabel(family, direction = null) {

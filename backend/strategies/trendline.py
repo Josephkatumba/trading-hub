@@ -120,6 +120,37 @@ class TrendlineV5Strategy(TrendlineStrategy):
                                       higher_rows=higher, strategy_version=self.version, target_model="h1-structure")
 
 
+V51_VERSION = "trendline-first-v5.1"
+
+
+class TrendlineV51Strategy(TrendlineV5Strategy):
+    """trendline-first-v5.1: v5 plus a break-and-retest confirmation. The LIVE trendline.
+
+    Same strategy_id ("trendline_v5"), detection, scoring, closed bars, session context,
+    H1 structural targets, stop, 1.5R gate and lifecycle as v5; records keep the version
+    that produced them (as v3/v4 did under "trendline"). The only change is when a BREAK
+    may confirm (scanner.analyze_symbol, break_confirmation="retest-rejection"):
+
+      v5    a BREAK confirms on the break candle itself (close beyond the line).
+      v5.1  the break candle is only the event. It must be a genuine crossing (previous
+            close not yet beyond the line), then within 12 closed M15 bars a later candle
+            must retest the broken line (trade to within 0.15 ATR of it) and the last closed
+            candle must close back on the break side with a deterministic rejection candle
+            (wick_rejection / engulfing / close_away, strategies/price_action.py). A close
+            more than 0.08 ATR back through the line fails the break.
+    REVERSAL (line rejection) setups are unchanged: they already require the candle to
+    touch the line and close back on the rejection side.
+    """
+    version = V51_VERSION
+
+    def evaluate(self, market: MarketInput) -> dict[str, Any]:
+        rows, higher = closed_bars(market.rows), closed_bars(market.higher_rows)
+        context = self.closed_session_context(rows, self.basis()) if rows else None
+        return scanner.analyze_symbol(market.symbol, rows, spread=market.spread, session_context=context,
+                                      higher_rows=higher, strategy_version=self.version, target_model="h1-structure",
+                                      break_confirmation="retest-rejection")
+
+
 SHADOW_STRATEGY_ID = "trendline-first-v5-shadow"
 
 

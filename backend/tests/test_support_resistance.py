@@ -31,7 +31,8 @@ from test_market_data import IC_MARKETS, FakeBroker, run_scan  # noqa: E402
 from test_strategy_isolation import IsolationTestCase, Store, market  # noqa: E402
 
 EVIDENCE_KEYS = {"method", "levels_found", "tolerance", "atr", "timeframes_used", "unavailable_timeframes", "level",
-                 "family", "distance_atr_h1", "touch", "rejection", "confirmation", "plan"}
+                 "family", "distance_atr_h1", "touch", "rejection", "confirmation", "plan",
+                 "candle_confirmation"}   # sr-levels-v2
 LEVEL_KEYS = {"type", "price", "zone_low", "zone_high", "reactions", "strength", "reactions_by_timeframe",
               "higher_timeframe_reactions", "higher_timeframe_confluence", "role_reversal", "last_reaction_time"}
 
@@ -138,7 +139,7 @@ class SetupTests(unittest.TestCase):
         self.assertEqual((approach["entry"], approach["stop_loss"], approach["take_profit"]), (None, None, None))
         touched = evaluate(f.support_ending("no_rejection"))
         self.assertEqual((touched["state"], touched["strategy_valid"]), ("DEVELOPING", False))
-        self.assertEqual(set(touched["strategy_evidence"]["confirmation"]["failed"]), {"rejection", "momentum"})
+        self.assertEqual(set(touched["strategy_evidence"]["confirmation"]["failed"]), {"rejection", "momentum", "pattern"})
         weak = evaluate(f.support_ending("weak_close"))                  # momentum without a rejection candle
         self.assertEqual((weak["state"], weak["strategy_valid"]), ("DEVELOPING", False))
         self.assertTrue(weak["strategy_evidence"]["confirmation"]["rules"]["momentum"])
@@ -235,12 +236,13 @@ class ShadowPersistenceTests(IsolationTestCase):
 
     def test_registry_identity_and_research_mode_still_available(self):
         self.assertEqual(strategies.REGISTRY.mode("support_resistance"), "LIVE")
-        self.assertEqual(strategies.REGISTRY.live(), [strategies.TRENDLINE, "support_resistance", "trend_momentum"])
-        self.assertEqual((SupportResistanceStrategy.strategy_id, SupportResistanceStrategy.version), ("support_resistance", "sr-levels-v1"))
+        self.assertEqual(strategies.REGISTRY.live(), [strategies.TRENDLINE, "support_resistance", "trend_momentum", "smc"])
+        self.assertEqual((SupportResistanceStrategy.strategy_id, SupportResistanceStrategy.version), ("support_resistance", "sr-levels-v2"))
         self.assertNotEqual(SupportResistanceStrategy.version, strategies.TrendlineStrategy.version)
         m15 = f.support_ending("bounce")
         results = self.registry.evaluate(MarketInput("SYN", m15, higher_rows=f.range_h1(), bars={"M15": m15, "H1": f.range_h1()}))
-        self.assertEqual({sid: r.mode for sid, r in results.items()}, {strategies.TRENDLINE: "LIVE", "support_resistance": "SHADOW", "trend_momentum": "SHADOW"})
+        self.assertEqual({sid: r.mode for sid, r in results.items()}, {strategies.TRENDLINE: "LIVE", "support_resistance": "SHADOW", "trend_momentum": "SHADOW",
+                             "smc": "SHADOW"})
 
     def test_lifecycle_evidence_and_single_confirmation(self):
         developing = evaluate(f.support_ending("no_rejection"))
@@ -258,14 +260,14 @@ class ShadowPersistenceTests(IsolationTestCase):
         snapshots = [s for s in self.store.records("setup_observations.jsonl") if s["setup_id"] == first["setup_id"]]
         for snapshot in snapshots:
             self.assertEqual((snapshot["strategy_id"], snapshot["strategy_version"], snapshot.get("shadow")),
-                             ("support_resistance", "sr-levels-v1", True))
+                             ("support_resistance", "sr-levels-v2", True))
             self.assertEqual(snapshot["episode_identity"]["strategy_id"], "support_resistance")
         self.assertEqual(snapshots[-1]["strategy_evidence"], json.loads(json.dumps(confirmed["strategy_evidence"])))
         self.assertEqual((snapshots[-1]["proposed_entry"], snapshots[-1]["proposed_stop_loss"], snapshots[-1]["proposed_take_profit"]),
                          (confirmed["entry"], confirmed["stop_loss"], confirmed["take_profit"]))
         confirmations = self.store.records("setup_confirmations.jsonl")
         self.assertEqual([(c["setup_id"], c["strategy_id"], c["strategy_version"], c.get("shadow")) for c in confirmations],
-                         [(first["setup_id"], "support_resistance", "sr-levels-v1", True)])
+                         [(first["setup_id"], "support_resistance", "sr-levels-v2", True)])
 
     def test_coexists_with_trendline_in_either_direction_and_never_suppresses_it(self):
         sell = evaluate(f.resistance_rejection())
@@ -344,7 +346,8 @@ class ScanLoopShadowTests(unittest.TestCase):
         self.assertEqual(g.canonical(strip(markets)), g.canonical(strip(baseline)), "top-level markets are the trendline result")
         for market_row in markets:
             modes = {entry["strategy_id"]: entry["mode"] for entry in market_row["strategies"]}
-            self.assertEqual(modes, {strategies.TRENDLINE: "LIVE", "support_resistance": "SHADOW", "trend_momentum": "SHADOW"})
+            self.assertEqual(modes, {strategies.TRENDLINE: "LIVE", "support_resistance": "SHADOW", "trend_momentum": "SHADOW",
+                             "smc": "SHADOW"})
         lines = files["setup_observations.jsonl"].splitlines(keepends=True)
         trend = [line for line in lines if json.loads(line)["strategy_id"] == strategies.TRENDLINE]
         self.assertEqual(b"".join(trend), baseline_files["setup_observations.jsonl"], "trendline records byte-identical")
