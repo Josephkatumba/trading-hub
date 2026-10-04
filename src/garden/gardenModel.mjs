@@ -457,8 +457,8 @@ function researchValue(key, value) {
   return String(value);
 }
 
-// Strategies that keep their own recorded context in `strategy_evidence` (S/R and
-// Trend/Momentum). Paths into that record, per research section, with a display format.
+// Strategies that keep their own recorded context in `strategy_evidence` (S/R,
+// Trend/Momentum and SMC). Paths into that record, per research section, with a display format.
 const STRATEGY_RESEARCH = Object.freeze({
   trend_momentum: {
     structure: [["trend.h4.structure", "H4 structure", "text"], ["pullback.retracement", "Pullback retracement", "percent"],
@@ -477,6 +477,15 @@ const STRATEGY_RESEARCH = Object.freeze({
     levels: [["level.type", "Level", "text"], ["level.price", "Level price", "price"], ["level.zone_low", "Zone low", "price"], ["level.zone_high", "Zone high", "price"],
       ["level.reactions", "Reactions", "number"], ["level.strength", "Strength", "number"], ["level.role_reversal", "Role reversal", "bool"],
       ["level.higher_timeframe_confluence", "Higher-timeframe confluence", "bool"], ["distance_atr_h1", "Distance to level", "atr"]],
+  },
+  smc: {
+    structure: [["family", "Setup family", "text"], ["structure.last_break.kind", "M15 structure break", "text"], ["structure.trend", "M15 structure", "text"],
+      ["order_block.fvg_overlap", "FVG / order block overlap", "bool"], ["candle_confirmation.pattern", "Reaction candle", "text"]],
+    trend: [["htf.trend", "Higher-timeframe trend", "text"], ["htf.basis", "Higher-timeframe basis", "text"]],
+    momentum: [],
+    levels: [["order_block.low", "Order block low", "price"], ["order_block.high", "Order block high", "price"],
+      ["liquidity_sweep.swept_level", "Swept liquidity", "price"], ["structure.last_break.level", "Break level", "price"],
+      ["plan.structure_invalidation", "Structural invalidation", "price"]],
   },
 });
 const humanize = text => { const s = String(text).replace(/_/g, " ").toLowerCase(); return s.charAt(0).toUpperCase() + s.slice(1); };
@@ -590,8 +599,8 @@ export const MAX_ORBS = {history: 18, growing: 18, shaping: 10, bloomed: 10, act
 
 // Each live strategy grows in its own sector ("branch") of the garden, so strategy
 // identity is visible in the constellation itself. Unknown strategies share a sector.
-export const STRATEGY_SECTORS = Object.freeze({trendline: 0, trendline_v5: 0, support_resistance: 1, trend_momentum: 2});
-const SECTOR_WIDTH = (Math.PI * 2) / 3;
+export const STRATEGY_SECTORS = Object.freeze({trendline: 0, trendline_v5: 0, support_resistance: 1, trend_momentum: 2, smc: 3});
+const SECTOR_WIDTH = (Math.PI * 2) / 4;
 const SECTOR_SPREAD = SECTOR_WIDTH * 0.42;          // half-width used by orbs (a gap between sectors)
 export function sectorAngle(strategyId) {
   const index = STRATEGY_SECTORS[strategyId];
@@ -599,7 +608,7 @@ export function sectorAngle(strategyId) {
 }
 const wrap = angle => Math.atan2(Math.sin(angle), Math.cos(angle));
 // Strategy identity colours: muted, distinct from the long/short/stage colours.
-export const STRATEGY_COLORS = Object.freeze({trendline: "#4f86a8", trendline_v5: "#4f86a8", support_resistance: "#b3843a", trend_momentum: "#7c6bbf"});
+export const STRATEGY_COLORS = Object.freeze({trendline: "#4f86a8", trendline_v5: "#4f86a8", support_resistance: "#b3843a", trend_momentum: "#7c6bbf", smc: "#4f9a83"});
 export const OTHER_STRATEGY_COLOR = "#8fa396";
 
 /** Sector labels and trunks for the strategies that have orbs (for either renderer). */

@@ -128,11 +128,11 @@ test("a setup listed in several buckets is counted once", () => {
 });
 
 test("each strategy grows in its own sector of the garden", () => {
-  const cards = ["trendline", "support_resistance", "trend_momentum"].flatMap(id => [0, 1, 2, 3].map(i =>
+  const cards = ["trendline", "support_resistance", "trend_momentum", "smc"].flatMap(id => [0, 1, 2, 3].map(i =>
     ({key: id + i, symbol: "S" + i, stage: i % 2 ? "growing" : "bloomed", direction: "LONG", score: 70, strategy: {id}})));
   for (const orb of constellationLayout(cards)) {
     const offset = Math.atan2(Math.sin(Math.atan2(orb.z, orb.x) - sectorAngle(orb.strategy)), Math.cos(Math.atan2(orb.z, orb.x) - sectorAngle(orb.strategy)));
-    assert.ok(Math.abs(offset) <= (Math.PI * 2 / 3) * 0.42 + 1e-9, orb.id);
+    assert.ok(Math.abs(offset) <= (Math.PI * 2 / 4) * 0.42 + 1e-9, orb.id);
   }
 });
 

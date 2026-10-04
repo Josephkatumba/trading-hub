@@ -20,7 +20,7 @@ export function confirmationToastHtml(event) {
     + '<small class="confirmation-toast-note">' + esc(toast.note) + '</small></article>';
 }
 
-/** Per-strategy split of the live Garden counters ("TRENDLINE 3 · S/R 2 · TREND/MOM 4"). */
+/** Per-strategy split of the live Garden counters ("TRENDLINE 3 · S/R 2 · TREND/MOM 4 · SMC 1"). */
 export function strategyBreakdownLine(breakdown) {
   if (!breakdown?.length) return "";
   return '<div class="gd-counter-breakdown" aria-label="Live setups by strategy">'
@@ -205,7 +205,7 @@ export function researchLine(row) {
 
 /**
  * Strategy filter buttons. Only registered strategies appear: names that are not
- * registered (SMC, CRT, ICT) are not part of the Garden at all.
+ * registered (CRT, ICT) are not part of the Garden at all.
  */
 export function strategyFilterBar(filters, selected = "all") {
   return '<div class="gd-strategy-filters" role="group" aria-label="Filter by strategy"><span class="gd-strategy-filters-label">Strategy</span>'
