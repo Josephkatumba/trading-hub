@@ -305,6 +305,9 @@ body.garden-mode .topline b { color: #1c2321; }
 .garden-root .performance-table { width: 100%; border-collapse: collapse; color: var(--gd-text); font: 12.5px Inter, sans-serif; font-variant-numeric: tabular-nums; }
 .garden-root .performance-table th, .garden-root .performance-table td { padding: 8px 10px; border-bottom: 1px solid var(--gd-border); text-align: left; }
 .garden-root .performance-table thead th { color: var(--gd-faint); font-size: 10.5px; letter-spacing: .06em; }
+.garden-root .performance-verified { margin-top: 14px; display: grid; gap: 6px; }
+.garden-root .performance-verified .gd-ok { color: var(--gd-faint); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+.garden-root .performance-verified .gd-warn { color: #e0a24a; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
 .garden-root .historical-confirmations { background: var(--gd-surface); border: 1px solid var(--gd-border); }
 .garden-root .historical-confirmations > summary { padding: 4px 0; color: var(--gd-text); font: 700 14px Inter, sans-serif; letter-spacing: 0; }
 .garden-root .historical-confirmations > summary b { color: var(--gd-text); font-weight: 800; }

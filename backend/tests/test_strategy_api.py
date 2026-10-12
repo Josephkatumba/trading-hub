@@ -51,9 +51,11 @@ class RegistryApiTests(unittest.TestCase):
                          [("trendline_v5", "LIVE"), ("support_resistance", "LIVE"), ("trend_momentum", "LIVE"), ("smc", "LIVE"), ("crt", "DISABLED")])
 
     def test_radar_response_adds_the_registry_and_keeps_every_existing_field(self):
-        with mock.patch.object(main, "market_snapshot", return_value=[]):
+        with mock.patch.object(main, "market_snapshot", side_effect=AssertionError("radar must not scan")):
             response = main.radar()
-        self.assertEqual(set(response) - {"strategy_registry"}, RADAR_KEYS)
+        # Additive: `scan` (freshness of the autonomous worker's latest scan, Phase A).
+        self.assertEqual(set(response) - {"strategy_registry", "scan"}, RADAR_KEYS)
+        self.assertIn("sequence", response["scan"])
         self.assertEqual(response["strategy_registry"], strategies.REGISTRY.describe())
         registry = strategies.build_default_registry()
         registry.register(Disabled())

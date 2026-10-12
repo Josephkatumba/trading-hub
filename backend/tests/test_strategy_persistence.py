@@ -210,7 +210,7 @@ class ScanLoopIsolationTests(unittest.TestCase):
                  mock.patch.object(main, "STRATEGIES", registry), \
                  mock.patch.object(main, "mt5_symbol", side_effect=lambda s: s if s in ("XAUUSD", "EURUSD") else None), \
                  mock.patch.object(main, "datetime", g.FrozenClock.make()), \
-                 mock.patch.object(main, "resolve_due_market_outcomes", return_value=[]):
+                 mock.patch.object(main, "resolve_due_market_outcomes", return_value=[]),                  g.without_qualification():
                 markets = main.market_snapshot()
         finally:
             main._MT5_SESSION.update(initialized=False, initializations=0)
@@ -272,7 +272,9 @@ class OutcomeAndPerformanceTests(unittest.TestCase):
                 snapshots = [json.loads(line) for line in (root / "setup_observations.jsonl").read_text().splitlines()]
                 by_id = {s["observation_id"]: s for s in snapshots}
                 reference = {s["symbol"]: float(s["reference_price"]) for s in snapshots}
-                base = g.BASE_NOW.timestamp() + 3600
+                # Bars from the first observation on: outcomes are labelled only from paths whose
+                # start the bars cover (outcomes.resolve_due_market_outcomes).
+                base = g.BASE_NOW.timestamp()
                 bars = {symbol: [{"time": base + i * 900, "open": price, "close": price,
                                   "high": price * (1 + 0.0015 * (i % 23)), "low": price * (1 - 0.0015 * (i % 19))}
                                  for i in range(200)] for symbol, price in reference.items()}

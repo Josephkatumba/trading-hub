@@ -6,7 +6,7 @@ import "./garden/garden.css";
 import "./garden/garden-observatory.css";
 import "./garden/garden-command.css";
 import {engineFetch,getEngineUrl} from "./engine.js";
-import {createPoller} from "./radarPolling.mjs";
+import {archiveOutcomeIds, createPoller, historyDue, scanFreshnessText, scanKey} from "./radarPolling.mjs";
 import {confirmationDisplay} from "./analystPresentation.mjs";
 import {setupCountSummary, visibleSetupEntries} from "./radarLayout.mjs";
 import {createConfirmationAlertTracker, dispatchConfirmationAlerts, dispatchTestSound, persistedConfirmationEvents} from "./confirmationAlerts.mjs";
@@ -64,6 +64,8 @@ const similarCache = new Map();       // setup_id -> {data, state, at}: /api/mar
 const SIMILAR_REFRESH_MS = 120000;
 const LAB_REFRESH_MS = 60000;
 let latestOutcomes = [];
+let latestPerformance = null;         // /api/market/performance, refreshed once per completed engine scan
+let historyScanKey = null;            // scanKey() the history requests last succeeded for
 let latestArchive = [];
 let selectedKey = null;
 let analystCache = new Map();
@@ -138,7 +140,7 @@ async function getFundamentals(){try{return await engineFetch("/api/market/funda
 async function getRadar(){
   try{
     const data=await engineFetch("/api/market/radar"),markets=Array.isArray(data?.markets)?data.markets:[];
-    return {mode:data?.live&&markets.length?"LIVE":"ENGINE_NO_DATA",markets,live:!!data?.live&&markets.length>0,source:data?.source||"MT5",timestamp:data?.timestamp,mt5Status:data?.mt5_status,error:data?.error,registry:Array.isArray(data?.strategy_registry)?data.strategy_registry:null};
+    return {mode:data?.live&&markets.length?"LIVE":"ENGINE_NO_DATA",markets,live:!!data?.live&&markets.length>0,source:data?.source||"MT5",timestamp:data?.timestamp,scan:data?.scan||null,mt5Status:data?.mt5_status,error:data?.error,registry:Array.isArray(data?.strategy_registry)?data.strategy_registry:null};
   }catch(_){}
   return radarDemoEnabled()?{mode:"DEMO",markets:demoData(),live:false,source:"DEMO"}:{mode:"OFFLINE",markets:[],live:false,source:"OFFLINE"};
 }
@@ -161,7 +163,8 @@ function getAnalysis(m){
   return request;
 }
 async function getSetupEpisodes(){try{return await engineFetch("/api/market/setup-episodes?bucket=all&limit=40&per_strategy=true");}catch(_){return null;}}
-async function getOutcomes(){try{const data=await engineFetch("/api/market/outcomes");return Array.isArray(data?.outcomes)?data.outcomes:null;}catch(_){return null;}}
+// Only the outcomes the archive shows (closed confirmed setups), never the whole outcome store.
+async function getOutcomes(setupIds){if(!setupIds.length)return [];try{const data=await engineFetch("/api/market/outcomes?setup_ids="+encodeURIComponent(setupIds.join(",")));return Array.isArray(data?.outcomes)?data.outcomes:null;}catch(_){return null;}}
 
 // ----- cards ------------------------------------------------------------------
 function cardFor(row,bucket){
@@ -543,7 +546,7 @@ function paint(result){
   paintResearch();
   paintConfirmed(latestMarkets,result.performance);
   const now=new Date().toLocaleTimeString();
-  document.getElementById("radarUpdated").textContent={LIVE:"Updated "+now,ENGINE_NO_DATA:"No market data · "+now,OFFLINE:"Offline · checked "+now,DEMO:"Simulated · not market data"}[mode];
+  document.getElementById("radarUpdated").textContent={LIVE:scanFreshnessText(result.scan,now),ENGINE_NO_DATA:"No market data · "+now,OFFLINE:"Offline · checked "+now,DEMO:"Simulated · not market data"}[mode];
   const status=document.getElementById("radarEngineStatus");if(status)status.textContent={LIVE:"Live MT5 engine",ENGINE_NO_DATA:"Engine online · MT5 "+String(result.mt5Status||"no data"),OFFLINE:"Engine offline",DEMO:"Demo mode · engine offline"}[mode];
   paintPerformance(result.performance);
   refreshLab();
@@ -639,7 +642,19 @@ function bindConfirmationAlertControls(){
   };}
   if(test)test.onclick=()=>{dispatchTestSound(()=>playConfirmationTone());};
 }
-function paintPerformance(data){const el=document.getElementById("dailyPerformance");if(!el)return;if(!data){el.innerHTML='<div class="macro-empty"><b>Performance unavailable</b><span>Backend performance endpoint did not respond.</span></div>';return;}if(strategyFilter!=="all"){el.innerHTML=strategyPerformanceBlock(strategyPerformance(data,strategyFilter),strategyTag(strategyFilter),{shadow:strategyStatus(strategyFilter,latestRegistry)==="SHADOW"});return;}const daily=data.daily?.[0]||data.summary||{};const horizons=daily.by_horizon||{};const rows=["15m","1h","4h","24h"].map(h=>{const x=horizons[h]||{};return '<tr><th>'+h+'</th><td>'+Number(x.win||0)+'</td><td>'+Number(x.loss||0)+'</td><td>'+Number(x.pending||0)+'</td><td>'+Number(x.no_hit||0)+'</td><td>'+Number(x.ambiguous||0)+'</td></tr>';}).join("");const h4=horizons["4h"]||{};const wins=Number(h4.win||0),losses=Number(h4.loss||0),denominator=Number(h4.win_rate_denominator??wins+losses);const rate=h4.win_rate;el.innerHTML='<div class="performance-headline"><b>'+wins+'W / '+losses+'L</b><span><b class="gd-combined">ALL LIVE STRATEGIES COMBINED</b> Select a strategy for its own results · 4h win rate '+(rate==null?"—":Number(rate).toFixed(1)+"%")+' · denominator '+denominator+' (wins + losses)</span></div><div class="performance-table-wrap"><table class="performance-table"><thead><tr><th>HORIZON</th><th>W</th><th>L</th><th>PENDING</th><th>NO HIT</th><th>AMBIGUOUS</th></tr></thead><tbody>'+rows+'</tbody></table></div><small>Timezone: '+esc(data.timezone||daily.reporting_timezone||"Africa/Nairobi")+' · MarketOutcome records only. NO_HIT and AMBIGUOUS are excluded from win-rate denominator.</small>';}
+function paintPerformance(data){const el=document.getElementById("dailyPerformance");if(!el)return;if(!data){el.innerHTML='<div class="macro-empty"><b>Performance unavailable</b><span>Backend performance endpoint did not respond.</span></div>';return;}if(strategyFilter!=="all"){el.innerHTML=strategyPerformanceBlock(strategyPerformance(data,strategyFilter),strategyTag(strategyFilter),{shadow:strategyStatus(strategyFilter,latestRegistry)==="SHADOW"});return;}const daily=data.daily?.[0]||data.summary||{};const horizons=daily.by_horizon||{};const rows=["15m","1h","4h","24h"].map(h=>{const x=horizons[h]||{};return '<tr><th>'+h+'</th><td>'+Number(x.win||0)+'</td><td>'+Number(x.loss||0)+'</td><td>'+Number(x.pending||0)+'</td><td>'+Number(x.no_hit||0)+'</td><td>'+Number(x.ambiguous||0)+'</td></tr>';}).join("");const h4=horizons["4h"]||{};const wins=Number(h4.win||0),losses=Number(h4.loss||0),denominator=Number(h4.win_rate_denominator??wins+losses);const rate=h4.win_rate;el.innerHTML='<div class="performance-headline"><b>'+wins+'W / '+losses+'L</b><span><b class="gd-combined">ALL LIVE STRATEGIES COMBINED</b> Select a strategy for its own results · 4h win rate '+(rate==null?"—":Number(rate).toFixed(1)+"%")+' · denominator '+denominator+' (wins + losses)</span></div><div class="performance-table-wrap"><table class="performance-table"><thead><tr><th>HORIZON</th><th>W</th><th>L</th><th>PENDING</th><th>NO HIT</th><th>AMBIGUOUS</th></tr></thead><tbody>'+rows+'</tbody></table></div><small>Timezone: '+esc(data.timezone||daily.reporting_timezone||"Africa/Nairobi")+' · Stored MarketOutcome labels per horizon. NO_HIT and AMBIGUOUS are excluded from win-rate denominator.</small>'+verifiedPerformanceBlock(daily.verified);}
+// Verified, reconciled figures (backend performance.verified_summary): the Strategy Lab's rule,
+// every confirmed setup in exactly one bucket. Rates and R averages appear only with enough decisive outcomes.
+function verifiedPerformanceBlock(v){
+  if(!v)return "";
+  const n=x=>Number(x||0),r=v.r||{};
+  const rate=v.target_first_rate==null?"— (needs "+n(v.min_decisive_for_rate)+" decisive, has "+n(v.decisive)+")":Number(v.target_first_rate).toFixed(1)+"%";
+  const avg=r.average_r==null?"—":(r.average_r>=0?"+":"")+Number(r.average_r).toFixed(2)+"R";
+  const pf=r.profit_factor==null?"—":Number(r.profit_factor).toFixed(2);
+  return '<div class="performance-verified"><b>Verified outcomes</b> '+(v.reconciled?'<span class="gd-ok">reconciled</span>':'<span class="gd-warn">not reconciled</span>')
+    +'<div class="performance-table-wrap"><table class="performance-table"><thead><tr><th>CONFIRMED</th><th>TARGET FIRST</th><th>STOP FIRST</th><th>NO BARRIER</th><th>UNVERIFIED</th><th>PENDING</th></tr></thead><tbody><tr><td>'+n(v.confirmed)+'</td><td>'+n(v.verified_target)+'</td><td>'+n(v.verified_stop)+'</td><td>'+n(v.verified_other)+'</td><td>'+n(v.unverified)+'</td><td>'+n(v.pending)+'</td></tr></tbody></table></div>'
+    +'<small>Target-first rate '+rate+' · total '+(r.total_r==null?"—":Number(r.total_r).toFixed(2)+"R")+' · average '+avg+' · profit factor '+pf+'. Only outcomes with verified timestamps count; R uses the planned reward/risk (executable, spread included, when recorded); no commissions or slippage.</small></div>';
+}
 function paintFundamentals(data){
   const el=document.getElementById("radarFundamentals");if(!el)return;
   if(!data.configured){el.innerHTML='<div class="macro-empty"><b>Macro layer ready</b><span>Connect a Trading Economics API key on the engine to bring live US economic events into the scanner.</span></div>';return;}
@@ -649,12 +664,28 @@ function paintFundamentals(data){
 
 // ----- lifecycle ------------------------------------------------------------------
 const EMPTY_EPISODES={current:[],confirmed:[],closed:[]};
+// Every poll reads the radar (the engine's latest completed scan, cheap). Performance,
+// setup episodes and archive outcomes only change when a scan completes, so they are
+// requested once per new scan (scanKey), and again on the next poll if a request failed.
 async function refreshRadar(isCurrent){
-  const [radar,performance,episodes,outcomes]=await Promise.all([getRadar(),getPerformance(),getSetupEpisodes(),getOutcomes()]);
+  const radar=await getRadar();
   if(!isCurrent())return;
-  latestOutcomes=radar.mode==="LIVE"||radar.mode==="ENGINE_NO_DATA"?(outcomes||latestOutcomes):[];
+  const engine=radar.mode==="LIVE"||radar.mode==="ENGINE_NO_DATA";
+  let episodes=latestEpisodes;
+  if(!engine){
+    latestOutcomes=[];latestPerformance=null;historyScanKey=null;
+  }else if(historyDue(radar,historyScanKey)){
+    const [performance,fetched]=await Promise.all([getPerformance(),getSetupEpisodes()]);
+    if(!isCurrent())return;
+    episodes=fetched||latestEpisodes;
+    const outcomes=await getOutcomes(archiveOutcomeIds(episodes));
+    if(!isCurrent())return;
+    latestPerformance=performance;
+    latestOutcomes=outcomes||latestOutcomes;
+    historyScanKey=performance&&fetched&&outcomes?scanKey(radar):null;
+  }
   // Engine offline or demo: never show previously fetched engine episodes as if current.
-  paint({...radar,performance,episodes:radar.mode==="LIVE"||radar.mode==="ENGINE_NO_DATA"?(episodes||latestEpisodes):EMPTY_EPISODES});
+  paint({...radar,performance:engine?latestPerformance:null,episodes:engine?episodes:EMPTY_EPISODES});
 }
 function disposeGarden(){gardenMountToken++;garden?.dispose();garden=null;}
 async function mountGardenVisual(){

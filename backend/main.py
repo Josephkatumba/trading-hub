@@ -29,15 +29,16 @@ from observations import (confirmation_events, record_markets,
                           latest_broker_symbols, observation_index_stats, outcome_watch_snapshots,
                           performance_observations, snapshots_by_observation_id)
 from outcomes import (MARKET_OUTCOMES_FILE, TRADE_OUTCOMES_FILE, append_market_outcome, configured_horizons,
-                      derive_market_outcome, list_records, record_trade_outcome,
-                      resolve_due_market_outcomes)
+                      derive_market_outcome, list_records, outcomes_for_setup, outcomes_for_setups,
+                      present_outcome_keys, record_trade_outcome, resolve_due_market_outcomes)
 from analyst import analyze_snapshot
-from performance import performance_report
+from performance import performance_report, report_end_day, reporting_timezone
 from market_time import combined_normalization_status, mt5_epoch_to_utc_iso, normalize_mt5_epoch, utc_iso
 from ml_dataset import audit_live_dataset
 from strategy_lab import strategy_lab_report
 import evaluation
 import observations as observation_store
+import qualification
 
 try:
     import MetaTrader5 as mt5
@@ -81,7 +82,8 @@ def ensure_mt5() -> tuple[bool, str | None]:
     with _MT5_LOCK:
         if _MT5_SESSION["initialized"]:
             try:
-                if mt5.terminal_info() is not None:
+                terminal = mt5.terminal_info()
+                if terminal is not None and getattr(terminal, "connected", True):
                     return True, None
             except Exception:
                 LOGGER.exception("MT5 liveness check failed")
@@ -114,13 +116,14 @@ def close_mt5() -> None:
 
 
 def autonomous_market_worker(stop):
-    """Observational scans only; reuse the same engine/MT5 session and storage."""
+    """Observational scans only; reuse the same engine/MT5 session and storage.
+    The only scanner: /api/market/radar serves this worker's latest result."""
     while not stop.is_set():
         try:
             market_snapshot()
         except Exception:
             LOGGER.exception("Autonomous observational scan failed")
-        stop.wait(30)
+        stop.wait(WORKER_INTERVAL_SECONDS)
 
 
 @asynccontextmanager
@@ -148,6 +151,19 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["Accept", "Content-Type"],
 )
+
+
+@app.get("/api/ready")
+def readiness():
+    """Cheap monitoring probe: never queries MT5 or rebuilds storage indexes."""
+    from fastapi.responses import JSONResponse
+    _, scan, freshness = latest_scan()
+    completed_status = freshness.get("result_status", scan.get("status"))
+    ready = (completed_status == "CONNECTED" and
+             freshness["status"] == "FRESH" and scan.get("market_count", 0) > 0)
+    return JSONResponse(status_code=200 if ready else 503, content={
+        "ready": ready, "scan_status": scan.get("status"),
+        "age_seconds": freshness["age_seconds"], "execution_enabled": False})
 
 SYMBOL_ALIASES = {
     "XAUUSD": ["XAUUSD", "GOLD"],
@@ -190,10 +206,18 @@ def configured_watchlist(raw: str | None = None) -> list[str]:
 
 WATCHLIST = configured_watchlist(os.getenv("TRADING_HUB_EXTRA_SYMBOLS"))
 ENGINE_STARTED = datetime.now(timezone.utc)
-_SCAN_LOCK = threading.RLock()
+_SCAN_LOCK = threading.RLock()          # one scan (and MT5 shutdown) at a time
+# Scan status and the latest completed scan result. Guarded by their own lock, so
+# readers (/api/health, /api/market/radar) never wait for a scan in progress.
+_STATE_LOCK = threading.RLock()
 _LAST_SCAN: dict[str, Any] = {"status": "NOT_SCANNED", "started_at": None,
                               "completed_at": None, "market_count": 0, "error": None,
                               "elapsed_ms": None}
+_LAST_RESULT: dict[str, Any] = {"markets": [], "sequence": 0, "completed_at": None}
+WORKER_INTERVAL_SECONDS = 30
+# Radar data older than this is reported STALE (a scan currently takes tens of seconds
+# and the worker waits WORKER_INTERVAL_SECONDS between scans).
+RADAR_STALE_SECONDS = 180
 
 # The bridge heartbeat file also contains login, server, balance and equity.
 # Only these non-identifying fields may leave the engine.
@@ -225,7 +249,45 @@ def normalize_symbol(symbol: str) -> str:
     return symbol.replace("USDr", "").replace(".r", "").upper()
 
 
+# Resolved broker symbols, so a scan does not repeat the symbol_select/symbol_info
+# probing for every symbol every time. Scoped to the MT5 module and terminal session
+# (cleared on reconnect); a symbol whose quote/info later fails is dropped and
+# re-resolved; a failed resolution is retried after SYMBOL_RETRY_SECONDS.
+SYMBOL_RETRY_SECONDS = 300.0
+_SYMBOL_CACHE: dict[str, Any] = {"owner": None, "session": None, "resolved": {}, "missing": {}}
+_SYMBOL_LOCK = threading.Lock()
+
+
 def mt5_symbol(symbol: str) -> str | None:
+    if mt5 is None:
+        return None
+    with _SYMBOL_LOCK:
+        if _SYMBOL_CACHE["owner"] is not mt5 or _SYMBOL_CACHE["session"] != _MT5_SESSION["initializations"]:
+            _SYMBOL_CACHE.update(owner=mt5, session=_MT5_SESSION["initializations"], resolved={}, missing={})
+        if symbol in _SYMBOL_CACHE["resolved"]:
+            return _SYMBOL_CACHE["resolved"][symbol]
+        retry_at = _SYMBOL_CACHE["missing"].get(symbol)
+        if retry_at is not None and monotonic_time.monotonic() < retry_at:
+            return None
+    actual = resolve_mt5_symbol(symbol)
+    with _SYMBOL_LOCK:
+        if _SYMBOL_CACHE["owner"] is mt5:
+            if actual:
+                _SYMBOL_CACHE["resolved"][symbol] = actual
+                _SYMBOL_CACHE["missing"].pop(symbol, None)
+            else:
+                _SYMBOL_CACHE["missing"][symbol] = monotonic_time.monotonic() + SYMBOL_RETRY_SECONDS
+    return actual
+
+
+def forget_mt5_symbol(symbol: str) -> None:
+    """Drop a cached resolution (its quote or info failed), so the next scan resolves it again."""
+    with _SYMBOL_LOCK:
+        _SYMBOL_CACHE["resolved"].pop(symbol, None)
+
+
+def resolve_mt5_symbol(symbol: str) -> str | None:
+    """The broker's name for a product symbol, probed through the terminal (uncached)."""
     if mt5 is None:
         return None
 
@@ -303,6 +365,10 @@ def _strategy_entry(result, setup: dict[str, Any] | None) -> dict[str, Any]:
         return entry
     entry.update({name: result.core(name) for name in CORE_FIELDS})
     entry["setup_family"] = result.payload.get("setup_family")
+    if setup and "qualification" in setup:
+        # The executable-price qualification (qualification.py) may have withdrawn the confirmation.
+        entry["confirmed"] = setup.get("strategy_valid") is True
+        entry["qualification"] = setup["qualification"]
     entry.update({key: setup[key] for key in _STRATEGY_SETUP_FIELDS if setup and key in setup})
     return entry
 
@@ -314,25 +380,47 @@ def _attach_strategies(scanned: list[tuple[dict[str, Any], dict[str, Any], dict[
 
 
 def market_snapshot() -> list[dict[str, Any]]:
-    # Browser radar and autonomous worker reuse one scan/session at a time.
+    """Run one full scan and publish it as the latest result. Called by the autonomous
+    worker (the only scanner); readers use latest_scan() and never start a scan."""
     with _SCAN_LOCK:
-        return _market_snapshot()
+        markets = _market_snapshot()
+        with _STATE_LOCK:
+            _LAST_RESULT.update(markets=markets, sequence=_LAST_RESULT["sequence"] + 1,
+                                completed_at=_LAST_SCAN.get("completed_at"), status=_LAST_SCAN.get("status"))
+        return markets
+
+
+def latest_scan(now: datetime | None = None) -> tuple[list[dict[str, Any]], dict[str, Any], dict[str, Any]]:
+    """(markets, scan status, freshness) of the latest completed scan, without scanning."""
+    with _STATE_LOCK:
+        markets, scan = _LAST_RESULT["markets"], dict(_LAST_SCAN)
+        sequence, completed_at = _LAST_RESULT["sequence"], _LAST_RESULT["completed_at"]
+        result_status = (_LAST_RESULT.get("status", scan.get("status")) if completed_at else scan.get("status"))
+    completed = parse_health_time(completed_at)
+    age = max(0.0, ((now or datetime.now(timezone.utc)) - completed).total_seconds()) if completed else None
+    freshness = {"sequence": sequence, "completed_at": completed_at, "age_seconds": None if age is None else round(age, 1),
+                 "status": "NOT_SCANNED" if age is None else "FRESH" if age <= RADAR_STALE_SECONDS else "STALE",
+                 "scanning": scan.get("status") == "SCANNING", "elapsed_ms": scan.get("elapsed_ms"),
+                 "source": "autonomous_worker", "interval_seconds": WORKER_INTERVAL_SECONDS,
+                 "stale_after_seconds": RADAR_STALE_SECONDS}
+    freshness["result_status"] = result_status
+    return markets, scan, freshness
 
 
 def _market_snapshot() -> list[dict[str, Any]]:
     started_clock = datetime.now(timezone.utc)
     started = monotonic_time.perf_counter()
-    with _SCAN_LOCK:
+    with _STATE_LOCK:
         _LAST_SCAN.update(status="SCANNING", started_at=utc_iso(started_clock), error=None)
     if mt5 is None:
-        with _SCAN_LOCK:
+        with _STATE_LOCK:
             _LAST_SCAN.update(status="MT5_UNAVAILABLE", completed_at=utc_iso(datetime.now(timezone.utc)),
                               market_count=0, error="MetaTrader5 package is unavailable",
                               elapsed_ms=round((monotonic_time.perf_counter() - started) * 1000, 2))
         return []
     initialized, initialize_error = ensure_mt5()
     if not initialized:
-        with _SCAN_LOCK:
+        with _STATE_LOCK:
             _LAST_SCAN.update(status="MT5_OFFLINE", completed_at=utc_iso(datetime.now(timezone.utc)),
                               market_count=0, error=initialize_error,
                               elapsed_ms=round((monotonic_time.perf_counter() - started) * 1000, 2))
@@ -356,6 +444,8 @@ def _market_snapshot() -> list[dict[str, Any]]:
             info = mt5.symbol_info(actual)
             rates = mt5.copy_rates_from_pos(actual, mt5.TIMEFRAME_M15, 0, 300)
             h1_rates = mt5.copy_rates_from_pos(actual, mt5.TIMEFRAME_H1, 0, 160)
+            if not tick or not info:
+                forget_mt5_symbol(requested)     # re-resolved on the next scan
             if not tick or not info or rates is None or h1_rates is None:
                 continue
             received_at = datetime.now(timezone.utc)
@@ -411,6 +501,9 @@ def _market_snapshot() -> list[dict[str, Any]]:
             results = STRATEGIES.evaluate(MarketInput(actual, rows, spread=current_spread,
                                                       session_context=context, higher_rows=higher_rows,
                                                       bars=bars, unavailable_timeframes=unavailable))
+            tick_utc = tick_provenance.get("normalized_utc") if tick_provenance.get("normalization_status") == "VERIFIED" else None
+            tick_age = ((received_at - datetime.fromisoformat(tick_utc)).total_seconds()
+                        if tick_utc else None)
             for strategy_id, result in results.items():
                 tally = strategy_results.setdefault(strategy_id, {"ok": 0, "error": 0})
                 tally["ok" if result.ok else "error"] += 1
@@ -420,9 +513,6 @@ def _market_snapshot() -> list[dict[str, Any]]:
             scan = trendline.payload
             reference = float(rows[-97]["close"]) if len(rows) >= 97 else float(rows[0]["close"])
             change_pct = ((price - reference) / reference * 100) if reference else 0.0
-            tick_utc = tick_provenance.get("normalized_utc") if tick_provenance.get("normalization_status") == "VERIFIED" else None
-            tick_age = ((received_at - datetime.fromisoformat(tick_utc)).total_seconds()
-                        if tick_utc else None)
             candle_age = (raw_tick_epoch - float(rates[-1]["time"])) if raw_tick_epoch is not None else None
             source_time = (bar_provenance.get("normalized_utc")
                 if source_timestamp_quality == "VERIFIED" else None)
@@ -457,7 +547,7 @@ def _market_snapshot() -> list[dict[str, Any]]:
             }
             # The top-level market is the live trendline's result; its strategy_id is stamped so
             # its records are never attributed to the retired "trendline" (v4) by default.
-            market = {**quote, **scan, **provenance, "strategy_id": TRENDLINE}
+            market = qualification.apply({**quote, **scan, **provenance, "strategy_id": TRENDLINE})
             setups: dict[str, dict[str, Any]] = {}
             for strategy_id, result in results.items():
                 if strategy_id == TRENDLINE or not result.ok:
@@ -466,12 +556,13 @@ def _market_snapshot() -> list[dict[str, Any]]:
                 setups[strategy_id] = {**quote, **result.payload, **provenance, "timeframe": strategy.timeframe,
                     "higher_timeframes": list(strategy.higher_timeframes), "strategy_id": strategy_id,
                     "strategy_version": result.strategy_version, "strategy_mode": result.mode}
+                qualification.apply(setups[strategy_id])
             markets.append(market)
             strategy_markets.extend(setups.values())
             scanned.append((market, results, setups))
     except Exception as exc:
         LOGGER.exception("Market scan failed")
-        with _SCAN_LOCK:
+        with _STATE_LOCK:
             _LAST_SCAN.update(status="SCAN_ERROR", completed_at=utc_iso(datetime.now(timezone.utc)),
                               market_count=len(markets), error=str(exc),
                               elapsed_ms=round((monotonic_time.perf_counter() - started) * 1000, 2))
@@ -483,28 +574,26 @@ def _market_snapshot() -> list[dict[str, Any]]:
         # resolver can act on are loaded (see observations.outcome_watch_snapshots).
         horizons = configured_horizons()
         snapshots_by_id = snapshots_by_observation_id(str(row.get("observation_id")) for row in confirmations)
-        existing_outcomes = list_records(MARKET_OUTCOMES_FILE)
         claimed = {str(snapshot.get("observation_id") or "") for snapshot in
                    (snapshots_by_id.get(str(row.get("observation_id"))) for row in confirmations) if snapshot}
-        present = {(row.get("setup_id"), row.get("observation_id"), row.get("horizon"),
-                    row.get("label_definition")) for row in existing_outcomes}
+        # Keys of the stored outcomes, maintained incrementally (no full read of the outcome file).
+        present = present_outcome_keys(MARKET_OUTCOMES_FILE)
         watch_snapshots = outcome_watch_snapshots(claimed, {symbol for symbol, bars in bars_by_symbol.items() if bars},
                                                   present, horizons)
         due = resolve_due_market_outcomes(confirmations, snapshots_by_id, bars_by_symbol,
-                                           existing_outcomes, horizons,
-                                           watch_snapshots=watch_snapshots)
+                                           [], horizons, watch_snapshots=watch_snapshots, present=present)
         for outcome in due:
             append_market_outcome(outcome)
     except Exception as exc:
         LOGGER.exception("Market scan persistence or outcome resolution failed")
-        with _SCAN_LOCK:
+        with _STATE_LOCK:
             _LAST_SCAN.update(status="STORAGE_ERROR", completed_at=utc_iso(datetime.now(timezone.utc)),
                               market_count=len(markets), error=str(exc),
                               elapsed_ms=round((monotonic_time.perf_counter() - started) * 1000, 2))
         _attach_strategies(scanned)
         return markets
     _attach_strategies(scanned)
-    with _SCAN_LOCK:
+    with _STATE_LOCK:
         _LAST_SCAN.update(status="CONNECTED" if markets else "NO_MARKETS",
                           completed_at=utc_iso(datetime.now(timezone.utc)), market_count=len(markets),
                           error=None, elapsed_ms=round((monotonic_time.perf_counter() - started) * 1000, 2),
@@ -538,12 +627,12 @@ def health():
             error = str(exc)
 
     now = datetime.now(timezone.utc)
-    with _SCAN_LOCK:
+    with _STATE_LOCK:                 # never waits for a scan in progress
         scan = dict(_LAST_SCAN)
     last_scan = parse_health_time(scan.get("completed_at"))
     scan_age = max(0.0, (now - last_scan).total_seconds()) if last_scan else None
-    freshness = ("UNKNOWN" if scan_age is None else "FRESH" if scan_age <= 30 else "STALE")
-    data_dir = Path(__file__).resolve().parent / "data"
+    freshness = ("UNKNOWN" if scan_age is None else "FRESH" if scan_age <= RADAR_STALE_SECONDS else "STALE")
+    data_dir = observation_store.DATA_DIR
     storage = {}
     for name in ("setup_observations.jsonl", "setup_lifecycle.jsonl", "setup_confirmations.jsonl",
                  "market_outcomes.jsonl", "trade_outcomes.jsonl"):
@@ -694,27 +783,31 @@ def mt5_time_diagnostic(symbols: str | None = None, bars: int = 8):
 
 @app.get("/api/market/radar")
 def radar():
-    markets = market_snapshot()
+    """The autonomous worker's latest completed scan; never starts a scan itself.
+    `timestamp` is when that scan completed; `scan` says how fresh it is."""
+    markets, scan, freshness = latest_scan()
     return {
         "source": "MT5",
         "live": bool(markets),
         "markets": markets,
-        "timestamp": utc_iso(datetime.now(timezone.utc)),
-        "engine_status": "CONNECTED" if markets else _LAST_SCAN.get("status", "UNKNOWN"),
-        "mt5_status": "CONNECTED" if markets else _LAST_SCAN.get("status", "UNKNOWN"),
-        "error": _LAST_SCAN.get("error"),
+        "timestamp": freshness["completed_at"] or utc_iso(datetime.now(timezone.utc)),
+        "engine_status": ("STALE" if freshness["status"] == "STALE" else
+                          freshness.get("result_status") or scan.get("status", "UNKNOWN")),
+        "mt5_status": "CONNECTED" if markets else scan.get("status", "UNKNOWN"),
+        "error": scan.get("error"),
         "strategy_registry": STRATEGIES.describe(),
+        "scan": freshness,
     }
 
 
 @app.get("/api/market/shadow/trendline-v5")
 def trendline_v5_shadow_report():
     """Read-only experiment metrics of the trendline-first-v5 SHADOW strategy (never live, never traded)."""
-    with _SCAN_LOCK:
+    with _STATE_LOCK:
         scan = dict(_LAST_SCAN)
     registered = TRENDLINE_V5_SHADOW in STRATEGIES.registered()
     status = shadow_state(TRENDLINE_V5_SHADOW, scan) if registered else "NOT_REGISTERED"
-    return load_shadow_report(TRENDLINE_V5_SHADOW, status=status, outcomes=list_records(MARKET_OUTCOMES_FILE))
+    return load_shadow_report(TRENDLINE_V5_SHADOW, status=status, outcomes=_confirmed_outcomes(confirmation_events()))
 
 
 @app.get("/api/market/strategies")
@@ -730,7 +823,7 @@ def fundamentals():
 
 @app.get("/api/market/context")
 def context():
-    markets = market_snapshot()
+    markets, _, _ = latest_scan()     # the worker's latest scan; never starts one
     return {
         "live": bool(markets),
         "markets": markets,
@@ -768,7 +861,7 @@ def setup_detail(setup_id: str):
     return {"setup_id": setup_id, "snapshots": snapshots,
             "lifecycle_events": lifecycle_events(setup_id),
             "confirmation_events": confirmation_events(setup_id),
-            "market_outcomes": list_records(MARKET_OUTCOMES_FILE, setup_id),
+            "market_outcomes": outcomes_for_setup(setup_id, MARKET_OUTCOMES_FILE),
             "trade_outcomes": list_records(TRADE_OUTCOMES_FILE, setup_id)}
 
 
@@ -798,6 +891,52 @@ def setup_analysis(setup_id: str, observation_id: str | None = None):
     return analyze_snapshot(snapshot)
 
 
+def _stamps(*paths: Path) -> tuple[tuple[str, int | None, int | None], ...]:
+    """(path, size, mtime_ns) of each source file; any append changes it."""
+    stamps = []
+    for path in paths:
+        try:
+            stat = path.stat()
+            stamps.append((str(path), stat.st_size, stat.st_mtime_ns))
+        except FileNotFoundError:
+            stamps.append((str(path), None, None))
+    return tuple(stamps)
+
+
+class _StampedCache:
+    """Read-endpoint results keyed by their arguments and the _stamps() of the files they
+    are derived from: an append to any source file yields a new key, i.e. a recompute."""
+
+    def __init__(self, size: int = 16) -> None:
+        self._lock = threading.Lock()
+        self._items: dict[Any, Any] = {}
+        self._size = size
+
+    def get(self, key: Any, build):
+        with self._lock:
+            if key in self._items:
+                return self._items[key]
+        value = build()
+        with self._lock:
+            if len(self._items) >= self._size:
+                self._items.clear()
+            self._items[key] = value
+        return value
+
+    def clear(self) -> None:
+        with self._lock:
+            self._items.clear()
+
+
+_READ_CACHE = _StampedCache()
+
+
+def _confirmed_outcomes(confirmations: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The market outcomes of the confirmed setups, in file order: every row the reports
+    (performance, Strategy Lab, evaluation, shadow report) look up, as str(setup_id)."""
+    return outcomes_for_setups((str(row.get("setup_id")) for row in confirmations), MARKET_OUTCOMES_FILE)
+
+
 @app.get("/api/market/performance")
 def setup_performance(date: str | None = Query(default=None, min_length=10, max_length=10),
                       days: int = Query(default=1, ge=1, le=30)):
@@ -808,16 +947,26 @@ def setup_performance(date: str | None = Query(default=None, min_length=10, max_
         except ValueError as exc:
             from fastapi import HTTPException
             raise HTTPException(status_code=422, detail="date must use YYYY-MM-DD") from exc
-    return performance_report(confirmation_events(), list_records(MARKET_OUTCOMES_FILE),
-        performance_observations(), report_date=date, days=days,
-        horizons=configured_horizons())
+    horizons = configured_horizons()
+    key = ("performance", report_end_day(date).isoformat(), days, horizons, reporting_timezone(),
+           _stamps(observation_store.CONFIRMATIONS_FILE, MARKET_OUTCOMES_FILE, observation_store.LOG_FILE))
+
+    def build() -> dict[str, Any]:
+        confirmations = confirmation_events()
+        decisions = snapshots_by_observation_id(str(row.get("observation_id")) for row in confirmations)
+        return performance_report(confirmations, _confirmed_outcomes(confirmations), performance_observations(),
+                                  report_date=date, days=days, horizons=horizons, decision_snapshots=decisions)
+    return _READ_CACHE.get(key, build)
 
 
 @app.get("/api/market/strategy-lab")
 def strategy_lab(recent: int = Query(default=25, ge=1, le=200)):
     """Per-strategy setups, confirmations and verified outcomes (read-only; strategies never mixed)."""
-    return {**strategy_lab_report(list_records(MARKET_OUTCOMES_FILE), recent_limit=recent),
-            "timestamp": utc_iso(datetime.now(timezone.utc))}
+    key = ("strategy-lab", recent, _stamps(observation_store.LOG_FILE, observation_store.LIFECYCLE_FILE,
+                                          observation_store.CONFIRMATIONS_FILE, MARKET_OUTCOMES_FILE))
+    report = _READ_CACHE.get(key, lambda: strategy_lab_report(_confirmed_outcomes(confirmation_events()),
+                                                              recent_limit=recent))
+    return {**report, "timestamp": utc_iso(datetime.now(timezone.utc))}
 
 
 _EVALUATION_CACHE: dict[str, Any] = {"key": None, "records": None}
@@ -834,7 +983,7 @@ def _evaluation_records() -> list[dict[str, Any]]:
             confirmations = confirmation_events()
             snapshots = observation_store.snapshots_by_observation_id(str(row.get("observation_id")) for row in confirmations)
             _EVALUATION_CACHE.update(key=key, records=evaluation.setup_records(confirmations, snapshots,
-                                                                               list_records(MARKET_OUTCOMES_FILE)))
+                                                                               _confirmed_outcomes(confirmations)))
         return _EVALUATION_CACHE["records"]
 
 
@@ -881,9 +1030,27 @@ def transition_setup(setup_id: str, payload: LifecycleTransitionRequest):
         raise HTTPException(status_code=status, detail=str(exc)) from exc
 
 
+MAX_OUTCOME_SETUP_IDS = 200
+
+
 @app.get("/api/market/outcomes")
-def market_outcomes(setup_id: str | None = None):
-    return {"outcomes": list_records(MARKET_OUTCOMES_FILE, setup_id), "configured_horizons": configured_horizons()}
+def market_outcomes(setup_id: str | None = None, setup_ids: str | None = None):
+    """Market outcomes of one setup (setup_id) or of several (setup_ids, comma-separated, at
+    most MAX_OUTCOME_SETUP_IDS), read through the outcome index. Without either, every
+    record (a full read of the outcome file: for exports, never for polling)."""
+    if setup_ids is not None:
+        wanted = list(dict.fromkeys(part.strip() for part in setup_ids.split(",") if part.strip()))
+        if len(wanted) > MAX_OUTCOME_SETUP_IDS:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=422, detail=f"at most {MAX_OUTCOME_SETUP_IDS} setup_ids")
+        if setup_id:
+            wanted = list(dict.fromkeys([setup_id, *wanted]))
+        outcomes = outcomes_for_setups(wanted, MARKET_OUTCOMES_FILE, exact=True)
+    elif setup_id is not None:
+        outcomes = outcomes_for_setup(setup_id, MARKET_OUTCOMES_FILE)
+    else:
+        outcomes = list_records(MARKET_OUTCOMES_FILE)
+    return {"outcomes": outcomes, "configured_horizons": configured_horizons()}
 
 
 @app.get("/api/market/trade-outcomes")
@@ -916,7 +1083,7 @@ def derive_setup_market_outcome(setup_id: str, observation_id: str, horizon: str
     if (snapshot.get("time_provenance") or {}).get("timezone_normalization_status") != "VERIFIED":
         from fastapi import HTTPException
         raise HTTPException(status_code=409, detail="Snapshot source time is unverified; outcome derivation is quarantined")
-    existing = [row for row in list_records(MARKET_OUTCOMES_FILE, setup_id)
+    existing = [row for row in outcomes_for_setup(setup_id, MARKET_OUTCOMES_FILE)
                 if row.get("observation_id") == observation_id and row.get("horizon") == horizon]
     if existing:
         return existing[-1]

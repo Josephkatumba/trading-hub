@@ -99,7 +99,11 @@ class Capture(Strategy):
 def run_scan(broker: FakeBroker, registry: StrategyRegistry | None = None, watchlist=None, root: Path | None = None):
     patches = [mock.patch.object(main, "mt5", broker), mock.patch.object(main, "datetime", g.FrozenClock.make()),
                mock.patch.object(main, "WATCHLIST", watchlist or list(main.OFFICIAL_UNIVERSE)),
-               mock.patch.object(main, "resolve_due_market_outcomes", return_value=[])]
+               mock.patch.object(main, "resolve_due_market_outcomes", return_value=[]),
+               # The fake brokers carry no verified tick time, so the live qualification
+               # (qualification.py, tested on its own in test_tradeden_v2) would fail every
+               # confirmation closed; these scans test the strategies' own decisions.
+               g.without_qualification()]
     if registry is not None:
         patches.append(mock.patch.object(main, "STRATEGIES", registry))
     main._MT5_SESSION.update(initialized=False, initializations=0)

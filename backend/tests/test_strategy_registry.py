@@ -251,7 +251,7 @@ class ScanLoopTests(unittest.TestCase):
              mock.patch.object(main, "confirmation_events", return_value=[]), \
              mock.patch.object(main, "snapshots_by_observation_id", return_value={}), \
              mock.patch.object(main, "outcome_watch_snapshots", return_value=[]), \
-             mock.patch.object(main, "list_records", return_value=[]), \
+             mock.patch.object(main, "present_outcome_keys", return_value=set()), \
              mock.patch.object(main, "resolve_due_market_outcomes", return_value=[]):
             markets = main.market_snapshot()
         main._MT5_SESSION.update(initialized=False, initializations=0)

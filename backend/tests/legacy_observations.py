@@ -25,11 +25,11 @@ def indexed_jsonl_records(path: Path, key: str, value: Any) -> list[dict[str, An
         return []
     wanted = str(value)
     matches: list[dict[str, Any]] = []
-    with path.open("r", encoding="utf-8") as handle:
+    with path.open("rb") as handle:          # binary (as production): damaged lines are skipped
         for line in handle:
             try:
                 record = json.loads(line)
-            except json.JSONDecodeError:
+            except (json.JSONDecodeError, UnicodeDecodeError):
                 continue
             if isinstance(record, dict) and key in record and str(record[key]) == wanted:
                 matches.append(record)
@@ -48,13 +48,14 @@ def _read_jsonl(path: Path) -> list[dict[str, Any]]:
     if not path.exists():
         return []
     result = []
-    with path.open("r", encoding="utf-8") as handle:
+    # Binary read (as production): a line damaged on disk is skipped, not fatal.
+    with path.open("rb") as handle:
         for line in handle:
             try:
                 value = json.loads(line)
                 if isinstance(value, dict):
                     result.append(value)
-            except json.JSONDecodeError:
+            except (json.JSONDecodeError, UnicodeDecodeError):
                 continue
     return result
 

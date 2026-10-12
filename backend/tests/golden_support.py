@@ -312,3 +312,10 @@ def run_persistence(module, root: Path, legacy: bool = False) -> dict[str, bytes
             FrozenClock.current = BASE_NOW + timedelta(minutes=15 * index)
             module.record_markets(json.loads(json.dumps(markets)))
     return {name: (root / name).read_bytes() if (root / name).exists() else b"" for name in PERSISTED_FILES}
+
+
+def without_qualification():
+    """Patch the live executable-price qualification (qualification.apply) to a pass-through,
+    for fixture scans whose fake brokers have no verified tick time."""
+    import qualification
+    return mock.patch.object(qualification, "apply", side_effect=lambda market, *args, **kwargs: market)

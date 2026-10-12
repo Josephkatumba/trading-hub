@@ -68,7 +68,7 @@ class MT5SessionTests(unittest.TestCase):
              mock.patch.object(main, "confirmation_events", return_value=[]), \
              mock.patch.object(main, "snapshots_by_observation_id", return_value={}), \
              mock.patch.object(main, "outcome_watch_snapshots", return_value=[]), \
-             mock.patch.object(main, "list_records", return_value=[]), \
+             mock.patch.object(main, "present_outcome_keys", return_value=set()), \
              mock.patch.object(main, "resolve_due_market_outcomes", return_value=[]):
             for _ in range(3):
                 main.market_snapshot()
@@ -79,6 +79,13 @@ class MT5SessionTests(unittest.TestCase):
         self.assertEqual(main.ensure_mt5(), (True, None))
         self.fake.terminal_alive = False
         self.assertEqual(main.ensure_mt5(), (True, None))
+        self.assertEqual(self.fake.initialize_calls, 2)
+        self.assertEqual(self.fake.shutdown_calls, 1)
+
+    def test_present_but_disconnected_terminal_is_reconnected(self):
+        self.assertEqual(main.ensure_mt5(), (True, None))
+        with mock.patch.object(self.fake, "terminal_info", return_value=SimpleNamespace(connected=False)):
+            self.assertEqual(main.ensure_mt5(), (True, None))
         self.assertEqual(self.fake.initialize_calls, 2)
         self.assertEqual(self.fake.shutdown_calls, 1)
 

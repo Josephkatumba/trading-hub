@@ -17,7 +17,9 @@ from market_time import parse_aware_utc, utc_iso
 from jsonl_index import ensure_trailing_newline, index_for, indexed_jsonl_records
 from strategies import EVIDENCE_CONTAINER, LIVE, REGISTRY as STRATEGIES, SHADOW, record_strategy_id
 
-DATA_DIR = Path(__file__).resolve().parent / "data"
+from storage_config import data_directory
+
+DATA_DIR = data_directory()
 LOG_FILE = DATA_DIR / "setup_observations.jsonl"
 LIFECYCLE_FILE = DATA_DIR / "setup_lifecycle.jsonl"
 CONFIRMATIONS_FILE = DATA_DIR / "setup_confirmations.jsonl"
@@ -30,13 +32,15 @@ def _read_jsonl(path: Path) -> list[dict[str, Any]]:
     if not path.exists():
         return []
     result = []
-    with path.open("r", encoding="utf-8") as handle:
+    # Binary read: a line damaged on disk (e.g. NUL bytes or foreign bytes after a crash)
+    # is skipped like any other unparseable line instead of aborting the whole read.
+    with path.open("rb") as handle:
         for line in handle:
             try:
                 value = json.loads(line)
                 if isinstance(value, dict):
                     result.append(value)
-            except json.JSONDecodeError:
+            except (json.JSONDecodeError, UnicodeDecodeError):
                 continue
     return result
 
@@ -96,7 +100,7 @@ _SUMMARY_FIELDS = ("setup_id", "observation_id", "observed_at", "timestamp", "sy
 _PERFORMANCE_FIELDS = ("setup_id", "observation_id", "observed_at", "timestamp", "symbol",
                        "direction", "lifecycle_state", "shadow")
 _OBSERVATION_INDEX_SCHEMA = "observations-v5"
-_LIFECYCLE_INDEX_SCHEMA = "lifecycle-v2"
+_LIFECYCLE_INDEX_SCHEMA = "lifecycle-v3"
 _CONFIRMATION_INDEX_SCHEMA = "confirmations-v1"
 _TERMINAL_STATES = frozenset({"INVALIDATED", "EXPIRED", "RESOLVED"})
 
@@ -173,6 +177,8 @@ def observation_index_stats() -> dict[str, Any]:
 
 def _lifecycle_summary(event: dict[str, Any]) -> dict[str, Any]:
     summary = {"sid": event.get("setup_id", ""), "to": event.get("to_state")}
+    if event.get("reason_code") is not None:
+        summary["rc"] = event.get("reason_code")   # how a terminal event ended its episode (Strategy Lab)
     metadata = event.get("metadata")
     if isinstance(metadata, dict) and metadata.get(LEVEL_CLOSURE) is not None:
         summary["cl"] = metadata[LEVEL_CLOSURE]    # what a market-ended level episode suppresses
@@ -617,10 +623,10 @@ def _snapshot(market: dict[str, Any], setup_id: str, state: str, now: str) -> Se
         "price_action", "price_action_state", "trendline", "trendline_state",
         "trendline_line", "nearest_level", "nearest_level_type", "nearest_level_atr",
         "spread_atr", "crt_context", "crt_state") if key in market}
-    features.update({key: market.get(key) for key in ("rr", "risk_distance", "reward_distance") if key in market})
+    features.update({key: market.get(key) for key in ("rr", "risk_distance", "reward_distance", "rr_executable") if key in market})
     rule_evidence = {key: market.get(key) for key in (
         "scanner_state", "trendline_gate", "confirmation_alignment", "strategy_valid", "reason", "trigger",
-        "invalidation_hint", "stage", "action") if key in market}
+        "invalidation_hint", "stage", "action", "strategy_signal_valid", "qualification") if key in market}
     rule_evidence["scanner_state"] = market.get("state")
     time_provenance = dict(market.get("time_provenance") or {})
     time_provenance["backend_received_at"] = market.get("backend_received_at")
@@ -902,6 +908,27 @@ def snapshots_by_observation_id(observation_ids: Iterable[str]) -> dict[str, dic
     return {observation_id: row for (observation_id, _), row in zip(wanted, rows)}
 
 
+# Exactly the snapshot fields outcomes.resolve_due_market_outcomes / derive_market_outcome /
+# validate_outcome_time read from a WATCH snapshot (nested: only the keys they read).
+_WATCH_FIELDS = ("record_type", "setup_id", "observation_id", "observed_at", "timestamp", "observation_time",
+                 "source_timestamp", "symbol", "timeframe", "direction", "reference_price",
+                 "proposed_take_profit", "proposed_stop_loss", "invalidation_price")
+_WATCH_NESTED = {"time_provenance": ("timezone_normalization_status", "source_time_basis"),
+                 "rule_evidence": ("strategy_valid", "invalidation_hint")}
+# Per observation store: WATCH rows (by index position) that can never be labelled (no valid
+# barriers: a property of the immutable row) and the outcome-relevant projection of the rest.
+_WATCH_MEMO: dict[str, dict[str, Any]] = {}
+
+
+def _watch_projection(row: dict[str, Any]) -> dict[str, Any]:
+    projection = {field: row[field] for field in _WATCH_FIELDS if field in row}
+    for field, keys in _WATCH_NESTED.items():
+        if field in row:
+            value = row[field]
+            projection[field] = {key: value[key] for key in keys if key in value} if isinstance(value, dict) else value
+    return projection
+
+
 def outcome_watch_snapshots(claimed_observation_ids: set[str], symbols_with_bars: set[str],
                             present_keys: set[tuple[Any, ...]], horizons: Iterable[str],
                             label_definition: str = "target-invalidation-first-v1") -> list[dict[str, Any]]:
@@ -909,21 +936,33 @@ def outcome_watch_snapshots(claimed_observation_ids: set[str], symbols_with_bars
 
     Mirrors that function's own skip rules (first occurrence per observation_id,
     after the confirmation snapshots in `claimed_observation_ids`; VERIFIED time;
-    a symbol with bars; at least one missing horizon), so dropping the other rows
-    here cannot change its output. It still re-checks everything itself.
+    a symbol with bars; at least one missing horizon; valid barriers), so dropping
+    the other rows here cannot change its output. It still re-checks everything itself.
+
+    Each row is read from the JSONL once per engine process: rows without valid
+    barriers are remembered and skipped, the others are kept as the projection of
+    the fields the resolver reads (_WATCH_FIELDS), which is what is returned.
     """
+    from outcomes import watch_barriers_valid
     horizons = tuple(horizons)
     index = _observation_index()
     visited = set(claimed_observation_ids)
     selected: list[int] = []
     with index.lock:
-        for position, summary in enumerate(index.summaries()):
+        summaries = index.summaries()
+        memo = _WATCH_MEMO.get(str(index.path))
+        if memo is None or memo["generation"] != index.generation:
+            memo = _WATCH_MEMO[str(index.path)] = {"generation": index.generation, "invalid": set(), "rows": {}}
+        invalid, rows = memo["invalid"], memo["rows"]
+        for position, summary in enumerate(summaries):
             if summary["rt"] != "setup_snapshot" or summary.get("strategy_valid"):
                 continue
             observation_id = str(summary.get("observation_id") or "")
             if not observation_id or observation_id in visited:
                 continue
             visited.add(observation_id)
+            if position in invalid:
+                continue
             if summary.get("tz_status") != "VERIFIED":
                 continue
             if str(summary.get("symbol") or "") not in symbols_with_bars:
@@ -932,7 +971,15 @@ def outcome_watch_snapshots(claimed_observation_ids: set[str], symbols_with_bars
                    in present_keys for horizon in horizons):
                 continue
             selected.append(position)
-        return index.load(selected)
+        missing = [position for position in selected if position not in rows]
+        for position, row in zip(missing, index.load(missing)):
+            if watch_barriers_valid(row):
+                rows[position] = _watch_projection(row)
+            else:
+                invalid.add(position)
+        kept = [position for position in selected if position in rows]
+        memo["rows"] = {position: rows[position] for position in kept}   # rows no longer selected are dropped
+        return [rows[position] for position in kept]
 
 
 def performance_observations() -> list[dict[str, Any]]:
@@ -956,6 +1003,55 @@ def lifecycle_events(setup_id: str | None = None) -> list[dict[str, Any]]:
     return _read_jsonl(LIFECYCLE_FILE)
 
 
+def _file_stamp(path: Path) -> tuple[int, int] | None:
+    try:
+        stat = path.stat()
+    except FileNotFoundError:
+        return None
+    return stat.st_size, stat.st_mtime_ns
+
+
+# setup_episodes' inputs, per store, refreshed only from what changed: the confirmation
+# and lifecycle files are re-read when their size/mtime changes; the latest snapshot of a
+# setup is re-read only when a newer snapshot of it was appended. The output (durations
+# against the clock, buckets, limits) is still computed on every call.
+_EPISODE_FEED: dict[tuple[str, str, str], dict[str, Any]] = {}
+_EPISODE_FEED_LOCK = threading.Lock()
+
+
+def _episode_feed_sources() -> tuple[dict[Any, dict[str, Any]], dict[str, list[dict[str, Any]]],
+                                     dict[str, Any], dict[str, dict[str, Any]]]:
+    """(confirmations by setup_id, lifecycle events by str(setup_id), first observed_at and
+    latest snapshot per setup in first-appearance order), as setup_episodes reads them."""
+    store = (str(LOG_FILE), str(LIFECYCLE_FILE), str(CONFIRMATIONS_FILE))
+    with _EPISODE_FEED_LOCK:
+        state = _EPISODE_FEED.setdefault(store, {"conf": (False, None), "life": (False, None),
+                                                 "generation": None, "position": {}, "row": {}, "first": {}})
+        stamp = _file_stamp(CONFIRMATIONS_FILE)
+        if state["conf"][0] is False or state["conf"][0] != stamp:
+            state["conf"] = (stamp, {row.get("setup_id"): row for row in _read_jsonl(CONFIRMATIONS_FILE)})
+        stamp = _file_stamp(LIFECYCLE_FILE)
+        if state["life"][0] is False or state["life"][0] != stamp:
+            event_map: dict[str, list[dict[str, Any]]] = {}
+            for event in _read_jsonl(LIFECYCLE_FILE):
+                event_map.setdefault(str(event.get("setup_id")), []).append(event)
+            state["life"] = (stamp, event_map)
+        index = _observation_index()
+        with index.lock:
+            groups = index.groups("k_snap")
+            if state["generation"] != index.generation:
+                state.update(generation=index.generation, position={}, row={}, first={})
+            positions, rows, first = state["position"], state["row"], state["first"]
+            changed = [sid for sid, found in groups.items() if positions.get(sid) != found[-1]]
+            for sid, row in zip(changed, index.load(groups[sid][-1] for sid in changed)):
+                positions[sid], rows[sid] = groups[sid][-1], row
+                if sid not in first:
+                    first[sid] = index.summary(groups[sid][0]).get("observed_at")
+            latest = {sid: rows[sid] for sid in groups}
+            first_observed = {sid: first[sid] for sid in groups}
+        return state["conf"][1], state["life"][1], first_observed, latest
+
+
 def setup_episodes(bucket: str = "current", limit: int = 100, include_shadow: bool = False,
                    per_strategy: bool = False) -> list[dict[str, Any]]:
     """Return a bounded episode view built from append-only snapshots and events.
@@ -964,18 +1060,7 @@ def setup_episodes(bucket: str = "current", limit: int = 100, include_shadow: bo
     review only and never part of the live view); the limit applies afterwards,
     per strategy_id when `per_strategy`.
     """
-    confirmations = {row.get("setup_id"): row for row in _read_jsonl(CONFIRMATIONS_FILE)}
-    events = _read_jsonl(LIFECYCLE_FILE)
-    # First and latest snapshot per setup, in first-appearance order.
-    index = _observation_index()
-    with index.lock:
-        groups = index.groups("k_snap")
-        sids = list(groups)
-        first_observed = {sid: index.summary(groups[sid][0]).get("observed_at") for sid in sids}
-        latest = dict(zip(sids, index.load(groups[sid][-1] for sid in sids)))
-    event_map: dict[str, list[dict[str, Any]]] = {}
-    for event in events:
-        event_map.setdefault(str(event.get("setup_id")), []).append(event)
+    confirmations, event_map, first_observed, latest = _episode_feed_sources()
     now = datetime.now(timezone.utc)
     plans = confirmed_plans(sid for sid in latest if sid in confirmations)
     output = []

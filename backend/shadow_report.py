@@ -104,7 +104,9 @@ def shadow_report(strategy_id: str, episodes: list[dict[str, Any]], events: list
             close = next((e for e in timeline if e.get("to_state") in {"INVALIDATED", "EXPIRED", "RESOLVED"}), None)
             if close:
                 closed_before_confirmation[str(close.get("to_state"))] += 1
-                if close.get("reason_code") == "DIRECTION_CHANGED":
+                # Stored before 2026-10-12 as INVALIDATED / DIRECTION_CHANGED; now EXPIRED /
+                # SIGNAL_WITHDRAWN:DIRECTION_CHANGED (episode_identity.SIGNAL_WITHDRAWN).
+                if str(close.get("reason_code") or "").split(":")[-1] == "DIRECTION_CHANGED":
                     pre_confirmation_direction_changes += 1
 
     rows = []

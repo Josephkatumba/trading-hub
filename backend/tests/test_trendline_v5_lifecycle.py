@@ -80,7 +80,8 @@ class ConfirmedTrendlineLifecycleTests(V5LifecycleTestCase):
         event = self.store.scan(tl("SHORT", invalidation=PRICE + 10))[0]
         self.assertEqual(states(self.store, setup_id), ["DEVELOPING", "CONFIRMED"])
         self.assertNotIn(setup_id, {context["setup_id"], event["setup_id"]})
-        closing = [e for e in self.store.records("setup_lifecycle.jsonl") if e["setup_id"] == setup_id and e.get("reason_code") == "DIRECTION_CHANGED"]
+        closing = [e for e in self.store.records("setup_lifecycle.jsonl") if e["setup_id"] == setup_id
+                   and str(e.get("reason_code") or "").endswith("DIRECTION_CHANGED")]
         self.assertEqual(closing, [])
 
     def test_3_it_stays_open_and_becomes_active_until_a_legitimate_outcome(self):
@@ -117,12 +118,12 @@ class ConfirmedTrendlineLifecycleTests(V5LifecycleTestCase):
         self.assertEqual([c["setup_id"] for c in self.store.records("setup_confirmations.jsonl")].count(setup_id), 1)
         self.assertEqual(self.store.events_for(setup_id)[-1]["reason_code"], "INVALIDATION_PRICE_CROSSED")
 
-    def test_7_before_confirmation_a_direction_change_still_invalidates(self):
+    def test_7_before_confirmation_a_direction_change_withdraws_the_signal(self):
         first = self.store.scan(tl("LONG", invalidation=STOP))[0]
         self.store.scan(tl("LONG", state="CONFIRMING", invalidation=STOP))    # confirming, not confirmed
         self.store.scan(tl("SHORT", invalidation=PRICE + 10))
         event = self.store.events_for(first["setup_id"])[-1]
-        self.assertEqual((event["to_state"], event["reason_code"]), ("INVALIDATED", "DIRECTION_CHANGED"))
+        self.assertEqual((event["to_state"], event["reason_code"]), ("EXPIRED", "SIGNAL_WITHDRAWN:DIRECTION_CHANGED"))
 
 
 class OtherStrategiesUnchangedTests(IsolationTestCase):

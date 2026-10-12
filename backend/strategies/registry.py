@@ -9,9 +9,11 @@ and isolates them from each other:
   * a strategy that raises yields a failed StrategyResult; the others still run
     and their results are unaffected;
   * a disabled strategy is never called and produces no result;
-  * when more than one strategy is enabled, each receives its own copy of the
-    market input (bars copied bar by bar), so no strategy can alter another's
-    data. (With a single enabled strategy the input is passed as is.)
+  * when more than one strategy is enabled, they share one read-only copy of the
+    market input (frozen_input: bars are read-only mappings in tuples), made once
+    per symbol, so no strategy can alter another's data: an attempt raises and
+    fails only that strategy. Each still gets its own copy of the small session
+    context. (With a single enabled strategy the input is passed as is.)
   * a strategy whose declared data_requirements are missing from the collected
     market context is not run; it yields a failed MissingMarketData result.
     (A MarketInput without collected bars is not checked.)
@@ -19,7 +21,9 @@ and isolates them from each other:
 from __future__ import annotations
 
 import copy
+import dataclasses
 import logging
+from types import MappingProxyType
 
 from .base import DISABLED, LIVE, SHADOW, MarketInput, Strategy, StrategyResult
 
@@ -40,6 +44,21 @@ def isolated_copy(market: MarketInput) -> MarketInput:
     return MarketInput(market.symbol, _copy_bars(market.rows), market.spread, copy.deepcopy(market.session_context),
                        _copy_bars(market.higher_rows), {tf: _copy_bars(rows) for tf, rows in market.bars.items()},
                        dict(market.unavailable_timeframes))
+
+
+def _freeze_bars(rows):
+    return None if rows is None else tuple(MappingProxyType(dict(row)) for row in rows)
+
+
+def frozen_input(market: MarketInput) -> MarketInput:
+    """One read-only copy of the input that every strategy can share: each bar is a
+    read-only mapping (a copy of the caller's bar), each bar sequence a tuple and the
+    timeframe map read-only, so writing to it raises instead of reaching another
+    strategy or the caller. Values are the same as isolated_copy()'s."""
+    return MarketInput(market.symbol, _freeze_bars(market.rows), market.spread, market.session_context,
+                       _freeze_bars(market.higher_rows),
+                       MappingProxyType({tf: _freeze_bars(rows) for tf, rows in market.bars.items()}),
+                       MappingProxyType(dict(market.unavailable_timeframes)))
 
 
 class StrategyRegistry:
@@ -102,6 +121,7 @@ class StrategyRegistry:
     def evaluate(self, market: MarketInput) -> dict[str, StrategyResult]:
         enabled = [self._strategies[strategy_id] for strategy_id in self.enabled()]
         shared = len(enabled) == 1
+        frozen = None if shared else frozen_input(market)
         results: dict[str, StrategyResult] = {}
         for strategy in enabled:
             mode = self._modes[strategy.strategy_id]
@@ -112,7 +132,8 @@ class StrategyRegistry:
                 results[strategy.strategy_id] = StrategyResult(strategy.strategy_id, strategy.version, None, error, mode)
                 continue
             try:
-                payload = strategy.evaluate(market if shared else isolated_copy(market))
+                payload = strategy.evaluate(market if shared else dataclasses.replace(
+                    frozen, session_context=copy.deepcopy(market.session_context)))
                 results[strategy.strategy_id] = StrategyResult(strategy.strategy_id, strategy.version, payload, None, mode)
             except Exception as exc:  # isolation: one strategy's failure is only its own
                 LOGGER.warning("Strategy %s failed for %s: %r", strategy.strategy_id, market.symbol, exc)

@@ -208,10 +208,10 @@ class ShadowLifecycleTests(IsolationTestCase):
         self.store.scan(shadow("SHORT", invalidation=PRICE + 10))
         self.assertEqual([e["to_state"] for e in self.store.events_for(sid)], ["DEVELOPING", "CONFIRMED"])
 
-    def test_pre_confirmation_invalidation_still_applies(self):
+    def test_pre_confirmation_direction_change_withdraws_the_signal(self):
         sid = self.store.scan(shadow("LONG", invalidation=STOP))[0]["setup_id"]
         self.store.scan(shadow("SHORT", invalidation=PRICE + 10))
-        self.assertEqual(self.store.events_for(sid)[-1]["reason_code"], "DIRECTION_CHANGED")
+        self.assertEqual(self.store.events_for(sid)[-1]["reason_code"], "SIGNAL_WITHDRAWN:DIRECTION_CHANGED")
 
     def test_10_target_closes_it(self):
         sid = self.confirm("LONG")

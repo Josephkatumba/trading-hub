@@ -17,8 +17,10 @@ from collections import Counter, defaultdict
 from typing import Any, Iterable
 
 import observations
+from episode_identity import closure_kind
 from ml_dataset import _outcome_quarantine_reasons
 from outcomes import DEFAULT_HORIZONS
+from performance import _plan_r, _r_multiple
 from strategies import REGISTRY, record_strategy_id
 
 TERMINAL = ("INVALIDATED", "EXPIRED", "RESOLVED")
@@ -26,6 +28,7 @@ STATES = ("DETECTED", "DEVELOPING", "CONFIRMING", "CONFIRMED", "ACTIVE", *TERMIN
 OUTCOME_KINDS = ("pending", "unverified", "verified_target", "verified_stop", "verified_other")
 # Minimum verified target+stop outcomes before a win rate is shown at all.
 MIN_VERIFIED_FOR_RATE = 30
+CLOSURE_KINDS = ("PRICE_INVALIDATED", "TARGET_RESOLVED", "WITHDRAWN", "REPLACED", "TIMED_OUT", "MANUAL", "OTHER")
 
 
 def classify_outcome(confirmation: dict[str, Any], outcomes: Iterable[dict[str, Any]],
@@ -71,9 +74,15 @@ def strategy_lab_report(market_outcomes: list[dict[str, Any]], recent_limit: int
         first.setdefault(sid, summary)
         latest[sid] = summary
     last_state: dict[str, str] = {}
+    last_closure: dict[str, str | None] = {}
     for event in observations._lifecycle_index().summaries():
         if event.get("to"):
-            last_state[str(event.get("sid"))] = str(event["to"])
+            stored = {"to_state": event["to"], "reason_code": event.get("rc")}
+            kind = closure_kind(stored)
+            # A stored INVALIDATED that was a signal withdrawal (price never reached the
+            # invalidation; episode_identity.SIGNAL_WITHDRAWN) is counted as EXPIRED.
+            last_state[str(event.get("sid"))] = "EXPIRED" if kind == "WITHDRAWN" else str(event["to"])
+            last_closure[str(event.get("sid"))] = kind
     confirmations = {str(row.get("setup_id")): row for row in observations.confirmation_events()}
     snapshots = observations.snapshots_by_observation_id(str(row.get("observation_id")) for row in confirmations.values())
     outcomes_by_setup: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -88,12 +97,15 @@ def strategy_lab_report(market_outcomes: list[dict[str, Any]], recent_limit: int
         strategy_id = record_strategy_id(summary)
         confirmation = confirmations.get(sid)
         state = last_state.get(sid) or str(summary.get("lifecycle_state") or "DETECTED")
-        outcome, horizon = (classify_outcome(confirmation, outcomes_by_setup.get(sid, []),
-                                             snapshots.get(str(confirmation.get("observation_id"))))
+        decision = snapshots.get(str(confirmation.get("observation_id"))) if confirmation else None
+        outcome, horizon = (classify_outcome(confirmation, outcomes_by_setup.get(sid, []), decision)
                             if confirmation else (None, None))
+        plan_r = _plan_r(decision) if confirmation else None
         rows[strategy_id].append({"setup_id": sid, "symbol": summary.get("symbol"), "direction": summary.get("direction"),
             "timeframe": summary.get("timeframe") or "M15", "setup_type": summary.get("setup_type"),
-            "lifecycle_state": state, "confirmed": confirmation is not None, "outcome": outcome, "outcome_horizon": horizon,
+            "lifecycle_state": state, "closure": last_closure.get(sid) if state in TERMINAL else None,
+            "confirmed": confirmation is not None, "outcome": outcome, "outcome_horizon": horizon,
+            "plan_r": plan_r, "r_multiple": _r_multiple(outcome, plan_r) if outcome else None,
             "first_observed_at": first[sid].get("observed_at"), "last_observed_at": summary.get("observed_at"),
             "shadow": summary.get("shadow") is True})
         per_strategy.setdefault(strategy_id, None)
@@ -116,6 +128,9 @@ def strategy_lab_report(market_outcomes: list[dict[str, Any]], recent_limit: int
                     bucket[item["outcome"]] += 1
         decisive = outcomes["verified_target"] + outcomes["verified_stop"]
         enough = decisive >= min_verified_for_rate
+        rs = [item["r_multiple"] for item in confirmed if item["r_multiple"] is not None]
+        gains, losses = sum(r for r in rs if r > 0), -sum(r for r in rs if r < 0)
+        closures = Counter(item["closure"] for item in items if item["closure"])
         strategy = REGISTRY.get(strategy_id) if strategy_id in REGISTRY.registered() else None
         report.append({
             "strategy_id": strategy_id, "mode": _mode(strategy_id), "version": strategy.version if strategy else None,
@@ -127,6 +142,13 @@ def strategy_lab_report(market_outcomes: list[dict[str, Any]], recent_limit: int
             "win_rate": round(outcomes["verified_target"] / decisive * 100, 1) if enough else None,
             "win_rate_note": (f"Based on {decisive} verified target/stop outcomes." if enough else
                               f"Not shown: {decisive} verified target/stop outcomes (needs {min_verified_for_rate})."),
+            # R per verified decisive outcome: +planned R (executable when recorded) at the target, -1 at the stop.
+            "r": {"count": len(rs), "total_r": round(sum(rs), 2) if rs else None,
+                  "average_r": round(sum(rs) / len(rs), 3) if rs and enough else None,
+                  "profit_factor": round(gains / losses, 2) if losses and enough else None},
+            # How closed episodes ended. WITHDRAWN: the strategy stopped reporting the setup
+            # before price reached its invalidation (not a loss, not an invalidation).
+            "closures": {kind: closures.get(kind, 0) for kind in CLOSURE_KINDS},
             **{name: {key: dict(value) for key, value in sorted(group.items())} for name, group in groups.items()},
             "recent": sorted(items, key=lambda item: str(item["last_observed_at"] or ""), reverse=True)[:recent_limit],
         })

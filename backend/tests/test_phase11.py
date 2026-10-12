@@ -238,11 +238,13 @@ class ConfirmedEventTests(IsolationTestCase):
         current = {row["setup_id"]: row for row in self.episodes("current")}
         self.assertEqual({current[setup_id]["direction"], current[short["setup_id"]]["direction"]}, {"LONG", "SHORT"})
 
-    def test_unconfirmed_hypothesis_is_still_invalidated_by_a_direction_change(self):
+    def test_unconfirmed_hypothesis_is_withdrawn_by_a_direction_change(self):
+        # Price never reached its invalidation: EXPIRED as a withdrawn signal (TRADEden V2).
         developing = V2.evaluate(f.scenario(trigger=False))
         setup_id = self.store.scan(tm_market(developing))[0]["setup_id"]
         self.store.scan(tm_market(opposite(developing)))
-        self.assertEqual(self.store.events_for(setup_id)[-1]["reason_code"], "DIRECTION_CHANGED")
+        event = self.store.events_for(setup_id)[-1]
+        self.assertEqual((event["to_state"], event["reason_code"]), ("EXPIRED", "SIGNAL_WITHDRAWN:DIRECTION_CHANGED"))
 
     def test_confirmed_episode_resolves_at_its_confirmed_target(self):
         setup_id, confirmed = self.confirm()

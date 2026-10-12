@@ -136,7 +136,61 @@ Report: `backend/STRATEGY_UPGRADE_PHASE1_REPORT.md`.
   history in an isolated store and writes nothing to the live store.
 - No TradeDen strategy logic changed.
 
+### 2026-10-12 — TRADEden V2: audit and fixes (CEO-authorised execution cycle)
+Audit of the live store and the code. Every fix applies going forward. Stored records are never
+rewritten; where a stored record was misclassified, it is re-read at read time.
+
+- **Store integrity.** On 2026-10-05 at 16:01Z, OneDrive sync-engine bytes were written into
+  `setup_observations.jsonl` at byte ~955 MB (81 damaged lines). A NUL line was also written into
+  `setup_lifecycle.jsonl`. The plain JSONL readers stopped on the non-UTF-8 bytes. They now read in
+  binary and skip damaged lines, as the index already did. The lost lines are not reconstructed.
+  The data directory sits in an over-quota OneDrive folder; it should move out of OneDrive.
+- **Trade qualification** (`backend/qualification.py`, all strategies). Each strategy plans from
+  the last closed close. A confirmation is now re-checked at the live quote. The checks: levels are
+  present and on the correct sides; price has not already passed the stop or the target; the quote
+  is at most 300 s old (an unverified quote age fails); and the executable R:R is ≥ 1.5, unrounded,
+  with the spread paid. A setup that fails is not confirmed. The strategy's own decision is kept as
+  `strategy_signal_valid`, and the checks are stored in `rule_evidence.qualification`.
+  - Measured on the stored data: 2 confirmations were recorded with price already beyond the stop,
+    29 had an executable R:R below 1.5, and 1 was issued on a 38-hour-old tick.
+- **Lifecycle classification.** Under the confirmed-events lifecycle, an unconfirmed setup that the
+  strategy stops reporting (direction or family change) is now `EXPIRED`, with reason
+  `SIGNAL_WITHDRAWN:<why>`. It used to be marked `INVALIDATED` even though price never reached its
+  invalidation (about 2,250 stored events). Those events also blocked the same setup from being
+  detected again.
+  - The Strategy Lab reads the stored withdrawals as `EXPIRED` and reports `closures` per strategy:
+    price-invalidated, target-resolved, withdrawn, replaced and timed out.
+  - The retired v4 matcher policy is unchanged.
+- **Outcomes.** A market path is labelled only when the fetched bars reach back to the observation.
+  Before, a window that started after the observation (for example after engine downtime) was
+  labelled from a truncated path.
+- **Performance.** `/api/market/performance` adds `verified` and `verified_by_strategy`. They use
+  the Strategy Lab rule: only verified outcomes count, and the shortest horizon with a verified
+  target or stop decides. Every confirmed setup falls into exactly one bucket, and `reconciled`
+  checks that the buckets add up.
+  - R-multiples: +planned R (executable when recorded) at the target, −1 at the stop. The report
+    shows total R, and average R and profit factor only from 30 decisive outcomes.
+  - The Strategy Lab reports the same R figures.
+  - The per-horizon label tables remain, now titled as stored labels.
+- **Scores.** The score is a sum of rule points; it is not calibrated, and the trendline score
+  includes points for absent evidence. The UI now labels it "rule pts", with a note that it is not a
+  probability. Strategy thresholds are unchanged.
+- **Efficiency Phase A** (previously uncommitted) is included:
+  - the radar serves the worker's latest scan;
+  - an incremental outcome index;
+  - read caches;
+  - a shared, read-only strategy input.
+- **Tests.** New: `backend/tests/test_tradeden_v2.py`. Stale expectations were updated to the
+  current registry (v5.1, SMC, sr-levels-v2). The `test_scanner_quality` import path was fixed.
+
 ## Current limitations
+- **Codex recovery, 2026-10-12:** inherited V2 changes preserved and verified; online
+  preparation, configurable durable storage, scanner readiness, disconnected-terminal
+  recovery and manual-outcome coverage added. See `docs/V2_RECOVERY.md` and
+  `deploy/README.md`. The old note below about Phase 11 being uncommitted is stale:
+  those features were already in the recovery baseline. No deployment or execution
+  was enabled. The current audit finds 2,165 duplicate outcome keys and 45 damaged
+  outcome lines (alongside 81 damaged observations and one lifecycle line).
 - Replay results exclude spread, slippage and commission; they are small samples over one 180-day
   window. Parameters were chosen before the replay and not fitted, and no strategy is shown to be
   profitable.
@@ -150,4 +204,9 @@ Report: `backend/STRATEGY_UPGRADE_PHASE1_REPORT.md`.
   proximity requirement for the trigger candle.
 - A large body of earlier work (Phase 11, v5 replacement, Garden command centre) is still
   uncommitted alongside Phase 1, so commits should be split by scope.
-- `backend/data/` (the live JSONL store, over 1 GB) is untracked and must not be committed.
+- `backend/data/` (the live JSONL store, over 1 GB) is untracked and must not be committed. It lives in
+  an over-quota OneDrive folder, which already corrupted it once (2026-10-05).
+- Outcome labels use M15 bars strictly after the observation: price movement inside the bar that was
+  forming at observation time is not seen, and a bar touching both barriers is AMBIGUOUS.
+- About 537 duplicate stored outcome keys (2026-09-25/29, identical labels) remain; the reports key by
+  (setup, observation, horizon), so they are not double-counted.

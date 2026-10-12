@@ -37,6 +37,40 @@ CONFIRMED_LEVELS = ("confirmed_invalidation_price", "confirmed_target_price")
 # (every historical S/R closure, expiries) suppress nothing.
 LEVEL_EPISODES_LIFECYCLE = CONFIRMED_EVENTS_LIFECYCLE + "+level-episodes-v1"
 LEVEL_CLOSURE = "level_closure"          # lifecycle event metadata key
+# Under CONFIRMED_EVENTS_LIFECYCLE an unconfirmed episode whose strategy stops reporting it
+# (another direction or setup family, or NO SETUP) is EXPIRED with reason code
+# "SIGNAL_WITHDRAWN:<why>". It was formerly INVALIDATED (reason DIRECTION_CHANGED /
+# SETUP_FAMILY_CHANGED) although price never reached its invalidation level; those stored
+# events are kept as written and read as withdrawals by withdrawn_invalidation().
+# INVALIDATED now always means the market reached the setup's invalidation price.
+SIGNAL_WITHDRAWN = "SIGNAL_WITHDRAWN"
+_WITHDRAWAL_REASONS = {"DIRECTION_CHANGED", "SETUP_FAMILY_CHANGED"}
+
+
+def withdrawn_invalidation(event: dict[str, Any]) -> bool:
+    """A stored INVALIDATED event that was really a signal withdrawal (pre-fix classification)."""
+    return (str(event.get("to_state") or "") == "INVALIDATED"
+            and str(event.get("reason_code") or "") in _WITHDRAWAL_REASONS)
+
+
+def closure_kind(event: dict[str, Any]) -> str | None:
+    """How a terminal lifecycle event ended its episode: PRICE_INVALIDATED (stop reached),
+    TARGET_RESOLVED, WITHDRAWN (the strategy stopped reporting it), REPLACED, TIMED_OUT or
+    MANUAL. None for a non-terminal event."""
+    state, reason = str(event.get("to_state") or ""), str(event.get("reason_code") or "")
+    if state not in TERMINAL_STATES:
+        return None
+    if withdrawn_invalidation(event) or reason.startswith(SIGNAL_WITHDRAWN):
+        return "WITHDRAWN"
+    if state == "INVALIDATED":
+        return "PRICE_INVALIDATED" if reason == "INVALIDATION_PRICE_CROSSED" else "MANUAL" if reason == "MANUAL_REVIEW" else "OTHER"
+    if state == "RESOLVED":
+        return "TARGET_RESOLVED" if reason == "TARGET_PRICE_CROSSED" else "MANUAL" if reason == "MANUAL_REVIEW" else "OTHER"
+    if reason == "INACTIVITY_TIMEOUT":
+        return "TIMED_OUT"
+    if reason.startswith("EPISODE_REPLACED"):
+        return "REPLACED"
+    return "MANUAL" if reason == "MANUAL_REVIEW" else "OTHER"
 _M15_SECONDS = 900
 
 
@@ -245,8 +279,14 @@ def rank_candidates(market: dict[str, Any], candidates: list[dict[str, Any]], no
                 evaluated.append((candidate, "EXPIRE", "EPISODE_REPLACED:" + str(reason), distance))
         elif decision == "NO_MATCH" and reason in {"DIRECTION_CHANGED", "SETUP_FAMILY_CHANGED"}:
             # A confirmed episode stays open: the new observation is a competing episode.
-            evaluated.append((candidate, "COMPETING" if confirmed_events and is_confirmed(candidate) else "INVALIDATE",
-                              reason, distance))
+            if confirmed_events and is_confirmed(candidate):
+                evaluated.append((candidate, "COMPETING", reason, distance))
+            elif confirmed_events:
+                # The strategy no longer reports this hypothesis, but price never reached its
+                # invalidation: the signal was withdrawn, not invalidated (see SIGNAL_WITHDRAWN).
+                evaluated.append((candidate, "EXPIRE", SIGNAL_WITHDRAWN + ":" + str(reason), distance))
+            else:
+                evaluated.append((candidate, "INVALIDATE", reason, distance))
         elif decision == "NO_MATCH" and reason == "SIGNIFICANT_PRICE_DISPLACEMENT":
             evaluated.append((candidate, "EXPIRE", "EPISODE_REPLACED:" + str(reason), distance))
         elif decision == "CONTINUE":

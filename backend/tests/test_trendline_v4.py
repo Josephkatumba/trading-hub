@@ -127,16 +127,16 @@ class TrendlineV4EndToEndTests(unittest.TestCase):
         self.assertEqual(TrendlineStrategy.strategy_id, LegacyTrendlineStrategy.strategy_id)
         self.assertEqual(TrendlineStrategy.strategy_id, "trendline")
         self.assertNotIn("trendline", REGISTRY.registered())
-        self.assertEqual(REGISTRY.live(), ["trendline_v5", "support_resistance", "trend_momentum"])
-        self.assertEqual(REGISTRY.get("trendline_v5").version, "trendline-first-v5")
-        self.assertEqual(REGISTRY.registered(), ["trendline_v5", "support_resistance", "trend_momentum"])
+        self.assertEqual(REGISTRY.live(), ["trendline_v5", "support_resistance", "trend_momentum", "smc"])
+        self.assertEqual(REGISTRY.get("trendline_v5").version, "trendline-first-v5.1")
+        self.assertEqual(REGISTRY.registered(), ["trendline_v5", "support_resistance", "trend_momentum", "smc"])
         # Everything but the version label and the session reader is the same strategy.
         for name in ("timeframe", "higher_timeframes", "lifecycle", "data_requirements", "evaluate"):
             self.assertEqual(getattr(TrendlineStrategy, name), getattr(LegacyTrendlineStrategy, name), name)
         # (index stats stubbed: health must not build index sidecars in the real data directory)
         with mock.patch.object(main, "mt5", None), mock.patch.object(main, "observation_index_stats", return_value={}):
             health = main.health()
-        self.assertEqual((health["strategy"], health["strategy_id"]), ("trendline-first-v5", "trendline_v5"))
+        self.assertEqual((health["strategy"], health["strategy_id"]), ("trendline-first-v5.1", "trendline_v5"))
 
     def test_v4_records_and_markets_carry_v4_and_the_v3_configuration_carries_v3(self):
         for now, (old, old_files), (new, new_files) in self.runs:
@@ -145,7 +145,7 @@ class TrendlineV4EndToEndTests(unittest.TestCase):
             for files, version in ((old_files, "trendline-first-v3"), (new_files, "trendline-first-v4")):
                 snapshots = [json.loads(line) for line in files["setup_observations.jsonl"].splitlines()]
                 self.assertEqual({s["strategy_version"] for s in snapshots if s["strategy_id"] == "trendline"}, {version})
-                self.assertEqual({s["strategy_version"] for s in snapshots if s["strategy_id"] == "support_resistance"}, {"sr-levels-v1"})
+                self.assertEqual({s["strategy_version"] for s in snapshots if s["strategy_id"] == "support_resistance"}, {"sr-levels-v2"})
 
     # A / B ------------------------------------------------------------------------------------
     def test_v3_reproduces_and_v4_corrects_the_session_context_end_to_end(self):

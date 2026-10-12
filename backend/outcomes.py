@@ -4,15 +4,17 @@ from __future__ import annotations
 import json
 import os
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
 from schemas import validate_trade_outcome
 from market_time import parse_aware_utc, utc_iso
-from jsonl_index import ensure_trailing_newline
+from jsonl_index import ensure_trailing_newline, index_for
 
-DATA_DIR = Path(__file__).resolve().parent / "data"
+from storage_config import data_directory
+
+DATA_DIR = data_directory()
 MARKET_OUTCOMES_FILE = DATA_DIR / "market_outcomes.jsonl"
 TRADE_OUTCOMES_FILE = DATA_DIR / "trade_outcomes.jsonl"
 DEFAULT_HORIZONS = ("15m", "1h", "4h", "24h")
@@ -37,15 +39,84 @@ def list_records(path: Path, setup_id: str | None = None) -> list[dict[str, Any]
     if not path.exists():
         return []
     records = []
-    with path.open("r", encoding="utf-8") as handle:
+    with path.open("rb") as handle:                 # damaged lines are skipped, never fatal
         for line in handle:
             try:
                 row = json.loads(line)
-                if setup_id is None or row.get("setup_id") == setup_id:
+                if isinstance(row, dict) and (setup_id is None or row.get("setup_id") == setup_id):
                     records.append(row)
-            except json.JSONDecodeError:
+            except (json.JSONDecodeError, UnicodeDecodeError):
                 continue
     return records
+
+
+# ----- incremental market-outcome index ---------------------------------------
+# A derived, in-memory index over the append-only market_outcomes.jsonl
+# (jsonl_index.JsonlIndex): each query reads only the bytes appended since the
+# previous one, so the scan loop and the read endpoints no longer re-parse the
+# whole file. Full rows are re-read from the JSONL by byte offset; the file stays
+# the only source of truth and is never rewritten. Not persisted: the index is
+# built once per engine process (a sidecar for this file would be rewritten often).
+_OUTCOME_INDEX_SCHEMA = "market-outcomes-v1"
+_PRESENT_KEYS: dict[str, tuple[Any, set[tuple[Any, ...]]]] = {}
+
+
+def _outcome_summary(row: dict[str, Any]) -> dict[str, Any]:
+    setup_id = row.get("setup_id")
+    summary: dict[str, Any] = {"pk": [setup_id, row.get("observation_id"), row.get("horizon"),
+                                      row.get("label_definition")],
+                               "sidx": str(setup_id)}       # str(setup_id): what reports key by
+    if isinstance(setup_id, str):
+        summary["sid"] = setup_id                            # exact setup_id, as list_records(path, setup_id)
+    return summary
+
+
+def market_outcome_index(path: Path | None = None):
+    return index_for(path or MARKET_OUTCOMES_FILE, _outcome_summary, ("sid", "sidx"),
+                     schema=_OUTCOME_INDEX_SCHEMA, persist=False)
+
+
+def present_outcome_keys(path: Path | None = None) -> set[tuple[Any, ...]]:
+    """{(setup_id, observation_id, horizon, label_definition)} of every stored outcome:
+    the `present` set resolve_due_market_outcomes builds from `existing`, maintained
+    incrementally. Returns a copy the caller may extend."""
+    index = market_outcome_index(path)
+    with index.lock:
+        cached = _PRESENT_KEYS.get(str(index.path))
+        cursor, reset, rows = index.delta(cached[0] if cached else None)
+        keys = set() if reset or cached is None else cached[1]
+        for summary in rows:
+            key = tuple(summary["pk"])
+            try:
+                keys.add(key)
+            except TypeError:
+                continue           # an unhashable field never equals a lookup key
+        _PRESENT_KEYS[str(index.path)] = (cursor, keys)
+        return set(keys)
+
+
+def outcomes_for_setup(setup_id: str, path: Path | None = None) -> list[dict[str, Any]]:
+    """Same rows as list_records(path, setup_id), in file order, without a full read."""
+    if setup_id is None:
+        return []
+    index = market_outcome_index(path)
+    with index.lock:
+        return index.load(index.lookup("sid", setup_id))
+
+
+def outcomes_for_setups(setup_ids, path: Path | None = None, exact: bool = False) -> list[dict[str, Any]]:
+    """Every outcome whose setup_id is one of `setup_ids`, in file order.
+
+    exact=False matches str(row["setup_id"]) (how the reports key outcomes), so a
+    report fed this subset sees exactly the rows it would have looked up in the full
+    list; exact=True matches like list_records(path, setup_id) does."""
+    key = "sid" if exact else "sidx"
+    index = market_outcome_index(path)
+    with index.lock:
+        positions = sorted({position for setup_id in dict.fromkeys(setup_ids)
+                            if setup_id is not None or not exact
+                            for position in index.lookup(key, setup_id if exact else str(setup_id))})
+        return index.load(positions)
 
 
 def record_trade_outcome(payload: dict[str, Any]) -> dict[str, Any]:
@@ -156,6 +227,10 @@ def derive_market_outcome(snapshot: dict[str, Any], horizon: str, bars: list[dic
     if not selected:
         return None
     selected.sort(key=lambda item: item[0])
+    # Every entry point must reject a path with an unknown beginning, including
+    # manually derived outcomes (not just the autonomous resolver).
+    if selected[0][0] > observed + timedelta(seconds=frame_seconds):
+        return None
     if selected[-1][0] < aligned_end - timedelta(minutes=frame_minutes):
         return None
     time_validation = validate_outcome_time(snapshot, [bar for _, bar in selected])
@@ -236,19 +311,77 @@ def _timeframe_minutes(timeframe: str) -> int | None:
     return None
 
 
+def _watch_barriers(snapshot: dict[str, Any]) -> tuple[Any, Any]:
+    """(target, invalidation) a snapshot's outcome is labelled against."""
+    rules = snapshot.get("rule_evidence") or {}
+    invalidation = snapshot.get("invalidation_price")
+    if invalidation is None:
+        invalidation = rules.get("invalidation_hint", snapshot.get("proposed_stop_loss"))
+    return snapshot.get("proposed_take_profit"), invalidation
+
+
+def watch_barriers_valid(snapshot: dict[str, Any]) -> bool:
+    """Whether a WATCH snapshot has actual decision-time barriers on the right sides of its
+    reference price. A function of the (immutable) snapshot only."""
+    target, invalidation = _watch_barriers(snapshot)
+    try:
+        reference = float(snapshot.get("reference_price"))
+        target_value, invalid_value = float(target), float(invalidation)
+        return (reference > 0 and target_value > 0 and invalid_value > 0 and
+            (target_value > reference > invalid_value if snapshot.get("direction") == "LONG" else
+             target_value < reference < invalid_value if snapshot.get("direction") == "SHORT" else False))
+    except (TypeError, ValueError):
+        return False
+
+
+_HORIZON_UNITS_SECONDS = {"15m": 900, "1h": 3600, "4h": 14400, "24h": 86400}
+
+
+def _earliest_bar_epoch(bars: list[dict[str, Any]]) -> float | None:
+    """The earliest bar time, or None when any bar time is not a plain number."""
+    times = [bar.get("time") for bar in bars]
+    if not times or not all(isinstance(value, (int, float)) and not isinstance(value, bool) for value in times):
+        return None
+    return float(min(times))
+
+
+def _nothing_to_label(observed: datetime, horizon: str, timeframe: str, earliest: float | None,
+                      current: datetime) -> bool:
+    """True when derive_market_outcome(..., now=current) is certain to return None for this
+    horizon, by its own rules and alignment: the horizon's candle-aligned end is still in
+    the future, or every supplied bar opens at or after that end (no candle to select)."""
+    frame_minutes = _timeframe_minutes(timeframe)
+    if frame_minutes is None or horizon not in _HORIZON_UNITS_SECONDS:
+        return False
+    frame_seconds = frame_minutes * 60
+    end_epoch = (observed + timedelta(seconds=_HORIZON_UNITS_SECONDS[horizon])).timestamp()
+    aligned_end = ((int(end_epoch) + frame_seconds - 1) // frame_seconds) * frame_seconds
+    if current < datetime.fromtimestamp(aligned_end, tz=timezone.utc):
+        return True
+    return earliest is not None and earliest >= aligned_end
+
+
 def resolve_due_market_outcomes(confirmations: list[dict[str, Any]],
                                 snapshots_by_id: dict[str, dict[str, Any]],
                                 bars_by_symbol: dict[str, list[dict[str, Any]]],
                                 existing: list[dict[str, Any]],
                                 horizons: tuple[str, ...],
                                 now: datetime | None = None,
-                                watch_snapshots: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
-    """Appendable market paths for confirmed and barrier-valid WATCH observations."""
+                                watch_snapshots: list[dict[str, Any]] | None = None,
+                                present: set[tuple[Any, ...]] | None = None) -> list[dict[str, Any]]:
+    """Appendable market paths for confirmed and barrier-valid WATCH observations.
+
+    `present`: the (setup_id, observation_id, horizon, label_definition) keys of the
+    stored outcomes (present_outcome_keys()); when given, `existing` is not read."""
     current = parse_aware_utc(now or datetime.now(timezone.utc))
     if current is None:
         return []
-    present = {(row.get("setup_id"), row.get("observation_id"), row.get("horizon"),
-                row.get("label_definition")) for row in existing}
+    if present is None:
+        present = {(row.get("setup_id"), row.get("observation_id"), row.get("horizon"),
+                    row.get("label_definition")) for row in existing}
+    else:
+        present = set(present)
+    earliest: dict[str, float | None] = {}
     created = []
     candidates: list[tuple[dict[str, Any], dict[str, Any]]] = []
     for confirmation in confirmations:
@@ -277,30 +410,31 @@ def resolve_due_market_outcomes(confirmations: list[dict[str, Any]],
         bars = bars_by_symbol.get(symbol)
         if not bars:
             continue
-        rules = snapshot.get("rule_evidence") or {}
-        target = snapshot.get("proposed_take_profit")
-        invalidation = snapshot.get("invalidation_price")
-        if invalidation is None:
-            invalidation = rules.get("invalidation_hint", snapshot.get("proposed_stop_loss"))
+        target, invalidation = _watch_barriers(snapshot)
         # WATCH rows without actual decision-time barriers remain unlabeled; do
         # not infer levels or manufacture binary outcomes from later data.
-        if source_record is snapshot:
-            try:
-                reference = float(snapshot.get("reference_price"))
-                target_value, invalid_value = float(target), float(invalidation)
-                valid = (reference > 0 and target_value > 0 and invalid_value > 0 and
-                    (target_value > reference > invalid_value if snapshot.get("direction") == "LONG" else
-                     target_value < reference < invalid_value if snapshot.get("direction") == "SHORT" else False))
-            except (TypeError, ValueError):
-                valid = False
-            if not valid:
-                continue
+        if source_record is snapshot and not watch_barriers_valid(snapshot):
+            continue
+        if symbol not in earliest:
+            earliest[symbol] = _earliest_bar_epoch(bars)
+        # The bars must cover the start of the path: the first bar must open no later than
+        # one candle after the observation. When the fetched window starts later (the engine
+        # was offline longer than the window covers), the beginning of the path is unknown
+        # and a barrier could have been hit there, so the setup stays unlabeled rather than
+        # labeled from a truncated path.
+        frame_seconds = (_timeframe_minutes(str(snapshot.get("timeframe") or "M15")) or 0) * 60
+        if earliest[symbol] is not None and earliest[symbol] > observed.timestamp() + frame_seconds:
+            continue
         for horizon in horizons:
             key = (snapshot.get("setup_id"), snapshot.get("observation_id"),
                    horizon, "target-invalidation-first-v1")
             if key in present:
                 continue
             timeframe = str(snapshot.get("timeframe") or "M15")
+            # Not due yet, or the bars no longer reach back into this horizon: derive would
+            # return None. Skipped before building the per-horizon inputs.
+            if _nothing_to_label(observed, horizon, timeframe, earliest[symbol], current):
+                continue
             frame_minutes = _timeframe_minutes(timeframe) or 0
             horizon_minutes = {"15m": 15, "1h": 60, "4h": 240, "24h": 1440}.get(horizon, 0)
             expected = max(1, (horizon_minutes + frame_minutes - 1) // frame_minutes) if frame_minutes else None

@@ -137,10 +137,11 @@ class ProductionLifecycleTests(IsolationTestCase):
         self.assertEqual(len([c for c in self.store.records("setup_confirmations.jsonl") if c["setup_id"] == sid]), 1,
                          "the confirmation is a single historical event")
 
-    def test_e_before_confirmation_the_live_trendline_is_still_invalidated(self):
+    def test_e_before_confirmation_the_live_trendline_is_withdrawn(self):
         sid = self.store.scan(market("LONG", TRENDLINE, invalidation=2640.0))[0]["setup_id"]
         self.store.scan(market("SHORT", TRENDLINE, invalidation=2660.0))
-        self.assertEqual(self.store.events_for(sid)[-1]["reason_code"], "DIRECTION_CHANGED")
+        event = self.store.events_for(sid)[-1]
+        self.assertEqual((event["to_state"], event["reason_code"]), ("EXPIRED", "SIGNAL_WITHDRAWN:DIRECTION_CHANGED"))
 
 
 if __name__ == "__main__":

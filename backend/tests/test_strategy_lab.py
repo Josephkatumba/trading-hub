@@ -8,6 +8,7 @@ integrity rules, and strategies are never combined.
 from __future__ import annotations
 
 import sys
+import json
 import unittest
 from datetime import timedelta
 from pathlib import Path
@@ -112,7 +113,9 @@ class StrategyLabTests(IsolationTestCase):
         self.assertEqual(horizon, min((o["horizon"] for o in verified if o["label"] == "WIN"), key=["15m", "1h", "4h", "24h"].index))
 
     def test_api_route_and_setup_evidence(self):
-        with g.isolated_store(observations, self.store.root), mock.patch.object(main, "list_records", return_value=self.outcomes):
+        outcome_file = self.store.root / "market_outcomes.jsonl"
+        outcome_file.write_text("".join(json.dumps(row) + "\n" for row in self.outcomes), encoding="utf-8")
+        with g.isolated_store(observations, self.store.root), mock.patch.object(main, "MARKET_OUTCOMES_FILE", outcome_file):
             response = main.strategy_lab(recent=25)
             detail = main.setup_detail(self.sr_long_id)
             garden = main.setup_episode_feed(bucket="all", limit=100)

@@ -320,7 +320,8 @@ class PersistenceLifecycleTests(IsolationTestCase):
         setup_id = self.store.scan(tm_market(evaluate(trigger=False)), market("LONG", invalidation=2600.0))[0]["setup_id"]
         trend_id = self.store.records("setup_observations.jsonl")[1]["setup_id"]
         self.store.scan(tm_market(evaluate(d1_trend=-0.3), price=109.9), market("LONG", invalidation=2600.0))
-        self.assertEqual(self.store.events_for(setup_id)[-1]["to_state"], "INVALIDATED")
+        # NO SETUP withdraws the unconfirmed signal (EXPIRED, not INVALIDATED: price never reached its stop).
+        self.assertEqual(self.store.events_for(setup_id)[-1]["to_state"], "EXPIRED")
         self.assertEqual([e["to_state"] for e in self.store.events_for(trend_id)], ["DEVELOPING"])
 
 

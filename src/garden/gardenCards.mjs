@@ -10,11 +10,15 @@ const orUnavailable = (value, text = "Unavailable") => value == null || value ==
 export const NOT_ADVICE = "Not an entry recommendation. TRADeden observes and explains; you make the decisions.";
 
 /** Confirmed-setup notification card: strategy, symbol, direction, setup, score, time, evidence. */
+// The engine's score counts strategy rule points. It is not calibrated against outcomes,
+// so it is never presented as a confidence or win probability.
+export const SCORE_NOTE = "Rule score: points for the strategy rules this setup meets. It is not a probability or a confidence level; outcomes are in Setup performance and the Strategy Lab.";
+
 export function confirmationToastHtml(event) {
   const toast = confirmationToastModel(event);
   return '<article class="confirmation-toast-card" data-confirmation-toast="' + esc(String(event?.setup_id || "unknown")) + '" data-strategy="' + esc(toast.strategyId) + '">'
     + '<b>🌸 ' + esc(toast.title) + '</b><strong>' + esc(toast.headline) + '</strong>'
-    + '<span>Setup · ' + esc(toast.setup) + '</span><span>Score · ' + esc(toast.score) + '</span>'
+    + '<span>Setup · ' + esc(toast.setup) + '</span><span title="' + SCORE_NOTE + '">Rule score · ' + esc(toast.score) + '</span>'
     + '<small>Confirmation time · ' + esc(toast.confirmedAt) + '</small>'
     + (toast.evidence ? '<small class="confirmation-toast-evidence">' + esc(toast.evidence) + '</small>' : '')
     + '<small class="confirmation-toast-note">' + esc(toast.note) + '</small></article>';
@@ -123,7 +127,7 @@ export function setupCard(card, {selected = false, expanded = false, evidenceHtm
     + '<header class="gd-card-head"><div class="gd-node" aria-hidden="true"><i class="gd-swatch gd-swatch-' + card.stage + ' gd-swatch-' + String(card.direction || "none").toLowerCase() + '"></i></div>'
     + '<div class="gd-card-title"><h3>' + esc(card.symbol) + '</h3>'
     + '<span class="gd-stage-chip"><span aria-hidden="true">' + card.stageIcon + '</span> ' + esc(card.headline) + '</span></div>'
-    + '<div class="gd-score" aria-label="Setup score">' + scoreRing(card.score) + (card.score == null ? '<b class="gd-na">—</b>' : '<b>' + card.score + '</b>') + '<span>/ 100</span></div></header>'
+    + '<div class="gd-score" aria-label="Rule score (not a probability)" title="' + SCORE_NOTE + '">' + scoreRing(card.score) + (card.score == null ? '<b class="gd-na">—</b>' : '<b>' + card.score + '</b>') + '<span>rule pts</span></div></header>'
     + '<div class="gd-card-sub">' + strategyChip(card.strategy, card.strategyVersion) + directionBadge(card) + '<span>' + orUnavailable(card.setupType, "Setup type unavailable") + (card.timeframe ? ' · ' + esc(card.timeframe) : '') + '</span>'
     + (card.strategyVersion ? '<small class="gd-version">' + esc(card.strategyVersion) + '</small>' : '')
     + (card.tracked ? '<span class="gd-tracked-flag">Tracking</span>' : '') + '</div>'
@@ -287,7 +291,7 @@ export function priorityWatchRow(entry, {rank = null, selected = false, entering
     + (basis ? '<small class="gd-basis">' + (basis === "scan" ? "Live scan" : "Recorded") + ' ·</small> ' : '')
     + (entry.stage ? GARDEN_STAGES[entry.stage].icon + ' ' : '') + esc(life || "No setup") + '</span>'
     + (entry.core ? '<span class="gd-core-badge" title="Core market: always kept in view. Not a better trade.">⭐ Core</span>' : '')
-    + '<span class="gd-pw-score" title="The engine\'s setup score">' + (entry.score == null ? '—' : esc(Math.round(entry.score))) + '</span></span>'
+    + '<span class="gd-pw-score" title="' + SCORE_NOTE + '">' + (entry.score == null ? '—' : esc(Math.round(entry.score))) + '</span></span>'
     + (signals.length ? '<span class="gd-watch-signals">'
       + signals.map(signal => '<span class="gd-signal" data-strategy="' + esc(signal.strategy) + '" data-dir="' + dirKey(signal.direction) + '" title="' + esc(signal.tag + (signal.state ? ' · ' + signal.state : '')) + '">'
         + '<i class="gd-glyph" aria-hidden="true"></i>' + esc(signal.tag) + ' ' + (signal.direction ? '<b>' + (signal.direction === "LONG" ? "▲ BUY" : "▼ SELL") + '</b>' : '<em>—</em>') + '</span>').join("") + '</span>' : '')
@@ -341,7 +345,7 @@ export function compactCard(card, {selected = false, variant = "developing"} = {
     + ' aria-label="' + esc(card.symbol + ' · ' + (card.direction || 'no direction') + ' · open market research') + '">'
     + '<header class="gd-mini-head"><i class="gd-swatch gd-swatch-' + card.stage + ' gd-swatch-' + String(card.direction || "none").toLowerCase() + '" aria-hidden="true"></i>'
     + '<div class="gd-mini-title"><h3>' + esc(card.symbol) + '</h3>' + directionBadge(card) + '</div>'
-    + '<div class="gd-mini-score" aria-label="Setup score">' + scoreRing(card.score, 40) + '<b>' + (card.score == null ? '—' : card.score) + '</b></div></header>'
+    + '<div class="gd-mini-score" aria-label="Rule score (not a probability)" title="' + SCORE_NOTE + '">' + scoreRing(card.score, 40) + '<b>' + (card.score == null ? '—' : card.score) + '</b></div></header>'
     + '<div class="gd-mini-sub">' + strategyChip(card.strategy, card.strategyVersion) + '<span>' + orUnavailable(card.setupType, "Setup type unavailable")
     + (card.timeframe ? ' · ' + esc(card.timeframe) : '') + '</span>' + (card.tracked ? '<span class="gd-tracked-flag">Tracking</span>' : '') + '</div>'
     + levels
@@ -562,7 +566,7 @@ export function focusPanel(card) {
     card.confirmationTime ? 'confirmed ' + card.confirmationTime : null].filter(Boolean);
   return '<div class="gd-focus-head" data-dir="' + dirKey(card.direction) + '"><i class="gd-swatch gd-swatch-' + card.stage + ' gd-swatch-' + String(card.direction || "none").toLowerCase() + '" aria-hidden="true"></i>'
     + '<div><b>' + esc(card.symbol) + '</b><span>' + card.stageIcon + ' ' + esc(card.headline) + '</span></div>'
-    + (card.score == null ? '' : '<strong>' + card.score + '<small>/100</small></strong>')
+    + (card.score == null ? '' : '<strong>' + card.score + '<small> rule pts</small></strong>')
     + '<button type="button" class="gd-focus-close" data-focus-action="close" aria-label="Clear selection" title="Clear selection">×</button></div>'
     + '<div class="gd-focus-sub">' + strategyChip(card.strategy, card.strategyVersion) + directionBadge(card)
     + '<span>' + orUnavailable(card.setupType, "Setup type unavailable") + (card.timeframe ? ' · ' + esc(card.timeframe) : '') + '</span></div>'
@@ -610,7 +614,7 @@ export function researchPanel(model, {loading = false, similar = null, similarSt
     + '<h2 id="gardenResearchTitle">' + esc(card.symbol) + ' ' + directionBadge(card) + '</h2>'
     + '<div class="gd-rs-sub">' + strategyChip(card.strategy, card.strategyVersion) + (card.strategy ? '<span>' + esc(card.strategy.label) + '</span>' : '')
     + (card.strategyVersion ? '<small class="gd-version">' + esc(card.strategyVersion) + '</small>' : '') + '<span>' + orUnavailable(card.setupType, "Setup type unavailable") + (card.timeframe ? ' · ' + esc(card.timeframe) : '') + '</span></div></div>'
-    + '<div class="gd-rs-score" aria-label="Setup score">' + scoreRing(card.score, 54) + '<b>' + (card.score == null ? '—' : card.score) + '</b></div>'
+    + '<div class="gd-rs-score" aria-label="Rule score (not a probability)" title="' + SCORE_NOTE + '">' + scoreRing(card.score, 54) + '<b>' + (card.score == null ? '—' : card.score) + '</b></div>'
     + '<button type="button" class="gd-rs-close" data-research-action="close" aria-label="Close market research">×</button></header>'
     + '<div class="gd-rs-body">'
     + lifecycleRailHtml(card.rail)

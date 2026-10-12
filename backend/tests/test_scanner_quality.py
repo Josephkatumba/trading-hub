@@ -1,6 +1,10 @@
+import sys
 import unittest
+from pathlib import Path
 
-from backend.scanner import _trade_levels
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from scanner import _trade_levels  # noqa: E402
 
 
 class TradeLevelStructureTests(unittest.TestCase):
