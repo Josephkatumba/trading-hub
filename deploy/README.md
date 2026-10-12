@@ -1,6 +1,7 @@
 # TRADEden V2 private production deployment
 
 Commercial Phase 1 preparation: [COMMERCIAL_MVP.md](COMMERCIAL_MVP.md).
+Private beta deployment and exact external requirements: [PRIVATE_BETA.md](PRIVATE_BETA.md).
 The private deployment below remains available; the commercial configuration is inactive.
 
 ## Architecture and cost assumptions

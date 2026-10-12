@@ -32,8 +32,17 @@ class Conflict(Exception):
 
 class CommercialStore:
     def __init__(self, url):
-        self.engine = create_engine(url, pool_pre_ping=True, **({"connect_args": {"check_same_thread": False}}
-                                    if url.startswith("sqlite") else {}))
+        connect_args = {"check_same_thread": False} if url.startswith("sqlite") else {"connect_timeout": 5}
+        self.engine = create_engine(url, pool_pre_ping=True, connect_args=connect_args)
+
+    def healthy(self):
+        with self.engine.connect() as connection:
+            version = connection.execute(select(migrations.c.version)).scalars().all()
+            connection.execute(select(journal.c.user_id).limit(0))
+            connection.execute(select(sessions.c.user_id).limit(0))
+            connection.execute(select(entitlements.c.user_id).limit(0))
+            connection.execute(select(users.c.id).limit(0))
+        return version == [1]
 
     def migrate(self):
         # Explicit initial migration; runtime never silently initializes production schemas.
@@ -73,8 +82,9 @@ class CommercialStore:
                 sessions.c.expires_at > int(time.time()))).mappings().first()
             if not row:
                 return None
+            owner = connection.execute(select(users.c.issuer, users.c.subject).where(users.c.id == row["user_id"])).mappings().one()
             grant = connection.execute(select(entitlements).where(entitlements.c.user_id == row["user_id"])).mappings().first()
-        return {"id": row["user_id"], "csrf": row["csrf"],
+        return {"id": row["user_id"], "csrf": row["csrf"], "issuer": owner["issuer"], "subject": owner["subject"],
                 "plan": "pro" if grant and grant["plan"] == "pro" and grant["expires_at"] > time.time() else "free"}
 
     def logout(self, token):

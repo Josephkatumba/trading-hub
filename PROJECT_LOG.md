@@ -260,3 +260,21 @@ backup and canonical file hashes and all 127 raw quarantined lines verified unch
 Production PostgreSQL and a real OIDC tenant remain external acceptance gates.
 See deploy/COMMERCIAL_MVP.md for configuration, tier plan, limits and launch checks.
 Nothing was purchased, published or enabled for real-money execution.
+
+## 2026-10-12 — Private beta preparation
+
+Continued from 8d7fba671766a4c38998f1e0e69c5e5ac7331405. Added OIDC subject
+invitations (including existing-session revocation), database schema readiness,
+fresh requalified opportunity reads, redacted production preflight, explicit MT5
+terminal selection, Windows process supervision/task preparation and PostgreSQL
+archive/checksum tooling. Prepared protected runtime configuration and exact external
+setup/acceptance requirements in deploy/PRIVATE_BETA.md. No services purchased or
+published; billing and execution remain disabled.
+
+Verification: backend 490 tests run, OK with 7 history comparisons skipped; targeted
+beta 4/4, commercial 15/15, frontend 168/168, browser 2/2 and commercial build passed.
+Deployment scripts parsed and task preview passed without installation. Isolated real
+broker probe scanned 15 instruments with all four strategies, returned 100 verified-UTC
+candles and reconnected. Original/canonical hashes and 127 quarantine lines unchanged.
+Actual OIDC login, PostgreSQL migration/backup/restore, DNS/TLS and VPS unattended
+reboot need the external host, tenant and service credentials; these are not verified.

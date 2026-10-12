@@ -97,7 +97,8 @@ def ensure_mt5() -> tuple[bool, str | None]:
             except Exception:
                 LOGGER.exception("MT5 shutdown of stale session failed")
         try:
-            connected = bool(mt5.initialize())
+            terminal_path = os.getenv("TRADING_HUB_MT5_TERMINAL_PATH")
+            connected = bool(mt5.initialize(path=terminal_path, timeout=15000) if terminal_path else mt5.initialize())
         except Exception as exc:
             LOGGER.exception("MT5 initialization failed")
             return False, str(exc)
@@ -167,9 +168,36 @@ def readiness():
     completed_status = freshness.get("result_status", scan.get("status"))
     ready = (completed_status == "CONNECTED" and
              freshness["status"] == "FRESH" and scan.get("market_count", 0) > 0)
+    database_ready = True
+    if os.getenv("TRADING_HUB_AUTH_MODE") == "oidc":
+        try:
+            database_ready = commercial.store().healthy()
+        except Exception:
+            database_ready = False
+    ready = ready and database_ready
     return JSONResponse(status_code=200 if ready else 503, content={
         "ready": ready, "scan_status": scan.get("status"),
-        "age_seconds": freshness["age_seconds"], "execution_enabled": False})
+        "age_seconds": freshness["age_seconds"], "database_ready": database_ready, "execution_enabled": False})
+
+
+@app.get("/api/market/opportunities")
+def trade_opportunities():
+    """Only current, requalified plans; historical confirmations stay research evidence."""
+    markets, _, freshness = latest_scan()
+    opportunities = []
+    if freshness["status"] == "FRESH":
+        for market in markets:
+            for plan in market.get("strategies", []):
+                if plan.get("trade_qualified") is not True or plan.get("mode") != "LIVE":
+                    continue
+                current = {**market, **plan, "tick_age_seconds":
+                           (market.get("tick_age_seconds") or 0) + (freshness.get("age_seconds") or 0)}
+                if market.get("tick_age_seconds") is None:
+                    current["tick_age_seconds"] = None
+                if (qualification.qualify(current) or {}).get("qualified"):
+                    current.pop("strategies", None)
+                    opportunities.append({**current, "trade_qualified": True})
+    return {"opportunities": opportunities, "execution_enabled": False, "freshness": freshness}
 
 SYMBOL_ALIASES = {
     "XAUUSD": ["XAUUSD", "GOLD"],
@@ -376,6 +404,7 @@ def _strategy_entry(result, setup: dict[str, Any] | None) -> dict[str, Any]:
         entry["confirmed"] = setup.get("strategy_valid") is True
         entry["qualification"] = setup["qualification"]
         entry.update({key: setup.get(key) for key in ("entry", "stop_loss", "take_profit", "pattern_strength", "trade_qualified", "plan_evidence")})
+        entry["round_trip_cost_price"] = setup["qualification"].get("additional_cost_price")
     entry.update({key: setup[key] for key in _STRATEGY_SETUP_FIELDS if setup and key in setup})
     return entry
 

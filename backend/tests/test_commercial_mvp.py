@@ -42,6 +42,9 @@ class CommercialTests(unittest.TestCase):
         @self.app.get("/api/market/chart")
         def chart():
             return {"symbol": "XAUUSD", "candles": [{"time": int(time.time())-10*86400, "open": 1, "high": 2, "low": 1, "close": 2}]}
+        @self.app.get("/api/market/opportunities")
+        def opportunities():
+            return {"opportunities": [{"symbol":"XAUUSD","trade_qualified":True}, {"symbol":"BTCUSD","trade_qualified":True}]}
         self.client = TestClient(self.app, base_url="https://app.test")
         self.a, self.ca = self.db.login("https://identity.test/", "alice")
         self.b, self.cb = self.db.login("https://identity.test/", "bob")
@@ -61,6 +64,13 @@ class CommercialTests(unittest.TestCase):
         self.login_as("forged")
         self.assertEqual(self.client.get("/api/market/radar").status_code, 401)
         self.assertEqual(self.client.post("/api/billing/webhook").status_code, 401)
+
+    def test_beta_invites_are_enforced_for_existing_sessions(self):
+        with patch.dict(os.environ,{"TRADING_HUB_PRIVATE_BETA":"1","TRADING_HUB_BETA_SUBJECTS":'["alice"]'}):
+            self.login_as(self.a)
+            self.assertEqual(self.client.get("/api/auth/me").status_code,200)
+            self.login_as(self.b)
+            self.assertEqual(self.client.get("/api/journal/review").status_code,403)
 
     def test_cross_user_records_and_conflicting_versions(self):
         self.login_as(self.a)
@@ -101,6 +111,7 @@ class CommercialTests(unittest.TestCase):
     def test_free_pro_expiry_and_disabled_billing(self):
         self.login_as(self.a)
         self.assertEqual([r["symbol"] for r in self.client.get("/api/market/radar").json()["markets"]], ["XAUUSD"])
+        self.assertEqual([r["symbol"] for r in self.client.get("/api/market/opportunities").json()["opportunities"]], ["XAUUSD"])
         self.assertEqual(self.client.get("/api/market/chart?symbol=BTCUSD").status_code, 403)
         self.assertEqual(self.client.get("/api/market/chart").json()["candles"], [])
         self.assertEqual(self.client.get("/api/journal/export").status_code, 403)

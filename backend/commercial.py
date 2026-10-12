@@ -24,6 +24,14 @@ KINDS = {"trade", "account", "review"}
 _LOGIN_ATTEMPTS = OrderedDict()
 
 
+def beta_allowed(issuer, subject):
+    if os.getenv("TRADING_HUB_PRIVATE_BETA") != "1":
+        return True
+    subjects = json.loads(os.getenv("TRADING_HUB_BETA_SUBJECTS", "[]"))
+    return (issuer == os.getenv("TRADING_HUB_OIDC_ISSUER", "").rstrip("/") + "/"
+            and subject in subjects)
+
+
 @lru_cache(maxsize=1)
 def store():
     url = os.getenv("TRADING_HUB_DATABASE_URL")
@@ -85,6 +93,10 @@ def install(app):
     if mode not in {"private", "oidc"}:
         raise RuntimeError("Unknown authentication mode")
     enabled = mode == "oidc"
+    if os.getenv("TRADING_HUB_PRIVATE_BETA") == "1":
+        subjects = json.loads(os.getenv("TRADING_HUB_BETA_SUBJECTS", "[]"))
+        if not enabled or not isinstance(subjects, list) or not subjects or not all(isinstance(s, str) and s for s in subjects):
+            raise RuntimeError("Private beta requires OIDC and an explicit nonempty subject allowlist")
     oauth = OAuth()
     if enabled:
         issuer = os.getenv("TRADING_HUB_OIDC_ISSUER", "").rstrip("/") + "/"
@@ -109,6 +121,8 @@ def install(app):
         if token:
             try:
                 request.state.user = await asyncio.to_thread(store().identity, token)
+                if request.state.user and not beta_allowed(request.state.user["issuer"], request.state.user["subject"]):
+                    return JSONResponse({"detail": "Private beta invitation required"}, 403)
             except Exception:
                 return JSONResponse({"detail": "User storage unavailable"}, 503)
         path = request.url.path
@@ -128,7 +142,7 @@ def install(app):
             if path == "/api/market/chart" and request.state.user["plan"] != "pro" and request.query_params.get("symbol", "XAUUSD") not in FREE_SYMBOLS:
                 return JSONResponse({"detail": "Instrument requires Pro"}, 403)
             allowed = {"/api/market/radar", "/api/market/strategies", "/api/market/setup-episodes",
-                       "/api/market/outcomes", "/api/market/candles", "/api/market/chart", "/api/market/performance"}
+                       "/api/market/outcomes", "/api/market/candles", "/api/market/chart", "/api/market/performance", "/api/market/opportunities"}
             parts = path.split("/")
             setup_read = request.method in {"GET", "HEAD"} and len(parts) in {5, 6} and parts[:4] == ["", "api", "market", "setups"] and (len(parts) == 5 or parts[5] in {"history", "lifecycle"})
             if setup_read:
@@ -185,6 +199,9 @@ async def callback(request: Request):
                 or not identity.get("sub") or not identity.get("nonce") or identity.get("nonce_supported") is False
                 or identity.get("exp", 0) <= time.time()):
             raise HTTPException(401, "Invalid identity claims")
+        if not beta_allowed(identity["iss"], identity["sub"]):
+            request.session.clear()
+            raise HTTPException(403, "Private beta invitation required")
         opaque, _ = await asyncio.to_thread(store().login, identity["iss"], identity["sub"])
     except (OAuthError, JoseError, ValueError):
         raise HTTPException(401, "Identity verification failed")
