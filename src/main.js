@@ -8,13 +8,15 @@ import {formatR,hasRecordedR,hasRecordedRisk} from "./riskData.mjs";
 import {getReview,saveReview,reviewedCount,DEFAULT_RULES} from "./journal.js";
 import {renderAnalytics,renderInsights,initInsights} from "./behaviorView.js";
 import {renderMarketRadar,initMarketRadar,stopMarketRadar,scrollToGardenSection} from "./marketRadar.js";
+import {renderMarkets,initMarkets,stopMarkets} from "./intelligenceChart.mjs";
+import {initIdentity,identityState,authRequired,signIn,signOut,cloudActive} from "./userJournal.mjs";
 
 let state={view:"radar",trades:getTrades(),importOpen:false,selectedTrade:null,filters:{account:"ALL",symbol:"ALL",session:"ALL"}};
 
 // Navigation: the Garden is the product; watch tools sit beside it; journal
 // tools stay available but quieter. Items with an anchor open a Garden section.
 const NAV={
- watch:[["radar","Markets","◎","gardenMarkets"],["analytics","Setup Lab","◒"],["insights","Analyst","✦"],["radar","Setup performance","▦","gardenPerformance"],["radar","Alerts","◔","gardenAlerts"]],
+ watch:[["markets","Markets","◎"],["analytics","Setup Lab","◒"],["insights","Analyst","✦"],["radar","Setup performance","▦","gardenPerformance"],["radar","Alerts","◔","gardenAlerts"]],
  journal:[["overview","Portfolio","⌂"],["trades","Trades","↗"],["accounts","Accounts","◈"]]
 };
 const navLink=([view,label,icon,anchor])=>`<a class="${state.view===view&&!anchor?"active":""}" data-view="${view}"${anchor?` data-anchor="${anchor}"`:""}><span>${icon}</span>${label}</a>`;
@@ -35,6 +37,11 @@ function filterSelect(key,label){
 }
 
 function render(){
+ if(authRequired()&&!identityState.user){
+  stopMarketRadar();stopMarkets();
+  document.querySelector("#root").innerHTML='<main class="markets-workspace"><h1>TRADEden</h1><p>Sign in to your market intelligence and private journal.</p><button id="accountLogin" class="primary">Sign in securely</button></main>';
+  document.getElementById("accountLogin").onclick=signIn;return;
+ }
  const all=state.trades, trades=filteredTrades(), m=calculateMetrics(trades), reviews=reviewedCount();
  const accounts=getAccounts(all).map(a=>({...a,...(INITIAL_ACCOUNTS[a.name]||{})}));
  document.querySelector("#root").innerHTML=`
@@ -46,7 +53,7 @@ function render(){
    <a class="nav-garden ${state.view==="radar"?"active":""}" data-view="radar"><span class="nav-garden-orb" aria-hidden="true"></span><div><b>Garden</b><small>Live market constellation</small></div></a>
    <nav aria-label="Watch"><span class="nav-label">Watch</span>${NAV.watch.map(navLink).join("")}</nav>
    <nav class="nav-secondary" aria-label="Journal"><span class="nav-label">Journal</span>${NAV.journal.map(navLink).join("")}<a class="nav-muted"><span>◇</span>Marketplace <em class="soon">SOON</em></a></nav>
-   <div class="side-bottom"><a><span>⚙</span>Settings</a><div class="profile"><div class="avatar">JK</div><div><b>Joseph Katumba</b><small>Pro workspace</small></div><span>•••</span></div></div>
+   <div class="side-bottom"><div class="profile"><div class="avatar">TD</div><div><b>${cloudActive()?"Your account":"Private workspace"}</b><small>${esc(identityState.entitlements?.plan||"Owner")} workspace</small></div><button id="accountSession" class="ghost">${cloudActive()?"Sign out":"Sign in"}</button></div></div>
   </aside>
   <main>
    <div class="topline"><span><i class="live-dot"></i> DATA ENGINE ACTIVE · ${all.length} TRADES · ${reviews} REVIEWS</span><span>FILTERED P&L <b>${signed(m.pnl)}</b></span></div>
@@ -57,6 +64,7 @@ function render(){
  document.body.classList.toggle("garden-mode",state.view==="radar");
  bind();
  if(state.view==="radar") initMarketRadar(); else stopMarketRadar();
+ if(state.view==="markets")initMarkets();else stopMarkets();
  if(state.view==="insights") initInsights();
 }
 
@@ -66,7 +74,7 @@ function importModal(){return `
 <h2>Connect your trading history</h2><p class="sub">Start with a CSV from MT5, a broker, prop firm or futures platform. TRADeden normalizes the execution data inside your workspace.</p>
 <label class="tz-field"><span>BROKER SERVER TIMEZONE</span><input id="brokerTz" list="tzList" value="${esc(getBrokerTimeZone())}" placeholder="e.g. Europe/Athens or UTC — leave empty if unknown" autocomplete="off"/><datalist id="tzList">${timeZoneOptions()}</datalist><small>MT5 exports use broker server time, not UTC. Sessions are only classified when this is set; otherwise they show as <b>Unverified</b>. Check your broker's documentation — TRADeden does not guess it.</small></label>
 <label class="dropzone" id="dropzone"><input id="csvFile" type="file" accept=".csv,text/csv,.txt"/><span class="upload-icon">↑</span><b>Drop CSV here or click to browse</b><small>CSV · XLS exports can be converted to CSV · browser-local prototype</small></label>
-<div id="importStatus"></div><div class="import-actions"><button class="ghost" id="cancelImport">Cancel</button><button class="primary" id="importDemo">Restore demo dataset</button></div>
+<div id="importStatus"></div><div class="import-actions"><button class="ghost" id="cancelImport">Cancel</button>${!authRequired()&&!cloudActive()?'<button class="primary" id="importDemo">Restore demo dataset</button>':""}</div>
 </div></div>`;}
 
 function sessionBasisNote(trades){const n=trades.filter(t=>t.session==="Unverified").length;return n?'<div class="basis-note"><b>'+n+' of '+trades.length+' sessions unverified.</b> MT5 exports use broker server time. Set the broker server timezone in <button class="text-btn" id="importBasis">Import</button> to classify them; the raw timestamps are unchanged.</div>':"";}
@@ -99,7 +107,7 @@ function tradeDrawer(t,trades){
 }
 const views={
 overview:(trades,m,accounts)=>`
-<section class="command"><div><div class="kicker">PORTFOLIO / LIVE INTELLIGENCE</div><h1>Good evening, Joseph.</h1><p class="sub">Your trading account is becoming the journal. Trading Hub is turning executions into intelligence.</p></div><div class="command-actions"><button class="ghost" id="importTop">Import trades</button><button class="primary" id="connectTop">+ Connect account</button></div></section>
+<section class="command"><div><div class="kicker">PORTFOLIO / LIVE INTELLIGENCE</div><h1>Your portfolio.</h1><p class="sub">Your trading account is becoming the journal. Trading Hub is turning executions into intelligence.</p></div><div class="command-actions"><button class="ghost" id="importTop">Import trades</button><button class="primary" id="connectTop">+ Connect account</button></div></section>
 <section class="portfolio-card"><div><div class="tiny">FILTERED EQUITY P&L</div><div class="equity">${signed(m.pnl)}<span class="live-dot"></span></div><div class="equity-meta"><span class="up">${pct(m.winRate)} win rate</span><span>${m.profitFactor.toFixed(2)} profit factor</span><span class="muted">${trades.length} trades</span></div></div><div class="portfolio-spark">${spark(m.equityCurve)}<div class="spark-labels"><span>START</span><span>NOW</span></div></div><div class="portfolio-side"><span>MAX DRAWDOWN</span><strong>${money(m.maxDrawdown)}</strong><div class="meter"><i style="width:${Math.min((m.maxDrawdown/2000)*100,100)}%"></i></div><small>Peak-to-trough P&L</small></div></section>
 <section class="metric-grid"><div class="metric"><span>NET P&L</span><strong class="${m.pnl>=0?"up":"down"}">${signed(m.pnl)}</strong><small>Current filter</small></div><div class="metric"><span>MAX DRAWDOWN</span><strong>${money(m.maxDrawdown)}</strong><small>Peak-to-trough</small></div><div class="metric"><span>WIN RATE</span><strong>${pct(m.winRate)}</strong><small>${m.wins} wins / ${m.losses} losses</small></div><div class="metric"><span>PROFIT FACTOR</span><strong>${m.profitFactor.toFixed(2)}</strong><small>Gross profit / loss</small></div><div class="metric"><span>AVG. R</span><strong class="${m.avgR==null?"unavailable":""}">${formatR(m.avgR)}</strong><small>${m.avgR==null?"No risk data in imported trades":m.rCoverage+" of "+trades.length+" trades have R"}</small></div></section>
 <section class="dashboard-grid"><div class="panel wide"><div class="panel-head"><div><span class="kicker">PERFORMANCE</span><h2>Equity trajectory</h2></div><button class="text-btn" data-view="trades">Inspect trades →</button></div><div class="big-chart">${bigChart(m.equityCurve)}</div></div>
@@ -109,6 +117,7 @@ overview:(trades,m,accounts)=>`
 accounts:(trades,m,accounts)=>`<div class="page-title"><div><div class="kicker">CAPITAL MAP</div><h1>All accounts</h1><p class="sub">One portfolio view across your trading activity.</p></div><button class="primary" id="importAccounts">+ Import trades</button></div><div class="account-cards">${accounts.map(a=>`<div class="account-card"><div class="account-top"><span class="account-icon big">${(a.platform||"I")[0]}</span><span class="status">${a.status||"IMPORTED"}</span></div><h3>${esc(a.name)}</h3><small>${esc(a.platform||"Imported account")}</small><div class="card-balance">${a.balance?money(a.balance):"Activity linked"}</div><div class="account-bottom"><span>P&L <b class="${a.pnl>=0?"up":"down"}">${signed(a.pnl)}</b></span><span>Trades <b>${a.trades}</b></span></div></div>`).join("")}</div>`,
 trades:(trades,m)=>`<div class="page-title"><div><div class="kicker">EXECUTION LEDGER</div><h1>Trade intelligence</h1><p class="sub">${trades.length} executions · click a trade to inspect the context behind it.</p></div><div><button class="ghost" id="importTrades">Import CSV</button></div></div>${sessionBasisNote(trades)}<div class="filter-bar">${filterSelect("account","ACCOUNT")}${filterSelect("symbol","SYMBOL")}${filterSelect("session","SESSION")}<button class="ghost" id="clearFilters">Clear</button></div><div class="panel table-panel"><div class="table-head"><span>SYMBOL</span><span>SIDE</span><span>SESSION</span><span>TIME</span><span>P&L</span></div>${trades.map(t=>`<button class="table-row clickable" data-trade="${esc(t.id)}"><b>${esc(t.symbol)}</b><span class="${t.side==="BUY"?"up":"down"}">${t.side}</span><span>${esc(t.session)}</span><span>${esc(t.time)}</span><strong class="${t.pnl>=0?"up":"down"}">${signed(t.pnl)}</strong></button>`).join("")||"<div class='empty-state'>No trades match these filters.</div>"}</div>`,
 radar:renderMarketRadar,
+markets:renderMarkets,
 analytics:renderAnalytics,
 insights:renderInsights
 };
@@ -123,6 +132,7 @@ function linePath(points,w,h,pad){
 
 function openImport(){state.importOpen=true;render();}
 function bind(){
+ const accountSession=document.getElementById("accountSession");if(accountSession)accountSession.onclick=()=>cloudActive()?signOut().catch(()=>alert("Sign out failed; retry.")):signIn();
  document.querySelectorAll("[data-view]").forEach(el=>el.onclick=()=>{
    state.view=el.dataset.view;state.selectedTrade=null;render();
    if(el.dataset.anchor)scrollToGardenSection(el.dataset.anchor);
@@ -147,14 +157,14 @@ function bind(){
  if(file)file.onchange=e=>{if(e.target.files[0])handleFile(e.target.files[0]);};
  const demo=document.getElementById("importDemo");if(demo)demo.onclick=()=>{resetTrades();state.trades=getTrades();state.importOpen=false;render();};
  const save=document.getElementById("saveReview");
- if(save)save.onclick=()=>{
+ if(save)save.onclick=async()=>{
    const rules=[...document.querySelectorAll("[data-rule]:checked")].map(x=>Number(x.dataset.rule));
-   saveReview(state.selectedTrade.id,{
+   try{await saveReview(state.selectedTrade.id,{
      setup:document.getElementById("reviewSetup")?.value||"",
      grade:document.getElementById("reviewGrade")?.value||"",
      rules,
      notes:document.getElementById("reviewNotes")?.value||""
-   });
+   });}catch(error){alert("Review was not saved. Reload if it changed on another device, then retry.");return;}
    render();
  };
  const ask=document.getElementById("askTrade");if(ask)ask.onclick=()=>{state.selectedTrade=null;state.view="insights";render();};
@@ -174,7 +184,7 @@ async function handleFile(file){
  const parsed=parseCSV(await file.text(),{sourceTimeZone:tz});
  if(!parsed.length){if(status)status.innerHTML='<div class="import-error">No recognizable executions found. Try a CSV with Symbol, Side, Entry, Exit, Volume or P&L columns.</div>';return;}
  const result=mergeImportedTrades(state.trades,parsed);
- state.trades=normalizeTrades(result.trades);saveTrades(state.trades);
+ try{await saveTrades(normalizeTrades(result.trades));state.trades=getTrades();}catch(error){if(status)status.textContent="Import was not fully saved. Reload your journal and retry; existing records remain preserved.";return;}
  const skipped=result.skippedExistingId+result.skippedDuplicateContent;
  const notes=[skipped?skipped+' already in your workspace (not duplicated)':'',result.sampleExcluded?result.sampleExcluded+' bundled sample trades set aside (restore any time)':'',tz?'':'sessions Unverified until a broker timezone is set'].filter(Boolean);
  if(status)status.innerHTML='<div class="import-success">✓ Added '+result.added+' new trade'+(result.added===1?'':'s')+'.'+(notes.length?' '+esc(notes.join(' · '))+'.':'')+'</div>';
@@ -182,3 +192,4 @@ async function handleFile(file){
 }
 window.addEventListener("pagehide",stopMarketRadar);
 render();
+initIdentity().then(()=>{state.trades=getTrades();render();}).catch(()=>{document.querySelector("#root").innerHTML='<main class="markets-workspace"><h1>TRADEden</h1><p>Account storage is unavailable. Reload to retry; your records remain on the server.</p></main>';});

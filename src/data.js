@@ -3,6 +3,7 @@ import {withTimeProvenance,isValidTimeZone,UNVERIFIED_SESSION} from "./tradeTime
 import {assignImportIds,tradeOrigin} from "./tradeImport.mjs";
 import {redactSampleTrade} from "./sampleRedaction.mjs";
 import {averageR,hasRecordedRisk} from "./riskData.mjs";
+import {cloudActive,cloudRows,saveCloudTrades,authRequired} from "./userJournal.mjs";
 const DEMO_TRADES = [
   { id:"TH-001", account:"Goldimus Funded", symbol:"XAUUSD", side:"BUY", entry:3342.2, exit:3356.8, volume:0.3, pnl:620, r:1.84, risk:337, time:"2026-09-21 14:32", session:"New York" },
   { id:"TH-002", account:"Personal Futures", symbol:"NAS100", side:"SELL", entry:22780, exit:22690, volume:1, pnl:410, r:1.35, risk:303, time:"2026-09-21 11:08", session:"London" },
@@ -22,11 +23,13 @@ export function setBrokerTimeZone(zone){const z=String(zone||"").trim();try{if(z
 
 export function normalizeTrades(trades,zone=getBrokerTimeZone()){return trades.map(redactSampleTrade).map(t=>({...withTimeProvenance(t,zone),origin:tradeOrigin(t)}));}
 export function getTrades() {
+  if(cloudActive())return normalizeTrades(cloudRows("trade"));
+  if(authRequired())return [];
   let raw=IMPORTED_TRADES;
   try { const saved=localStorage.getItem("th_trades"); if(saved)raw=JSON.parse(saved); } catch {}
   return normalizeTrades(raw);
 }
-export function saveTrades(trades){ localStorage.setItem("th_trades",JSON.stringify(trades)); }
+export function saveTrades(trades){ if(cloudActive())return saveCloudTrades(trades);if(authRequired())throw new Error("Sign in required");localStorage.setItem("th_trades",JSON.stringify(trades)); }
 export function resetTrades(){ localStorage.removeItem("th_trades"); }
 
 const cleanHeader=h=>String(h).toLowerCase().replace(/[^a-z0-9]/g,"");

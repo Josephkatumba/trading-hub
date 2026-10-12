@@ -241,3 +241,22 @@ rewritten; where a stored record was misclassified, it is re-read at read time.
   forming at observation time is not seen, and a bar touching both barriers is AMBIGUOUS.
 - About 537 duplicate stored outcome keys (2026-09-25/29, identical labels) remain; the reports key by
   (setup, observation, horizon), so they are not double-counted.
+
+## 2026-10-12 — Codex Commercial MVP Phase 1
+
+Continued from fa651dc8e4a7d5bdd380207e9a54552634c2edaa. Preserved the Garden,
+all four live strategies, historical records and quarantine evidence. Added
+conservative executable trade plans, configurable net 1.5R minimum / 2R preferred,
+separate pattern strength, broker precision and explicit cost assumptions. Added
+Markets with official TradingView embedding and actual-candle Lightweight Charts.
+Implemented Auth0-compatible OIDC, owner-keyed versioned journals, PostgreSQL initial
+migration, server-enforced Free/Pro entitlements and inactive $19/month billing hooks.
+Commercial builds exclude bundled owner trades; private mode remains available.
+
+Verification: backend 484 tests run, OK with 7 real-store tests skipped in the isolated
+run; separate historical suite 15/15 passed. Final commercial tests 14/14 passed,
+frontend 168/168, browser 2/2; private/commercial production builds passed. Original
+backup and canonical file hashes and all 127 raw quarantined lines verified unchanged.
+Production PostgreSQL and a real OIDC tenant remain external acceptance gates.
+See deploy/COMMERCIAL_MVP.md for configuration, tier plan, limits and launch checks.
+Nothing was purchased, published or enabled for real-money execution.

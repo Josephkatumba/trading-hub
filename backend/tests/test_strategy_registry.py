@@ -265,7 +265,16 @@ class ScanLoopTests(unittest.TestCase):
                                            "break_confirmation"})
             self.assertEqual((kwargs["strategy_version"], kwargs["target_model"]), ("trendline-first-v5.1", "h1-structure"))
             self.assertEqual(kwargs["break_confirmation"], "retest-rejection")
-            self.assertEqual(g.canonical({key: market[key] for key in payload}), g.canonical(payload))
+            # Raw pattern detection remains exact; the authorized commercial overlay
+            # reprices only the executable plan and records the original levels.
+            changed_plan = {"entry", "stop_loss", "take_profit", "rr", "risk_distance", "reward_distance",
+                            "strategy_valid", "reason", "strategy_evidence"}
+            untouched = set(payload) - changed_plan
+            self.assertEqual(g.canonical({key: market[key] for key in untouched}),
+                             g.canonical({key: payload[key] for key in untouched}))
+            if market.get("plan_evidence"):
+                self.assertEqual(market["plan_evidence"]["pattern_plan"],
+                                 {key: payload.get(key) for key in ("entry", "stop_loss", "take_profit")})
             self.assertEqual(market["strategy_id"], "trendline_v5", "stamped: never attributed to the retired trendline")
         self.assertEqual(len(recorded), 1)
 

@@ -103,14 +103,14 @@ def run_scan(broker: FakeBroker, registry: StrategyRegistry | None = None, watch
                # The fake brokers carry no verified tick time, so the live qualification
                # (qualification.py, tested on its own in test_tradeden_v2) would fail every
                # confirmation closed; these scans test the strategies' own decisions.
-               g.without_qualification()]
+               ]
     if registry is not None:
         patches.append(mock.patch.object(main, "STRATEGIES", registry))
     main._MT5_SESSION.update(initialized=False, initializations=0)
     tmp = tempfile.TemporaryDirectory() if root is None else None
     store = Path(tmp.name) if tmp else root
     try:
-        with g.isolated_store(observations, store):
+        with g.isolated_store(observations, store), g.without_qualification():
             for patch in patches:
                 patch.start()
             try:

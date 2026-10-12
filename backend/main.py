@@ -11,7 +11,7 @@ import time as monotonic_time
 from typing import Any
 from urllib.parse import urlsplit
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
@@ -39,6 +39,8 @@ from strategy_lab import strategy_lab_report
 import evaluation
 import observations as observation_store
 import qualification
+from trade_planning import apply_plan
+import commercial
 from outcome_identity import unique_outcomes
 
 try:
@@ -144,13 +146,16 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(title="Trading Hub Market Engine", version="0.3.0", lifespan=lifespan)
+commercial.install(app)
+from intelligence_chart import router as chart_router
+app.include_router(chart_router)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=configured_cors_origins(),
-    allow_credentials=False,
-    allow_methods=["GET", "POST"],
-    allow_headers=["Accept", "Content-Type"],
+    allow_credentials=os.getenv("TRADING_HUB_AUTH_MODE") == "oidc",
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["Accept", "Content-Type", "X-CSRF-Token"],
 )
 
 
@@ -370,6 +375,7 @@ def _strategy_entry(result, setup: dict[str, Any] | None) -> dict[str, Any]:
         # The executable-price qualification (qualification.py) may have withdrawn the confirmation.
         entry["confirmed"] = setup.get("strategy_valid") is True
         entry["qualification"] = setup["qualification"]
+        entry.update({key: setup.get(key) for key in ("entry", "stop_loss", "take_profit", "pattern_strength", "trade_qualified", "plan_evidence")})
     entry.update({key: setup[key] for key in _STRATEGY_SETUP_FIELDS if setup and key in setup})
     return entry
 
@@ -548,15 +554,18 @@ def _market_snapshot() -> list[dict[str, Any]]:
             }
             # The top-level market is the live trendline's result; its strategy_id is stamped so
             # its records are never attributed to the retired "trendline" (v4) by default.
-            market = qualification.apply({**quote, **scan, **provenance, "strategy_id": TRENDLINE})
+            precision = {"digits": getattr(info, "digits", None), "point": getattr(info, "point", None),
+                         "tick_size": getattr(info, "trade_tick_size", None)}
+            market = qualification.apply(apply_plan({**quote, **scan, **provenance, **precision, "strategy_id": TRENDLINE}, bars))
             setups: dict[str, dict[str, Any]] = {}
             for strategy_id, result in results.items():
                 if strategy_id == TRENDLINE or not result.ok:
                     continue
                 strategy = STRATEGIES.get(strategy_id)
-                setups[strategy_id] = {**quote, **result.payload, **provenance, "timeframe": strategy.timeframe,
+                setups[strategy_id] = {**quote, **result.payload, **provenance, **precision, "timeframe": strategy.timeframe,
                     "higher_timeframes": list(strategy.higher_timeframes), "strategy_id": strategy_id,
                     "strategy_version": result.strategy_version, "strategy_mode": result.mode}
+                apply_plan(setups[strategy_id], bars)
                 qualification.apply(setups[strategy_id])
             markets.append(market)
             strategy_markets.extend(setups.values())
@@ -939,7 +948,7 @@ def _confirmed_outcomes(confirmations: list[dict[str, Any]]) -> list[dict[str, A
 
 
 @app.get("/api/market/performance")
-def setup_performance(date: str | None = Query(default=None, min_length=10, max_length=10),
+def setup_performance(request: Request = None, date: str | None = Query(default=None, min_length=10, max_length=10),
                       days: int = Query(default=1, ge=1, le=30)):
     if date:
         try:
@@ -949,6 +958,13 @@ def setup_performance(date: str | None = Query(default=None, min_length=10, max_
             from fastapi import HTTPException
             raise HTTPException(status_code=422, detail="date must use YYYY-MM-DD") from exc
     horizons = configured_horizons()
+    user = getattr(getattr(request, "state", None), "user", None)
+    if os.getenv("TRADING_HUB_AUTH_MODE") == "oidc" and user:
+        confirmations = commercial.scope_payload(confirmation_events(), user)
+        decisions = snapshots_by_observation_id(str(row.get("observation_id")) for row in confirmations)
+        return performance_report(confirmations, _confirmed_outcomes(confirmations),
+            commercial.scope_payload(performance_observations(), user), report_date=date,
+            days=min(days, commercial.policy(user)["history_days"]), horizons=horizons, decision_snapshots=decisions)
     key = ("performance", report_end_day(date).isoformat(), days, horizons, reporting_timezone(),
            _stamps(observation_store.CONFIRMATIONS_FILE, MARKET_OUTCOMES_FILE, observation_store.LOG_FILE))
 
@@ -1039,6 +1055,8 @@ def market_outcomes(setup_id: str | None = None, setup_ids: str | None = None):
     """Market outcomes of one setup (setup_id) or of several (setup_ids, comma-separated, at
     most MAX_OUTCOME_SETUP_IDS), read through the outcome index. Without either, every
     record (a full read of the outcome file: for exports, never for polling)."""
+    if os.getenv("TRADING_HUB_AUTH_MODE") == "oidc" and setup_id is None and setup_ids is None:
+        raise HTTPException(422, "Select setup IDs for a bounded history read")
     if setup_ids is not None:
         wanted = list(dict.fromkeys(part.strip() for part in setup_ids.split(",") if part.strip()))
         if len(wanted) > MAX_OUTCOME_SETUP_IDS:
@@ -1051,6 +1069,12 @@ def market_outcomes(setup_id: str | None = None, setup_ids: str | None = None):
         outcomes = outcomes_for_setup(setup_id, MARKET_OUTCOMES_FILE)
     else:
         outcomes = unique_outcomes(list_records(MARKET_OUTCOMES_FILE))
+    if os.getenv("TRADING_HUB_AUTH_MODE") == "oidc":
+        outcomes = outcomes[-5000:]
+        snapshots = snapshots_by_observation_id(r.get("observation_id") for r in outcomes)
+        outcomes = [{**r, "symbol": snapshots[str(r.get("observation_id"))].get("symbol"),
+                     "observed_at": snapshots[str(r.get("observation_id"))].get("observed_at")}
+                    for r in outcomes if str(r.get("observation_id")) in snapshots]
     return {"outcomes": outcomes, "configured_horizons": configured_horizons()}
 
 

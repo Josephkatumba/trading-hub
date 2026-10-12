@@ -5,3 +5,8 @@ MetaTrader5==5.0.6180
 python-dotenv==1.2.3
 tzdata==2026.4
 numpy==2.5.3
+Authlib==1.8.0
+SQLAlchemy==2.1.4
+psycopg[binary]==3.3.6
+itsdangerous==2.2.0
+httpx==0.28.1

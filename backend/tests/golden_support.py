@@ -314,8 +314,13 @@ def run_persistence(module, root: Path, legacy: bool = False) -> dict[str, bytes
     return {name: (root / name).read_bytes() if (root / name).exists() else b"" for name in PERSISTED_FILES}
 
 
+@contextmanager
 def without_qualification():
-    """Patch the live executable-price qualification (qualification.apply) to a pass-through,
-    for fixture scans whose fake brokers have no verified tick time."""
+    """Test raw strategy contracts without the live planning/qualification overlays.
+
+    Fake brokers have no verified tick time; commercial planning is tested separately.
+    """
     import qualification
-    return mock.patch.object(qualification, "apply", side_effect=lambda market, *args, **kwargs: market)
+    with mock.patch.object(qualification, "apply", side_effect=lambda market, *args, **kwargs: market), \
+         mock.patch("main.apply_plan", side_effect=lambda market, *args, **kwargs: market):
+        yield

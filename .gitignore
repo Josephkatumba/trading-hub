@@ -157,3 +157,5 @@ backend/*.before-*
 
 # Private production Python environment
 .venv/
+test-results/
+playwright-report/

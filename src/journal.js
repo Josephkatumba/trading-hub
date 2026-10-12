@@ -1,4 +1,5 @@
 import {migrateJournalKeys} from "./sampleRedaction.mjs";
+import {cloudActive,cloudObject,cloudWrite,authRequired} from "./userJournal.mjs";
 const KEY="th_journal_v1";
 
 const DEFAULT_RULES=[
@@ -9,6 +10,8 @@ const DEFAULT_RULES=[
 ];
 
 export function getJournal(){
+  if(cloudActive())return cloudObject("review");
+  if(authRequired())return {};
   try{
     const {journal,changed}=migrateJournalKeys(JSON.parse(localStorage.getItem(KEY)||"{}"));
     if(changed)localStorage.setItem(KEY,JSON.stringify(journal));
@@ -22,6 +25,8 @@ export function getReview(id){
 }
 
 export function saveReview(id,review){
+  if(cloudActive())return cloudWrite("review",id,{...getReview(id),...review,updatedAt:new Date().toISOString()});
+  if(authRequired())throw new Error("Sign in required");
   const all=getJournal();
   all[id]={...getReview(id),...review,updatedAt:new Date().toISOString()};
   localStorage.setItem(KEY,JSON.stringify(all));

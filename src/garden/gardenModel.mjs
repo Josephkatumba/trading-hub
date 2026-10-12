@@ -269,6 +269,8 @@ export function setupCardModel(row, {bucket = null, analysis = null, tracked = f
     bucket: bucket || (stage === "history" ? "history" : stage === "bloomed" || stage === "active" ? "bloomed" : "growing"),
     // A confirmed setup keeps the score it was confirmed with; the latest observation's score drifts.
     score: finite(plan?.score ?? row?.score) ? Math.round(Number(plan?.score ?? row.score)) : null,
+    patternStrength: row?.pattern_strength ?? row?.strategy_evidence?.pattern_strength ?? null,
+    tradeQualified: Boolean(row?.trade_qualified ?? row?.rule_evidence?.strategy_valid ?? row?.strategy_valid),
     setupType: setupFamilyLabel(setupTypeOf(row), dir),
     latestObservation: latestObservationNote(row),
     strategy: strategyTag(strategyIdOf(row)),

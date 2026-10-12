@@ -1,4 +1,5 @@
 const KEY="th_engine_url";
+import {identityState,authRequired} from "./userJournal.mjs";
 // Canonical local engine address. Must match backend/start_engine.bat and the READMEs.
 export const DEFAULT_ENGINE_URL="http://127.0.0.1:8000";
 // A previous build silently rewrote saved :8000 URLs to this value. Nothing else
@@ -32,8 +33,8 @@ export function setEngineUrl(url){
 
 export async function engineFetch(path,options={}){
   const base=getEngineUrl();
-  return fetch(base+path,{...options,headers:{"Accept":"application/json",...(options.headers||{})}}).then(async response=>{
-    if(!response.ok) throw new Error("Engine request failed: "+response.status);
+  return fetch(base+path,{credentials:authRequired()||identityState.user?"include":"same-origin",...options,headers:{"Accept":"application/json",...(identityState.csrf?{"X-CSRF-Token":identityState.csrf}:{}),...(options.headers||{})}}).then(async response=>{
+    if(!response.ok){const error=new Error("Engine request failed: "+response.status);error.status=response.status;throw error;}
     return response.json();
   });
 }

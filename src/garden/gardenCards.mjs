@@ -132,6 +132,7 @@ export function setupCard(card, {selected = false, expanded = false, evidenceHtm
     + (card.strategyVersion ? '<small class="gd-version">' + esc(card.strategyVersion) + '</small>' : '')
     + (card.tracked ? '<span class="gd-tracked-flag">Tracking</span>' : '') + '</div>'
     + lifecycleRailHtml(card.rail)
+    + (card.patternStrength!=null?'<p class="gd-plan-note">Pattern points: '+esc(card.patternStrength)+' · '+(card.tradeQualified?'Trade qualified':'Observation visible · trade plan unqualified')+'</p>':'')
     + (card.levels.planned
       ? '<div class="gd-levels">' + level("Entry", card.levels.entry) + level("Stop", card.levels.stop, "gd-level-stop")
         + level("Target", card.levels.target, "gd-level-target") + level("R:R", card.levels.rr) + '</div>' + riskBar(card.risk)

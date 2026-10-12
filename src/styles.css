@@ -876,3 +876,11 @@ main{position:relative;padding-bottom:90px}.topline{border-bottom-color:rgba(98,
 .radar-root.is-simulated .lifecycle-card-head::after{content:"SIMULATED · NOT A LIVE SETUP";display:block;margin-top:6px;width:max-content;padding:2px 7px;border-radius:4px;background:#f6c56b;color:#1a1204;font-size:8px;font-weight:700;letter-spacing:.12em}
 .radar-root.is-simulated .radar-row-btn::before{content:"SIM";position:absolute;left:4px;top:4px;padding:1px 4px;border-radius:3px;background:#f6c56b;color:#1a1204;font-size:7px;font-weight:700;letter-spacing:.1em}
 .radar-root.is-simulated :is(.dev-score,.radar-score,.radar-big-score,.score-ring){opacity:.45;filter:grayscale(1)}
+/* The Markets workspace sits beside the existing Garden. */
+.markets-workspace{max-width:1400px;margin:auto;padding:24px;color:var(--text,#e0ebe5)}
+.chart-controls{display:flex;gap:16px;flex-wrap:wrap;align-items:end;margin:24px 0}
+.chart-controls label{display:flex;flex-direction:column;gap:8px}
+.chart-controls select{background:#142b23;color:#e0ebe5;border:1px solid #3e6454;border-radius:8px;padding:10px;max-width:320px}
+.chart-canvas{height:420px;width:100%;min-width:0;border:1px solid #315344;border-radius:12px;overflow:hidden;margin:12px 0 20px}
+.chart-caption{font-size:12px;line-height:1.6}.chart-caption a{color:#8bd6bc}
+@media(max-width:650px){.markets-workspace{padding:12px}.chart-canvas{height:320px}.chart-controls select{max-width:230px}}
