@@ -174,9 +174,12 @@ class Harness:
         self.new_root = Path(self.tmp.name) / "new"
         for root in (self.old_root, self.new_root):
             root.mkdir()
-            for name in FILES:
-                if (source / name).exists():
-                    shutil.copyfile(source / name, root / name)
+        # The live worker may append between copies. Read each source once so
+        # the old/new implementations always receive byte-identical inputs.
+        for name in FILES:
+            if (source / name).exists():
+                shutil.copyfile(source / name, self.old_root / name)
+                shutil.copyfile(self.old_root / name, self.new_root / name)
         self.saved = [(module, {name: getattr(module, name) for name in
                                 ("DATA_DIR", "LOG_FILE", "LIFECYCLE_FILE", "CONFIRMATIONS_FILE")})
                       for module in (legacy, current)]

@@ -191,6 +191,10 @@ rewritten; where a stored record was misclassified, it is re-read at read time.
   those features were already in the recovery baseline. No deployment or execution
   was enabled. The current audit finds 2,165 duplicate outcome keys and 45 damaged
   outcome lines (alongside 81 damaged observations and one lifecycle line).
+  Final verification: 458 isolated backend tests, 164 frontend tests, production
+  build and deployment script syntax passed. Real-store write equivalence passed
+  after correcting the fixture-copy race. The complete optional real-store
+  read-equivalence suite was not rerun; see the recovery report for its limits.
 - Replay results exclude spread, slippage and commission; they are small samples over one 180-day
   window. Parameters were chosen before the replay and not fitted, and no strategy is shown to be
   profitable.

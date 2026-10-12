@@ -7,7 +7,7 @@ function memoryStorage(initial={}){
   return {getItem:k=>map.has(k)?map.get(k):null,setItem:(k,v)=>map.set(k,String(v)),removeItem:k=>map.delete(k),map};
 }
 globalThis.localStorage=memoryStorage();
-const {getEngineUrl,DEFAULT_ENGINE_URL}=await import("../src/engine.js");
+const {getEngineUrl,DEFAULT_ENGINE_URL,hostedEngineUrl}=await import("../src/engine.js");
 
 test("default engine URL is the canonical port 8000", () => {
   globalThis.localStorage=memoryStorage();
@@ -30,6 +30,13 @@ test("the app-written legacy :8010 value is cleared back to the default", () => 
 test("a user-chosen remote URL is respected and only trailing slash trimmed", () => {
   globalThis.localStorage=memoryStorage({th_engine_url:"https://engine.example.com/"});
   assert.equal(getEngineUrl(),"https://engine.example.com");
+});
+
+test("HTTPS deployment uses authenticated same-origin API despite a saved laptop URL", () => {
+  const page={protocol:"https:",origin:"https://tradeden.example.com"};
+  assert.equal(hostedEngineUrl(page,true),page.origin);
+  assert.equal(hostedEngineUrl(page,false),null);
+  assert.equal(hostedEngineUrl({protocol:"http:",origin:"http://localhost:5173"},true),null);
 });
 
 test("startup script, stop script and READMEs all use port 8000 and no 8010 remains", () => {

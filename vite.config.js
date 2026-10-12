@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  base: "/trading-hub/"
+  base: process.env.VITE_BASE_PATH || "/trading-hub/"
 });

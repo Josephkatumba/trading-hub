@@ -154,3 +154,6 @@ backend/data/
 
 # Local backup copies of engine files
 backend/*.before-*
+
+# Private production Python environment
+.venv/

@@ -31,6 +31,9 @@ Account connection → trade normalization → analytics → trading fingerprint
 Tests: `npm test` (frontend), `cd backend && python -m unittest discover -s tests`
 (backend; run `test_scanner_quality.py` from the repo root with `PYTHONPATH=backend`).
 
+Private online deployment and recovery: [deployment runbook](deploy/README.md).
+The server store can be moved outside OneDrive with `TRADING_HUB_DATA_DIR`.
+
 ## The TRADeden Garden
 
 The Garden is the product and the landing page: a living market constellation

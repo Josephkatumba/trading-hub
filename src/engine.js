@@ -5,7 +5,15 @@ export const DEFAULT_ENGINE_URL="http://127.0.0.1:8000";
 // ever wrote it (setEngineUrl has no UI yet), so it is app-written, not a user choice.
 const LEGACY_APP_WRITTEN_URLS=new Set(["http://127.0.0.1:8010","http://localhost:8010"]);
 
+export function hostedEngineUrl(page,sameOrigin){
+  return sameOrigin&&page?.protocol==="https:" ? page.origin : null;
+}
+
 export function getEngineUrl(){
+  // Hosted HTTPS dashboards use the authenticated same-origin reverse proxy.
+  const hosted=hostedEngineUrl(typeof location!=="undefined"?location:null,
+    import.meta.env?.VITE_ENGINE_SAME_ORIGIN==="1");
+  if(hosted)return hosted;
   try{
     const saved=String(localStorage.getItem(KEY)||"").trim().replace(/\/$/,"");
     if(LEGACY_APP_WRITTEN_URLS.has(saved)){
