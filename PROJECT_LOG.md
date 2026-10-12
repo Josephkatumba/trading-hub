@@ -1,5 +1,32 @@
 # PROJECT_LOG — TradeDen (trading-hub)
 
+## Final integrity follow-up — 2026-10-12
+
+- Continued from `3bca4b216c08f4d0fce873f6e5e22ccd53b8a8d2` with a clean working tree.
+- Created verified private backups and a clean historical projection without
+  rewriting the live store. Quarantined 127 unrecoverable damaged lines as raw
+  bytes; omitted 809 repeat outcome copies only from the projection and retained
+  1,356 differing evidence variants across 1,346 keys. Conflicts are excluded from
+  verified outcomes, research classification and training at read time.
+- Added retry idempotency, streaming cold index reads, integrity audit/recovery
+  tools and actual Windows/MT5 resource measurements. Streaming cold-index peak
+  decreased from 2,633 to 639 MiB. Complete worker startup peaked at 4,034 MiB;
+  recommend a licensed 2-vCPU/8-GB/80-GB Windows VM, subject to server soak tests.
+- Audited gateway-only authentication and browser-local journals. Documented a
+  minimal OIDC/PostgreSQL/user-ownership/entitlement path for Free and $19 Pro;
+  subscription accounts and payments are not implemented.
+- The frozen projection is not the active live store. Rollout must take a fresh
+  stopped-writer backup and recovery to retain intervening appends. No hosting
+  purchase, public launch or real-money execution occurred.
+- See [readiness and provenance](deploy/READINESS.md) for detailed evidence and
+  remaining operational gates. Earlier unfinished-work and duplicate counts below
+  describe their historical audit dates, not the current committed code.
+- Verification passed: 464 isolated backend tests, 164 frontend tests, production
+  build, all seven real-store comparison cases and eight synthetic cases. The
+  complete comparison run revealed an obsolete live-view fixture filter; its
+  corrected episode case passed on rerun. Compilation, script syntax and diff
+  whitespace checks passed. Historical comparisons operate on frozen copies.
+
 Operational history, reconstructed from repository evidence: git history (commit dates are
 author dates), the reports in `backend/*_REPORT.md`, module docstrings and the test suites.
 Work that exists only as uncommitted working-tree files is marked **uncommitted**; no date is

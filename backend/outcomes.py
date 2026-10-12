@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import os
 import uuid
+import threading
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -13,6 +14,7 @@ from market_time import parse_aware_utc, utc_iso
 from jsonl_index import ensure_trailing_newline, index_for
 
 from storage_config import data_directory
+from outcome_identity import unique_outcomes, outcome_key, semantic_fingerprint
 
 DATA_DIR = data_directory()
 MARKET_OUTCOMES_FILE = DATA_DIR / "market_outcomes.jsonl"
@@ -101,7 +103,7 @@ def outcomes_for_setup(setup_id: str, path: Path | None = None) -> list[dict[str
         return []
     index = market_outcome_index(path)
     with index.lock:
-        return index.load(index.lookup("sid", setup_id))
+        return unique_outcomes(index.load(index.lookup("sid", setup_id)))
 
 
 def outcomes_for_setups(setup_ids, path: Path | None = None, exact: bool = False) -> list[dict[str, Any]]:
@@ -116,7 +118,7 @@ def outcomes_for_setups(setup_ids, path: Path | None = None, exact: bool = False
         positions = sorted({position for setup_id in dict.fromkeys(setup_ids)
                             if setup_id is not None or not exact
                             for position in index.lookup(key, setup_id if exact else str(setup_id))})
-        return index.load(positions)
+        return unique_outcomes(index.load(positions))
 
 
 def record_trade_outcome(payload: dict[str, Any]) -> dict[str, Any]:
@@ -461,7 +463,26 @@ def resolve_due_market_outcomes(confirmations: list[dict[str, Any]],
     return created
 
 
+_OUTCOME_APPEND_LOCK = threading.RLock()
+
+
 def append_market_outcome(record: dict[str, Any]) -> None:
     if record.get("record_type") != "market_outcome":
         raise ValueError("Only market_outcome records may be written here")
-    _append(MARKET_OUTCOMES_FILE, record)
+    with _OUTCOME_APPEND_LOCK:
+        key = outcome_key(record)
+        try:
+            hash(key)
+            complete = all(value is not None and value != "" for value in key)
+        except TypeError:
+            complete = False
+        if not complete:
+            _append(MARKET_OUTCOMES_FILE, record)
+            return
+        index = market_outcome_index()
+        with index.lock:
+            positions = index.lookup("sid", record.get("setup_id"))
+            same_key = [p for p in positions if tuple(index.rows[p]["pk"]) == key]
+            if any(semantic_fingerprint(row) == semantic_fingerprint(record) for row in index.load(same_key)):
+                return  # retry of the same event; changed evidence is preserved
+        _append(MARKET_OUTCOMES_FILE, record)

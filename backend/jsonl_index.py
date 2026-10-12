@@ -165,15 +165,16 @@ class JsonlIndex:
 
     def _consume(self, handle, size: int) -> None:
         handle.seek(self.offset)
-        data = handle.read(size - self.offset)
-        end = data.rfind(b"\n")
-        if end < 0:
-            return  # only an incomplete (possibly in-progress) trailing line
         position = self.offset
-        for raw in data[:end + 1].split(b"\n")[:-1]:
-            self._add(position, raw)
+        # Stream complete lines up to this stat's boundary. A cold index must not
+        # allocate the entire historical log twice (read + split) before parsing.
+        while position < size:
+            raw = handle.readline(size - position)
+            if not raw.endswith(b"\n"):
+                break  # preserve the incomplete tail for the next refresh
+            self._add(position, raw[:-1])
             self._unpersisted += 1
-            position += len(raw) + 1
+            position += len(raw)
         self.offset = position
         self._head_hash, self._tail_hash = self._fingerprints(handle, self.offset)
 

@@ -79,6 +79,8 @@ def _timestamp_offset_seconds(left: Any, right: Any) -> float | None:
 def _outcome_quarantine_reasons(outcome: dict[str, Any],
                                 snapshot: dict[str, Any] | None = None) -> list[str]:
     reasons = []
+    if outcome.get("outcome_status") == "DUPLICATE_OUTCOME_CONFLICT":
+        reasons.append("DUPLICATE_OUTCOME_CONFLICT")
     if outcome.get("timestamp_quality") != "VERIFIED":
         reasons.append("OUTCOME_TIMESTAMP_QUALITY_MISSING_OR_UNVERIFIED")
     if (outcome.get("data_quality") or {}).get("timestamp_quality") != "VERIFIED":
@@ -298,6 +300,8 @@ def prepare_dataset(observations: list[dict[str, Any]], outcomes: list[dict[str,
                     horizons: tuple[str, ...] | None = None,
                     include_projection: bool = True) -> dict[str, Any]:
     """Produce a non-persisted audit projection and aggregate readiness stats."""
+    from outcome_identity import unique_outcomes
+    outcomes = unique_outcomes(outcomes)
     horizons = horizons or configured_horizons()
     snapshots = [r for r in observations if r.get("record_type") == "setup_snapshot" or not r.get("record_type")]
     observation_id_counts = Counter(str(row.get("observation_id")) for row in snapshots if row.get("observation_id"))

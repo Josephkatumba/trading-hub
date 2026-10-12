@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 import sys
 import tempfile
@@ -30,7 +31,7 @@ import observations as current  # noqa: E402
 from outcomes import resolve_due_market_outcomes  # noqa: E402
 from performance import performance_report  # noqa: E402
 
-REAL_DATA = BACKEND / "data"
+REAL_DATA = Path(os.getenv("TRADING_HUB_TEST_HISTORY_DIR", str(BACKEND / "data")))
 FILES = ("setup_observations.jsonl", "setup_lifecycle.jsonl", "setup_confirmations.jsonl")
 FROZEN_NOW = datetime(2026, 9, 24, 12, 0, 0, tzinfo=timezone.utc)
 
@@ -130,20 +131,29 @@ def synthetic_store(root: Path) -> None:
     (root / "setup_confirmations.jsonl").write_text("".join(json.dumps(c) + "\n" for c in confirmations), encoding="utf-8")
 
 
-def trendline_only(root: Path) -> int:
-    """Rewrite a store copy without other strategies' records (snapshots, their lifecycle
-    events and confirmations); returns how many records were removed."""
+def trendline_only(root: Path, shadow_only: bool = False) -> int:
+    """Rewrite a legacy fixture to a comparable strategy view.
+
+    Default: trendline only for the pre-strategy writer. shadow_only: exclude
+    episodes whose latest snapshot is shadow for the current multi-strategy feed.
+    Never change the original historical source.
+    """
     snapshots = root / "setup_observations.jsonl"
     if not snapshots.exists():
         return 0
-    removed, other_ids = 0, set()
+    removed, other_ids, latest = 0, set(), {}
     for line in snapshots.read_bytes().splitlines():
         try:
             row = json.loads(line)
         except ValueError:
             continue
-        if isinstance(row, dict) and row.get("strategy_id") not in (None, "trendline"):
-            other_ids.add(str(row.get("setup_id")))
+        if isinstance(row, dict):
+            if row.get("record_type") == "setup_snapshot":
+                latest[str(row.get("setup_id"))] = row
+            if not shadow_only and row.get("strategy_id") not in (None, "trendline"):
+                other_ids.add(str(row.get("setup_id")))
+    if shadow_only:
+        other_ids = {sid for sid, row in latest.items() if row.get("shadow") is True}
     if not other_ids:
         return 0
     for name in FILES:
@@ -157,7 +167,8 @@ def trendline_only(root: Path) -> int:
             except ValueError:
                 kept.append(line)
                 continue
-            if isinstance(row, dict) and (str(row.get("setup_id")) in other_ids or row.get("strategy_id") not in (None, "trendline")):
+            if isinstance(row, dict) and (str(row.get("setup_id")) in other_ids or
+                    (not shadow_only and row.get("strategy_id") not in (None, "trendline"))):
                 removed += 1
                 continue
             kept.append(line)
@@ -241,7 +252,9 @@ class EquivalenceMixin:
         # records. (Both are the same comparison when a store has no shadow records.)
         # Phase 11 adds confirmed_plan (the confirmation snapshot's levels), checked below.
         strip = lambda rows: [{k: v for k, v in row.items() if k not in ("strategy_id", "confirmed_plan")} for row in rows]  # noqa: E731
-        shadow = {str(row.get("setup_id")) for row in legacy.all_observations() if row.get("shadow") is True}
+        latest = {str(row.get("setup_id")): row for row in legacy.all_observations()
+                  if row.get("record_type") == "setup_snapshot"}
+        shadow = {sid for sid, row in latest.items() if row.get("shadow") is True}
         views = []
         for bucket in ("current", "confirmed", "closed", "all"):
             for limit in (1, 7, 100, 500):
@@ -259,7 +272,7 @@ class EquivalenceMixin:
                         self.assertEqual((plan["entry"], plan["stop_loss"], plan["take_profit"]),
                                          (snapshot.get("proposed_entry"), snapshot.get("proposed_stop_loss"), snapshot.get("proposed_take_profit")))
                 views.append((bucket, limit, current.setup_episodes(bucket, limit)))
-        trendline_only(self.h.old_root)
+        trendline_only(self.h.old_root, shadow_only=True)
         for bucket, limit, live in views:
             self.assertFalse({str(row["setup_id"]) for row in live} & shadow, (bucket, limit))
             self.assertEqual(strip(live), strip(legacy.setup_episodes(bucket, limit)), ("live", bucket, limit))

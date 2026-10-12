@@ -1,5 +1,10 @@
 # TRADEden V2 recovery — 12 October 2026
 
+Final integrity investigation and measured hosting requirements are recorded in
+[deployment readiness](../deploy/READINESS.md). It supersedes the unresolved
+historical-data and sizing observations below; these sections retain the original
+recovery chronology.
+
 ## Inherited work
 
 Recovery began on `tradeden-garden` at `ee9b336`, one commit ahead of its remote;

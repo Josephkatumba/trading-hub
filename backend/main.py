@@ -39,6 +39,7 @@ from strategy_lab import strategy_lab_report
 import evaluation
 import observations as observation_store
 import qualification
+from outcome_identity import unique_outcomes
 
 try:
     import MetaTrader5 as mt5
@@ -1049,7 +1050,7 @@ def market_outcomes(setup_id: str | None = None, setup_ids: str | None = None):
     elif setup_id is not None:
         outcomes = outcomes_for_setup(setup_id, MARKET_OUTCOMES_FILE)
     else:
-        outcomes = list_records(MARKET_OUTCOMES_FILE)
+        outcomes = unique_outcomes(list_records(MARKET_OUTCOMES_FILE))
     return {"outcomes": outcomes, "configured_horizons": configured_horizons()}
 
 

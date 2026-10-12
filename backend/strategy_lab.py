@@ -20,6 +20,7 @@ import observations
 from episode_identity import closure_kind
 from ml_dataset import _outcome_quarantine_reasons
 from outcomes import DEFAULT_HORIZONS
+from outcome_identity import unique_outcomes
 from performance import _plan_r, _r_multiple
 from strategies import REGISTRY, record_strategy_id
 
@@ -39,7 +40,7 @@ def classify_outcome(confirmation: dict[str, Any], outcomes: Iterable[dict[str, 
     decides which barrier was touched first; otherwise the longest verified
     horizon (NO_HIT / AMBIGUOUS) is reported as verified_other.
     """
-    own = [row for row in outcomes if row.get("record_type") in (None, "market_outcome")
+    own = [row for row in unique_outcomes(outcomes) if row.get("record_type") in (None, "market_outcome")
            and str(row.get("observation_id")) == str(confirmation.get("observation_id"))]
     verified = {row.get("horizon"): row for row in own if not _outcome_quarantine_reasons(row, snapshot)}
     for horizon in horizons:

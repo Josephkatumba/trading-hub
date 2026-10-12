@@ -3,12 +3,14 @@ import argparse
 from collections import Counter
 import json
 from pathlib import Path
+from outcome_identity import semantic_fingerprint
 
 
 def audit_store(root: Path) -> dict:
     result = {}
     confirmations = set()
     outcomes = set()
+    outcome_variants = {}
     confirmation_references = set()
     outcome_references = set()
     for name in ("setup_confirmations.jsonl", "market_outcomes.jsonl", "trade_outcomes.jsonl",
@@ -38,6 +40,11 @@ def audit_store(root: Path) -> dict:
                     key = tuple(row.get(k) for k in ("setup_id", "observation_id", "horizon", "label_definition"))
                     counts["duplicate_outcome_keys"] += key in outcomes
                     outcomes.add(key)
+                    variants = outcome_variants.setdefault(key, set())
+                    fingerprint = semantic_fingerprint(row)
+                    counts["duplicate_exact_copies"] += fingerprint in variants
+                    counts["conflicting_extra_variants"] += bool(variants) and fingerprint not in variants
+                    variants.add(fingerprint)
                     outcome_references.add(row.get("observation_id"))
                 if name == "setup_observations.jsonl":
                     confirmation_references.discard(row.get("observation_id"))
@@ -45,6 +52,8 @@ def audit_store(root: Path) -> dict:
                 if name == "trade_outcomes.jsonl":
                     counts["invalid_execution_types"] += row.get("execution_type") not in {"ACTUAL", "SIMULATED"}
         result[name] = dict(counts)
+        if name == "market_outcomes.jsonl":
+            result[name]["conflicting_groups"] = sum(len(v) > 1 for v in outcome_variants.values())
     result["integrity"] = {
         "missing_confirmation_observation_ids": len(confirmation_references),
         "missing_outcome_observation_ids": len(outcome_references)}

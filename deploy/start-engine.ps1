@@ -1,4 +1,8 @@
 $ErrorActionPreference = 'Stop'
+# The scanner reads NumPy rate arrays; it does not need parallel BLAS pools.
+$env:OPENBLAS_NUM_THREADS = '1'
+$env:OMP_NUM_THREADS = '1'
+$env:MKL_NUM_THREADS = '1'
 $taskRepo = Split-Path $PSScriptRoot -Parent
 if (-not $env:TRADING_HUB_DATA_DIR -or -not [System.IO.Path]::IsPathRooted($env:TRADING_HUB_DATA_DIR)) {
     throw 'Set TRADING_HUB_DATA_DIR to a persistent absolute path outside OneDrive.'

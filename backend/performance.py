@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from typing import Any
 
 from outcomes import DEFAULT_HORIZONS
+from outcome_identity import unique_outcomes
 from market_time import parse_aware_utc
 from strategies.base import record_strategy_id
 
@@ -48,6 +49,8 @@ def _empty_counts() -> dict[str, int]:
 
 
 def _classify(outcome: dict[str, Any] | None) -> str:
+    if outcome and outcome.get("outcome_status") == "DUPLICATE_OUTCOME_CONFLICT":
+        return "PENDING"
     if not outcome or not outcome.get("label"):
         return "PENDING"
     label = str(outcome["label"]).upper()
@@ -244,6 +247,7 @@ def performance_report(confirmations: list[dict[str, Any]], outcomes: list[dict[
     reconciled figures: `verified`, `verified_by_strategy` and setups[].verified_outcome."""
     tz_name = timezone_name or reporting_timezone()
     end_day = report_end_day(report_date, tz_name)
+    outcomes = unique_outcomes(outcomes)
     days = max(1, min(int(days), 30))
     daily = [_daily(confirmations, outcomes, snapshots, end_day - timedelta(days=offset),
                     tz_name, horizons) for offset in reversed(range(days))]

@@ -8,12 +8,14 @@ and Vite static build. The autonomous engine scans every 30 seconds after each
 completed scan; browsers read the cached scan. No laptop dependency remains once
 the terminal and engine run on that server. No order submission is implemented.
 
-Planning size: 2 vCPU, **4 GB RAM minimum; 8 GB preferred**, 80 GB SSD initially,
+Planning size: 2 vCPU, **8 GB RAM practical launch minimum**, 80 GB SSD initially,
 daily encrypted off-server backup. The old observation file already exceeds 1 GB;
 measure daily growth and provision capacity for retention and backups. Budget
-placeholder: USD 20–50/month including Windows licensing, plus domain and backup;
-this is an estimate, not a provider quote. Benchmark this broker's complete
+must be obtained for an 8 GB licensed Windows VM, plus domain and backup;
+the former USD 20–50 placeholder is not a verified current quote. Benchmark this broker's complete
 16-symbol scan and index rebuild on the selected host before accepting its size.
+See [measured readiness and commercial plan](READINESS.md) for actual local measurements,
+historical repair provenance and remaining launch gates.
 
 MT5 Python talks directly to the terminal, so a Linux web-only container does not
 replace this dependency ([MetaQuotes integration](https://www.mql5.com/en/docs/python_metatrader5)).
