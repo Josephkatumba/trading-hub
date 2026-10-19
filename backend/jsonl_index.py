@@ -303,6 +303,19 @@ class JsonlIndex:
                 out.append(json.loads(handle.read(length)))
         return out
 
+    def iter_load(self, positions: Iterable[int]):
+        """Read full rows one at a time while preventing an index rebuild.
+
+        Consumers can retain a projection without retaining every decoded row.
+        Closing/exhausting the generator releases the file and index lock.
+        """
+        with self._lock:
+            with self.path.open("rb") as handle:
+                for position in positions:
+                    start, length = self.spans[position]
+                    handle.seek(start)
+                    yield json.loads(handle.read(length))
+
     def stats(self) -> dict[str, Any]:
         self.refresh()
         return {"indexed_bytes": self.offset, "rows": len(self.rows),

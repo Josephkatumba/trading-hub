@@ -1,0 +1,17 @@
+{
+  "reviewed_date_eat":"2026-10-20",
+  "terminal_installation":"MetaTrader 5 IC Markets Global",
+  "official_source":"https://www.icmarkets.sc/en/trading-pricing/trading-hours/",
+  "additional_global_source":"https://www.icmarkets-global.com/de/trading-pricing/trading-hours",
+  "server_basis":"America/New_York+07:00",
+  "server_utc_offset_on_observation_date_hours":3,
+  "published_breaks_server_time":{
+    "XAUUSD":"23:59–01:02, except Friday close 23:57",
+    "NAS100_aka_USTEC":"23:59–01:00",
+    "US500":"23:59–01:00",
+    "GER40_aka_DE40":"23:59–01:05 and 03:15–03:16"
+  },
+  "finding":"Earlier 00:44–00:52 EAT stale-quote observations coincided with the published daily broker break. Quote streams resumed without changing the engine or freshness rules. This strongly supports session closure rather than a timezone offset or collector disconnection as the cause.",
+  "limits":"Published schedule is indicative; the account terminal's Specification is authoritative. An account-specific session table was not available through the existing read-only Python interface. Quote availability and trading-session availability are distinct; DE40 quotes were seen before its published trade open. No freshness waiver is created for a closed market.",
+  "freshness_policy":"Unchanged: 30-second quote gate with five-second future tolerance, 60-second snapshot age, two primary/context bar durations; forming candles excluded. Fresh reopened quotes alone do not make old completed M15 context current."
+}

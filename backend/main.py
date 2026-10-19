@@ -46,6 +46,8 @@ import telegram_notifier
 import signal_outcomes
 import reports
 from strategy_bank import worker as bank_worker
+from quant_live import service as quant_live_service
+from quant_live.api import router as quant_live_router
 
 try:
     import MetaTrader5 as mt5
@@ -157,6 +159,13 @@ async def lifespan(_app: FastAPI):
     if bank_worker.enabled() and mt5 is not None:
         background.append(threading.Thread(target=bank_worker.run, args=(stop, mt5, ensure_mt5, mt5_symbol, list(WATCHLIST)),
                                            name="tradeden-strategy-bank", daemon=True))
+    # Experimental providers consume this scanner's data; they never open an MT5 session.
+    def quant_history(broker, timeframe, start, end):
+        with _SCAN_LOCK:
+            if mt5 is None:
+                return None
+            return signal_outcomes.mt5_fetch(mt5, ensure_mt5, os.getenv("TRADING_HUB_MT5_SOURCE_TIMEZONE"))(broker, timeframe, start, end)
+    quant_worker = quant_live_service.start(stop, quant_history)
     for thread in background:
         thread.start()
     try:
@@ -164,7 +173,7 @@ async def lifespan(_app: FastAPI):
     finally:
         stop.set()
         worker.join(timeout=5)
-        for thread in [notifier, *background]:
+        for thread in [notifier, quant_worker, *background]:
             if thread is not None:
                 thread.join(timeout=5)
         # Serialize shutdown with scans and browser requests.
@@ -176,6 +185,7 @@ app = FastAPI(title="Trading Hub Market Engine", version="0.3.0", lifespan=lifes
 commercial.install(app)
 from intelligence_chart import router as chart_router
 app.include_router(chart_router)
+app.include_router(quant_live_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -496,6 +506,7 @@ def _market_snapshot() -> list[dict[str, Any]]:
     bars_by_symbol: dict[str, list[dict[str, Any]]] = {}
     # Timeframes to collect: enabled strategies' declared needs + shared H4/D1 context.
     data_plan = market_data.plan_for(STRATEGIES)
+    data_plan = market_data.merge_requirements([data_plan, quant_live_service.requirements()])
     strategy_results: dict[str, dict[str, int]] = {}
     try:
         for requested in WATCHLIST:
@@ -556,8 +567,28 @@ def _market_snapshot() -> list[dict[str, Any]]:
             # Market context by timeframe (tick_volume kept as the broker reports it).
             # M15/H1 reuse the bars fetched above; the rows/higher_rows the trendline
             # strategy reads are unchanged.
+            quant_spreads = quant_live_service.enabled()
             bars, unavailable = market_data.fetch_timeframes(mt5, actual, data_plan, fetched={
-                "M15": market_data.bars_from_rates(rates), "H1": market_data.bars_from_rates(h1_rates)})
+                "M15": market_data.bars_from_rates(rates, include_spread=quant_spreads),
+                "H1": market_data.bars_from_rates(h1_rates, include_spread=quant_spreads)}, include_spread=quant_spreads)
+            if quant_spreads:
+                try:
+                    mode = getattr(info, "trade_mode", None)
+                    full = getattr(mt5, "SYMBOL_TRADE_MODE_FULL", 4)
+                    long_only = getattr(mt5, "SYMBOL_TRADE_MODE_LONGONLY", 1)
+                    short_only = getattr(mt5, "SYMBOL_TRADE_MODE_SHORTONLY", 2)
+                    from quant_live.costs import commission_price
+                    quant_live_service.offer(normalize_symbol(requested), actual, bars,
+                        {"bid": bid, "ask": ask, "raw_tick_at": raw_tick_epoch, "received_at": received_at.timestamp()},
+                        {"point": float(info.point), "tick_size": float(getattr(info, "trade_tick_size", 0) or 0),
+                         "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+                         "tradable_long": mode in (full, long_only), "tradable_short": mode in (full, short_only),
+                         "commission_price": commission_price(normalize_symbol(requested)), "cost_basis": "assumed research schedule; account charges unverified",
+                         "swap_mode": getattr(info, "swap_mode", None), "swap_long": getattr(info, "swap_long", None),
+                         "swap_short": getattr(info, "swap_short", None), "swap_rollover3days": getattr(info, "swap_rollover3days", None)},
+                        source_basis, normalize_mt5_epoch)
+                except Exception:
+                    LOGGER.exception("Experimental lab handoff rejected; legacy scan continues")
             # The registry runs the enabled strategies (only trendline). Market fields
             # stay the trendline payload exactly; strategy metadata is not added yet.
             results = STRATEGIES.evaluate(MarketInput(actual, rows, spread=current_spread,

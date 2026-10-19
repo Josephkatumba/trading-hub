@@ -1,0 +1,18 @@
+{
+  "version": "tradeden-shared-eval-1.0.0",
+  "train_start": "2024-10-15T00:00:00+00:00",
+  "validation_start": "2025-10-01T00:00:00+00:00",
+  "test_start": "2026-04-01T00:00:00+00:00",
+  "test_end": "2026-10-01T00:00:00+00:00",
+  "entry_basis": "first recorded bid/ask candle open at entry_at; exact minute boundaries only; entry_at must equal confirming candle close",
+  "max_signals": 2000,
+  "max_horizon_seconds": 604800,
+  "max_spread_to_risk": 0.25,
+  "commission_price": {"EURUSD":0.00007,"GBPUSD":0.00007,"USDJPY":0.007,"USDCHF":0.00007,"USDCAD":0.00007,"AUDUSD":0.00007,"NZDUSD":0.00007,"EURJPY":0.007,"GBPJPY":0.007,"XAUUSD":0.07,"XAGUSD":0.0014,"BTCUSD":0,"ETHUSD":0,"NAS100":0,"US500":0,"GER40":0},
+  "execution_costs": "assumed commissions; .25 spread adverse entry/target/time fill slippage; .5 spread on stops; current swap proxy modes 1/5 only; stress doubles spreads/adverse costs and removes swap credits",
+  "gaps": "incomplete unless continuous coverage proves the outcome; no inferred broker calendar",
+  "ties": "contiguous M1 required; both barriers within one minute remain ambiguous",
+  "unseen_data_status": "chronological held-out historical data already exposed to prior research; prospective results required",
+  "multiple_testing": "pooled across all labs and registered variants; Holm recomputed by control plane; weekly sign-flip symmetry is an assumption",
+  "qualification": "metrics never certify profitability; independent review and CEO approval mandatory; production activation disabled"
+}

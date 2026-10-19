@@ -15,6 +15,9 @@ sys.path.insert(0, str(backend / "tests"))
 
 with tempfile.TemporaryDirectory() as temporary:
     os.environ["TRADING_HUB_DATA_DIR"] = temporary
+    # A locally activated paper consumer must not change legacy fixture assumptions.
+    # Live-consumer tests explicitly opt in within their own isolated test scope.
+    os.environ["TRADEDEN_QUANT_LIVE_ENABLED"] = "0"
     suite = unittest.defaultTestLoader.discover(str(backend / "tests"))
     def isolated(items):
         for item in items:

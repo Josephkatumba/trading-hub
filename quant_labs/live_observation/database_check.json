@@ -1,0 +1,250 @@
+{
+  "database": "C:\\Users\\katjo\\OneDrive\\Documents\\GitHub\\trading-hub\\backend\\data\\quant_live\\signals.sqlite3",
+  "models": [
+    {
+      "lab": "codex",
+      "key": "compression_escape",
+      "version": "0.1.0",
+      "status": "EXPERIMENTAL",
+      "scan_enabled": 1,
+      "alert_enabled": 0,
+      "sha": "e1544089d460ed90050b1db223143581cb907963b9f3446f20fb1023690d54f9"
+    }
+  ],
+  "model_source_hash_matches": true,
+  "runs": [
+    {
+      "marker": "5a112c86b41c3d08fab2616052a3940e0a17e5a7837408d9b39c8a4be81ff587",
+      "state": "REJECTED",
+      "at": 1792446265.264667,
+      "body": {
+        "reason": "STALE_OR_FUTURE_INPUT"
+      }
+    },
+    {
+      "marker": "bbda8e9810bb4b9ff53786c12a2856dbd8144c99cb802ceff093748467e81b48",
+      "state": "COMPLETE",
+      "at": 1792446268.6862922,
+      "body": {
+        "decisions": 0,
+        "resources": {
+          "enforced": true,
+          "memory_limit_mb": 192.0,
+          "peak_committed_mb": 14.015625,
+          "cpu_cap_percent": 15.0,
+          "cpu_limit_seconds": 4.0,
+          "cpu_seconds_used": 0.09375,
+          "max_processes": 1
+        },
+        "input_sha256": "f74740592f0eebf501ec00736aec9799de7465508c0c630774623b1e2c9a7c35",
+        "source_sha256": "e1544089d460ed90050b1db223143581cb907963b9f3446f20fb1023690d54f9",
+        "input_data_timestamp": 1792446265.05394
+      }
+    },
+    {
+      "marker": "f250270e091597c4339eb473ba26aa1c088455841df5de52eaa47eaa62bb40fc",
+      "state": "COMPLETE",
+      "at": 1792446269.7305179,
+      "body": {
+        "decisions": 0,
+        "resources": {
+          "enforced": true,
+          "memory_limit_mb": 192.0,
+          "peak_committed_mb": 13.984375,
+          "cpu_cap_percent": 15.0,
+          "cpu_limit_seconds": 4.0,
+          "cpu_seconds_used": 0.078125,
+          "max_processes": 1
+        },
+        "input_sha256": "a844912a150d6197b447c4771535029b87fa8edb33a035c9d8d24af43bcfb892",
+        "source_sha256": "e1544089d460ed90050b1db223143581cb907963b9f3446f20fb1023690d54f9",
+        "input_data_timestamp": 1792446265.078749
+      }
+    },
+    {
+      "marker": "bcac5cfd6ba3d87f75a79669019e063b207a73064b8101e137594340f183a85a",
+      "state": "REJECTED",
+      "at": 1792446271.30728,
+      "body": {
+        "reason": "STALE_OR_FUTURE_INPUT"
+      }
+    },
+    {
+      "marker": "01a00a39b6bbf559da0142b4260cfbfe2980006b898dcf84e06e81b6257e48e8",
+      "state": "COMPLETE",
+      "at": 1792446272.3028598,
+      "body": {
+        "decisions": 0,
+        "resources": {
+          "enforced": true,
+          "memory_limit_mb": 192.0,
+          "peak_committed_mb": 13.94140625,
+          "cpu_cap_percent": 15.0,
+          "cpu_limit_seconds": 4.0,
+          "cpu_seconds_used": 0.09375,
+          "max_processes": 1
+        },
+        "input_sha256": "7cf9268ea7b2b3e6dd89a50bf9eed15f17883486fafaed1d6201a57800d080ad",
+        "source_sha256": "e1544089d460ed90050b1db223143581cb907963b9f3446f20fb1023690d54f9",
+        "input_data_timestamp": 1792446265.102463
+      }
+    },
+    {
+      "marker": "3d94b0922b387f5877715c0b5572659d4c03e4ecf9ecb5240291b4e6b0a699cb",
+      "state": "COMPLETE",
+      "at": 1792446276.475214,
+      "body": {
+        "decisions": 0,
+        "resources": {
+          "enforced": true,
+          "memory_limit_mb": 192.0,
+          "peak_committed_mb": 13.8671875,
+          "cpu_cap_percent": 15.0,
+          "cpu_limit_seconds": 4.0,
+          "cpu_seconds_used": 0.078125,
+          "max_processes": 1
+        },
+        "input_sha256": "d683ce673739e1d5cf38faf1b5ca32f392d62622aa0fb6af1c2b0f4b816c082b",
+        "source_sha256": "e1544089d460ed90050b1db223143581cb907963b9f3446f20fb1023690d54f9",
+        "input_data_timestamp": 1792446265.126413
+      }
+    },
+    {
+      "marker": "d4b9b4d62edb6c8fb6edc5ebf3f616bd9cd1d9495495641b780c6b74a8db4b89",
+      "state": "REJECTED",
+      "at": 1792446280.3515701,
+      "body": {
+        "reason": "STALE_OR_FUTURE_INPUT"
+      }
+    },
+    {
+      "marker": "80d2b9b191c761e156b49b640bf0a1bd198c8235fdee1ac8c7e945869a110cfe",
+      "state": "REJECTED",
+      "at": 1792446281.463497,
+      "body": {
+        "reason": "STALE_OR_FUTURE_INPUT"
+      }
+    },
+    {
+      "marker": "b2857ceff6f51d9b2e5b163d515f6238a35a101a77a8640c090e8b44951883f6",
+      "state": "REJECTED",
+      "at": 1792446284.1608062,
+      "body": {
+        "reason": "STALE_OR_FUTURE_INPUT"
+      }
+    },
+    {
+      "marker": "01d3c1b8d19e638650a3ef674c43b15fe6214dbc87e634ca3fd5e1dbf3d0ab6f",
+      "state": "COMPLETE",
+      "at": 1792446321.1598523,
+      "body": {
+        "decisions": 0,
+        "resources": {
+          "enforced": true,
+          "memory_limit_mb": 192.0,
+          "peak_committed_mb": 13.828125,
+          "cpu_cap_percent": 15.0,
+          "cpu_limit_seconds": 4.0,
+          "cpu_seconds_used": 0.109375,
+          "max_processes": 1
+        },
+        "input_sha256": "1b9dbdfb8f64e27aad40e0c206739d6686c33b8836b409c30a9537b87166925f",
+        "source_sha256": "e1544089d460ed90050b1db223143581cb907963b9f3446f20fb1023690d54f9",
+        "input_data_timestamp": 1792446319.851396
+      }
+    },
+    {
+      "marker": "6a226504aa5f12e56f5bc0a747950fd03cc38788fc679d8b23dfe567ce72dd2d",
+      "state": "COMPLETE",
+      "at": 1792446321.4754734,
+      "body": {
+        "decisions": 0,
+        "resources": {
+          "enforced": true,
+          "memory_limit_mb": 192.0,
+          "peak_committed_mb": 13.9375,
+          "cpu_cap_percent": 15.0,
+          "cpu_limit_seconds": 4.0,
+          "cpu_seconds_used": 0.109375,
+          "max_processes": 1
+        },
+        "input_sha256": "2a1335df9ac07e2ada5cfdfc083c7444931f7b14af3691b291bcad41eb6160da",
+        "source_sha256": "e1544089d460ed90050b1db223143581cb907963b9f3446f20fb1023690d54f9",
+        "input_data_timestamp": 1792446319.860307
+      }
+    },
+    {
+      "marker": "1e99b8e5fa1e3860fe8d475802bf93328a36c0ac5a6cee26a81e92c40ad9d805",
+      "state": "COMPLETE",
+      "at": 1792446321.7748973,
+      "body": {
+        "decisions": 0,
+        "resources": {
+          "enforced": true,
+          "memory_limit_mb": 192.0,
+          "peak_committed_mb": 13.88671875,
+          "cpu_cap_percent": 15.0,
+          "cpu_limit_seconds": 4.0,
+          "cpu_seconds_used": 0.09375,
+          "max_processes": 1
+        },
+        "input_sha256": "08eec7a850d871a6e273c6af854d2a975282b0f08583b31d0ef74501c7ccd85f",
+        "source_sha256": "e1544089d460ed90050b1db223143581cb907963b9f3446f20fb1023690d54f9",
+        "input_data_timestamp": 1792446319.869002
+      }
+    },
+    {
+      "marker": "1a83cb54c2b9d28987763db667ab3a947d41c7f78167b11bcb73ba7091867805",
+      "state": "COMPLETE",
+      "at": 1792446322.0631979,
+      "body": {
+        "decisions": 0,
+        "resources": {
+          "enforced": true,
+          "memory_limit_mb": 192.0,
+          "peak_committed_mb": 14.01171875,
+          "cpu_cap_percent": 15.0,
+          "cpu_limit_seconds": 4.0,
+          "cpu_seconds_used": 0.03125,
+          "max_processes": 1
+        },
+        "input_sha256": "7e958e3b0ae2986d7ce3778f04cd04d470f25afbc132c7fe3ff3ffd14e68673f",
+        "source_sha256": "e1544089d460ed90050b1db223143581cb907963b9f3446f20fb1023690d54f9",
+        "input_data_timestamp": 1792446319.881676
+      }
+    },
+    {
+      "marker": "a4f35381ca4091cfc92fc139c6a026cc73295315745e5cd8486d7fb493f739f9",
+      "state": "COMPLETE",
+      "at": 1792446322.374867,
+      "body": {
+        "decisions": 0,
+        "resources": {
+          "enforced": true,
+          "memory_limit_mb": 192.0,
+          "peak_committed_mb": 13.94140625,
+          "cpu_cap_percent": 15.0,
+          "cpu_limit_seconds": 4.0,
+          "cpu_seconds_used": 0.0625,
+          "max_processes": 1
+        },
+        "input_sha256": "0d762be8099fa2f1c625a042405ca2fd17a445f6b4a84eee37d2d0de422ea375",
+        "source_sha256": "e1544089d460ed90050b1db223143581cb907963b9f3446f20fb1023690d54f9",
+        "input_data_timestamp": 1792446319.891656
+      }
+    }
+  ],
+  "run_states": {
+    "COMPLETE": 9,
+    "REJECTED": 5
+  },
+  "signals": [],
+  "signal_count": 0,
+  "qualified_count": 0,
+  "previews": [],
+  "preview_count": 0,
+  "outbox_states": {},
+  "delivery_approval": null,
+  "cached_candle_count": 15735,
+  "outcome_revision_count": 0
+}

@@ -1,0 +1,81 @@
+{
+  "boundary_entry_minute_stop": {
+    "status": "TARGET_HIT",
+    "hit_at": "2026-10-01T00:15:00+00:00",
+    "hours_to_hit": 0.25,
+    "method": "M15",
+    "reason": "first level reached",
+    "r_multiple": 2.0,
+    "evidence": {
+      "m15_bars": 1,
+      "m1_bars_used": 1,
+      "first_bar": "2026-10-01T00:00:00+00:00",
+      "last_bar_checked": "2026-10-01T00:15:00+00:00"
+    }
+  },
+  "sparse_tie_minutes": {
+    "status": "TARGET_HIT",
+    "hit_at": "2026-10-01T00:29:00+00:00",
+    "hours_to_hit": 0.48,
+    "method": "M1",
+    "reason": "both levels inside one M15 candle; M1 replay decided the order",
+    "r_multiple": 2.0,
+    "evidence": {
+      "m15_bars": 1,
+      "m1_bars_used": 2,
+      "first_bar": "2026-10-01T00:00:00+00:00",
+      "last_bar_checked": "2026-10-01T00:15:00+00:00"
+    }
+  },
+  "future_in_confirmation_bar": {
+    "status": "TARGET_HIT",
+    "hit_at": "2026-10-01T00:01:00+00:00",
+    "hours_to_hit": 0.01,
+    "method": "M1",
+    "reason": "first level reached in the confirmation candle",
+    "r_multiple": 2.0,
+    "evidence": {
+      "m15_bars": 0,
+      "m1_bars_used": 1,
+      "first_bar": null,
+      "last_bar_checked": null
+    }
+  },
+  "missing_path_before_hit": {
+    "status": "TARGET_HIT",
+    "hit_at": "2026-10-02T00:00:00+00:00",
+    "hours_to_hit": 24.0,
+    "method": "M15",
+    "reason": "first level reached",
+    "r_multiple": 2.0,
+    "evidence": {
+      "m15_bars": 1,
+      "m1_bars_used": 0,
+      "first_bar": "2026-10-01T00:00:00+00:00",
+      "last_bar_checked": "2026-10-02T00:00:00+00:00"
+    }
+  },
+  "truncated_history_at_expiry": {
+    "status": "NO_HIT",
+    "hit_at": null,
+    "hours_to_hit": null,
+    "method": "M15",
+    "reason": "neither level reached within 7 days",
+    "r_multiple": null,
+    "evidence": {
+      "m15_bars": 1,
+      "m1_bars_used": 0,
+      "first_bar": "2026-10-01T00:00:00+00:00",
+      "last_bar_checked": "2026-10-01T00:15:00+00:00",
+      "max_gap_hours": 0.25
+    }
+  },
+  "future_quote_accepted": {
+    "accepted": true,
+    "reason": ""
+  },
+  "future_bar_accepted": {
+    "accepted": true,
+    "reason": ""
+  }
+}

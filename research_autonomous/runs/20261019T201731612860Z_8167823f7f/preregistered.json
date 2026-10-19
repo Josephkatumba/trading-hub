@@ -1,0 +1,121 @@
+{
+  "framework": "autonomous-research-1.0.0",
+  "resolver_version": "independent-execution-1.0.0",
+  "start": "2024-10-15",
+  "end": "2026-10-01",
+  "symbols": [
+    "XAUUSD",
+    "XAGUSD",
+    "BTCUSD",
+    "ETHUSD",
+    "EURUSD",
+    "GBPUSD",
+    "USDJPY",
+    "USDCHF",
+    "USDCAD",
+    "AUDUSD",
+    "NZDUSD",
+    "EURJPY",
+    "GBPJPY",
+    "NAS100",
+    "US500",
+    "GER40"
+  ],
+  "specs": [
+    {
+      "key": "drift48",
+      "family": "persistent drift",
+      "idea": "A coherent two-day directional move may persist beyond trading costs.",
+      "entry_rule": "H1 at 00/06/12/18 UTC: 48-return log drift / sqrt(sum squared returns) >= 1.5 in magnitude; efficiency >= .25; enter next H1 open.",
+      "stop_rule": "2 prior H1 ATR(24) from executable entry.",
+      "target_rule": "1.5R fixed.",
+      "horizon_hours": 24,
+      "intended_regime": "TREND",
+      "limitations": "Intraday hypothesis inspired by momentum, not a replication of monthly futures literature.",
+      "version": "1.0.0",
+      "risk_model": "one planned-risk unit; one open position per strategy/instrument; no compounding"
+    },
+    {
+      "key": "robust_revert",
+      "family": "robust statistical reversion",
+      "idea": "Extreme deviation from the rolling median may revert when its first reversal starts.",
+      "entry_rule": "Previous H1 close >2.5 scaled MAD(48) from prior median; current H1 moves toward median; same signed deviation; enter next open.",
+      "stop_rule": "1.5 prior H1 ATR(24).",
+      "target_rule": "Frozen median of 48 closes before trigger; >=1R executable reward.",
+      "horizon_hours": 12,
+      "intended_regime": "RANGE",
+      "limitations": "Median is not intrinsic value; persistent trends can defeat reversion.",
+      "version": "1.0.0",
+      "risk_model": "one planned-risk unit; one open position per strategy/instrument; no compounding"
+    },
+    {
+      "key": "compression_release",
+      "family": "compression expansion",
+      "idea": "A first range escape after narrow trading may persist.",
+      "entry_rule": "Prior 12 H1 high-low range <=2.5 prior ATR(24); first close beyond it by .1 ATR; enter next open.",
+      "stop_rule": "1.5 prior H1 ATR(24).",
+      "target_rule": "2R fixed.",
+      "horizon_hours": 12,
+      "intended_regime": "VOLATILE",
+      "limitations": "Few compressions may meet fixed rule; no thresholds retuned to increase count.",
+      "version": "1.0.0",
+      "risk_model": "one planned-risk unit; one open position per strategy/instrument; no compounding"
+    },
+    {
+      "key": "shock_fade",
+      "family": "transient shock reversal",
+      "idea": "A large directional shock followed by a reversal may reflect temporary dislocation.",
+      "entry_rule": "Prior H1 range >2.5 prior ATR(24), body >=70% range; current close crosses shock midpoint in opposite direction; enter next open.",
+      "stop_rule": "Beyond shock extreme by .2 prior ATR(24).",
+      "target_rule": "Shock open; >=1.2R executable reward.",
+      "horizon_hours": 6,
+      "intended_regime": "RANGE",
+      "limitations": "No news feed; shocks can be permanent information, not temporary liquidity.",
+      "version": "1.0.0",
+      "risk_model": "one planned-risk unit; one open position per strategy/instrument; no compounding"
+    },
+    {
+      "key": "relative_lag",
+      "family": "cross-market residual reversal",
+      "idea": "BTC/ETH relative return shocks may mean-revert conditionally.",
+      "entry_rule": "BTC/ETH only: rolling prior 48 H1 returns OLS beta; current residual >2.5 prior residual SD; fade residual next H1 open.",
+      "stop_rule": "1.5 prior H1 ATR(24).",
+      "target_rule": "1.5R fixed.",
+      "horizon_hours": 6,
+      "intended_regime": "ANY",
+      "limitations": "Unhedged single-leg residual signal; not market-neutral arbitrage. Both CFDs share crypto risk.",
+      "version": "1.0.0",
+      "risk_model": "one planned-risk unit; one open position per strategy/instrument; no compounding"
+    }
+  ],
+  "folds": [
+    [
+      "2025-10-01",
+      "2026-01-01"
+    ],
+    [
+      "2026-01-01",
+      "2026-04-01"
+    ],
+    [
+      "2026-04-01",
+      "2026-07-01"
+    ],
+    [
+      "2026-07-01",
+      "2026-10-01"
+    ]
+  ],
+  "purge_hours": 48,
+  "max_seconds": 240,
+  "max_attempts_per_experiment": 2000,
+  "hypothesis_family_size": 83,
+  "optimizer": null,
+  "workers": 1,
+  "execution": "bid bars; executable ask/bid entries; half-open paths; gaps unknown; .25 spread entry/limit/time slippage, .5 spread stops",
+  "commission": "FX .00007 (.007 JPY), gold .07, silver .0014 price units round-trip; others zero, assumed",
+  "financing": "current snapshot proxy modes 1/5 only; unknown conversions fail closed; stress doubles costs and drops credits",
+  "stress": "2x entry/exit spreads, slippage, commissions and positive financing; same frozen stop/target/risk",
+  "selection": "three policies: static diverse; train-only per-market; train-only per-market/regime; 30 known/95% coverage/positive stressed training/90% cluster score",
+  "authorization": "offline only; no production promotion or notifications"
+}

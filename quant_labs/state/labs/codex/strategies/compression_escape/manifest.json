@@ -1,0 +1,15 @@
+{
+  "lab":"codex",
+  "key":"compression_escape",
+  "version":"0.1.0",
+  "name":"Compression Escape",
+  "timeframe":"M15",
+  "requirements":{"M15":300,"H1":160,"M1":120},
+  "instruments":["XAUUSD","EURUSD","GBPUSD","GBPJPY","BTCUSD","ETHUSD","NAS100","US500","GER40"],
+  "classification":"EXPERIMENTAL",
+  "entry_type":"MARKET_PAPER_QUOTE",
+  "risk_model":"One planned risk unit; structural 0.5–3 M15 ATR stop; no broker execution",
+  "planned_rr":"3R or 4R after qualification",
+  "known_limitations":"No verified positive edge; regime instability, CFD spread proxies, signal correlation and missing histories remain limitations.",
+  "authorship":{"lab":"codex","session_reference":"Codex current task 01a155be-ad08-7922-bb69-2762009efd16","statement":"Created by this actual Codex session; not attributed to Claude or Kimi."}
+}

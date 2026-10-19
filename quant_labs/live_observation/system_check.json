@@ -1,0 +1,9 @@
+{
+  "captured_at_utc": "2026-10-19T21:53:43.7785377Z",
+  "engine_listener_count": 1,
+  "engine_pid": 40304,
+  "bind_address": "127.0.0.1",
+  "mt5_terminal_process_count": 1,
+  "total_physical_kib": 24883064,
+  "free_physical_kib": 5563284
+}

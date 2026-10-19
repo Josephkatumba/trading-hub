@@ -233,7 +233,7 @@ class WatchMemoTests(unittest.TestCase):
 
     def test_rows_are_read_once_and_projected_to_what_the_resolver_reads(self):
         index = observations._observation_index()
-        with mock.patch.object(index, "load", wraps=index.load) as load:
+        with mock.patch.object(index, "iter_load", wraps=index.iter_load) as load:
             first = observations.outcome_watch_snapshots(set(), {"XAUUSD"}, set(), ("1h",))
             second = observations.outcome_watch_snapshots(set(), {"XAUUSD"}, set(), ("1h",))
         self.assertEqual([row["observation_id"] for row in first], ["obs_v"])          # no valid barriers: skipped

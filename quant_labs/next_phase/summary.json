@@ -1,0 +1,1509 @@
+{
+  "measured_at": 1792448259.0051448,
+  "memory_baseline": {
+    "working_set_mb": 4414.2265625,
+    "peak_working_set_mb": 5872.265625,
+    "private_mb": 5009.79296875,
+    "cpu_seconds": 88.0625,
+    "logical_cpus": 20
+  },
+  "memory_final_same_running_process": {
+    "working_set_mb": 3201.28515625,
+    "peak_working_set_mb": 5872.265625,
+    "private_mb": 5009.59375,
+    "cpu_seconds": 156.234375,
+    "logical_cpus": 20
+  },
+  "measured_watcher_peak_reduction_percent": 97.85400477526821,
+  "identical_projection_output_sha256": "433feba7a146b74e74c731a45f2b8389b8241b1cfe216c507e7e8bb173465bf3",
+  "production_optimization_applied": false,
+  "production_restart_in_phase": false,
+  "permissions_unchanged": true,
+  "live_models_unchanged": true,
+  "existing_codex_consumer_running": true,
+  "experimental_outbound_approval": false,
+  "broker_execution_enabled": false,
+  "new_codex_executables": 7,
+  "strategy_families": 2,
+  "historical_market_cases": 21,
+  "canonical_completed_cases": 18,
+  "preserved_failed_jobs": 3,
+  "supplemental_exact_retries_completed": 3,
+  "new_models_admitted_live": 0,
+  "new_models_certified": 0,
+  "cases": [
+    {
+      "key": "trend_reclaim_r2",
+      "symbol": "EURUSD",
+      "status": "canonical COMPLETE",
+      "job": "f8d227f4d20e4469ad6388383ed311dd",
+      "test_normal": {
+        "attempted": 19,
+        "data_complete_fraction": 0.9473684210526315,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 9,
+        "longest_losing_streak": 5,
+        "max_realized_drawdown_r": 5.65559919626333,
+        "net_expectancy_r": -0.1202983339518566,
+        "opportunities_per_month": 3.160177595628415,
+        "planned_rr_bands": {
+          "2\u20133": 19
+        },
+        "planned_rr_mean": 2.294142970542842,
+        "profit_factor": 0.8355138100948724,
+        "realized_win_loss_ratio": 1.671027620189745,
+        "resolved": 18,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 12,
+          "TIME_EXIT": 1,
+          "TP": 5
+        },
+        "total_r": -2.165370011133419,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.5516765269066096,
+          0.42237260017749606
+        ],
+        "weekly_sign_flip_p": 0.6635,
+        "win_rate": 0.3333333333333333
+      },
+      "test_stress": {
+        "attempted": 19,
+        "data_complete_fraction": 0.9473684210526315,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 9,
+        "longest_losing_streak": 5,
+        "max_realized_drawdown_r": 6.816283604181739,
+        "net_expectancy_r": -0.23127800581375585,
+        "opportunities_per_month": 3.160177595628415,
+        "planned_rr_bands": {
+          "2\u20133": 19
+        },
+        "planned_rr_mean": 2.294142970542842,
+        "profit_factor": 0.7157729966492274,
+        "realized_win_loss_ratio": 1.8610097912879917,
+        "resolved": 18,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 12,
+          "TIME_EXIT": 1,
+          "TP": 5
+        },
+        "total_r": -4.163004104647605,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.6684291252195935,
+          0.3220036184911824
+        ],
+        "weekly_sign_flip_p": 0.787,
+        "win_rate": 0.2777777777777778
+      },
+      "planned_rr_min": 2.057441253263736,
+      "planned_rr_max": 2.5789473684206836,
+      "net_planned_rr_min": 2.0000000000000155
+    },
+    {
+      "key": "trend_reclaim_r3",
+      "symbol": "EURUSD",
+      "status": "canonical COMPLETE",
+      "job": "7f99779e544440c2bb96f3085d83f258",
+      "test_normal": {
+        "attempted": 18,
+        "data_complete_fraction": 0.9444444444444444,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 9,
+        "longest_losing_streak": 9,
+        "max_realized_drawdown_r": 9.63553960798037,
+        "net_expectancy_r": -0.5667964475282571,
+        "opportunities_per_month": 2.9938524590163933,
+        "planned_rr_bands": {
+          "3\u20134": 18
+        },
+        "planned_rr_mean": 3.3642069557020218,
+        "profit_factor": 0.37643958200817595,
+        "realized_win_loss_ratio": 2.82329686506132,
+        "resolved": 17,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 14,
+          "TIME_EXIT": 2,
+          "TP": 1
+        },
+        "total_r": -9.63553960798037,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.074881887498705,
+          -0.10235924413717609
+        ],
+        "weekly_sign_flip_p": 0.9785,
+        "win_rate": 0.11764705882352941
+      },
+      "test_stress": {
+        "attempted": 18,
+        "data_complete_fraction": 0.9444444444444444,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 9,
+        "longest_losing_streak": 9,
+        "max_realized_drawdown_r": 11.490857525023955,
+        "net_expectancy_r": -0.6759327955896445,
+        "opportunities_per_month": 2.9938524590163933,
+        "planned_rr_bands": {
+          "3\u20134": 18
+        },
+        "planned_rr_mean": 3.3642069557020218,
+        "profit_factor": 0.33085130360567916,
+        "realized_win_loss_ratio": 2.4813847770425936,
+        "resolved": 17,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 14,
+          "TIME_EXIT": 2,
+          "TP": 1
+        },
+        "total_r": -11.490857525023957,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.1552951250024208,
+          -0.21222190982301561
+        ],
+        "weekly_sign_flip_p": 0.99,
+        "win_rate": 0.11764705882352941
+      },
+      "planned_rr_min": 3.075718015665829,
+      "planned_rr_max": 3.7368421052626353,
+      "net_planned_rr_min": 2.979999999999103
+    },
+    {
+      "key": "trend_reclaim_r4",
+      "symbol": "EURUSD",
+      "status": "canonical COMPLETE",
+      "job": "99670a8be294489bb74601e95745c871",
+      "test_normal": {
+        "attempted": 17,
+        "data_complete_fraction": 0.9411764705882353,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 8,
+        "longest_losing_streak": 8,
+        "max_realized_drawdown_r": 13.135247774189354,
+        "net_expectancy_r": -0.8209529858868346,
+        "opportunities_per_month": 2.8275273224043715,
+        "planned_rr_bands": {
+          "4\u20135": 17
+        },
+        "planned_rr_mean": 4.44847435712875,
+        "profit_factor": 0.0934614696500711,
+        "realized_win_loss_ratio": 0.6542302875504977,
+        "resolved": 16,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 13,
+          "TIME_EXIT": 3
+        },
+        "total_r": -13.135247774189354,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.0328114049637358,
+          -0.6180588629029482
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.125
+      },
+      "test_stress": {
+        "attempted": 17,
+        "data_complete_fraction": 0.9411764705882353,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 8,
+        "longest_losing_streak": 8,
+        "max_realized_drawdown_r": 14.899656600323869,
+        "net_expectancy_r": -0.9312285375202419,
+        "opportunities_per_month": 2.8275273224043715,
+        "planned_rr_bands": {
+          "4\u20135": 17
+        },
+        "planned_rr_mean": 4.44847435712875,
+        "profit_factor": 0.07561432261361835,
+        "realized_win_loss_ratio": 0.5293002582953285,
+        "resolved": 16,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 13,
+          "TIME_EXIT": 3
+        },
+        "total_r": -14.89965660032387,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.1444390719774324,
+          -0.7471190894339286
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.125
+      },
+      "planned_rr_min": 4.091383812010463,
+      "planned_rr_max": 4.92105263157844,
+      "net_planned_rr_min": 3.959999999998563
+    },
+    {
+      "key": "trend_reclaim_r5",
+      "symbol": "EURUSD",
+      "status": "canonical COMPLETE",
+      "job": "581b5102ac14481882524c6e4462ae29",
+      "test_normal": {
+        "attempted": 17,
+        "data_complete_fraction": 0.9411764705882353,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 8,
+        "longest_losing_streak": 8,
+        "max_realized_drawdown_r": 15.28691349903149,
+        "net_expectancy_r": -0.9554320936894681,
+        "opportunities_per_month": 2.8275273224043715,
+        "planned_rr_bands": {
+          "5\u20137": 17
+        },
+        "planned_rr_mean": 5.533689846442865,
+        "profit_factor": 0.0845604981519906,
+        "realized_win_loss_ratio": 1.268407472279859,
+        "resolved": 16,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 15,
+          "TIME_EXIT": 1
+        },
+        "total_r": -15.28691349903149,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.1357170381258,
+          -0.5892341734060507
+        ],
+        "weekly_sign_flip_p": 0.996,
+        "win_rate": 0.0625
+      },
+      "test_stress": {
+        "attempted": 17,
+        "data_complete_fraction": 0.9411764705882353,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 8,
+        "longest_losing_streak": 8,
+        "max_realized_drawdown_r": 17.089565315820213,
+        "net_expectancy_r": -1.0680978322387635,
+        "opportunities_per_month": 2.8275273224043715,
+        "planned_rr_bands": {
+          "5\u20137": 17
+        },
+        "planned_rr_mean": 5.533689846442865,
+        "profit_factor": 0.07111712599290156,
+        "realized_win_loss_ratio": 1.0667568898935234,
+        "resolved": 16,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 15,
+          "TIME_EXIT": 1
+        },
+        "total_r": -17.089565315820217,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.2714340762516,
+          -0.703919461222428
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.0625
+      },
+      "planned_rr_min": 5.109660574412556,
+      "planned_rr_max": 6.105263157894245,
+      "net_planned_rr_min": 4.9399999999984665
+    },
+    {
+      "key": "trend_reclaim_r7",
+      "symbol": "EURUSD",
+      "status": "canonical COMPLETE",
+      "job": "34fb0057bf18434489a7db4933e74680",
+      "test_normal": {
+        "attempted": 17,
+        "data_complete_fraction": 0.9411764705882353,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 8,
+        "longest_losing_streak": 8,
+        "max_realized_drawdown_r": 16.47382938688216,
+        "net_expectancy_r": -1.0296143366801351,
+        "opportunities_per_month": 2.8275273224043715,
+        "planned_rr_bands": {
+          "7+": 17
+        },
+        "planned_rr_mean": 7.70310117969333,
+        "profit_factor": 0.013483384437809833,
+        "realized_win_loss_ratio": 0.2022507665671475,
+        "resolved": 16,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 15,
+          "TIME_EXIT": 1
+        },
+        "total_r": -16.473829386882162,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.1357170381258,
+          -0.8367554582480825
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.0625
+      },
+      "test_stress": {
+        "attempted": 17,
+        "data_complete_fraction": 0.9411764705882353,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 8,
+        "longest_losing_streak": 8,
+        "max_realized_drawdown_r": 18.276481203670883,
+        "net_expectancy_r": -1.1422800752294304,
+        "opportunities_per_month": 2.8275273224043715,
+        "planned_rr_bands": {
+          "7+": 17
+        },
+        "planned_rr_mean": 7.70310117969333,
+        "profit_factor": 0.006603733127911448,
+        "realized_win_loss_ratio": 0.09905599691867172,
+        "resolved": 16,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 15,
+          "TIME_EXIT": 1
+        },
+        "total_r": -18.276481203670887,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.2720275211172825,
+          -0.9523422159222499
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.0625
+      },
+      "planned_rr_min": 7.14621409921674,
+      "planned_rr_max": 8.447368421051417,
+      "net_planned_rr_min": 6.905660377359751
+    },
+    {
+      "key": "trend_reclaim_r9",
+      "symbol": "EURUSD",
+      "status": "canonical COMPLETE",
+      "job": "422544c6728c43578b5d5ec11aa5a277",
+      "test_normal": {
+        "attempted": 17,
+        "data_complete_fraction": 0.9411764705882353,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 8,
+        "longest_losing_streak": 16,
+        "max_realized_drawdown_r": 17.726165835480305,
+        "net_expectancy_r": -1.107885364717519,
+        "opportunities_per_month": 2.8275273224043715,
+        "planned_rr_bands": {
+          "7+": 17
+        },
+        "planned_rr_mean": 9.872657726116362,
+        "profit_factor": 0.0,
+        "realized_win_loss_ratio": null,
+        "resolved": 16,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 16
+        },
+        "total_r": -17.726165835480305,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.143356043309685,
+          -1.0791326931013203
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.0
+      },
+      "test_stress": {
+        "attempted": 17,
+        "data_complete_fraction": 0.9411764705882353,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 8,
+        "longest_losing_streak": 16,
+        "max_realized_drawdown_r": 19.52881765226903,
+        "net_expectancy_r": -1.2205511032668146,
+        "opportunities_per_month": 2.8275273224043715,
+        "planned_rr_bands": {
+          "7+": 17
+        },
+        "planned_rr_mean": 9.872657726116362,
+        "profit_factor": 0.0,
+        "realized_win_loss_ratio": null,
+        "resolved": 16,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 16
+        },
+        "total_r": -19.528817652269034,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.2912137627910525,
+          -1.1636885619501955
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.0
+      },
+      "planned_rr_min": 9.180156657963467,
+      "planned_rr_max": 10.789473684209174,
+      "net_planned_rr_min": 8.867924528303787
+    },
+    {
+      "key": "range_sweep_reversion",
+      "symbol": "EURUSD",
+      "status": "canonical COMPLETE",
+      "job": "fb6c431f78174908ac29807f21336e52",
+      "test_normal": {
+        "attempted": 22,
+        "data_complete_fraction": 1.0,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 13,
+        "longest_losing_streak": 4,
+        "max_realized_drawdown_r": 4.650323907473949,
+        "net_expectancy_r": 0.48207348882557743,
+        "opportunities_per_month": 3.6591530054644807,
+        "planned_rr_bands": {
+          "2\u20133": 4,
+          "3\u20134": 8,
+          "4\u20135": 3,
+          "5\u20137": 5,
+          "7+": 2
+        },
+        "planned_rr_mean": 4.406818948649977,
+        "profit_factor": 1.6333040533061942,
+        "realized_win_loss_ratio": 3.4999372570847016,
+        "resolved": 22,
+        "statuses": {
+          "SL": 15,
+          "TIME_EXIT": 2,
+          "TP": 5
+        },
+        "total_r": 10.605616754162703,
+        "unknown": 0,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.3498952465153245,
+          1.348438806494204
+        ],
+        "weekly_sign_flip_p": 0.151,
+        "win_rate": 0.3181818181818182
+      },
+      "test_stress": {
+        "attempted": 22,
+        "data_complete_fraction": 1.0,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 13,
+        "longest_losing_streak": 4,
+        "max_realized_drawdown_r": 5.54593083381485,
+        "net_expectancy_r": 0.3326675325837259,
+        "opportunities_per_month": 3.6591530054644807,
+        "planned_rr_bands": {
+          "2\u20133": 4,
+          "3\u20134": 8,
+          "4\u20135": 3,
+          "5\u20137": 5,
+          "7+": 2
+        },
+        "planned_rr_mean": 4.406818948649977,
+        "profit_factor": 1.391314642099086,
+        "realized_win_loss_ratio": 2.9813885187837554,
+        "resolved": 22,
+        "statuses": {
+          "SL": 15,
+          "TIME_EXIT": 2,
+          "TP": 5
+        },
+        "total_r": 7.31868571684197,
+        "unknown": 0,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.4975022150735209,
+          1.1838118319233202
+        ],
+        "weekly_sign_flip_p": 0.2465,
+        "win_rate": 0.3181818181818182
+      },
+      "planned_rr_min": 2.256603773584823,
+      "planned_rr_max": 8.923076923079813,
+      "net_planned_rr_min": 2.17279411764698
+    },
+    {
+      "key": "trend_reclaim_r2",
+      "symbol": "XAUUSD",
+      "status": "canonical COMPLETE",
+      "job": "3bb6b60e6e094009bf3c4012f4279c54",
+      "test_normal": {
+        "attempted": 12,
+        "data_complete_fraction": 0.9166666666666666,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 7,
+        "longest_losing_streak": 5,
+        "max_realized_drawdown_r": 4.128312163609182,
+        "net_expectancy_r": 0.3109411330702679,
+        "opportunities_per_month": 1.9959016393442621,
+        "planned_rr_bands": {
+          "2\u20133": 12
+        },
+        "planned_rr_mean": 2.0218394401943605,
+        "profit_factor": 1.666448850776464,
+        "realized_win_loss_ratio": 1.999738620931757,
+        "resolved": 11,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 5,
+          "TIME_EXIT": 3,
+          "TP": 3
+        },
+        "total_r": 3.4203524637729465,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.8789928288259634,
+          1.0389789904736009
+        ],
+        "weekly_sign_flip_p": 0.2725,
+        "win_rate": 0.45454545454545453
+      },
+      "test_stress": {
+        "attempted": 12,
+        "data_complete_fraction": 0.9166666666666666,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 7,
+        "longest_losing_streak": 5,
+        "max_realized_drawdown_r": 4.181819294144428,
+        "net_expectancy_r": 0.30250609928774785,
+        "opportunities_per_month": 1.9959016393442621,
+        "planned_rr_bands": {
+          "2\u20133": 12
+        },
+        "planned_rr_mean": 2.0218394401943605,
+        "profit_factor": 1.6409070003953694,
+        "realized_win_loss_ratio": 1.9690884004744436,
+        "resolved": 11,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 5,
+          "TIME_EXIT": 3,
+          "TP": 3
+        },
+        "total_r": 3.3275670921652263,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.8901855092568541,
+          1.031544693628315
+        ],
+        "weekly_sign_flip_p": 0.2725,
+        "win_rate": 0.45454545454545453
+      },
+      "planned_rr_min": 2.0023236163920504,
+      "planned_rr_max": 2.1535269709545726,
+      "net_planned_rr_min": 2.000000000000008
+    },
+    {
+      "key": "trend_reclaim_r3",
+      "symbol": "XAUUSD",
+      "status": "supplemental exact retry",
+      "job": "ed0c9cbe410e485a8989f4ecd3e18659",
+      "test_normal": {
+        "attempted": 15,
+        "data_complete_fraction": 0.8,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 10,
+        "longest_losing_streak": 10,
+        "max_realized_drawdown_r": 10.548433717351992,
+        "net_expectancy_r": -0.879036143112666,
+        "opportunities_per_month": 2.4948770491803276,
+        "planned_rr_bands": {
+          "3\u20134": 15
+        },
+        "planned_rr_mean": 3.0282368105120367,
+        "profit_factor": 0.04813567433183064,
+        "realized_win_loss_ratio": 0.5294924176501371,
+        "resolved": 12,
+        "statuses": {
+          "INCOMPLETE": 3,
+          "SL": 11,
+          "TIME_EXIT": 1
+        },
+        "total_r": -10.548433717351992,
+        "unknown": 3,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.0094164201287386,
+          -0.6527624300855722
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.08333333333333333
+      },
+      "test_stress": {
+        "attempted": 15,
+        "data_complete_fraction": 0.8,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 10,
+        "longest_losing_streak": 10,
+        "max_realized_drawdown_r": 10.649408951844547,
+        "net_expectancy_r": -0.8874507459870457,
+        "opportunities_per_month": 2.4948770491803276,
+        "planned_rr_bands": {
+          "3\u20134": 15
+        },
+        "planned_rr_mean": 3.0282368105120367,
+        "profit_factor": 0.04748851893080594,
+        "realized_win_loss_ratio": 0.5223737082388653,
+        "resolved": 12,
+        "statuses": {
+          "INCOMPLETE": 3,
+          "SL": 11,
+          "TIME_EXIT": 1
+        },
+        "total_r": -10.649408951844547,
+        "unknown": 3,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.020408186666534,
+          -0.6621491411128837
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.08333333333333333
+      },
+      "planned_rr_min": 3.0030629488804292,
+      "planned_rr_max": 3.2047026279394717,
+      "net_planned_rr_min": 2.9970652971382594
+    },
+    {
+      "key": "trend_reclaim_r4",
+      "symbol": "XAUUSD",
+      "status": "canonical COMPLETE",
+      "job": "3405df1093eb4a6e93acf666710b7c3e",
+      "test_normal": {
+        "attempted": 15,
+        "data_complete_fraction": 0.8,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 10,
+        "longest_losing_streak": 10,
+        "max_realized_drawdown_r": 10.076607555585511,
+        "net_expectancy_r": -0.8101114924140637,
+        "opportunities_per_month": 2.4948770491803276,
+        "planned_rr_bands": {
+          "4\u20135": 15
+        },
+        "planned_rr_mean": 4.034886175388417,
+        "profit_factor": 0.1227707353281001,
+        "realized_win_loss_ratio": 1.350478088609101,
+        "resolved": 12,
+        "statuses": {
+          "INCOMPLETE": 3,
+          "SL": 11,
+          "TIME_EXIT": 1
+        },
+        "total_r": -9.721337908968763,
+        "unknown": 3,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.0094164201287386,
+          -0.4618941666125194
+        ],
+        "weekly_sign_flip_p": 0.997,
+        "win_rate": 0.08333333333333333
+      },
+      "test_stress": {
+        "attempted": 15,
+        "data_complete_fraction": 0.8,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 10,
+        "longest_losing_streak": 10,
+        "max_realized_drawdown_r": 10.169828484598984,
+        "net_expectancy_r": -0.818546887038276,
+        "opportunities_per_month": 2.4948770491803276,
+        "planned_rr_bands": {
+          "4\u20135": 15
+        },
+        "planned_rr_mean": 4.034886175388417,
+        "profit_factor": 0.12144385339354057,
+        "realized_win_loss_ratio": 1.335882387328946,
+        "resolved": 12,
+        "statuses": {
+          "INCOMPLETE": 3,
+          "SL": 11,
+          "TIME_EXIT": 1
+        },
+        "total_r": -9.822562644459312,
+        "unknown": 3,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.020408186666534,
+          -0.47133845479321423
+        ],
+        "weekly_sign_flip_p": 0.997,
+        "win_rate": 0.08333333333333333
+      },
+      "planned_rr_min": 4.003696662441894,
+      "planned_rr_max": 4.254495159059761,
+      "net_planned_rr_min": 3.9944134078216194
+    },
+    {
+      "key": "trend_reclaim_r5",
+      "symbol": "XAUUSD",
+      "status": "canonical COMPLETE",
+      "job": "fe9ce21d4eea4bc88fb283c4e57e122c",
+      "test_normal": {
+        "attempted": 14,
+        "data_complete_fraction": 0.7857142857142857,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 9,
+        "longest_losing_streak": 10,
+        "max_realized_drawdown_r": 10.076607555585511,
+        "net_expectancy_r": -0.8715457664093061,
+        "opportunities_per_month": 2.328551912568306,
+        "planned_rr_bands": {
+          "5\u20137": 14
+        },
+        "planned_rr_mean": 5.042315632452627,
+        "profit_factor": 0.04858819025970228,
+        "realized_win_loss_ratio": 0.4858819025970228,
+        "resolved": 11,
+        "statuses": {
+          "INCOMPLETE": 3,
+          "SL": 10,
+          "TIME_EXIT": 1
+        },
+        "total_r": -9.587003430502367,
+        "unknown": 3,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.0101624758158907,
+          -0.6347631668912997
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.09090909090909091
+      },
+      "test_stress": {
+        "attempted": 14,
+        "data_complete_fraction": 0.7857142857142857,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 9,
+        "longest_losing_streak": 10,
+        "max_realized_drawdown_r": 10.169828484598984,
+        "net_expectancy_r": -0.8802698973176253,
+        "opportunities_per_month": 2.328551912568306,
+        "planned_rr_bands": {
+          "5\u20137": 14
+        },
+        "planned_rr_mean": 5.042315632452627,
+        "profit_factor": 0.04787294248299236,
+        "realized_win_loss_ratio": 0.47872942482992364,
+        "resolved": 11,
+        "statuses": {
+          "INCOMPLETE": 3,
+          "SL": 10,
+          "TIME_EXIT": 1
+        },
+        "total_r": -9.682968870493879,
+        "unknown": 3,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.0221291872338663,
+          -0.6448045880591174
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.09090909090909091
+      },
+      "planned_rr_min": 5.004435994930273,
+      "planned_rr_max": 5.3042876901801765,
+      "net_planned_rr_min": 4.992663242846123
+    },
+    {
+      "key": "trend_reclaim_r7",
+      "symbol": "XAUUSD",
+      "status": "canonical COMPLETE",
+      "job": "ff6e00b289bb4b6aa440c790e5cf78b4",
+      "test_normal": {
+        "attempted": 14,
+        "data_complete_fraction": 0.7142857142857143,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 9,
+        "longest_losing_streak": 10,
+        "max_realized_drawdown_r": 10.076607555585511,
+        "net_expectancy_r": -1.007660755558551,
+        "opportunities_per_month": 2.328551912568306,
+        "planned_rr_bands": {
+          "7+": 14
+        },
+        "planned_rr_mean": 7.056045071263085,
+        "profit_factor": 0.0,
+        "realized_win_loss_ratio": null,
+        "resolved": 10,
+        "statuses": {
+          "INCOMPLETE": 4,
+          "SL": 10
+        },
+        "total_r": -10.076607555585511,
+        "unknown": 4,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.0105787354034108,
+          -1.005240044984658
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.0
+      },
+      "test_stress": {
+        "attempted": 14,
+        "data_complete_fraction": 0.7142857142857143,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 9,
+        "longest_losing_streak": 10,
+        "max_realized_drawdown_r": 10.169828484598984,
+        "net_expectancy_r": -1.0169828484598982,
+        "opportunities_per_month": 2.328551912568306,
+        "planned_rr_bands": {
+          "7+": 14
+        },
+        "planned_rr_mean": 7.056045071263085,
+        "profit_factor": 0.0,
+        "realized_win_loss_ratio": null,
+        "resolved": 10,
+        "statuses": {
+          "INCOMPLETE": 4,
+          "SL": 10
+        },
+        "total_r": -10.169828484598982,
+        "unknown": 4,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.0237842105915393,
+          -1.0114542409695462
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.0
+      },
+      "planned_rr_min": 7.005809040980122,
+      "planned_rr_max": 7.405255878285492,
+      "net_planned_rr_min": 6.985326485692588
+    },
+    {
+      "key": "trend_reclaim_r9",
+      "symbol": "XAUUSD",
+      "status": "canonical COMPLETE",
+      "job": "ed30e6a59c374c9aa93ec30b91cac429",
+      "test_normal": {
+        "attempted": 14,
+        "data_complete_fraction": 0.7142857142857143,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 9,
+        "longest_losing_streak": 10,
+        "max_realized_drawdown_r": 10.076607555585511,
+        "net_expectancy_r": -1.007660755558551,
+        "opportunities_per_month": 2.328551912568306,
+        "planned_rr_bands": {
+          "7+": 14
+        },
+        "planned_rr_mean": 9.06971784090879,
+        "profit_factor": 0.0,
+        "realized_win_loss_ratio": null,
+        "resolved": 10,
+        "statuses": {
+          "INCOMPLETE": 4,
+          "SL": 10
+        },
+        "total_r": -10.076607555585511,
+        "unknown": 4,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.0105787354034108,
+          -1.005240044984658
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.0
+      },
+      "test_stress": {
+        "attempted": 14,
+        "data_complete_fraction": 0.7142857142857143,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 9,
+        "longest_losing_streak": 10,
+        "max_realized_drawdown_r": 10.169828484598984,
+        "net_expectancy_r": -1.0169828484598982,
+        "opportunities_per_month": 2.328551912568306,
+        "planned_rr_bands": {
+          "7+": 14
+        },
+        "planned_rr_mean": 9.06971784090879,
+        "profit_factor": 0.0,
+        "realized_win_loss_ratio": null,
+        "resolved": 10,
+        "statuses": {
+          "INCOMPLETE": 4,
+          "SL": 10
+        },
+        "total_r": -10.169828484598982,
+        "unknown": 4,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.0237842105915393,
+          -1.0114542409695462
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.0
+      },
+      "planned_rr_min": 9.007287705956879,
+      "planned_rr_max": 9.506224066390681,
+      "net_planned_rr_min": 8.98092443140032
+    },
+    {
+      "key": "range_sweep_reversion",
+      "symbol": "XAUUSD",
+      "status": "canonical COMPLETE",
+      "job": "f6a9626fd9d942de92b36c84b97e1006",
+      "test_normal": {
+        "attempted": 11,
+        "data_complete_fraction": 0.9090909090909091,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 7,
+        "longest_losing_streak": 10,
+        "max_realized_drawdown_r": 10.100947577288254,
+        "net_expectancy_r": -1.0100947577288253,
+        "opportunities_per_month": 1.8295765027322404,
+        "planned_rr_bands": {
+          "2\u20133": 5,
+          "3\u20134": 2,
+          "5\u20137": 3,
+          "7+": 1
+        },
+        "planned_rr_mean": 4.18287539693718,
+        "profit_factor": 0.0,
+        "realized_win_loss_ratio": null,
+        "resolved": 10,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 10
+        },
+        "total_r": -10.100947577288252,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.0118995715719832,
+          -1.0075097988133093
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.0
+      },
+      "test_stress": {
+        "attempted": 11,
+        "data_complete_fraction": 0.9090909090909091,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 7,
+        "longest_losing_streak": 10,
+        "max_realized_drawdown_r": 10.23910330225771,
+        "net_expectancy_r": -1.023910330225771,
+        "opportunities_per_month": 1.8295765027322404,
+        "planned_rr_bands": {
+          "2\u20133": 5,
+          "3\u20134": 2,
+          "5\u20137": 3,
+          "7+": 1
+        },
+        "planned_rr_mean": 4.18287539693718,
+        "profit_factor": 0.0,
+        "realized_win_loss_ratio": null,
+        "resolved": 10,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 10
+        },
+        "total_r": -10.23910330225771,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.0282314564931727,
+          -1.017685520600964
+        ],
+        "weekly_sign_flip_p": 1.0,
+        "win_rate": 0.0
+      },
+      "planned_rr_min": 2.035315985130121,
+      "planned_rr_max": 8.994518402506252,
+      "net_planned_rr_min": 2.0052910052909776
+    },
+    {
+      "key": "trend_reclaim_r2",
+      "symbol": "BTCUSD",
+      "status": "canonical COMPLETE",
+      "job": "c12e72eca0bf4ca28283bf6c352b6f6c",
+      "test_normal": {
+        "attempted": 20,
+        "data_complete_fraction": 1.0,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 8,
+        "longest_losing_streak": 3,
+        "max_realized_drawdown_r": 3.10303652200109,
+        "net_expectancy_r": 0.3542025743055902,
+        "opportunities_per_month": 3.326502732240437,
+        "planned_rr_bands": {
+          "2\u20133": 20
+        },
+        "planned_rr_mean": 2.05239691995014,
+        "profit_factor": 1.7656376968781624,
+        "realized_win_loss_ratio": 1.7656376968781622,
+        "resolved": 20,
+        "statuses": {
+          "SL": 9,
+          "TIME_EXIT": 5,
+          "TP": 6
+        },
+        "total_r": 7.084051486111805,
+        "unknown": 0,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.2512427050346216,
+          0.7881720597487057
+        ],
+        "weekly_sign_flip_p": 0.125,
+        "win_rate": 0.5
+      },
+      "test_stress": {
+        "attempted": 20,
+        "data_complete_fraction": 1.0,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 8,
+        "longest_losing_streak": 3,
+        "max_realized_drawdown_r": 3.2060730440021796,
+        "net_expectancy_r": 0.3212218633100026,
+        "opportunities_per_month": 3.326502732240437,
+        "planned_rr_bands": {
+          "2\u20133": 20
+        },
+        "planned_rr_mean": 2.05239691995014,
+        "profit_factor": 1.6664061874066733,
+        "realized_win_loss_ratio": 1.6664061874066736,
+        "resolved": 20,
+        "statuses": {
+          "SL": 9,
+          "TIME_EXIT": 5,
+          "TP": 6
+        },
+        "total_r": 6.4244372662000515,
+        "unknown": 0,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.30064077308802867,
+          0.7498553742321387
+        ],
+        "weekly_sign_flip_p": 0.1565,
+        "win_rate": 0.5
+      },
+      "planned_rr_min": 2.0,
+      "planned_rr_max": 2.1933844061001624,
+      "net_planned_rr_min": 2.0
+    },
+    {
+      "key": "trend_reclaim_r3",
+      "symbol": "BTCUSD",
+      "status": "supplemental exact retry",
+      "job": "23f6f623f0b74401a632801cf5641d6f",
+      "test_normal": {
+        "attempted": 22,
+        "data_complete_fraction": 1.0,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 8,
+        "longest_losing_streak": 5,
+        "max_realized_drawdown_r": 5.923962705620383,
+        "net_expectancy_r": 0.052955341317682314,
+        "opportunities_per_month": 3.6591530054644807,
+        "planned_rr_bands": {
+          "3\u20134": 22
+        },
+        "planned_rr_mean": 3.0733924716041487,
+        "profit_factor": 1.0884016794723055,
+        "realized_win_loss_ratio": 1.9047029390765349,
+        "resolved": 22,
+        "statuses": {
+          "SL": 12,
+          "TIME_EXIT": 6,
+          "TP": 4
+        },
+        "total_r": 1.165017508989011,
+        "unknown": 0,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.5637269539802026,
+          0.5856746739622841
+        ],
+        "weekly_sign_flip_p": 0.4365,
+        "win_rate": 0.36363636363636365
+      },
+      "test_stress": {
+        "attempted": 22,
+        "data_complete_fraction": 1.0,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 8,
+        "longest_losing_streak": 5,
+        "max_realized_drawdown_r": 6.358585446312245,
+        "net_expectancy_r": 0.005148383080982841,
+        "opportunities_per_month": 3.6591530054644807,
+        "planned_rr_bands": {
+          "3\u20134": 22
+        },
+        "planned_rr_mean": 3.0733924716041487,
+        "profit_factor": 1.0080765939742384,
+        "realized_win_loss_ratio": 1.7641340394549172,
+        "resolved": 22,
+        "statuses": {
+          "SL": 12,
+          "TIME_EXIT": 6,
+          "TP": 4
+        },
+        "total_r": 0.1132644277816225,
+        "unknown": 0,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.6217055557740919,
+          0.5458387636379629
+        ],
+        "weekly_sign_flip_p": 0.497,
+        "win_rate": 0.36363636363636365
+      },
+      "planned_rr_min": 2.9999720631373243,
+      "planned_rr_max": 3.2577504116847926,
+      "net_planned_rr_min": 2.9999518692769813
+    },
+    {
+      "key": "trend_reclaim_r4",
+      "symbol": "BTCUSD",
+      "status": "canonical COMPLETE",
+      "job": "87839dcb1f29468aa6afa1811a175cee",
+      "test_normal": {
+        "attempted": 21,
+        "data_complete_fraction": 1.0,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 8,
+        "longest_losing_streak": 4,
+        "max_realized_drawdown_r": 5.944781625913358,
+        "net_expectancy_r": 0.3300744809708539,
+        "opportunities_per_month": 3.492827868852459,
+        "planned_rr_bands": {
+          "4\u20135": 21
+        },
+        "planned_rr_mean": 4.093758236965759,
+        "profit_factor": 1.550024118431002,
+        "realized_win_loss_ratio": 2.5187891924503782,
+        "resolved": 21,
+        "statuses": {
+          "SL": 12,
+          "TIME_EXIT": 5,
+          "TP": 4
+        },
+        "total_r": 6.931564100387932,
+        "unknown": 0,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.5711658251706746,
+          0.9895022810922859
+        ],
+        "weekly_sign_flip_p": 0.236,
+        "win_rate": 0.38095238095238093
+      },
+      "test_stress": {
+        "attempted": 21,
+        "data_complete_fraction": 1.0,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 8,
+        "longest_losing_streak": 4,
+        "max_realized_drawdown_r": 6.342292420516235,
+        "net_expectancy_r": 0.2848794022908032,
+        "opportunities_per_month": 3.492827868852459,
+        "planned_rr_bands": {
+          "4\u20135": 21
+        },
+        "planned_rr_mean": 4.093758236965759,
+        "profit_factor": 1.4495533686836377,
+        "realized_win_loss_ratio": 2.3555242241109116,
+        "resolved": 21,
+        "statuses": {
+          "SL": 12,
+          "TIME_EXIT": 5,
+          "TP": 4
+        },
+        "total_r": 5.982467448106868,
+        "unknown": 0,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.6395946862004398,
+          0.9584838353112086
+        ],
+        "weekly_sign_flip_p": 0.2715,
+        "win_rate": 0.38095238095238093
+      },
+      "planned_rr_min": 3.9999368088467024,
+      "planned_rr_max": 4.322188014605965,
+      "net_planned_rr_min": 3.999912675195435
+    },
+    {
+      "key": "trend_reclaim_r5",
+      "symbol": "BTCUSD",
+      "status": "canonical COMPLETE",
+      "job": "a3e00ce3783c4d35abed44d5ab29599c",
+      "test_normal": {
+        "attempted": 19,
+        "data_complete_fraction": 1.0,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 8,
+        "longest_losing_streak": 5,
+        "max_realized_drawdown_r": 5.283919108056223,
+        "net_expectancy_r": 0.5847590774154001,
+        "opportunities_per_month": 3.160177595628415,
+        "planned_rr_bands": {
+          "5\u20137": 19
+        },
+        "planned_rr_mean": 5.107493866481072,
+        "profit_factor": 1.9400049466155547,
+        "realized_win_loss_ratio": 3.325722765626665,
+        "resolved": 19,
+        "statuses": {
+          "SL": 11,
+          "TIME_EXIT": 4,
+          "TP": 4
+        },
+        "total_r": 11.110422470892603,
+        "unknown": 0,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.7998341818171791,
+          1.305925705379332
+        ],
+        "weekly_sign_flip_p": 0.2405,
+        "win_rate": 0.3684210526315789
+      },
+      "test_stress": {
+        "attempted": 19,
+        "data_complete_fraction": 1.0,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 8,
+        "longest_losing_streak": 5,
+        "max_realized_drawdown_r": 5.604969226694785,
+        "net_expectancy_r": 0.5453740915969174,
+        "opportunities_per_month": 3.160177595628415,
+        "planned_rr_bands": {
+          "5\u20137": 19
+        },
+        "planned_rr_mean": 5.107493866481072,
+        "profit_factor": 1.8344949402104926,
+        "realized_win_loss_ratio": 3.144848468932273,
+        "resolved": 19,
+        "statuses": {
+          "SL": 11,
+          "TIME_EXIT": 4,
+          "TP": 4
+        },
+        "total_r": 10.36210774034143,
+        "unknown": 0,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.8780419705352697,
+          1.276755420567985
+        ],
+        "weekly_sign_flip_p": 0.2405,
+        "win_rate": 0.3684210526315789
+      },
+      "planned_rr_min": 4.999916189411973,
+      "planned_rr_max": 5.386554020190595,
+      "net_planned_rr_min": 4.999874398157662
+    },
+    {
+      "key": "trend_reclaim_r7",
+      "symbol": "BTCUSD",
+      "status": "supplemental exact retry",
+      "job": "55e082cd36a74bea967893eed8c3578f",
+      "test_normal": {
+        "attempted": 18,
+        "data_complete_fraction": 1.0,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 7,
+        "longest_losing_streak": 5,
+        "max_realized_drawdown_r": 5.283919108056223,
+        "net_expectancy_r": 0.8173200778681204,
+        "opportunities_per_month": 2.9938524590163933,
+        "planned_rr_bands": {
+          "7+": 18
+        },
+        "planned_rr_mean": 7.148345871948533,
+        "profit_factor": 2.18328236317389,
+        "realized_win_loss_ratio": 4.36656472634778,
+        "resolved": 18,
+        "statuses": {
+          "SL": 12,
+          "TIME_EXIT": 3,
+          "TP": 3
+        },
+        "total_r": 14.711761401626168,
+        "unknown": 0,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.9372771532281338,
+          1.766463133850047
+        ],
+        "weekly_sign_flip_p": 0.2325,
+        "win_rate": 0.3333333333333333
+      },
+      "test_stress": {
+        "attempted": 18,
+        "data_complete_fraction": 1.0,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 7,
+        "longest_losing_streak": 5,
+        "max_realized_drawdown_r": 5.604969226694785,
+        "net_expectancy_r": 0.7706030660968555,
+        "opportunities_per_month": 2.9938524590163933,
+        "planned_rr_bands": {
+          "7+": 18
+        },
+        "planned_rr_mean": 7.148345871948533,
+        "profit_factor": 2.064363841450807,
+        "realized_win_loss_ratio": 4.128727682901613,
+        "resolved": 18,
+        "statuses": {
+          "SL": 12,
+          "TIME_EXIT": 3,
+          "TP": 3
+        },
+        "total_r": 13.870855189743398,
+        "unknown": 0,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.0258420176001335,
+          1.7373939459066865
+        ],
+        "weekly_sign_flip_p": 0.2325,
+        "win_rate": 0.3333333333333333
+      },
+      "planned_rr_min": 6.999810426540292,
+      "planned_rr_max": 7.515357628696294,
+      "net_planned_rr_min": 6.999790663596205
+    },
+    {
+      "key": "trend_reclaim_r9",
+      "symbol": "BTCUSD",
+      "status": "canonical COMPLETE",
+      "job": "cdea518785ab4c57a8d94f8ac32325de",
+      "test_normal": {
+        "attempted": 16,
+        "data_complete_fraction": 1.0,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 7,
+        "longest_losing_streak": 6,
+        "max_realized_drawdown_r": 6.224475664309594,
+        "net_expectancy_r": 0.6356446789802351,
+        "opportunities_per_month": 2.66120218579235,
+        "planned_rr_bands": {
+          "7+": 16
+        },
+        "planned_rr_mean": 9.196839478662648,
+        "profit_factor": 1.7488475403811492,
+        "realized_win_loss_ratio": 7.578339341651645,
+        "resolved": 16,
+        "statuses": {
+          "SL": 13,
+          "TIME_EXIT": 1,
+          "TP": 2
+        },
+        "total_r": 10.170314863683762,
+        "unknown": 0,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.0704302755691613,
+          1.9960439539411365
+        ],
+        "weekly_sign_flip_p": 0.2975,
+        "win_rate": 0.1875
+      },
+      "test_stress": {
+        "attempted": 16,
+        "data_complete_fraction": 1.0,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 7,
+        "longest_losing_streak": 6,
+        "max_realized_drawdown_r": 6.495862231219547,
+        "net_expectancy_r": 0.5804588567835588,
+        "opportunities_per_month": 2.66120218579235,
+        "planned_rr_bands": {
+          "7+": 16
+        },
+        "planned_rr_mean": 9.196839478662648,
+        "profit_factor": 1.647480709161843,
+        "realized_win_loss_ratio": 7.139083073034653,
+        "resolved": 16,
+        "statuses": {
+          "SL": 13,
+          "TIME_EXIT": 1,
+          "TP": 2
+        },
+        "total_r": 9.28734170853694,
+        "unknown": 0,
+        "weekly_bootstrap_expectancy_ci95": [
+          -1.1622831399662101,
+          1.9585023737049365
+        ],
+        "weekly_sign_flip_p": 0.3135,
+        "win_rate": 0.1875
+      },
+      "planned_rr_min": 8.999747235386995,
+      "planned_rr_max": 9.644161237202097,
+      "net_planned_rr_min": 8.999706929034685
+    },
+    {
+      "key": "range_sweep_reversion",
+      "symbol": "BTCUSD",
+      "status": "canonical COMPLETE",
+      "job": "cbfc1641c1f447f6a4becad29748e15e",
+      "test_normal": {
+        "attempted": 21,
+        "data_complete_fraction": 0.9523809523809523,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 10,
+        "longest_losing_streak": 5,
+        "max_realized_drawdown_r": 5.108720594471078,
+        "net_expectancy_r": 0.3711882366690847,
+        "opportunities_per_month": 3.492827868852459,
+        "planned_rr_bands": {
+          "2\u20133": 9,
+          "3\u20134": 6,
+          "4\u20135": 6
+        },
+        "planned_rr_mean": 3.2781932388713693,
+        "profit_factor": 1.6000009319661188,
+        "realized_win_loss_ratio": 2.400001397949178,
+        "resolved": 20,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 12,
+          "TIME_EXIT": 2,
+          "TP": 6
+        },
+        "total_r": 7.423764733381693,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.46540393413975256,
+          1.2990617087600371
+        ],
+        "weekly_sign_flip_p": 0.233,
+        "win_rate": 0.4
+      },
+      "test_stress": {
+        "attempted": 21,
+        "data_complete_fraction": 0.9523809523809523,
+        "floating_and_unknown_risk_included_in_drawdown": false,
+        "independent_entry_weeks": 10,
+        "longest_losing_streak": 5,
+        "max_realized_drawdown_r": 5.262458216378469,
+        "net_expectancy_r": 0.3252426770141796,
+        "opportunities_per_month": 3.492827868852459,
+        "planned_rr_bands": {
+          "2\u20133": 9,
+          "3\u20134": 6,
+          "4\u20135": 6
+        },
+        "planned_rr_mean": 3.2781932388713693,
+        "profit_factor": 1.5032182165415038,
+        "realized_win_loss_ratio": 2.2548273248122555,
+        "resolved": 20,
+        "statuses": {
+          "INCOMPLETE": 1,
+          "SL": 12,
+          "TIME_EXIT": 2,
+          "TP": 6
+        },
+        "total_r": 6.504853540283592,
+        "unknown": 1,
+        "weekly_bootstrap_expectancy_ci95": [
+          -0.5083333384076784,
+          1.240676498699464
+        ],
+        "weekly_sign_flip_p": 0.2705,
+        "win_rate": 0.4
+      },
+      "planned_rr_min": 2.0038041598735443,
+      "planned_rr_max": 8.999740686316702,
+      "net_planned_rr_min": 2.0038041598735443
+    }
+  ],
+  "shared_multiple_testing_family": 131,
+  "claude_shared_models": 0,
+  "kimi_shared_models": 0,
+  "real_codex_probe_status": "COMPLETE",
+  "live_paper_detections": 0,
+  "actual_claude_kimi_authoring_sessions_verified": false
+}

@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "checks": [
+    "three distinct lab cards with real stored counts",
+    "qualified view has explicit empty state",
+    "lab filter preserves empty Claude evidence",
+    "five imported Codex hypotheses labelled prior research",
+    "390px mobile layout has no page overflow",
+    "no browser runtime errors"
+  ],
+  "screenshots": [
+    "dashboard-desktop.png",
+    "dashboard-mobile.png"
+  ]
+}

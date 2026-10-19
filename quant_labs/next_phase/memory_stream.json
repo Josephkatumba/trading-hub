@@ -1,0 +1,63 @@
+{
+  "mode": "stream",
+  "actual_snapshot_rows": 5000,
+  "raw_input_bytes": 24403008,
+  "retained_projections": 1147,
+  "invalid_barriers": 3853,
+  "output_sha256": "433feba7a146b74e74c731a45f2b8389b8241b1cfe216c507e7e8bb173465bf3",
+  "traced_peak_mib": 2.038416862487793,
+  "traced_retained_mib": 1.882537841796875,
+  "elapsed_seconds": 3.9191145000513643,
+  "top_retained_allocations": [
+    {
+      "allocation": "C:\\Python314\\Lib\\json\\decoder.py:361",
+      "mib": 1.0724506378173828,
+      "blocks": 19958
+    },
+    {
+      "allocation": "C:\\Users\\katjo\\OneDrive\\Documents\\GitHub\\trading-hub\\backend\\observations.py:924",
+      "mib": 0.5075531005859375,
+      "blocks": 2294
+    },
+    {
+      "allocation": "C:\\Users\\katjo\\OneDrive\\Documents\\GitHub\\trading-hub\\backend\\observations.py:928",
+      "mib": 0.1400146484375,
+      "blocks": 2294
+    },
+    {
+      "allocation": "C:\\Users\\katjo\\OneDrive\\Documents\\GitHub\\trading-hub\\quant_labs\\next_phase\\profile_memory.py:43",
+      "mib": 0.125,
+      "blocks": 1
+    },
+    {
+      "allocation": "C:\\Users\\katjo\\OneDrive\\Documents\\GitHub\\trading-hub\\quant_labs\\next_phase\\profile_memory.py:42",
+      "mib": 0.03517913818359375,
+      "blocks": 1
+    },
+    {
+      "allocation": "C:\\Users\\katjo\\OneDrive\\Documents\\GitHub\\trading-hub\\quant_labs\\next_phase\\profile_memory.py:44",
+      "mib": 0.0016632080078125,
+      "blocks": 7
+    },
+    {
+      "allocation": "C:\\Python314\\Lib\\pathlib\\__init__.py:298",
+      "mib": 0.00060272216796875,
+      "blocks": 11
+    },
+    {
+      "allocation": "C:\\Python314\\Lib\\pathlib\\__init__.py:771",
+      "mib": 0.00031280517578125,
+      "blocks": 4
+    }
+  ],
+  "resources": {
+    "enforced": true,
+    "memory_limit_mb": 384.0,
+    "peak_committed_mb": 27.75,
+    "cpu_cap_percent": 15.0,
+    "cpu_limit_seconds": 25.0,
+    "cpu_seconds_used": 4.96875,
+    "max_processes": 1
+  },
+  "scope": "isolated genuine-record sample, not an attached live-process heap profile; no production file or sidecar writes"
+}

@@ -972,7 +972,7 @@ def outcome_watch_snapshots(claimed_observation_ids: set[str], symbols_with_bars
                 continue
             selected.append(position)
         missing = [position for position in selected if position not in rows]
-        for position, row in zip(missing, index.load(missing)):
+        for position, row in zip(missing, index.iter_load(missing)):
             if watch_barriers_valid(row):
                 rows[position] = _watch_projection(row)
             else:

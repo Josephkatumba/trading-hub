@@ -1,0 +1,13 @@
+{
+  "signals": 432,
+  "new_revisions": 0,
+  "statuses": {
+    "SL": 221,
+    "TP": 104,
+    "INCOMPLETE": 103,
+    "AMBIGUOUS": 4
+  },
+  "backend_modified": false,
+  "source_sha256": "a60187c7584595ffad698a6d71c246ccd6895be536c01ccff35b9ae03294b949",
+  "caution": "Changes reflect coverage, entry semantics, horizon and cost policy; they do not prove all prior results wrong."
+}

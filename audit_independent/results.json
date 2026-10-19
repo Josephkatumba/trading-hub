@@ -1,0 +1,2048 @@
+{
+  "cutoff_utc": "2026-10-19T20:15:00+00:00",
+  "confirmations": 413,
+  "outcome_records": 413,
+  "bank_signals": 49,
+  "snapshots_found": 383,
+  "comparisons": {
+    "all": {
+      "original": {
+        "signals": 432,
+        "resolved": 264,
+        "statuses": {
+          "SL": 173,
+          "TP": 91,
+          "GAP_UNKNOWN": 96,
+          "ENTRY_MINUTE_UNKNOWN": 4,
+          "MISSING_START": 1,
+          "TRUNCATED": 67
+        },
+        "total_r": -19.200183538559507,
+        "expectancy_r": -0.07272796794908905,
+        "profit_factor": 0.8982098632256994,
+        "win_rate": 0.3446969696969697,
+        "max_drawdown_realized_r": 54.63663949780871,
+        "day_block_bootstrap_95": [
+          -0.4534617994987395,
+          0.07140376143369644
+        ]
+      },
+      "experimental": {
+        "signals": 64,
+        "resolved": 43,
+        "statuses": {
+          "SL": 27,
+          "TP": 16,
+          "GAP_UNKNOWN": 17,
+          "ENTRY_MINUTE_UNKNOWN": 1,
+          "TRUNCATED": 3
+        },
+        "total_r": -0.5892463064213338,
+        "expectancy_r": -0.01370340247491474,
+        "profit_factor": 0.9793432665725356,
+        "win_rate": 0.37209302325581395,
+        "max_drawdown_realized_r": 8.484037725221839,
+        "day_block_bootstrap_95": [
+          -0.31764562838989846,
+          0.3833983947680866
+        ]
+      }
+    },
+    "train_purged": {
+      "original": {
+        "signals": 300,
+        "resolved": 220,
+        "statuses": {
+          "SL": 139,
+          "TP": 81,
+          "GAP_UNKNOWN": 79,
+          "ENTRY_MINUTE_UNKNOWN": 1
+        },
+        "total_r": 0.8058386682057517,
+        "expectancy_r": 0.0036629030372988714,
+        "profit_factor": 1.005333641243781,
+        "win_rate": 0.36818181818181817,
+        "max_drawdown_realized_r": 35.73078524977291,
+        "day_block_bootstrap_95": [
+          -0.3556766156960804,
+          0.11479405582586055
+        ]
+      },
+      "experimental": {
+        "signals": 48,
+        "resolved": 35,
+        "statuses": {
+          "SL": 21,
+          "TP": 14,
+          "GAP_UNKNOWN": 12,
+          "ENTRY_MINUTE_UNKNOWN": 1
+        },
+        "total_r": 2.7789636317435953,
+        "expectancy_r": 0.07939896090695986,
+        "profit_factor": 1.1253986740765045,
+        "win_rate": 0.4,
+        "max_drawdown_realized_r": 8.484037725221839,
+        "day_block_bootstrap_95": [
+          -0.15386054070432245,
+          0.7583060608184273
+        ]
+      }
+    },
+    "test": {
+      "original": {
+        "signals": 73,
+        "resolved": 6,
+        "statuses": {
+          "TP": 3,
+          "SL": 3,
+          "TRUNCATED": 67
+        },
+        "total_r": 1.9655716395737741,
+        "expectancy_r": 0.3275952732622957,
+        "profit_factor": 1.6163991904069015,
+        "win_rate": 0.5,
+        "max_drawdown_realized_r": 2.1285727903910026,
+        "day_block_bootstrap_95": [
+          -1.0642863951955013,
+          1.5807560137460979
+        ]
+      },
+      "experimental": {
+        "signals": 3,
+        "resolved": 0,
+        "statuses": {
+          "TRUNCATED": 3
+        },
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    }
+  },
+  "ablations": {
+    "htf": {
+      "signals": 201,
+      "resolved": 111,
+      "statuses": {
+        "SL": 76,
+        "TP": 35,
+        "GAP_UNKNOWN": 61,
+        "ENTRY_MINUTE_UNKNOWN": 1,
+        "MISSING_START": 1,
+        "TRUNCATED": 27
+      },
+      "total_r": -16.694122121905078,
+      "expectancy_r": -0.15039749659373944,
+      "profit_factor": 0.7938440825483826,
+      "win_rate": 0.3153153153153153,
+      "max_drawdown_realized_r": 35.70527005540346,
+      "day_block_bootstrap_95": [
+        -0.7067584109372242,
+        0.003837068200517495
+      ]
+    },
+    "location": {
+      "signals": 307,
+      "resolved": 226,
+      "statuses": {
+        "SL": 147,
+        "TP": 79,
+        "GAP_UNKNOWN": 71,
+        "ENTRY_MINUTE_UNKNOWN": 3,
+        "TRUNCATED": 7
+      },
+      "total_r": -15.848626617578185,
+      "expectancy_r": -0.070126666449461,
+      "profit_factor": 0.9015939300553473,
+      "win_rate": 0.3495575221238938,
+      "max_drawdown_realized_r": 48.878545502673774,
+      "day_block_bootstrap_95": [
+        -0.4316076237032529,
+        0.05173953293729557
+      ]
+    },
+    "cost": {
+      "signals": 371,
+      "resolved": 217,
+      "statuses": {
+        "SL": 147,
+        "TP": 70,
+        "GAP_UNKNOWN": 86,
+        "ENTRY_MINUTE_UNKNOWN": 2,
+        "MISSING_START": 1,
+        "TRUNCATED": 65
+      },
+      "total_r": -27.951760403152996,
+      "expectancy_r": -0.1288099557748986,
+      "profit_factor": 0.8233039159847662,
+      "win_rate": 0.3225806451612903,
+      "max_drawdown_realized_r": 38.348995863240404,
+      "day_block_bootstrap_95": [
+        -0.33200440611819915,
+        -0.06011037252980905
+      ]
+    }
+  },
+  "by_strategy": {
+    "atr_breakout": {
+      "original": {
+        "signals": 3,
+        "resolved": 0,
+        "statuses": {
+          "TRUNCATED": 3
+        },
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      },
+      "experimental": {
+        "signals": 0,
+        "resolved": 0,
+        "statuses": {},
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    },
+    "bollinger_reversion": {
+      "original": {
+        "signals": 1,
+        "resolved": 0,
+        "statuses": {
+          "TRUNCATED": 1
+        },
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      },
+      "experimental": {
+        "signals": 0,
+        "resolved": 0,
+        "statuses": {},
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    },
+    "breakout": {
+      "original": {
+        "signals": 1,
+        "resolved": 0,
+        "statuses": {
+          "TRUNCATED": 1
+        },
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      },
+      "experimental": {
+        "signals": 0,
+        "resolved": 0,
+        "statuses": {},
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    },
+    "donchian": {
+      "original": {
+        "signals": 10,
+        "resolved": 0,
+        "statuses": {
+          "TRUNCATED": 10
+        },
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      },
+      "experimental": {
+        "signals": 0,
+        "resolved": 0,
+        "statuses": {},
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    },
+    "ema_crossover": {
+      "original": {
+        "signals": 6,
+        "resolved": 0,
+        "statuses": {
+          "TRUNCATED": 6
+        },
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      },
+      "experimental": {
+        "signals": 0,
+        "resolved": 0,
+        "statuses": {},
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    },
+    "ema_pullback": {
+      "original": {
+        "signals": 7,
+        "resolved": 0,
+        "statuses": {
+          "TRUNCATED": 7
+        },
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      },
+      "experimental": {
+        "signals": 0,
+        "resolved": 0,
+        "statuses": {},
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    },
+    "fair_value_gap": {
+      "original": {
+        "signals": 3,
+        "resolved": 0,
+        "statuses": {
+          "TRUNCATED": 3
+        },
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      },
+      "experimental": {
+        "signals": 0,
+        "resolved": 0,
+        "statuses": {},
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    },
+    "ichimoku": {
+      "original": {
+        "signals": 4,
+        "resolved": 0,
+        "statuses": {
+          "TRUNCATED": 4
+        },
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      },
+      "experimental": {
+        "signals": 0,
+        "resolved": 0,
+        "statuses": {},
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    },
+    "inside_bar_breakout": {
+      "original": {
+        "signals": 4,
+        "resolved": 0,
+        "statuses": {
+          "TRUNCATED": 4
+        },
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      },
+      "experimental": {
+        "signals": 0,
+        "resolved": 0,
+        "statuses": {},
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    },
+    "london_breakout": {
+      "original": {
+        "signals": 3,
+        "resolved": 0,
+        "statuses": {
+          "TRUNCATED": 3
+        },
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      },
+      "experimental": {
+        "signals": 0,
+        "resolved": 0,
+        "statuses": {},
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    },
+    "macd_momentum": {
+      "original": {
+        "signals": 5,
+        "resolved": 0,
+        "statuses": {
+          "TRUNCATED": 5
+        },
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      },
+      "experimental": {
+        "signals": 0,
+        "resolved": 0,
+        "statuses": {},
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    },
+    "opening_range_breakout": {
+      "original": {
+        "signals": 2,
+        "resolved": 0,
+        "statuses": {
+          "TRUNCATED": 2
+        },
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      },
+      "experimental": {
+        "signals": 0,
+        "resolved": 0,
+        "statuses": {},
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    },
+    "smc": {
+      "original": {
+        "signals": 2,
+        "resolved": 1,
+        "statuses": {
+          "SL": 1,
+          "TRUNCATED": 1
+        },
+        "total_r": -1.0599315068493118,
+        "expectancy_r": -1.0599315068493118,
+        "profit_factor": 0.0,
+        "win_rate": 0.0,
+        "max_drawdown_realized_r": 1.0599315068493118,
+        "day_block_bootstrap_95": [
+          -1.0599315068493118,
+          -1.0599315068493118
+        ]
+      },
+      "experimental": {
+        "signals": 0,
+        "resolved": 0,
+        "statuses": {},
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    },
+    "support_resistance": {
+      "original": {
+        "signals": 30,
+        "resolved": 22,
+        "statuses": {
+          "TP": 10,
+          "SL": 12,
+          "GAP_UNKNOWN": 5,
+          "TRUNCATED": 3
+        },
+        "total_r": 2.69236642891045,
+        "expectancy_r": 0.12238029222320228,
+        "profit_factor": 1.2007495100068595,
+        "win_rate": 0.45454545454545453,
+        "max_drawdown_realized_r": 3.5855513249923665,
+        "day_block_bootstrap_95": [
+          -0.5541431320706378,
+          0.8253609051768459
+        ]
+      },
+      "experimental": {
+        "signals": 8,
+        "resolved": 5,
+        "statuses": {
+          "TP": 5,
+          "GAP_UNKNOWN": 2,
+          "TRUNCATED": 1
+        },
+        "total_r": 8.05090580627084,
+        "expectancy_r": 1.610181161254168,
+        "profit_factor": null,
+        "win_rate": 1.0,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": [
+          1.5573154802370524,
+          1.6594834403745407
+        ]
+      }
+    },
+    "trend_momentum": {
+      "original": {
+        "signals": 13,
+        "resolved": 4,
+        "statuses": {
+          "SL": 4,
+          "GAP_UNKNOWN": 8,
+          "MISSING_START": 1
+        },
+        "total_r": -4.1174717055121235,
+        "expectancy_r": -1.0293679263780309,
+        "profit_factor": 0.0,
+        "win_rate": 0.0,
+        "max_drawdown_realized_r": 4.117471705512124,
+        "day_block_bootstrap_95": [
+          -1.0489069925914953,
+          -1.0077233622670838
+        ]
+      },
+      "experimental": {
+        "signals": 0,
+        "resolved": 0,
+        "statuses": {},
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    },
+    "trendline": {
+      "original": {
+        "signals": 231,
+        "resolved": 169,
+        "statuses": {
+          "SL": 102,
+          "TP": 67,
+          "GAP_UNKNOWN": 62
+        },
+        "total_r": 14.424077547845407,
+        "expectancy_r": 0.08534957128902608,
+        "profit_factor": 1.1312440232735985,
+        "win_rate": 0.39644970414201186,
+        "max_drawdown_realized_r": 23.225993532711787,
+        "day_block_bootstrap_95": [
+          -0.33458205674933267,
+          0.1385409108405515
+        ]
+      },
+      "experimental": {
+        "signals": 32,
+        "resolved": 25,
+        "statuses": {
+          "SL": 15,
+          "TP": 10,
+          "GAP_UNKNOWN": 7
+        },
+        "total_r": 2.5768687199979796,
+        "expectancy_r": 0.10307474879991918,
+        "profit_factor": 1.1627894338257085,
+        "win_rate": 0.4,
+        "max_drawdown_realized_r": 8.484037725221839,
+        "day_block_bootstrap_95": [
+          -0.07029176817108537,
+          1.013248962897693
+        ]
+      }
+    },
+    "trendline_v5": {
+      "original": {
+        "signals": 107,
+        "resolved": 68,
+        "statuses": {
+          "GAP_UNKNOWN": 21,
+          "SL": 54,
+          "TP": 14,
+          "ENTRY_MINUTE_UNKNOWN": 4,
+          "TRUNCATED": 14
+        },
+        "total_r": -31.13922430295393,
+        "expectancy_r": -0.45792976916108724,
+        "profit_factor": 0.48216488184322076,
+        "win_rate": 0.20588235294117646,
+        "max_drawdown_realized_r": 34.16501974720726,
+        "day_block_bootstrap_95": [
+          -0.7516200179092899,
+          -0.20594684110759445
+        ]
+      },
+      "experimental": {
+        "signals": 24,
+        "resolved": 13,
+        "statuses": {
+          "GAP_UNKNOWN": 8,
+          "SL": 12,
+          "ENTRY_MINUTE_UNKNOWN": 1,
+          "TP": 1,
+          "TRUNCATED": 2
+        },
+        "total_r": -11.217020832690155,
+        "expectancy_r": -0.8628477563607811,
+        "profit_factor": 0.1165035249663712,
+        "win_rate": 0.07692307692307693,
+        "max_drawdown_realized_r": 11.217020832690153,
+        "day_block_bootstrap_95": [
+          -1.0729013791812578,
+          -0.4281616006160798
+        ]
+      }
+    }
+  },
+  "recorded_statuses": {
+    "smc": {
+      "STOP_HIT": 2
+    },
+    "support_resistance": {
+      "TARGET_HIT": 10,
+      "STOP_HIT": 19,
+      "PENDING": 1
+    },
+    "trend_momentum": {
+      "STOP_HIT": 12,
+      "UNAVAILABLE": 1
+    },
+    "trendline": {
+      "UNAVAILABLE": 22,
+      "STOP_HIT": 143,
+      "TARGET_HIT": 88
+    },
+    "trendline-first-v5-shadow": {},
+    "trendline_v5": {
+      "TARGET_HIT": 22,
+      "STOP_HIT": 84,
+      "PENDING": 1
+    }
+  },
+  "coverage": {
+    "AUDUSD": {
+      "m1_count": 100000,
+      "first": 1783965000.0,
+      "last": 1792390980.0
+    },
+    "BTCUSD": {
+      "m1_count": 100000,
+      "first": 1786344120.0,
+      "last": 1792390920.0
+    },
+    "ETHUSD": {
+      "m1_count": 100000,
+      "first": 1786342260.0,
+      "last": 1792390920.0
+    },
+    "EURJPY": {
+      "m1_count": 100000,
+      "first": 1783956480.0,
+      "last": 1792390980.0
+    },
+    "EURUSD": {
+      "m1_count": 100002,
+      "first": 1783964820.0,
+      "last": 1792390920.0
+    },
+    "GBPJPY": {
+      "m1_count": 100000,
+      "first": 1783964280.0,
+      "last": 1792390920.0
+    },
+    "GBPUSD": {
+      "m1_count": 100000,
+      "first": 1783964940.0,
+      "last": 1792390920.0
+    },
+    "GER40": {
+      "m1_count": 100000,
+      "first": 1783427820.0,
+      "last": 1792390980.0
+    },
+    "NAS100": {
+      "m1_count": 100000,
+      "first": 1783521720.0,
+      "last": 1792390980.0
+    },
+    "NZDUSD": {
+      "m1_count": 100000,
+      "first": 1783965000.0,
+      "last": 1792390980.0
+    },
+    "US500": {
+      "m1_count": 100000,
+      "first": 1783509840.0,
+      "last": 1792390980.0
+    },
+    "USDCAD": {
+      "m1_count": 100000,
+      "first": 1783965000.0,
+      "last": 1792390980.0
+    },
+    "USDCHF": {
+      "m1_count": 100000,
+      "first": 1783965000.0,
+      "last": 1792390980.0
+    },
+    "USDJPY": {
+      "m1_count": 100000,
+      "first": 1783963980.0,
+      "last": 1792390920.0
+    },
+    "XAGUSD": {
+      "m1_count": 100000,
+      "first": 1783520700.0,
+      "last": 1792390980.0
+    },
+    "XAUUSD": {
+      "m1_count": 100000,
+      "first": 1783517100.0,
+      "last": 1792390920.0
+    }
+  },
+  "correlated": [
+    {
+      "signal": "stp_f80e71236bd144669b1871cdf96630b5",
+      "prior": "stp_1b206ee09d7b4dc492705633464282dd",
+      "symbol": "NAS100",
+      "seconds": 239.9764368534088
+    },
+    {
+      "signal": "stp_528e7a144fb146e0bbdf6ceb964a0441",
+      "prior": "stp_23d1aca846574278a3d8f96492bfdce4",
+      "symbol": "US500",
+      "seconds": 660.0223309993744
+    },
+    {
+      "signal": "stp_6401a475b2b24b93bd54b654b06eeebe",
+      "prior": "stp_652afcc1e91443f5bec0e4aff803c3a9",
+      "symbol": "NAS100",
+      "seconds": 1156.8566949367523
+    },
+    {
+      "signal": "stp_d3f125b743af474f8a463e81ec2fe40e",
+      "prior": "stp_e42ee3fe7dc245abb633bf765bfa888a",
+      "symbol": "ETHUSD",
+      "seconds": 456.7338171005249
+    },
+    {
+      "signal": "stp_9dcac11c64a84adca980b401a2769d8f",
+      "prior": "stp_96d8b3a472b84e2c8f2b329185f3520b",
+      "symbol": "USDCAD",
+      "seconds": 1959.3430778980255
+    },
+    {
+      "signal": "stp_26680063cd1448b289da84850ed1b1c7",
+      "prior": "stp_c69b7a6d854743ee837c5047c3252bae",
+      "symbol": "USDJPY",
+      "seconds": 91.26029706001282
+    },
+    {
+      "signal": "stp_efcdeaafea6641149f83ed01ced81f84",
+      "prior": "stp_52f828041d28495682655bb731bdad9a",
+      "symbol": "EURJPY",
+      "seconds": 1500.071699142456
+    },
+    {
+      "signal": "stp_3bc92dec391c437ab3ef6f58562615a7",
+      "prior": "stp_1a7e96a73b0a4750be7b55ed687a584a",
+      "symbol": "BTCUSD",
+      "seconds": 271.29895997047424
+    },
+    {
+      "signal": "stp_ba65b6d2323641698906a8947f6122b8",
+      "prior": "stp_2a67d6e169274e4fb815bd48320dda67",
+      "symbol": "EURJPY",
+      "seconds": 3668.849067926407
+    },
+    {
+      "signal": "stp_6660cfbb193e4198b804287f15bfabf6",
+      "prior": "stp_b06fc25e25b642c2aebb6f5cb12d38e2",
+      "symbol": "XAUUSD",
+      "seconds": 1913.9962930679321
+    },
+    {
+      "signal": "stp_eadc60152c2f42998ee4720de3ec1eea",
+      "prior": "stp_3bc92dec391c437ab3ef6f58562615a7",
+      "symbol": "BTCUSD",
+      "seconds": 113.87000107765198
+    },
+    {
+      "signal": "stp_12b7b6e9405a45ceb9cf4f57a062fe3e",
+      "prior": "stp_0a226bc7dd164c6696c5d205e07d2f7d",
+      "symbol": "XAGUSD",
+      "seconds": 1924.0408890247345
+    },
+    {
+      "signal": "stp_954f3a6bf97d4514a897b5fc3a03ff83",
+      "prior": "stp_ba65b6d2323641698906a8947f6122b8",
+      "symbol": "EURJPY",
+      "seconds": 286.17680191993713
+    },
+    {
+      "signal": "stp_92b2c378bab04c9db3b89768cb3c9f80",
+      "prior": "stp_f80e71236bd144669b1871cdf96630b5",
+      "symbol": "NAS100",
+      "seconds": 6464.145005941391
+    },
+    {
+      "signal": "stp_e46b216812ec4f0583925a32afe33e77",
+      "prior": "stp_92b2c378bab04c9db3b89768cb3c9f80",
+      "symbol": "NAS100",
+      "seconds": 256.6284019947052
+    },
+    {
+      "signal": "stp_657540ec9f884a08ac7c1d2e02f5758c",
+      "prior": "stp_d3f125b743af474f8a463e81ec2fe40e",
+      "symbol": "ETHUSD",
+      "seconds": 2940.613858938217
+    },
+    {
+      "signal": "stp_dc9471cec5414cb08f98414d2aba8309",
+      "prior": "stp_efcdeaafea6641149f83ed01ced81f84",
+      "symbol": "EURJPY",
+      "seconds": 1080.6024940013885
+    },
+    {
+      "signal": "stp_5464625dc44f4d52984067d1bed6b6f1",
+      "prior": "stp_a9855b51504043a0b7d8ed0de60f19be",
+      "symbol": "BTCUSD",
+      "seconds": 3299.900094985962
+    },
+    {
+      "signal": "stp_17e9dfdbf0cb42bc8205e7d9f1461373",
+      "prior": "stp_954f3a6bf97d4514a897b5fc3a03ff83",
+      "symbol": "EURJPY",
+      "seconds": 1320.5111980438232
+    },
+    {
+      "signal": "stp_5920e7b748664c9b9e9c2a420a36a244",
+      "prior": "stp_eadc60152c2f42998ee4720de3ec1eea",
+      "symbol": "BTCUSD",
+      "seconds": 1686.6830019950867
+    },
+    {
+      "signal": "stp_10bc0a140bca4548bc8c14c44da008e7",
+      "prior": "stp_657540ec9f884a08ac7c1d2e02f5758c",
+      "symbol": "ETHUSD",
+      "seconds": 840.0448160171509
+    },
+    {
+      "signal": "stp_b3ba0476b3264d6a9ff2db9b734cff6f",
+      "prior": "stp_17e9dfdbf0cb42bc8205e7d9f1461373",
+      "symbol": "EURJPY",
+      "seconds": 120.05581212043762
+    },
+    {
+      "signal": "stp_790fc368687b48d985043cd2e188eb23",
+      "prior": "stp_dc9471cec5414cb08f98414d2aba8309",
+      "symbol": "EURJPY",
+      "seconds": 1020.0909788608551
+    },
+    {
+      "signal": "stp_0e0ecd3a201749dcb854643780de5c5e",
+      "prior": "stp_528e7a144fb146e0bbdf6ceb964a0441",
+      "symbol": "US500",
+      "seconds": 7680.953444957733
+    },
+    {
+      "signal": "stp_116a8b1d0eaf41f394f12f66f157f285",
+      "prior": "stp_10bc0a140bca4548bc8c14c44da008e7",
+      "symbol": "ETHUSD",
+      "seconds": 479.99421405792236
+    },
+    {
+      "signal": "stp_2726a1c3bb934ec8bf115ec1778e516b",
+      "prior": "stp_0e0ecd3a201749dcb854643780de5c5e",
+      "symbol": "US500",
+      "seconds": 300.1826820373535
+    },
+    {
+      "signal": "stp_4a312617a1d6447ab2ddb968cce91850",
+      "prior": "stp_1aa168d3de344749b5993cf9f3cd91a4",
+      "symbol": "ETHUSD",
+      "seconds": 103.14668202400208
+    },
+    {
+      "signal": "stp_151c10dd04204a43aa18a29faf9bf780",
+      "prior": "stp_2726a1c3bb934ec8bf115ec1778e516b",
+      "symbol": "US500",
+      "seconds": 162.96270489692688
+    },
+    {
+      "signal": "stp_4fe49c84445443e0b2f42c441c3e6eed",
+      "prior": "stp_4a312617a1d6447ab2ddb968cce91850",
+      "symbol": "ETHUSD",
+      "seconds": 99.9686450958252
+    },
+    {
+      "signal": "stp_9e719a5cfa304e22b373ecc9d8e1fb8e",
+      "prior": "stp_4fe49c84445443e0b2f42c441c3e6eed",
+      "symbol": "ETHUSD",
+      "seconds": 39.97987985610962
+    },
+    {
+      "signal": "stp_83adbe2b53014d49bf10288f9a79ebfe",
+      "prior": "stp_116a8b1d0eaf41f394f12f66f157f285",
+      "symbol": "ETHUSD",
+      "seconds": 533.4367048740387
+    },
+    {
+      "signal": "stp_19872495b4604377afabcbd3979259b0",
+      "prior": "stp_83adbe2b53014d49bf10288f9a79ebfe",
+      "symbol": "ETHUSD",
+      "seconds": 40.742172956466675
+    },
+    {
+      "signal": "stp_571a0a440cef40409ca400a21ab2f7d2",
+      "prior": "stp_19872495b4604377afabcbd3979259b0",
+      "symbol": "ETHUSD",
+      "seconds": 69.24116015434265
+    },
+    {
+      "signal": "stp_11e06b4102754a6695c74ac0c54a22df",
+      "prior": "stp_571a0a440cef40409ca400a21ab2f7d2",
+      "symbol": "ETHUSD",
+      "seconds": 76.09936380386353
+    },
+    {
+      "signal": "stp_8b2d6f4c5d2b4ac696e7b6433be9a21f",
+      "prior": "stp_e1724a09a1fa41d6b478f486d0f24247",
+      "symbol": "NZDUSD",
+      "seconds": 5040.268299102783
+    },
+    {
+      "signal": "stp_217fe4ed4e7c4b47a24c47fe3b979fe0",
+      "prior": "stp_9e719a5cfa304e22b373ecc9d8e1fb8e",
+      "symbol": "ETHUSD",
+      "seconds": 690.2717859745026
+    },
+    {
+      "signal": "stp_ef8565e843ee415da5c2bd96a5ca70d3",
+      "prior": "stp_8b2d6f4c5d2b4ac696e7b6433be9a21f",
+      "symbol": "NZDUSD",
+      "seconds": 94.07049584388733
+    },
+    {
+      "signal": "stp_2519289c22a24706b0148736e4dcd27a",
+      "prior": "stp_11e06b4102754a6695c74ac0c54a22df",
+      "symbol": "ETHUSD",
+      "seconds": 354.12878799438477
+    },
+    {
+      "signal": "stp_8d7e1406e9804396899cd6b789bd84f0",
+      "prior": "stp_2519289c22a24706b0148736e4dcd27a",
+      "symbol": "ETHUSD",
+      "seconds": 49.952614068984985
+    },
+    {
+      "signal": "stp_e7a060d9ebdd4043a49a5a306deb6759",
+      "prior": "stp_217fe4ed4e7c4b47a24c47fe3b979fe0",
+      "symbol": "ETHUSD",
+      "seconds": 205.96605706214905
+    },
+    {
+      "signal": "stp_9709047b2a1445daa457a6d0f4f05209",
+      "prior": "stp_ef8565e843ee415da5c2bd96a5ca70d3",
+      "symbol": "NZDUSD",
+      "seconds": 266.0959441661835
+    },
+    {
+      "signal": "stp_72f320ce5db541e587756b4cb9f6dc09",
+      "prior": "stp_b3ba0476b3264d6a9ff2db9b734cff6f",
+      "symbol": "EURJPY",
+      "seconds": 1799.7554440498352
+    },
+    {
+      "signal": "stp_c0390c9e4f2f40e0b21f02ab0e27688a",
+      "prior": "stp_4f01d91fb639490c9d2c6279688486dc",
+      "symbol": "GBPUSD",
+      "seconds": 84.65160179138184
+    },
+    {
+      "signal": "stp_cf9b3cc26f9a42f68af0a9cd29cf62e8",
+      "prior": "stp_315e607170544db2925b74a21c9e4b8e",
+      "symbol": "USDCHF",
+      "seconds": 84.65160179138184
+    },
+    {
+      "signal": "stp_1f1605c656ff4b25a4e57583999044fd",
+      "prior": "stp_72f320ce5db541e587756b4cb9f6dc09",
+      "symbol": "EURJPY",
+      "seconds": 84.65160179138184
+    },
+    {
+      "signal": "stp_1d6d1680c3c4427a81648151dd48aace",
+      "prior": "stp_a6b6ce9c5b434a14bc3102791f49882d",
+      "symbol": "XAGUSD",
+      "seconds": 5137.80979180336
+    },
+    {
+      "signal": "stp_abfcbc6715534a429e893d73b157bb18",
+      "prior": "stp_3850d6df552b4a34ad2393189003bdaa",
+      "symbol": "GBPUSD",
+      "seconds": 94.09038996696472
+    },
+    {
+      "signal": "stp_81f45a1fd09a46e5963eeb3754a3e2ac",
+      "prior": "stp_790fc368687b48d985043cd2e188eb23",
+      "symbol": "EURJPY",
+      "seconds": 1773.5260791778564
+    },
+    {
+      "signal": "stp_05185832d65048efadeecf660fa6e7f1",
+      "prior": "stp_8d7e1406e9804396899cd6b789bd84f0",
+      "symbol": "ETHUSD",
+      "seconds": 360.0031430721283
+    },
+    {
+      "signal": "stp_d6b8fb5c49514c6ab153f6432ed0661a",
+      "prior": "stp_9dcac11c64a84adca980b401a2769d8f",
+      "symbol": "USDCAD",
+      "seconds": 4617.156270027161
+    },
+    {
+      "signal": "stp_185fe42dbc9940809a773208625c980b",
+      "prior": "stp_1f1605c656ff4b25a4e57583999044fd",
+      "symbol": "EURJPY",
+      "seconds": 155.09861612319946
+    },
+    {
+      "signal": "stp_cc52bb1233fa40878304daf8b90ea168",
+      "prior": "stp_97261f2ba98d4b10bd2053f12af318f0",
+      "symbol": "NZDUSD",
+      "seconds": 5557.855180978775
+    },
+    {
+      "signal": "stp_db327e70258d4c5cbc5953327205aa87",
+      "prior": "stp_abfcbc6715534a429e893d73b157bb18",
+      "symbol": "GBPUSD",
+      "seconds": 266.86814999580383
+    },
+    {
+      "signal": "stp_8ae04d197e8b4593af83d5373ac99232",
+      "prior": "stp_81f45a1fd09a46e5963eeb3754a3e2ac",
+      "symbol": "EURJPY",
+      "seconds": 325.9724109172821
+    },
+    {
+      "signal": "stp_d4e5d113767b4de8ab9c11aadf5c534a",
+      "prior": "stp_cf9b3cc26f9a42f68af0a9cd29cf62e8",
+      "symbol": "USDCHF",
+      "seconds": 455.1587960720062
+    },
+    {
+      "signal": "stp_01dd8b87a19142c8b6da9f287fdccd9a",
+      "prior": "stp_185fe42dbc9940809a773208625c980b",
+      "symbol": "EURJPY",
+      "seconds": 300.06017994880676
+    },
+    {
+      "signal": "stp_e7c4302d66a143caa3b0271de4fd3c8a",
+      "prior": "stp_c0390c9e4f2f40e0b21f02ab0e27688a",
+      "symbol": "GBPUSD",
+      "seconds": 470.67247009277344
+    },
+    {
+      "signal": "stp_f9eb921dba524a36b2369f6e2562c190",
+      "prior": "stp_368d3abc29164f6d9d79e1c32c0d4675",
+      "symbol": "USDCAD",
+      "seconds": 8604.372624874115
+    },
+    {
+      "signal": "stp_9f619e75d4ec43ed85f1b488c10dbbdd",
+      "prior": "stp_05185832d65048efadeecf660fa6e7f1",
+      "symbol": "ETHUSD",
+      "seconds": 420.06290888786316
+    },
+    {
+      "signal": "stp_f19ac7cb2dea4596bc6f8b8888ac7847",
+      "prior": "stp_9709047b2a1445daa457a6d0f4f05209",
+      "symbol": "NZDUSD",
+      "seconds": 583.9056258201599
+    },
+    {
+      "signal": "stp_386d3ba256124edcad4af33db9b6aa8c",
+      "prior": "stp_cc52bb1233fa40878304daf8b90ea168",
+      "symbol": "NZDUSD",
+      "seconds": 442.47554206848145
+    },
+    {
+      "signal": "stp_0bcd7cd2eb054f179bb40d4246c15f1a",
+      "prior": "stp_01557ec93a2d4a96a63427aed5ef890a",
+      "symbol": "GBPJPY",
+      "seconds": 10080.646754026413
+    },
+    {
+      "signal": "stp_adc6726dfc204db8b991325ba2bf3ba0",
+      "prior": "stp_f19ac7cb2dea4596bc6f8b8888ac7847",
+      "symbol": "NZDUSD",
+      "seconds": 299.08333706855774
+    },
+    {
+      "signal": "stp_51fbcd0c12604b86bdcf43bd1add45f2",
+      "prior": "stp_adc6726dfc204db8b991325ba2bf3ba0",
+      "symbol": "NZDUSD",
+      "seconds": 77.13643503189087
+    },
+    {
+      "signal": "stp_0084979330894da993522e1a7f77d490",
+      "prior": "stp_7cd0d18654724b2c88bf56d9151e5b3a",
+      "symbol": "XAUUSD",
+      "seconds": 6349.32755279541
+    },
+    {
+      "signal": "stp_5933e7b5602b4a4286c2033af1f90b19",
+      "prior": "stp_386d3ba256124edcad4af33db9b6aa8c",
+      "symbol": "NZDUSD",
+      "seconds": 299.948646068573
+    },
+    {
+      "signal": "stp_949bc4ac3de04ecda78742bdab8ff849",
+      "prior": "stp_d6b8fb5c49514c6ab153f6432ed0661a",
+      "symbol": "USDCAD",
+      "seconds": 905.9810590744019
+    },
+    {
+      "signal": "stp_99224e8d6a434e21a07827c66a245a39",
+      "prior": "stp_5933e7b5602b4a4286c2033af1f90b19",
+      "symbol": "NZDUSD",
+      "seconds": 240.8372209072113
+    },
+    {
+      "signal": "stp_89317ad5a2174707b3266f9e13944092",
+      "prior": "stp_db327e70258d4c5cbc5953327205aa87",
+      "symbol": "GBPUSD",
+      "seconds": 940.0733468532562
+    },
+    {
+      "signal": "stp_187c4837779546678d9af5bb397fd076",
+      "prior": "stp_15fa7d9fedc841518384f6de0f3efff9",
+      "symbol": "GBPJPY",
+      "seconds": 8384.6314599514
+    },
+    {
+      "signal": "stp_b27c48ff3112482c8625c09e300c2761",
+      "prior": "stp_656797fc339143e6abe3cc541de64a70",
+      "symbol": "USDCHF",
+      "seconds": 6691.663153886795
+    },
+    {
+      "signal": "stp_176822aa10de4f749fa6d664bebbae4e",
+      "prior": "stp_01dd8b87a19142c8b6da9f287fdccd9a",
+      "symbol": "EURJPY",
+      "seconds": 1310.8537330627441
+    },
+    {
+      "signal": "stp_587ba140c65a49a2a514413d4a401e7d",
+      "prior": "stp_2efafb8977e0424d94cf052ba148a82d",
+      "symbol": "EURUSD",
+      "seconds": 1279.1574881076813
+    },
+    {
+      "signal": "stp_763960efec7a41eb866e29a6eb07bc44",
+      "prior": "stp_b27c48ff3112482c8625c09e300c2761",
+      "symbol": "USDCHF",
+      "seconds": 1003.3264150619507
+    },
+    {
+      "signal": "stp_cd8cd7d01a80475cacbef027ed16cf96",
+      "prior": "stp_8ae04d197e8b4593af83d5373ac99232",
+      "symbol": "EURJPY",
+      "seconds": 2160.1265740394592
+    },
+    {
+      "signal": "stp_779183a2cb674300baada26b25d80ab9",
+      "prior": "stp_eaf7270c84ac4a54a7e1218a576573f1",
+      "symbol": "EURUSD",
+      "seconds": 2801.724575996399
+    },
+    {
+      "signal": "stp_8b0e703da0d9455fa0cc794515d779ad",
+      "prior": "stp_0084979330894da993522e1a7f77d490",
+      "symbol": "XAUUSD",
+      "seconds": 4115.656222105026
+    },
+    {
+      "signal": "stp_333f2e78c80746b0b81749c369ea0d2e",
+      "prior": "stp_763960efec7a41eb866e29a6eb07bc44",
+      "symbol": "USDCHF",
+      "seconds": 2484.569118976593
+    },
+    {
+      "signal": "stp_6bcdfc55adc44003b6fc5ce2e643acbc",
+      "prior": "stp_949bc4ac3de04ecda78742bdab8ff849",
+      "symbol": "USDCAD",
+      "seconds": 4044.7063069343567
+    },
+    {
+      "signal": "stp_aa4e7ff9187149628e76637b883b226a",
+      "prior": "stp_e46b216812ec4f0583925a32afe33e77",
+      "symbol": "NAS100",
+      "seconds": 8362.506110191345
+    },
+    {
+      "signal": "stp_e9f045e6d97f44b3812a7c1f6dbe27f6",
+      "prior": "stp_5920e7b748664c9b9e9c2a420a36a244",
+      "symbol": "BTCUSD",
+      "seconds": 7222.449002027512
+    },
+    {
+      "signal": "stp_c1bb09474a084ead89047f9bc0937e4e",
+      "prior": "stp_151c10dd04204a43aa18a29faf9bf780",
+      "symbol": "US500",
+      "seconds": 7175.1668581962585
+    },
+    {
+      "signal": "stp_f0b201ac6b1341faacf9d4fe059a1374",
+      "prior": "stp_5464625dc44f4d52984067d1bed6b6f1",
+      "symbol": "BTCUSD",
+      "seconds": 8358.972581148148
+    },
+    {
+      "signal": "stp_f35523f4496e46af8974dc4f0015a9da",
+      "prior": "stp_e9f045e6d97f44b3812a7c1f6dbe27f6",
+      "symbol": "BTCUSD",
+      "seconds": 971.9581038951874
+    },
+    {
+      "signal": "stp_c6c3840189d740b6afce947ffbdb20a9",
+      "prior": "stp_f0b201ac6b1341faacf9d4fe059a1374",
+      "symbol": "BTCUSD",
+      "seconds": 11148.163436889648
+    },
+    {
+      "signal": "stp_4d1f1b7eb17b4db2877ba107cdd5fdaa",
+      "prior": "stp_c1bb09474a084ead89047f9bc0937e4e",
+      "symbol": "US500",
+      "seconds": 11374.263779878616
+    },
+    {
+      "signal": "stp_667df864be874512b8f6816aea15eac6",
+      "prior": "stp_8b0e703da0d9455fa0cc794515d779ad",
+      "symbol": "XAUUSD",
+      "seconds": 13454.798091888428
+    },
+    {
+      "signal": "stp_45b748bbbd5245ccad5316231f183bc7",
+      "prior": "stp_f35523f4496e46af8974dc4f0015a9da",
+      "symbol": "BTCUSD",
+      "seconds": 12184.631331920624
+    },
+    {
+      "signal": "stp_9c86dfdf7ced4bc18d12e7bebfc04501",
+      "prior": "stp_333f2e78c80746b0b81749c369ea0d2e",
+      "symbol": "USDCHF",
+      "seconds": 13454.798091888428
+    },
+    {
+      "signal": "stp_fa8c2439bd2a4564b50c9b405d6cc7fe",
+      "prior": "stp_aa4e7ff9187149628e76637b883b226a",
+      "symbol": "NAS100",
+      "seconds": 13267.903986930847
+    },
+    {
+      "signal": "stp_c3f20ed3a36d4d6f813393f0af0e27cd",
+      "prior": "stp_229f920e6b954bcd89b7a11aa666b77d",
+      "symbol": "ETHUSD",
+      "seconds": 111.31455111503601
+    },
+    {
+      "signal": "stp_2044c2be01274b04921f42fcf2b4b7b4",
+      "prior": "stp_5ed33d924d3842c2ab01e04777e09ef2",
+      "symbol": "EURUSD",
+      "seconds": 116.62163400650024
+    },
+    {
+      "signal": "stp_77294e863fbf42ffaa9e8dca4ce6438c",
+      "prior": "stp_2044c2be01274b04921f42fcf2b4b7b4",
+      "symbol": "EURUSD",
+      "seconds": 31.417160034179688
+    },
+    {
+      "signal": "stp_db13967c383741dcb641abce33d45325",
+      "prior": "stp_77294e863fbf42ffaa9e8dca4ce6438c",
+      "symbol": "EURUSD",
+      "seconds": 79.39071416854858
+    },
+    {
+      "signal": "stp_0f1fbd564c78403ca560c09121ad5ed6",
+      "prior": "stp_c3f20ed3a36d4d6f813393f0af0e27cd",
+      "symbol": "ETHUSD",
+      "seconds": 123.96352005004883
+    },
+    {
+      "signal": "stp_de049a221d084d40b37f585e2b525ca1",
+      "prior": "stp_ac1fbf0c3f9049309ac482509dfb764c",
+      "symbol": "GBPUSD",
+      "seconds": 1304.1325509548187
+    },
+    {
+      "signal": "stp_f5a93a9164334c8a863efad54a0cd0d7",
+      "prior": "stp_fa8c2439bd2a4564b50c9b405d6cc7fe",
+      "symbol": "NAS100",
+      "seconds": 235.83955788612366
+    },
+    {
+      "signal": "stp_2983762f7a614cb49f1230434d875b2f",
+      "prior": "stp_0ec78d8606cf4b2b927ecd916927314f",
+      "symbol": "NAS100",
+      "seconds": 112.1405680179596
+    },
+    {
+      "signal": "stp_33bd37cc98fc4e9bb6fb68cee6063ed1",
+      "prior": "stp_deafcba3fcbd4528b6c976f1207a8b4b",
+      "symbol": "USDCAD",
+      "seconds": 561.4931311607361
+    },
+    {
+      "signal": "stp_b48798c9954f4deda900bd078c8985ea",
+      "prior": "stp_db13967c383741dcb641abce33d45325",
+      "symbol": "EURUSD",
+      "seconds": 1228.9271199703217
+    },
+    {
+      "signal": "stp_ad4357442a14456290df812d719a06da",
+      "prior": "stp_33bd37cc98fc4e9bb6fb68cee6063ed1",
+      "symbol": "USDCAD",
+      "seconds": 231.62378692626953
+    },
+    {
+      "signal": "stp_fb69a2e5340849bd96c6817aee06a28d",
+      "prior": "stp_0f1fbd564c78403ca560c09121ad5ed6",
+      "symbol": "ETHUSD",
+      "seconds": 1320.4087488651276
+    },
+    {
+      "signal": "stp_a8ce301b66d44021a0be9085fc6f64d6",
+      "prior": "stp_b48798c9954f4deda900bd078c8985ea",
+      "symbol": "EURUSD",
+      "seconds": 612.1965849399567
+    },
+    {
+      "signal": "stp_5a91d3c8efdc434b8da4ede0b326bde6",
+      "prior": "stp_ad4357442a14456290df812d719a06da",
+      "symbol": "USDCAD",
+      "seconds": 545.6551780700684
+    },
+    {
+      "signal": "stp_c468e2e03e13425197df6f4166dc316a",
+      "prior": "stp_a8ce301b66d44021a0be9085fc6f64d6",
+      "symbol": "EURUSD",
+      "seconds": 60.43360090255737
+    },
+    {
+      "signal": "stp_fb63d20f355f49f7b6235c1e79823e67",
+      "prior": "stp_9c86dfdf7ced4bc18d12e7bebfc04501",
+      "symbol": "USDCHF",
+      "seconds": 2128.986814022064
+    },
+    {
+      "signal": "stp_403adcc9f2fd449da063bbd23229bcdf",
+      "prior": "stp_fb63d20f355f49f7b6235c1e79823e67",
+      "symbol": "USDCHF",
+      "seconds": 48.7492949962616
+    },
+    {
+      "signal": "stp_b7b0f1a94060404ab7a6f01035f8e1e2",
+      "prior": "stp_2c8b637928724795bb00db164bcfb267",
+      "symbol": "USDCAD",
+      "seconds": 748.2572588920593
+    },
+    {
+      "signal": "stp_3cd0a3519d984f02bb11ad17289b9254",
+      "prior": "stp_de049a221d084d40b37f585e2b525ca1",
+      "symbol": "GBPUSD",
+      "seconds": 2247.5608460903168
+    },
+    {
+      "signal": "stp_4f96aa5f050744928a52b09ee6e1d4cc",
+      "prior": "stp_fb69a2e5340849bd96c6817aee06a28d",
+      "symbol": "ETHUSD",
+      "seconds": 1502.4958171844482
+    },
+    {
+      "signal": "stp_08e32e0499f8441d9b70fc366892ddbd",
+      "prior": "stp_b7b0f1a94060404ab7a6f01035f8e1e2",
+      "symbol": "USDCAD",
+      "seconds": 853.2129771709442
+    },
+    {
+      "signal": "stp_8a3fa27712004748a9bcf8d323bdacf1",
+      "prior": "stp_38d0b1179eb64cb6bef1698001d4c692",
+      "symbol": "XAGUSD",
+      "seconds": 4409.306671142578
+    },
+    {
+      "signal": "stp_e73110f1ec7746cd9642b0c9d8531e2f",
+      "prior": "stp_08e32e0499f8441d9b70fc366892ddbd",
+      "symbol": "USDCAD",
+      "seconds": 34.75086283683777
+    },
+    {
+      "signal": "stp_8bca6b98296c4b66862205538600092c",
+      "prior": "stp_5a91d3c8efdc434b8da4ede0b326bde6",
+      "symbol": "USDCAD",
+      "seconds": 1091.2299098968506
+    },
+    {
+      "signal": "stp_ec6d610225334de4ba3659ccb49ef438",
+      "prior": "stp_e73110f1ec7746cd9642b0c9d8531e2f",
+      "symbol": "USDCAD",
+      "seconds": 54.329543113708496
+    },
+    {
+      "signal": "stp_9763aec978d44274835a508235cf8ef0",
+      "prior": "stp_ec6d610225334de4ba3659ccb49ef438",
+      "symbol": "USDCAD",
+      "seconds": 362.3604600429535
+    },
+    {
+      "signal": "stp_729d542bda074d0fb7efd6a6b0cc9c17",
+      "prior": "stp_8bca6b98296c4b66862205538600092c",
+      "symbol": "USDCAD",
+      "seconds": 403.3629250526428
+    },
+    {
+      "signal": "stp_2e3ab3759a52448690e10e481543b641",
+      "prior": "stp_729d542bda074d0fb7efd6a6b0cc9c17",
+      "symbol": "USDCAD",
+      "seconds": 40.024720907211304
+    },
+    {
+      "signal": "stp_1398baaedd50469aaeffb60b124efa87",
+      "prior": "stp_9763aec978d44274835a508235cf8ef0",
+      "symbol": "USDCAD",
+      "seconds": 125.82158589363098
+    },
+    {
+      "signal": "stp_b0471ef24e2d4a018edd94df3a4baa5c",
+      "prior": "stp_8a3fa27712004748a9bcf8d323bdacf1",
+      "symbol": "XAGUSD",
+      "seconds": 577.2624518871307
+    },
+    {
+      "signal": "stp_075682e8162d4f819b927da5102dbe1e",
+      "prior": "stp_2e3ab3759a52448690e10e481543b641",
+      "symbol": "USDCAD",
+      "seconds": 120.97914600372314
+    },
+    {
+      "signal": "stp_ee867763f098473abe491f014fa163d5",
+      "prior": "stp_075682e8162d4f819b927da5102dbe1e",
+      "symbol": "USDCAD",
+      "seconds": 73.03911995887756
+    },
+    {
+      "signal": "stp_1d28c64cf2634eed82d60495701c4a86",
+      "prior": "stp_1398baaedd50469aaeffb60b124efa87",
+      "symbol": "USDCAD",
+      "seconds": 299.470351934433
+    },
+    {
+      "signal": "stp_372326e2b4024b87bd3df9c24a5ddf6c",
+      "prior": "stp_d8d03e18e5f24d21bc9232875c613104",
+      "symbol": "GBPUSD",
+      "seconds": 3765.891445159912
+    },
+    {
+      "signal": "stp_5eb2733520e44a7086d5037367720138",
+      "prior": "stp_4f96aa5f050744928a52b09ee6e1d4cc",
+      "symbol": "ETHUSD",
+      "seconds": 1180.6948068141937
+    },
+    {
+      "signal": "stp_de148551ad9e44ddba760619599617e4",
+      "prior": "stp_0e8e945626e7421cb033c47dd0678061",
+      "symbol": "USDCHF",
+      "seconds": 4171.927687883377
+    },
+    {
+      "signal": "stp_74535587be9340b3a0b19ec1ddd7603c",
+      "prior": "stp_c9c0b3f8b1024b3aa92aae4515fbb267",
+      "symbol": "USDJPY",
+      "seconds": 4437.062772989273
+    },
+    {
+      "signal": "stp_0db66fdb3e44433ea86672cb0d71b86c",
+      "prior": "stp_8e6b1b34b2254562b1d0d66cfd10d7c4",
+      "symbol": "USDJPY",
+      "seconds": 4806.818921089172
+    },
+    {
+      "signal": "stp_8f7eb60078804775852c43581ce39b33",
+      "prior": "stp_74535587be9340b3a0b19ec1ddd7603c",
+      "symbol": "USDJPY",
+      "seconds": 693.4712030887604
+    },
+    {
+      "signal": "stp_fc5d88b9d102487aa5d0610c67446a09",
+      "prior": "stp_5eb2733520e44a7086d5037367720138",
+      "symbol": "ETHUSD",
+      "seconds": 1275.2569279670715
+    },
+    {
+      "signal": "stp_ae99903fc933421fa866b2e8fb396449",
+      "prior": "stp_ee867763f098473abe491f014fa163d5",
+      "symbol": "USDCAD",
+      "seconds": 1695.6300280094147
+    },
+    {
+      "signal": "stp_53dc1066d7084b039073a728e26efb1a",
+      "prior": "stp_0b6f4ad035f9471eb4393488a5d788cb",
+      "symbol": "AUDUSD",
+      "seconds": 5451.092085838318
+    },
+    {
+      "signal": "stp_fa969d9691124923956d21ca3b8a4329",
+      "prior": "stp_42013692635d44818a78c6f3487bb047",
+      "symbol": "XAUUSD",
+      "seconds": 5266.114480018616
+    },
+    {
+      "signal": "stp_8f2793b49fcd4314b613dcd761d040a0",
+      "prior": "stp_ceaea62d90184478ac9d7f226a4fa2fe",
+      "symbol": "NZDUSD",
+      "seconds": 5119.590967178345
+    },
+    {
+      "signal": "stp_bd64eaa4e4844afe8ee87bc8bb118437",
+      "prior": "stp_ff00a40ad32e4ec2adc9f8dad1f3cec4",
+      "symbol": "XAGUSD",
+      "seconds": 2118.7700278759003
+    },
+    {
+      "signal": "stp_d66931003df942c8aa97d85d02b6b7e1",
+      "prior": "stp_ea8e62fc618045f1905f724765f2c759",
+      "symbol": "EURUSD",
+      "seconds": 6009.092303037643
+    },
+    {
+      "signal": "stp_c233f49c5f1b48daac68577091d33880",
+      "prior": "stp_947d9cdfb814453f9007da94f5cc8ddd",
+      "symbol": "EURJPY",
+      "seconds": 6855.995002031326
+    },
+    {
+      "signal": "stp_e75799e50437400a8821760645e3ca2b",
+      "prior": "stp_fc5d88b9d102487aa5d0610c67446a09",
+      "symbol": "ETHUSD",
+      "seconds": 3967.6172862052917
+    },
+    {
+      "signal": "stp_1a4b2fd5318848249ae037050a025e78",
+      "prior": "stp_45b748bbbd5245ccad5316231f183bc7",
+      "symbol": "BTCUSD",
+      "seconds": 9517.729137182236
+    },
+    {
+      "signal": "stp_842a77d0f0ee4efdad2fe4f87a56b074",
+      "prior": "stp_f5a93a9164334c8a863efad54a0cd0d7",
+      "symbol": "NAS100",
+      "seconds": 9197.855293035507
+    },
+    {
+      "signal": "stp_f7d58fb5e4b545d8b27df13a0aac35cc",
+      "prior": "stp_c6c3840189d740b6afce947ffbdb20a9",
+      "symbol": "BTCUSD",
+      "seconds": 11843.074038982391
+    },
+    {
+      "signal": "stp_8b69a3cd70c84f88b2782c09a18c2185",
+      "prior": "stp_667df864be874512b8f6816aea15eac6",
+      "symbol": "XAUUSD",
+      "seconds": 11112.544758081436
+    },
+    {
+      "signal": "stp_db2c483e13704f88ae7fb9e213b4a541",
+      "prior": "stp_0db66fdb3e44433ea86672cb0d71b86c",
+      "symbol": "USDJPY",
+      "seconds": 6562.403292894363
+    },
+    {
+      "signal": "stp_3ea4389e2e6a42099a1d3573793f5cd7",
+      "prior": "stp_8f7eb60078804775852c43581ce39b33",
+      "symbol": "USDJPY",
+      "seconds": 6514.189068078995
+    },
+    {
+      "signal": "stp_4510449e485d4a4684c1e47caad28a2b",
+      "prior": "stp_372326e2b4024b87bd3df9c24a5ddf6c",
+      "symbol": "GBPUSD",
+      "seconds": 7802.099143028259
+    },
+    {
+      "signal": "stp_289f0f2ef24e4b84afc7737999d17af9",
+      "prior": "stp_c468e2e03e13425197df6f4166dc316a",
+      "symbol": "EURUSD",
+      "seconds": 9912.911543130875
+    },
+    {
+      "signal": "stp_72693eeef7a6499fb5fe2da3f2fc4f5d",
+      "prior": "stp_403adcc9f2fd449da063bbd23229bcdf",
+      "symbol": "USDCHF",
+      "seconds": 10286.426648139954
+    },
+    {
+      "signal": "stp_5f17aa1703ae4f4eaa91031428935e4a",
+      "prior": "stp_53dc1066d7084b039073a728e26efb1a",
+      "symbol": "AUDUSD",
+      "seconds": 8593.043076992035
+    },
+    {
+      "signal": "stp_e81f67f4bdab4490b79d7c2727d1edfb",
+      "prior": "stp_fa969d9691124923956d21ca3b8a4329",
+      "symbol": "XAUUSD",
+      "seconds": 10054.447615861893
+    },
+    {
+      "signal": "stp_9dd41fbacc864444bc6a825049d6560b",
+      "prior": "stp_d66931003df942c8aa97d85d02b6b7e1",
+      "symbol": "EURUSD",
+      "seconds": 8989.539885997772
+    },
+    {
+      "signal": "stp_08db0f63d61e43d19428012b69935a57",
+      "prior": "stp_8b69a3cd70c84f88b2782c09a18c2185",
+      "symbol": "XAUUSD",
+      "seconds": 4652.21901512146
+    },
+    {
+      "signal": "stp_c3675becb2e54e4482b2f18a01b62b66",
+      "prior": "stp_842a77d0f0ee4efdad2fe4f87a56b074",
+      "symbol": "NAS100",
+      "seconds": 7548.432163000107
+    },
+    {
+      "signal": "stp_bc9e974645c4407182a7b682cffccfbe",
+      "prior": "stp_8f2793b49fcd4314b613dcd761d040a0",
+      "symbol": "NZDUSD",
+      "seconds": 13477.7454559803
+    },
+    {
+      "signal": "stp_cde72d5f9afd469db10960f247e77acf",
+      "prior": "stp_db2c483e13704f88ae7fb9e213b4a541",
+      "symbol": "USDJPY",
+      "seconds": 12851.574622154236
+    },
+    {
+      "signal": "stp_94b49e779bf54a2bae1e20454f12e71b",
+      "prior": "stp_cf9df78bc43e4b038885ebcca630dddd",
+      "symbol": "BTCUSD",
+      "seconds": 8625.206837892532
+    },
+    {
+      "signal": "stp_c8a4256646084d59a2740bca25b8c57c",
+      "prior": "stp_94b49e779bf54a2bae1e20454f12e71b",
+      "symbol": "BTCUSD",
+      "seconds": 11943.592769145966
+    },
+    {
+      "signal": "stp_f9e1096ca2de44398a0cbcba27748b66",
+      "prior": "stp_d0a3a73188c44ebda0ed5380e29b2b02",
+      "symbol": "USDCHF",
+      "seconds": 9597.602946043015
+    },
+    {
+      "signal": "stp_b0f31d1fecf34c5eb8342970edc51e59",
+      "prior": "stp_55a150f55d1a43ce8b32980cc9408e5c",
+      "symbol": "US500",
+      "seconds": 900.0652449131012
+    },
+    {
+      "signal": "stp_aec506a2c274432f951ddf30e0bd4d69",
+      "prior": "stp_446ccaab7b354ce1b37a7c3f7d552b8d",
+      "symbol": "ETHUSD",
+      "seconds": 889.9854512214661
+    },
+    {
+      "signal": "stp_ac3759a993084f4dbb78d103913315b0",
+      "prior": "stp_941dac437fd24d688e4a6f0d978898ef",
+      "symbol": "XAGUSD",
+      "seconds": 5389.998662948608
+    },
+    {
+      "signal": "stp_e903878da8394e7288b7de8d91b329ca",
+      "prior": "stp_6b29c6449921408ab8be8e7dda5580fe",
+      "symbol": "EURJPY",
+      "seconds": 2730.156720161438
+    },
+    {
+      "signal": "stp_5dbcc4f2db324df6b417c0afb85c3db0",
+      "prior": "stp_6a19a0013c11406d918811067e9c0766",
+      "symbol": "XAUUSD",
+      "seconds": 880.0328950881958
+    },
+    {
+      "signal": "stp_42f48a3272d846cd8828f481648130aa",
+      "prior": "stp_ed406c997ee248a9a88745149fa8a48a",
+      "symbol": "XAUUSD",
+      "seconds": 2730.2172758579254
+    },
+    {
+      "signal": "stp_104396122ac348aaac427f961aaf99d0",
+      "prior": "stp_61824d626ead47d4bcfcc94d1592cdf1",
+      "symbol": "NAS100",
+      "seconds": 4168.5033230781555
+    },
+    {
+      "signal": "stp_dce577e2a58a4a3399a6223922d188ae",
+      "prior": "stp_47b8903820454e61b527e05406d4a677",
+      "symbol": "NZDUSD",
+      "seconds": 5408.471269130707
+    },
+    {
+      "signal": "stp_3a2e9b4e647945cf852e9e6125d28e40",
+      "prior": "stp_7a9576f727944c01969e73cbd3b7bc80",
+      "symbol": "NZDUSD",
+      "seconds": 60.00331091880798
+    },
+    {
+      "signal": "stp_ede38fb58ff24a8c9f44be6f1ba5f606",
+      "prior": "stp_3a2e9b4e647945cf852e9e6125d28e40",
+      "symbol": "NZDUSD",
+      "seconds": 12600.042594909668
+    },
+    {
+      "signal": "stp_137a2c7985134dcfb273cff868cf625d",
+      "prior": "stp_acb9009e7ba449479ef3f8f38bed0419",
+      "symbol": "NAS100",
+      "seconds": 939.1239411830902
+    },
+    {
+      "signal": "stp_aff6d6621b99488286afdafe4cce9ae1",
+      "prior": "stp_5cae57fb9f6947018f75476cd5943b3c",
+      "symbol": "USDCAD",
+      "seconds": 10106.153682947159
+    },
+    {
+      "signal": "stp_042084a3c2d042bb9cbbb01d11e1d2ac",
+      "prior": "stp_c431d5054d3244e18f0357b03f34f48a",
+      "symbol": "EURJPY",
+      "seconds": 3617.084881067276
+    },
+    {
+      "signal": "stp_7b0b1e72493848029ab4ed501c638916",
+      "prior": "stp_4e63b17f39f547c0b4f2e8bc8cdc9f48",
+      "symbol": "US500",
+      "seconds": 1111.921091079712
+    },
+    {
+      "signal": "stp_a1e7e9e975864e169e0ae05a1257ed4a",
+      "prior": "stp_c9efcdaab9374347806a5a7da520a3bb",
+      "symbol": "EURUSD",
+      "seconds": 7992.696840047836
+    },
+    {
+      "signal": "stp_409ef95baa7b4340b936cf1646c2a0e6",
+      "prior": "stp_a1e7e9e975864e169e0ae05a1257ed4a",
+      "symbol": "EURUSD",
+      "seconds": 14275.145068883896
+    },
+    {
+      "signal": "stp_b8ea9c5d5741478db8568683deb5609e",
+      "prior": "stp_c6a3cc3629fc4b8da3cc11b73d8a9947",
+      "symbol": "EURJPY",
+      "seconds": 8997.179151058197
+    },
+    {
+      "signal": "bank_fe9b46adcc8449a2a05cfd2ba6bb9304",
+      "prior": "bank_0bbc81ca45c54514890633a35309068b",
+      "symbol": "USDCAD",
+      "seconds": 1728.0111548900604
+    },
+    {
+      "signal": "bank_48e1a7917ae045d9a75365d7fdebdcf7",
+      "prior": "bank_3f5cc9299d6b4d0cb83b0c92c940185f",
+      "symbol": "AUDUSD",
+      "seconds": 884.4575209617615
+    },
+    {
+      "signal": "bank_194e6b57ccb9485c90ee20938abe2b22",
+      "prior": "bank_48e1a7917ae045d9a75365d7fdebdcf7",
+      "symbol": "AUDUSD",
+      "seconds": 0.0
+    },
+    {
+      "signal": "bank_0801e12eb44a41f3943335450553bdac",
+      "prior": "bank_d0e6e05993914533a89fa43f527b795e",
+      "symbol": "NZDUSD",
+      "seconds": 884.4575209617615
+    },
+    {
+      "signal": "bank_ead71dcded7c4a5e93b763674cfbb6d4",
+      "prior": "bank_0801e12eb44a41f3943335450553bdac",
+      "symbol": "NZDUSD",
+      "seconds": 0.0
+    },
+    {
+      "signal": "bank_e6e1a61e8429486ea8670c540e9e3018",
+      "prior": "bank_5e566d653b1742c49a0fe361eda0188c",
+      "symbol": "GBPJPY",
+      "seconds": 3609.07381606102
+    },
+    {
+      "signal": "bank_c79cd776b3e645799a062cfdd9f7cc63",
+      "prior": "bank_e6e1a61e8429486ea8670c540e9e3018",
+      "symbol": "GBPJPY",
+      "seconds": 0.0
+    },
+    {
+      "signal": "bank_df8596f5c4bd4e669345cdea846b1e77",
+      "prior": "stp_a8d348aeb34e4445bbb48d06ee77388b",
+      "symbol": "NAS100",
+      "seconds": 13060.601047039032
+    },
+    {
+      "signal": "bank_b1e94e10a954403e808f3e1a9e12761c",
+      "prior": "bank_ead71dcded7c4a5e93b763674cfbb6d4",
+      "symbol": "NZDUSD",
+      "seconds": 3609.07381606102
+    },
+    {
+      "signal": "bank_638f8075746d4e4f8bab03db7cfdf2f3",
+      "prior": "bank_b1e94e10a954403e808f3e1a9e12761c",
+      "symbol": "NZDUSD",
+      "seconds": 0.0
+    },
+    {
+      "signal": "bank_f4f8e7c24ee342caa271dbc9e8e7e3b9",
+      "prior": "bank_1751d36b6f734f9a844a7623ef4fae7e",
+      "symbol": "USDJPY",
+      "seconds": 8924.380954027176
+    },
+    {
+      "signal": "bank_16ae16bad2ec468c94e72e3627a59ed3",
+      "prior": "bank_f4f8e7c24ee342caa271dbc9e8e7e3b9",
+      "symbol": "USDJPY",
+      "seconds": 0.0
+    },
+    {
+      "signal": "bank_226a396e8f59419b893922af610f84c9",
+      "prior": "bank_3df1c6e166924f1d8b2b86a99235b9d6",
+      "symbol": "GER40",
+      "seconds": 3587.2959830760956
+    },
+    {
+      "signal": "bank_d5a3426b9b2c478f8ad45b71b61be1ca",
+      "prior": "bank_4633999bd6af4fbabf2dcea0f638db46",
+      "symbol": "EURJPY",
+      "seconds": 3587.2959830760956
+    },
+    {
+      "signal": "stp_7ae0c9baeb6c4bd499069746fb6c3218",
+      "prior": "bank_fe9b46adcc8449a2a05cfd2ba6bb9304",
+      "symbol": "USDCAD",
+      "seconds": 8418.115384101868
+    },
+    {
+      "signal": "bank_fe2a3b7cff7944698e89c3d78baafcb5",
+      "prior": "bank_8095366d8bb34e679f93baa8c1335d9d",
+      "symbol": "US500",
+      "seconds": 0.0
+    },
+    {
+      "signal": "bank_e86ae71ea13944d9b52e4d5129035494",
+      "prior": "stp_225f9e50dd1d468986a84c00ab2a5bf3",
+      "symbol": "NAS100",
+      "seconds": 9014.739081144333
+    },
+    {
+      "signal": "bank_7bc3ba2e17e24bcda407df3bc8f75cbb",
+      "prior": "stp_3b3d3905ac05412f98453e3f75ae79ef",
+      "symbol": "US500",
+      "seconds": 12609.383745193481
+    },
+    {
+      "signal": "bank_011e0d31c29845e1be0a3c7904fc5e28",
+      "prior": "bank_8f3dc97dec0f4b979a6ad45b795bdfbf",
+      "symbol": "ETHUSD",
+      "seconds": 7218.448652982712
+    },
+    {
+      "signal": "bank_5bf5b4141e2e49f8b4df679b2df470a7",
+      "prior": "bank_e86ae71ea13944d9b52e4d5129035494",
+      "symbol": "NAS100",
+      "seconds": 2707.918128013611
+    },
+    {
+      "signal": "bank_ac43f191175d4c11b99e0bd4221cf0c0",
+      "prior": "bank_7bc3ba2e17e24bcda407df3bc8f75cbb",
+      "symbol": "US500",
+      "seconds": 2707.918128013611
+    },
+    {
+      "signal": "bank_025edf9394e744039cad65cf8b2d266a",
+      "prior": "bank_d5a3426b9b2c478f8ad45b71b61be1ca",
+      "symbol": "EURJPY",
+      "seconds": 7218.448652982712
+    },
+    {
+      "signal": "bank_11ccac692b6c47d79ec3bf895bc48460",
+      "prior": "bank_16ae16bad2ec468c94e72e3627a59ed3",
+      "symbol": "USDJPY",
+      "seconds": 10811.942463874817
+    },
+    {
+      "signal": "bank_3b48558cbd784faa9d04b88ace24878f",
+      "prior": "bank_b59ffbc2288244e5a424472cb187918d",
+      "symbol": "USDCHF",
+      "seconds": 0.0
+    },
+    {
+      "signal": "stp_2b18d01547b245b69a31cf4e510ac5e3",
+      "prior": "stp_217bb78bafb64261a0c8b42a2e81e7d6",
+      "symbol": "XAGUSD",
+      "seconds": 12601.674773931503
+    },
+    {
+      "signal": "bank_bf3222812ddb4ec080696978e923cfb6",
+      "prior": "bank_85ce18c4892941cdb516e039b2c693c0",
+      "symbol": "XAUUSD",
+      "seconds": 10801.544151067734
+    },
+    {
+      "signal": "bank_35863f177b4042fea9b167e3287ec685",
+      "prior": "bank_fe2a3b7cff7944698e89c3d78baafcb5",
+      "symbol": "US500",
+      "seconds": 10801.544151067734
+    },
+    {
+      "signal": "bank_e26130c559f947c6a0cbd5154d627377",
+      "prior": "stp_086fd07b34b3413982e81bf514570124",
+      "symbol": "USDCHF",
+      "seconds": 5212.886467933655
+    },
+    {
+      "signal": "stp_b254c2a7ad144cdca69a72b8649548f1",
+      "prior": "stp_51b8b60138094122a493e9787b2e763e",
+      "symbol": "GBPJPY",
+      "seconds": 8988.890240907669
+    },
+    {
+      "signal": "stp_9406757332e545138dd880f32553c4dc",
+      "prior": "bank_3b48558cbd784faa9d04b88ace24878f",
+      "symbol": "USDCHF",
+      "seconds": 4501.477540016174
+    },
+    {
+      "signal": "stp_3c3bbc19b66048a59377e4400670d8fa",
+      "prior": "bank_b6141709e9ea4619aaa67abee2261ab0",
+      "symbol": "AUDUSD",
+      "seconds": 1210.3927640914917
+    },
+    {
+      "signal": "bank_8596193d7b774a6684edb2890335ffca",
+      "prior": "bank_ff04e52698674601b73c7fa1b891dc3e",
+      "symbol": "EURUSD",
+      "seconds": 14395.090988874435
+    },
+    {
+      "signal": "bank_dc336510562545208676125651123d21",
+      "prior": "bank_df995550217f488caa7491b4039aa719",
+      "symbol": "GER40",
+      "seconds": 7193.956250190735
+    }
+  ],
+  "manifest": {
+    "setup_confirmations.jsonl": {
+      "size": 401690,
+      "sha256": "4e1fa877df33f3b8d56f1a441cbf4c041fa780c307006b37ca1adafae0b54ab9"
+    },
+    "signal_outcomes.jsonl": {
+      "size": 404154,
+      "sha256": "145ddd7d1c408553f04518422bd81732a003088f5f2eb348195f470f059490a3"
+    },
+    "strategy_bank/signals.jsonl": {
+      "size": 108511,
+      "sha256": "11743106619113acf7c1a9759ff65105b46ea5512c66521834576742b1539d1d"
+    }
+  }
+}

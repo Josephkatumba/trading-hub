@@ -1,0 +1,27 @@
+const esc=value=>String(value??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=(value,digits=2)=>value==null?'—':Number(value).toFixed(digits);
+const date=value=>value==null?'—':new Date(value*1000).toISOString().replace('T',' ').replace('.000Z',' UTC');
+export const localLabsAvailable=hostname=>['127.0.0.1','localhost','[::1]','::1'].includes(hostname);
+export function renderQuantLabs(){return `<section class="ql-workspace"><div class="kicker">PRIVATE RESEARCH</div><h1>Quant Labs</h1><p class="sub">Independent experimental models · paper outcomes · Telegram dry run</p><div id="quantLabsData" aria-live="polite">Connecting to the local research engine…</div></section>`;}
+export function labsContent(data){
+ const p=data.performance||{},signals=data.signals||[],runtime=data.runtime||{};
+ const summary=(p)=>`<dl class="ql-stats"><div><dt>Resolved / unresolved</dt><dd>${esc(p.resolved||0)} / ${esc(p.unresolved||0)}</dd></div><div><dt>Win rate</dt><dd>${p.win_rate==null?'—':num(p.win_rate*100,1)+'%'}</dd></div><div><dt>Net paper R</dt><dd>${num(p.net_paper_r)}</dd></div><div><dt>Profit factor</dt><dd>${num(p.profit_factor)}</dd></div><div><dt>Paper drawdown R</dt><dd>${num(p.max_realized_paper_drawdown_r)}</dd></div></dl>`;
+ return `${runtime.source==='SYNTHETIC_BROWSER_TEST'?'<p class="ql-notice"><b>SYNTHETIC TEST DATA</b> · Pipeline demonstration only. These numbers are not observed market performance.</p>':''}<p class="ql-notice"><b>EXPERIMENTAL · NO OUTBOUND DELIVERY</b><br>${runtime.enabled?'Collector consumer enabled':'Collector consumer disabled'} · ${runtime.running?'Running':'Stopped'} · Actual executed R unavailable. Paper outcomes use assumed costs and do not establish profitability.</p>
+ <div class="ql-labs">${(data.labs||[]).map(lab=>`<article class="panel"><h2>${esc(lab.name)}</h2><span class="ql-tag">${esc(lab.status)}</span>${(lab.models||[]).map(m=>`<h3>${esc(m.name)} <small>v${esc(m.version)}</small></h3><p>${esc(m.status)} · Scan ${m.scan_enabled?'enabled':'disabled'} · Alerts ${m.alert_enabled?'enabled':'disabled'}</p><details><summary>Authorship & version evidence</summary><p>${esc(m.authorship?.session_reference)}</p><code>${esc(m.sha)}</code></details>`).join('')||'<p>Awaiting a model authored and registered by this actual AI session.</p>'}${summary(lab.performance||{})}</article>`).join('')}</div>
+ <section class="panel ql-section"><h2>Experimental performance</h2>${summary(p)}<p class="sub">${esc(data.scope)} · Unknown outcomes are excluded from wins and counted separately. A dash means unavailable.</p><details><summary>Performance by model, market, UTC session, timeframe and planned RR</summary>${Object.entries(data.breakdown||{}).map(([dimension,groups])=>`<h3>${esc(dimension)}</h3>${Object.entries(groups).map(([key,value])=>`<h4>${esc(key)}</h4>${summary(value)}`).join('')}`).join('')}</details></section>
+ <section class="panel ql-section"><h2>Latest signals & outcomes</h2><div class="ql-table"><table><thead><tr><th>Lab / model</th><th>Market / direction</th><th>Entry / SL / TP</th><th>Planned RR</th><th>State / paper R</th><th>Input time</th></tr></thead><tbody>${signals.map(s=>`<tr><td>${esc(s.lab_name||s.lab)}<br>${esc(s.model_name)} v${esc(s.model_version)}</td><td>${esc(s.symbol)}<br>${esc(s.direction)} · ${esc(s.timeframe)}</td><td>${num(s.entry,5)}<br>${num(s.stop_loss,5)} / ${num(s.take_profit,5)}</td><td>${s.planned_rr==null?'—':'1:'+num(s.planned_rr)}<br>Net ${num(s.net_planned_rr)}</td><td>${esc(s.state)}<br>${esc(s.outcome?.status||s.qualification_reason||'Pending')} · ${num(s.outcome?.simulated_net_r)}R</td><td>${esc(date(s.input_data_timestamp||s.signal_bar_closed_at))}<details><summary>Signal evidence</summary><p>${esc(s.signal_id)}</p><p>${esc(s.input_sha256)}</p><p>${esc(s.rationale)}</p><p>${esc(s.outcome?.reason)}</p></details></td></tr>`).join('')||'<tr><td colspan="6">No experimental signals recorded.</td></tr>'}</tbody></table></div></section>
+ <section class="panel ql-section"><h2>Verified models</h2><p>No independently verified live models registered. Experimental results remain separate.</p></section>
+ <section class="panel ql-section"><h2>Telegram dry-run previews</h2><p class="sub">No experimental messages are sent. CEO review and explicit activation approval are required.</p>${(data.outbox||[]).map(row=>`<details><summary>${esc(row.state)} · ${esc(row.signal)}</summary><pre>${esc(row.message)}</pre></details>`).join('')||'<p>No previews yet.</p>'}</section>`;
+}
+let timer=null,controller=null,generation=0;
+export function stopQuantLabs(){generation++;clearTimeout(timer);timer=null;controller?.abort();controller=null;}
+export function initQuantLabs(){
+ stopQuantLabs();const current=generation;
+ const refresh=async()=>{
+  const root=document.getElementById('quantLabsData');if(!root||current!==generation)return;
+  controller=new AbortController();const timeout=setTimeout(()=>controller?.abort(),8000);
+  try{const {engineFetch}=await import('./engine.js');const data=await engineFetch('/api/quant-labs/live',{signal:controller.signal});if(current===generation&&root.isConnected)root.innerHTML=labsContent(data);}
+  catch(error){if(current===generation&&root.isConnected)root.textContent='Local Quant Labs unavailable. Start the updated local engine to view its status.';}
+  finally{clearTimeout(timeout);if(current===generation)timer=setTimeout(refresh,15000);}
+ };refresh();
+}

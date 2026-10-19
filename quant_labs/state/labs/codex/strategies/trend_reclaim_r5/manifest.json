@@ -1,0 +1,31 @@
+{
+  "lab": "codex",
+  "key": "trend_reclaim_r5",
+  "version": "0.1.0",
+  "name": "Trend Reclaim R5",
+  "timeframe": "M15",
+  "requirements": {
+    "M15": 300,
+    "H1": 160,
+    "M1": 120
+  },
+  "instruments": [
+    "EURUSD",
+    "XAUUSD",
+    "BTCUSD"
+  ],
+  "classification": "EXPERIMENTAL",
+  "entry_type": "MARKET_PAPER_QUOTE",
+  "target_net_r": 5,
+  "declared_trials_in_phase": 7,
+  "research_stage": "OFFLINE_EVALUATION_ONLY_NOT_LIVE_REGISTERED",
+  "hypothesis": "Persistent higher-timeframe trend pullback reclaim",
+  "planned_rr": "Cost-buffered net-R objective 5",
+  "risk_model": "Structural stop, 0.5\u20133 ATR; fixed barriers and horizon; no execution",
+  "known_limitations": "Already-exposed historical sample; quote/spread/commission proxies; gap, financing, selection and regime risks; no certified edge.",
+  "authorship": {
+    "lab": "codex",
+    "session_reference": "Actual Codex task 01a155be-ad08-7922-bb69-2762009efd16; CEO next development phase",
+    "statement": "Independently authored by this Codex session; six declared exit variants plus one range model. No Claude/Kimi authorship."
+  }
+}

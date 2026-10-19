@@ -1,0 +1,23 @@
+{
+  "kind": "INFRASTRUCTURE_TEST",
+  "lab": "codex",
+  "intent_count": 54,
+  "result": {
+    "job": "6700808381844982b56277eccf6c319f",
+    "status": "COMPLETE",
+    "resources": {
+      "cpu_cap_percent": 20.0,
+      "cpu_limit_seconds": 20.0,
+      "cpu_seconds_used": 6.609375,
+      "enforced": true,
+      "max_processes": 1,
+      "memory_limit_mb": 384.0,
+      "peak_committed_mb": 114.953125,
+      "wall_seconds": 6.645039500028361
+    },
+    "reason": null
+  },
+  "claude_research_run": false,
+  "kimi_research_run": false,
+  "profitability_claim": false
+}
