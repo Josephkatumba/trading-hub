@@ -16,6 +16,7 @@ import {archivePanel, compactCard, confirmationToastHtml, emptyArea, esc, evalua
 import {filterByStrategy, matchesStrategy, strategyFilters, strategyPerformance, strategyStatus, strategyTag} from "./strategyModel.mjs";
 import {mountGarden, prefersReducedMotion} from "./garden/gardenMount.mjs";
 import {evidenceModel, evidencePanel, labReportPanel} from "./garden/strategyLab.mjs";
+import {bankPanel} from "./garden/strategyBank.mjs";
 import {marketWatchGroups, priorityWatchSlots, rankMarkets, trackScanEvents} from "./garden/priorityWatch.mjs";
 
 const DEMO_MARKETS = [
@@ -116,6 +117,7 @@ export function renderMarketRadar(){
     +'<div class="gd-research-backdrop" id="gardenWatchAllBackdrop" data-watch-action="close" hidden></div>'
     +'<section class="gd-research gd-watch-all" id="gardenWatchAll" role="dialog" aria-modal="true" aria-labelledby="gardenWatchAllTitle" tabindex="-1" hidden></section>'
     +'<section class="gd-panel performance-panel" id="gardenPerformance"><header class="gd-panel-head"><div><h2>📊 Today\'s setup performance</h2><p>Headline uses the 4h market outcome. Other configured horizons remain visible. Trade outcomes are excluded.</p></div></header><div id="dailyPerformance"><div class="macro-empty"><b>Loading performance</b></div></div></section>'
+    +'<details class="gd-panel gd-strategy-bank" id="strategyBank"><summary><span>🏦 Strategy Bank</span><span class="historical-expand-hint">Expand</span></summary><p>Twenty rule-based strategies, each confirming independently on completed candles. Statistics below are recorded signals and outcomes only; Pending means no signal has resolved yet. Experimental strategies are not proven profitable.</p><div id="strategyBankBody"></div></details>'
     +'<details class="gd-panel gd-strategy-lab" id="strategyLab"><summary><span>🧪 Strategy Lab</span><span class="historical-expand-hint">Expand</span></summary><p>Registered strategies and their status. Live strategies (Trendline, S/R, Trend/Momentum, SMC) each produce their own Garden setups, notifications and outcomes and are measured separately here. Live does not mean proven profitable. Shadow-mode (research) strategies, if any, are reviewed here only and never become Garden setups or alerts.</p><div id="strategyLabBody"></div><div id="strategyLabReport"></div><div id="strategyLabEvidence" aria-live="polite"></div>'
     +'<section class="gd-lab-evaluation"><h4>Historical evaluation · verified outcomes by condition</h4><p class="gd-note">The foundation of TRADeden\'s evaluation layer: what has happened to confirmed setups sharing a recorded condition. Deterministic, per strategy, verified outcomes only. It never creates or changes a setup.</p><div id="strategyLabEvaluation"></div></section></details>'
     +'<details class="gd-panel historical-confirmations" id="historicalConfirmations"><summary><span>📚 Confirmation event archive · today (<b id="historicalConfirmationCount">0</b>)</span><span class="historical-expand-hint">Expand</span></summary><p class="gd-archive-status" id="confirmedArchiveStatus"></p><div id="historicalConfirmationCards" class="gd-grid"></div></details>'
@@ -330,6 +332,15 @@ async function refreshLab(force=false){
   labReport=lab;evalReport=evaluation;
   paintLab();
 }
+// ----- Strategy Bank (on demand) ----------------------------------------------------
+let bankFetchedAt=0;
+async function refreshBank(force=false){
+  const panel=document.getElementById("strategyBank");
+  if(!panel?.open||(!force&&Date.now()-bankFetchedAt<LAB_REFRESH_MS))return;
+  bankFetchedAt=Date.now();
+  const report=await engineFetch("/api/strategy-bank").catch(()=>null);
+  const node=document.getElementById("strategyBankBody");if(node)node.innerHTML=bankPanel(report);
+}
 async function inspectLabSetup(setupId){
   const node=document.getElementById("strategyLabEvidence");if(!node)return;
   node.innerHTML='<p class="gd-na">Loading recorded evidence…</p>';
@@ -468,6 +479,7 @@ function bindGardenInteractions(){
     openResearch(setupKey);
   };
   const lab=document.getElementById("strategyLab");if(lab)lab.ontoggle=()=>{if(lab.open)refreshLab(true);};
+  const bank=document.getElementById("strategyBank");if(bank)bank.ontoggle=()=>{if(bank.open)refreshBank(true);};
   root.onkeydown=event=>{
     if(event.key==="Escape"&&researchOpen){event.preventDefault();closeResearch();return;}
     if(event.key==="Escape"&&watchAllOpen){event.preventDefault();closeWatchAll();return;}
@@ -716,6 +728,7 @@ export function scrollToGardenSection(id){
 function applyPendingAnchor(){
   const target=pendingAnchor&&document.getElementById(pendingAnchor);
   pendingAnchor=null;
+  if(target&&target.id==="strategyBank")target.open=true;   // nav link opens (and so loads) the bank
   if(target)target.scrollIntoView({block:"start"});
 }
 export function stopMarketRadar(){radarPoller?.stop();disposeGarden();researchOpen=false;watchAllOpen=false;shownWatchSymbols=null;scanEvents=null;document.body.classList.remove("gd-research-open");}

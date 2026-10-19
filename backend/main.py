@@ -43,6 +43,9 @@ from trade_planning import apply_plan
 import commercial
 from outcome_identity import unique_outcomes
 import telegram_notifier
+import signal_outcomes
+import reports
+from strategy_bank import worker as bank_worker
 
 try:
     import MetaTrader5 as mt5
@@ -140,13 +143,30 @@ async def lifespan(_app: FastAPI):
     # Telegram alerts run in their own thread (off unless TRADEDEN_TELEGRAM_ALERTS_ENABLED=1),
     # so Telegram delivery can never delay a scan.
     notifier = telegram_notifier.start_notifier(stop)
+    # Engine uptime heartbeat (sends nothing) and, when enabled, the authoritative signal
+    # outcome resolver and the scheduled Telegram reports: each in its own thread.
+    background = [threading.Thread(target=reports.heartbeat_loop, args=(stop,), name="tradeden-heartbeat", daemon=True)]
+    if signal_outcomes.enabled():
+        fetch = signal_outcomes.mt5_fetch(mt5, ensure_mt5, os.getenv("TRADING_HUB_MT5_SOURCE_TIMEZONE")) if mt5 else (lambda *a: None)
+        background.append(threading.Thread(target=signal_outcomes.run_worker, args=(stop, fetch),
+                                           name="tradeden-signal-outcomes", daemon=True))
+    if reports.enabled():
+        background.append(threading.Thread(target=reports.run_scheduler, args=(stop,), name="tradeden-reports", daemon=True))
+    # Strategy Bank (20 experimental strategies): off unless TRADEDEN_STRATEGY_BANK_ENABLED=1; its own
+    # thread, its own stores; never sends Telegram unless TRADEDEN_STRATEGY_BANK_TELEGRAM_ENABLED=1 too.
+    if bank_worker.enabled() and mt5 is not None:
+        background.append(threading.Thread(target=bank_worker.run, args=(stop, mt5, ensure_mt5, mt5_symbol, list(WATCHLIST)),
+                                           name="tradeden-strategy-bank", daemon=True))
+    for thread in background:
+        thread.start()
     try:
         yield
     finally:
         stop.set()
         worker.join(timeout=5)
-        if notifier is not None:
-            notifier.join(timeout=5)
+        for thread in [notifier, *background]:
+            if thread is not None:
+                thread.join(timeout=5)
         # Serialize shutdown with scans and browser requests.
         with _SCAN_LOCK:
             close_mt5()
@@ -721,6 +741,9 @@ def health():
         "shadow_strategies": shadow,
         "trendline_v5_shadow": next((item["state"] for item in shadow if item["strategy_id"] == TRENDLINE_V5_SHADOW), "NOT_REGISTERED"),
         "telegram_alerts": telegram_notifier.status(),
+        "signal_outcomes": {"enabled": signal_outcomes.enabled(), **signal_outcomes.status()},
+        "telegram_reports": reports.status(),
+        "strategy_bank": bank_worker.status(),
     }
 
 
@@ -1112,6 +1135,45 @@ def market_outcomes(setup_id: str | None = None, setup_ids: str | None = None):
                      "observed_at": snapshots[str(r.get("observation_id"))].get("observed_at")}
                     for r in outcomes if str(r.get("observation_id")) in snapshots]
     return {"outcomes": outcomes, "configured_horizons": configured_horizons()}
+
+
+@app.get("/api/strategy-bank")
+def strategy_bank():
+    """The 20-strategy bank: rules, status and statistics from RECORDED signals only ("pending"
+    until outcomes exist). Historical backtest results are returned separately and labelled."""
+    from strategy_bank import engine as bank_engine, rules as bank_rules
+    store = bank_engine.BankStore()
+    try:
+        linked = bank_engine.linked_production_rows()
+    except Exception:
+        LOGGER.exception("Strategy bank: linked production statistics unavailable")
+        linked = {}
+    historical_path = bank_engine.bank_dir() / "historical.json"
+    historical = json.loads(historical_path.read_text(encoding="utf-8")) if historical_path.exists() else None
+    spec_fields = ("n", "key", "name", "status", "timeframe", "entry", "indicators", "confirmation", "stop", "take_profit",
+                   "min_rr", "invalidation", "data", "unsupported_reason")
+    return {"strategies": bank_engine.statistics(store, linked),
+            "rules": [{k: (list(v) if isinstance(v, tuple) else v) for k, v in spec.items() if k in spec_fields}
+                      | {"instruments": list(spec["instruments"])} for spec in bank_rules.SPECS],
+            "opportunities": len(store.opportunities), "worker": bank_worker.status(),
+            "historical": {"label": "HISTORICAL BACKTEST (simulated, not live results)", "results": historical},
+            "notes": ["All bank strategies are EXPERIMENTAL: technical validation (rules implemented correctly) "
+                      "is not profitability validation.", "R multiples are hypothetical signal outcomes, not executed trades."]}
+
+
+@app.get("/api/market/signal-outcomes")
+def authoritative_signal_outcomes(setup_id: str | None = None, include_history: bool = False):
+    """One authoritative outcome per confirmed signal (signal_outcomes.py), read-only.
+    With setup_id and include_history, every revision (the audit trail)."""
+    store = signal_outcomes.OutcomeStore()
+    if setup_id:
+        rows = store.history(setup_id) if include_history else [r for r in [store.latest(setup_id)] if r]
+        return {"outcomes": rows}
+    rows = store.all_latest()
+    counts: dict[str, int] = {}
+    for row in rows:
+        counts[row.get("status")] = counts.get(row.get("status"), 0) + 1
+    return {"outcomes": rows, "counts": counts, "resolver_version": signal_outcomes.RESOLVER_VERSION}
 
 
 @app.get("/api/market/trade-outcomes")
