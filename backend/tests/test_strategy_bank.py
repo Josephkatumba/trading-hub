@@ -321,11 +321,16 @@ class OutcomeAndStatsTests(unittest.TestCase):
 
 class IsolationTests(unittest.TestCase):
     def test_flags_default_off_and_live_code_untouched(self):
+        # Isolated from the real backend/.env (the bank was activated there in T-034): the code
+        # defaults are off, and bank alerts can be switched off without stopping the bank.
         import os
-        for env in (worker.ENABLED_ENV, bank_telegram.ENABLED_ENV):
-            self.assertNotEqual(os.getenv(env, ""), "1")
-        self.assertFalse(worker.enabled())
-        self.assertFalse(bank_telegram.enabled())
+        without = {k: v for k, v in os.environ.items() if k not in (worker.ENABLED_ENV, bank_telegram.ENABLED_ENV)}
+        with mock.patch.dict(os.environ, without, clear=True):
+            self.assertFalse(worker.enabled())
+            self.assertFalse(bank_telegram.enabled())
+        with mock.patch.dict(os.environ, {**without, worker.ENABLED_ENV: "1", bank_telegram.ENABLED_ENV: "0"}, clear=True):
+            self.assertTrue(worker.enabled())
+            self.assertFalse(bank_telegram.enabled())
         import main
         source = inspect.getsource(main.lifespan)
         self.assertIn("bank_worker.enabled()", source)
@@ -343,6 +348,28 @@ class IsolationTests(unittest.TestCase):
         self.assertEqual(len(payload["rules"]), 20)
         self.assertIn("not live", payload["historical"]["label"])
         self.assertTrue(all(row["win_rate"] is None for row in payload["strategies"]))
+
+    def test_signals_api_is_read_only_recorded_signals_with_attribution(self):
+        """T-035: the dashboard's signal feed returns recorded bank signals (newest first) and
+        which strategies confirmed each opportunity, without writing anything."""
+        import main
+        with tempfile.TemporaryDirectory() as temp, mock.patch.object(engine, "bank_dir", lambda: Path(temp)):
+            store = engine.BankStore(Path(temp))
+            for k, minutes in enumerate((0, 30)):
+                store.put_signal({"signal_id": f"bank_{k}", "strategy_key": "ema_crossover", "strategy_name": "EMA Crossover",
+                                  "status": "EXPERIMENTAL", "symbol": "EURUSD", "direction": "LONG", "timeframe": "H1",
+                                  "confirmed_at": f"2026-10-20T09:{minutes:02d}:00+00:00", "opportunity_id": "opp_a",
+                                  "entry": 1.1, "stop_loss": 1.098, "take_profit": 1.104, "rr": 2.0, "evidence": {"x": 1}})
+            store.put_opportunity({"opportunity_id": "opp_a", "symbol": "EURUSD", "direction": "LONG", "first_confirmed_at": "2026-10-20T09:00:00+00:00",
+                                   "primary_signal_id": "bank_0", "strategies": ["EMA Crossover", "MACD Momentum"], "signal_ids": ["bank_0", "bank_1"]})
+            before = sorted((p.name, p.stat().st_size) for p in Path(temp).iterdir())
+            payload = main.strategy_bank_signals(limit=1)
+            after = sorted((p.name, p.stat().st_size) for p in Path(temp).iterdir())
+        self.assertEqual(before, after, "the endpoint never writes")
+        self.assertEqual([s["signal_id"] for s in payload["signals"]], ["bank_1"])      # newest first, limited
+        self.assertNotIn("evidence", payload["signals"][0])                              # projected fields only
+        self.assertEqual(payload["opportunities"]["opp_a"]["strategies"], ["EMA Crossover", "MACD Momentum"])
+        self.assertIn("not executed trades", payload["basis"])
 
 
 if __name__ == "__main__":

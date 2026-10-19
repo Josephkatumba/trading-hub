@@ -3,6 +3,7 @@
 import {GARDEN_STAGES, LIFECYCLE_STEPS, formatPrice} from "./gardenModel.mjs";
 import {STRATEGY_STATUS, gardenResearchEntries, normalizeRegistry, shadowResults, strategyPerformance, strategyTag} from "../strategyModel.mjs";
 import {confirmationToastModel} from "../confirmationAlerts.mjs";
+import {familyOf} from "../strategyUnified.mjs";
 
 export const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"}[c]));
 const orUnavailable = (value, text = "Unavailable") => value == null || value === "" ? '<span class="gd-na">' + text + '</span>' : esc(value);
@@ -53,7 +54,51 @@ function level(label, value, extraClass = "") {
 /** Compact strategy identity chip ("TRENDLINE", "S/R", ...); its glyph and colour come from CSS by data-strategy. */
 export function strategyChip(strategy, version = null) {
   if (!strategy) return "";
-  return '<span class="gd-strategy-tag" data-strategy="' + esc(strategy.id) + '" title="Strategy: ' + esc(strategy.label) + (version ? ' · ' + esc(version) : '') + '">' + esc(strategy.tag) + '</span>';
+  return '<span class="gd-strategy-tag" data-strategy="' + esc(strategy.id) + '" data-family="' + esc(familyOf(strategy.id).id) + '" title="Strategy: ' + esc(strategy.label) + (version ? ' · ' + esc(version) : '') + '">' + esc(strategy.tag) + '</span>';
+}
+
+/**
+ * Which strategy is responsible for a setup or signal, its validation status, and every
+ * strategy that independently confirmed the same opportunity (bank attribution).
+ */
+export function responsibleStrategy(card) {
+  if (!card?.unified) return "";
+  const others = (card.confirmedBy || []).filter(name => name !== card.unified.label);
+  return '<p class="gd-responsible" data-family="' + esc(card.unified.family) + '"><span>Strategy: <b>' + esc(card.unified.label) + '</b></span>'
+    + '<span class="gd-validation" data-validation="' + esc(card.validation?.key || "experimental") + '">' + esc(card.validation?.label || "Experimental · not proven profitable") + '</span>'
+    + (others.length ? '<span>Also confirmed by: ' + others.map(esc).join(", ") + '</span>' : '') + '</p>';
+}
+
+/**
+ * Unified header: the whole strategy bank at a glance, from RECORDED data only. Replaces the
+ * former four production-strategy badges. Nothing here implies proven profitability.
+ */
+export function unifiedHeader(model) {
+  if (!model?.available) return '<div class="gd-hstrategies gd-hbank" aria-label="Strategy bank"><span class="gd-na">Strategy bank unavailable</span></div>';
+  const item = (key, value, label, title, cls = "") => '<span class="gd-hstrategy gd-hbank-item ' + cls + '" title="' + esc(title) + '"><span><small>' + esc(label) + '</small></span>'
+    + '<b class="gd-hcount" data-stat="bank-' + key + '">' + (value == null ? '—' : esc(value)) + '</b></span>';
+  const rate = model.winRate == null ? "Pending" : Math.round(model.winRate * 100) + "%";
+  return '<div class="gd-hstrategies gd-hbank" aria-label="Strategy bank">'
+    + item("active", model.active, "Strategies active",
+      model.linked + " live production-linked + " + model.experimental + " experimental bank strategies"
+      + (model.productionOnly ? "; " + model.productionOnly + " further production strategies also run" : "")
+      + (model.unsupported ? "; " + model.unsupported + " unsupported" : "") + ". " + model.monitoring + " · " + model.alerts + ".")
+    + item("validated", model.validated, "Validated", "Strategies with demonstrated positive expectancy after costs. None yet: every strategy is experimental or live-but-unproven.", "is-validation")
+    + item("today", model.signalsToday, "Bank signals today", "Strategy bank signals recorded today (local time)")
+    + item("open", model.open, "Open", "Bank signals whose take profit or stop loss has not been reached yet")
+    + item("winrate", rate, "Forward win rate", model.resolved ? "Recorded forward outcomes over " + model.resolved + " resolved signals (hypothetical, not trades)" : "No forward signal has resolved yet")
+    + '</div>';
+}
+
+/** Dynamic strategy selector, populated from the backend bank report (replaces the filter bar). */
+export function strategySelect(options, selected = "all") {
+  const option = item => '<option value="' + esc(item.key) + '"' + (item.key === selected ? ' selected' : '') + (item.selectable ? '' : ' disabled')
+    + '>' + esc((item.n ? item.n + ". " : "") + item.label + (item.selectable ? (item.validation ? " · " + item.validation.label.split(" · ")[0] : "") : " · unsupported")) + '</option>';
+  const count = options.groups.reduce((total, group) => total + group.options.filter(item => item.selectable).length, 0);
+  return '<label class="gd-strategy-select"><span class="gd-strategy-filters-label">Strategy</span>'
+    + '<select id="strategySelect" aria-label="Filter the Garden by strategy">' + option({...options.all, selectable: true})
+    + options.groups.map(group => '<optgroup label="' + esc(group.label + " (" + group.options.length + ")") + '">' + group.options.map(option).join("") + '</optgroup>').join("")
+    + '</select><small class="gd-strategy-count">' + count + ' selectable · each confirms independently</small></label>';
 }
 
 /** Score as a ring: the arc is the backend score out of 100 (null: an empty dashed ring). */
@@ -571,6 +616,7 @@ export function focusPanel(card) {
     + '<button type="button" class="gd-focus-close" data-focus-action="close" aria-label="Clear selection" title="Clear selection">×</button></div>'
     + '<div class="gd-focus-sub">' + strategyChip(card.strategy, card.strategyVersion) + directionBadge(card)
     + '<span>' + orUnavailable(card.setupType, "Setup type unavailable") + (card.timeframe ? ' · ' + esc(card.timeframe) : '') + '</span></div>'
+    + responsibleStrategy(card)
     + (card.simulated ? '<p class="gd-analyst-sim">Simulated fixture — not market data.</p>' : '')
     + levels
     + '<p class="gd-focus-meta">' + esc(meta.join(" · ")) + '</p>'
@@ -618,6 +664,7 @@ export function researchPanel(model, {loading = false, similar = null, similarSt
     + '<div class="gd-rs-score" aria-label="Rule score (not a probability)" title="' + SCORE_NOTE + '">' + scoreRing(card.score, 54) + '<b>' + (card.score == null ? '—' : card.score) + '</b></div>'
     + '<button type="button" class="gd-rs-close" data-research-action="close" aria-label="Close market research">×</button></header>'
     + '<div class="gd-rs-body">'
+    + responsibleStrategy(card)
     + lifecycleRailHtml(card.rail)
     + '<p class="gd-rs-status"><span class="gd-life" data-life="' + esc(lifeKey(card.status)) + '">' + card.stageIcon + ' ' + orUnavailable(card.status, "—") + '</span>'
     + '<span>' + (card.session ? esc(card.session) + ' session' : '<span class="gd-na">Session unavailable</span>') + '</span>'

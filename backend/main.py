@@ -1161,6 +1161,29 @@ def strategy_bank():
                       "is not profitability validation.", "R multiples are hypothetical signal outcomes, not executed trades."]}
 
 
+_BANK_SIGNAL_FIELDS = ("signal_id", "strategy_key", "strategy_name", "strategy_number", "status", "symbol", "direction",
+                       "timeframe", "confirmed_at", "entry", "stop_loss", "take_profit", "rr", "executable", "execution_basis",
+                       "time_exit_at", "explanation", "contradictions", "opportunity_id", "alert", "outcome_status",
+                       "r_multiple", "outcome_at", "outcome_method", "outcome_reason", "r_basis")
+
+
+@app.get("/api/strategy-bank/signals")
+def strategy_bank_signals(limit: int = Query(default=200, ge=1, le=1000)):
+    """Recent RECORDED Strategy Bank signals (newest first) for the dashboard, read-only: the
+    bank's own store, never a scan. Each signal keeps its strategy; `opportunities` lists every
+    strategy that independently confirmed the same opportunity (attribution)."""
+    from strategy_bank import engine as bank_engine
+    store = bank_engine.BankStore()
+    rows = sorted(store.signals.values(), key=lambda row: str(row.get("confirmed_at")), reverse=True)[:limit]
+    wanted = {row.get("opportunity_id") for row in rows if row.get("opportunity_id")}
+    return {"signals": [{key: row.get(key) for key in _BANK_SIGNAL_FIELDS} for row in rows],
+            "opportunities": {oid: {"strategies": list(opp.get("strategies") or []), "symbol": opp.get("symbol"),
+                                    "direction": opp.get("direction"), "first_confirmed_at": opp.get("first_confirmed_at")}
+                              for oid, opp in store.opportunities.items() if oid in wanted},
+            "basis": "Recorded bank signals. R multiples are hypothetical signal outcomes, not executed trades.",
+            "timestamp": utc_iso(datetime.now(timezone.utc))}
+
+
 @app.get("/api/market/signal-outcomes")
 def authoritative_signal_outcomes(setup_id: str | None = None, include_history: bool = False):
     """One authoritative outcome per confirmed signal (signal_outcomes.py), read-only.

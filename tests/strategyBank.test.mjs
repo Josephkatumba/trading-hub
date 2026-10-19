@@ -22,7 +22,11 @@ test("live columns show recorded statistics only, Pending when nothing has resol
   assert.deepEqual(rows.map(r => [r.name, r.signals, r.winRate, r.expectancy]), [
     ["Trendline Break & Retest", 44, "18%", "-0.42R"], ["EMA Pullback", 0, null, null], ["VWAP Reversion", null, null, null]]);
   const html = bankPanel(REPORT);
-  assert.match(html, /EMA Pullback<\/td><td>Experimental · not running<\/td><td>0<\/td><td><span class="gd-na">Pending<\/span><\/td><td><span class="gd-na">Pending<\/span>/);
+  assert.match(html, /EMA Pullback<\/td><td>Experimental · not running<\/td><td><span class="gd-validation" data-validation="experimental">Experimental · not proven profitable<\/span><\/td><td>0<\/td><td><span class="gd-na">Pending<\/span><\/td><td><span class="gd-na">Pending<\/span>/);
+  // A live production-linked strategy is not called validated either.
+  assert.match(html, /data-validation="unproven">Live · not proven profitable/);
+  assert.doesNotMatch(html, /data-validation="validated"/);
+  assert.match(html, /Forward results: recorded signals and outcomes only/);
   assert.match(html, /VWAP Reversion is unsupported/);
   assert.match(html, /18%/);
 });

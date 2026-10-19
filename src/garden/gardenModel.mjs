@@ -7,6 +7,7 @@
 // state rather than a guess.
 import {currentWatchSetups, partitionSetupEpisodes} from "../radarLayout.mjs";
 import {liveGardenRows, setupFamilyLabel, strategyBreakdown, strategyConflict, strategyIdOf, strategyMatrix, strategyTag} from "../strategyModel.mjs";
+import {FAMILIES, bankOutcomeKind, familyOf, unifiedKey, unifiedStrategy, validationOf} from "../strategyUnified.mjs";
 
 export const GARDEN_STAGES = Object.freeze({
   growing: {key: "growing", icon: "🌱", label: "Growing", description: "Setup is developing."},
@@ -275,6 +276,12 @@ export function setupCardModel(row, {bucket = null, analysis = null, tracked = f
     latestObservation: latestObservationNote(row),
     strategy: strategyTag(strategyIdOf(row)),
     strategyVersion: row?.confirmation?.strategy_version || row?.strategy_version || null,
+    // The precise strategy behind the setup across the whole bank (e.g. "Trendline Bounce"),
+    // its validation status, and every strategy that independently confirmed the opportunity.
+    unified: unifiedStrategy(unifiedKey(row), row?.bankSignal?.strategy_name || null),
+    validation: validationOf(row?.bank ? row?.bankSignal?.status : "LINKED"),
+    bank: Boolean(row?.bank),
+    confirmedBy: Array.isArray(row?.confirmedBy) ? row.confirmedBy : null,
     timeframe: row?.timeframe || null,
     levels,
     risk: riskModel(row, analysis),
@@ -599,25 +606,30 @@ export const BANDS = Object.freeze({
 });
 export const MAX_ORBS = {history: 18, growing: 18, shaping: 10, bloomed: 10, active: 8};
 
-// Each live strategy grows in its own sector ("branch") of the garden, so strategy
-// identity is visible in the constellation itself. Unknown strategies share a sector.
-export const STRATEGY_SECTORS = Object.freeze({trendline: 0, trendline_v5: 0, support_resistance: 1, trend_momentum: 2, smc: 3});
-const SECTOR_WIDTH = (Math.PI * 2) / 4;
+// Each strategy family grows in its own sector ("branch") of the garden, so strategy identity is
+// visible in the constellation itself (one sector per family: with 19+ strategies, one slice each
+// would be unreadable). Every orb still names its exact strategy in the focus and details.
+const SECTOR_WIDTH = (Math.PI * 2) / FAMILIES.length;
 const SECTOR_SPREAD = SECTOR_WIDTH * 0.42;          // half-width used by orbs (a gap between sectors)
 export function sectorAngle(strategyId) {
-  const index = STRATEGY_SECTORS[strategyId];
-  return (index === undefined ? 3.5 : index) * SECTOR_WIDTH - Math.PI / 2;
+  const index = FAMILIES.findIndex(family => family.id === familyOf(strategyId).id);
+  return (index < 0 ? FAMILIES.length - 0.5 : index) * SECTOR_WIDTH - Math.PI / 2;
 }
 const wrap = angle => Math.atan2(Math.sin(angle), Math.cos(angle));
-// Strategy identity colours: muted, distinct from the long/short/stage colours.
-export const STRATEGY_COLORS = Object.freeze({trendline: "#4f86a8", trendline_v5: "#4f86a8", support_resistance: "#b3843a", trend_momentum: "#7c6bbf", smc: "#4f9a83"});
+// Family colours: muted, distinct from the long/short/stage colours.
+export const STRATEGY_COLORS = Object.freeze(Object.fromEntries(FAMILIES.map(family => [family.id, family.color])));
 export const OTHER_STRATEGY_COLOR = "#8fa396";
+export const strategyColor = strategyId => familyOf(strategyId).color || OTHER_STRATEGY_COLOR;
 
-/** Sector labels and trunks for the strategies that have orbs (for either renderer). */
+/** Sector labels and trunks for the strategy families that have orbs (for either renderer). */
 export function strategySectors(orbs) {
-  const ids = [...new Set(orbs.filter(orb => orb.stage !== "history").map(orb => orb.strategy))];
-  return ids.map(id => ({id, tag: strategyTag(id).tag, label: strategyTag(id).label, angle: sectorAngle(id),
-    color: STRATEGY_COLORS[id] || OTHER_STRATEGY_COLOR}));
+  const ids = [...new Set(orbs.filter(orb => orb.stage !== "history").map(orb => familyOf(orb.strategy).id))];
+  return ids.map(id => {
+    const family = FAMILIES.find(item => item.id === id) || {id, label: "Other", color: OTHER_STRATEGY_COLOR};
+    const index = FAMILIES.indexOf(family);
+    return {id, tag: family.label, label: family.label, color: family.color,
+      angle: (index < 0 ? FAMILIES.length - 0.5 : index) * SECTOR_WIDTH - Math.PI / 2};
+  });
 }
 
 /**
@@ -629,7 +641,7 @@ export function branchCurves(orbs) {
     const radius = Math.hypot(orb.x, orb.z);
     const hub = {x: Math.cos(orb.centre) * 0.7, z: Math.sin(orb.centre) * 0.7};
     const control = {x: Math.cos(orb.centre) * radius * 0.62, z: Math.sin(orb.centre) * radius * 0.62};
-    return {id: orb.id, strategy: orb.strategy, stage: orb.stage, color: STRATEGY_COLORS[orb.strategy] || OTHER_STRATEGY_COLOR,
+    return {id: orb.id, strategy: orb.strategy, stage: orb.stage, color: strategyColor(orb.strategy),
       hub, control, end: {x: orb.x, y: orb.y, z: orb.z}};
   });
 }
@@ -687,6 +699,7 @@ export const ARCHIVE_KINDS = Object.freeze({
   stop: {icon: "🛑", label: "Stop hit", tone: "stop"},
   no_hit: {icon: "◌", label: "No barrier hit", tone: "neutral"},
   ambiguous: {icon: "◐", label: "Ambiguous candle", tone: "neutral"},
+  time_exit: {icon: "⌛", label: "Time exit", tone: "neutral"},
   unverified: {icon: "…", label: "Outcome unverified", tone: "unverified"},
   pending: {icon: "⌛", label: "Outcome pending", tone: "unverified"},
   invalidated: {icon: "⚠️", label: "Invalidated", tone: "invalidated"},
@@ -779,6 +792,24 @@ export function archiveEntry(episode, outcomes = [], confirmationSnapshot = null
     closedTime: formatUtc(closedAt),
     closedReason: episode?.closed_event?.reason || episode?.closed_event?.reason_code || null,
     score: num(episode?.score),
+  };
+}
+
+/**
+ * Archive entry for a finished Strategy Bank signal: its RECORDED outcome and hypothetical R
+ * (signal outcome, never a trade result). Open bank signals are not archived.
+ */
+export function bankArchiveEntry(signal) {
+  const kind = bankOutcomeKind(signal);
+  const r = signal?.r_multiple == null || !Number.isFinite(Number(signal.r_multiple)) ? null : Number(signal.r_multiple);
+  const strategy = unifiedStrategy(signal?.strategy_key, signal?.strategy_name || null);
+  return {
+    key: signal?.signal_id || null, symbol: signal?.symbol || "Unknown", direction: direction(signal),
+    strategy_id: signal?.strategy_key || null, strategy: strategyTag(signal?.strategy_key), unified: strategy,
+    setupType: strategy.label, confirmed: true, bank: true, kind, ...ARCHIVE_KINDS[kind], horizon: null,
+    r, rText: r == null ? null : (r > 0 ? "+" : "") + r.toFixed(1) + "R",
+    verifiedCount: kind === "pending" ? 0 : 1, unverifiedCount: 0, lifecycle: "RESOLVED",
+    closedAt: signal?.outcome_at || null, closedTime: formatUtc(signal?.outcome_at), closedReason: signal?.outcome_reason || null, score: null,
   };
 }
 

@@ -38,9 +38,18 @@ export function strategyIdOf(row) {
   return value ? String(value) : LEGACY_STRATEGY_ID;
 }
 
+// Display names of strategies outside the catalog (the Strategy Bank), registered at load
+// (strategyUnified.mjs). Like the catalog, a name never makes a strategy active.
+const EXTRA_NAMES = new Map();
+export function registerStrategyNames(entries) {
+  for (const entry of entries || []) {
+    if (entry?.id && !STRATEGY_CATALOG[entry.id]) EXTRA_NAMES.set(String(entry.id), Object.freeze({id: String(entry.id), tag: entry.tag, label: entry.label}));
+  }
+}
+
 export function strategyTag(id) {
   const key = String(id || LEGACY_STRATEGY_ID);
-  return STRATEGY_CATALOG[key] || {id: key, tag: key.toUpperCase().replace(/_/g, " "), label: key};
+  return STRATEGY_CATALOG[key] || EXTRA_NAMES.get(key) || {id: key, tag: key.toUpperCase().replace(/_/g, " "), label: key};
 }
 
 /**

@@ -11,12 +11,13 @@ import {confirmationDisplay} from "./analystPresentation.mjs";
 import {setupCountSummary, visibleSetupEntries} from "./radarLayout.mjs";
 import {createConfirmationAlertTracker, dispatchConfirmationAlerts, dispatchTestSound, persistedConfirmationEvents} from "./confirmationAlerts.mjs";
 import {CONFIRMATION_CHIME_CONFIG, playConfirmationChime} from "./confirmationChime.mjs";
-import {analysisObservationId, archiveEntry, archiveSummary, gardenAreas, gardenHeaderModel, constellationLayout, researchModel, setupCardModel} from "./garden/gardenModel.mjs";
-import {archivePanel, compactCard, confirmationToastHtml, emptyArea, esc, evaluationPanel, focusPanel, headerStats, headerStrategies, marketWatchAll, priorityWatch, researchPanel, setupCard, stageLegend, strategyFilterBar, strategyLabPanel, strategyPerformanceBlock} from "./garden/gardenCards.mjs";
-import {filterByStrategy, matchesStrategy, strategyFilters, strategyPerformance, strategyStatus, strategyTag} from "./strategyModel.mjs";
+import {analysisObservationId, archiveEntry, archiveSummary, bankArchiveEntry, gardenAreas, gardenHeaderModel, constellationLayout, researchModel, setupCardModel} from "./garden/gardenModel.mjs";
+import {archivePanel, compactCard, confirmationToastHtml, emptyArea, esc, evaluationPanel, focusPanel, headerStats, marketWatchAll, priorityWatch, researchPanel, setupCard, stageLegend, strategyLabPanel, strategyPerformanceBlock, strategySelect, unifiedHeader} from "./garden/gardenCards.mjs";
+import {strategyPerformance, strategyStatus, strategyTag} from "./strategyModel.mjs";
+import {bankGardenRow, filterUnified, matchesUnified, productionIdOf, selectableKeys, strategyOptions, unifiedHeaderModel} from "./strategyUnified.mjs";
 import {mountGarden, prefersReducedMotion} from "./garden/gardenMount.mjs";
 import {evidenceModel, evidencePanel, labReportPanel} from "./garden/strategyLab.mjs";
-import {bankPanel} from "./garden/strategyBank.mjs";
+import {bankPanel, bankResearchPanel, bankStrategyPerformance} from "./garden/strategyBank.mjs";
 import {marketWatchGroups, priorityWatchSlots, rankMarkets, trackScanEvents} from "./garden/priorityWatch.mjs";
 
 const DEMO_MARKETS = [
@@ -54,7 +55,12 @@ let scanEvents = null;                // when each live strategy scan last chang
 let shownWatchSymbols = null;         // symbols in the 4 slots last paint (null before the first paint)
 const headerValues = new Map();       // data-stat -> last shown value (for change transitions)
 let archiveFilter = "all";
-let strategyFilter = "all";           // "all" or a strategy_id; applies to setups, archive and performance
+let strategyFilter = "all";           // "all" or a unified strategy key (strategyUnified.mjs); applies to setups, archive and performance
+let bankReport = null;                // /api/strategy-bank: the 19-strategy bank's rules, status and RECORDED statistics
+let bankSignalData = null;            // /api/strategy-bank/signals: recent recorded bank signals + opportunity attribution
+let bankDataAt = 0;
+const BANK_DATA_MS = 60000;           // the bank scans on candle closes: once a minute is plenty
+let lastHeaderModel = null;
 let latestRegistry = null;            // engine strategy registry (null: offline, trendline assumed)
 let labReport = null;                 // /api/market/strategy-lab, fetched only while the Lab is open
 let labSelected = "support_resistance";
@@ -101,7 +107,7 @@ export function renderMarketRadar(){
     +'<div class="gd-world-stage"><div class="gd-stage" id="gardenStage"></div><div class="gd-stage-overlay" id="gardenOverlay" hidden></div><div class="gd-focus" id="gardenFocus" role="region" aria-label="Selected market" aria-live="polite" hidden></div>'
     +'<div class="gd-legend">'+stageLegend()+'</div><small class="gd-stage-mode" id="gardenModeNote"></small></div>'
     +'<div class="gd-world-caption"><span class="gd-eyebrow" id="radarEyebrow">The TRADeden Garden</span>'
-    +'<p class="gd-hero-note" id="gardenHeroNote">Every node is a real setup from a live strategy and its lifecycle. Execution stays manual — TRADeden never places orders.</p></div></section>'
+    +'<p class="gd-hero-note" id="gardenHeroNote">Every node is a real setup or signal from one of TRADeden\'s strategies (the 19-strategy bank and the live production strategies), grouped into five strategy families. None has proven profitability yet. Execution stays manual: TRADeden never places orders.</p></div></section>'
     +'<section class="gd-panel gd-watch" id="gardenMarkets" aria-label="TRADeden priority watch"><header class="gd-panel-head"><div><h2>TRADeden priority watch</h2><p id="watchSubtitle">Markets demanding attention</p></div><span class="gd-count" id="marketCount"></span></header>'
     +'<div id="radarTable" class="gd-watch-list gd-pw-list" aria-live="polite"></div>'
     +'<footer class="gd-pw-foot"><span id="watchScanned"></span><button type="button" class="gd-link" id="watchViewAll" data-watch-action="all" aria-haspopup="dialog">View all →</button></footer></section>'
@@ -117,12 +123,12 @@ export function renderMarketRadar(){
     +'<div class="gd-research-backdrop" id="gardenWatchAllBackdrop" data-watch-action="close" hidden></div>'
     +'<section class="gd-research gd-watch-all" id="gardenWatchAll" role="dialog" aria-modal="true" aria-labelledby="gardenWatchAllTitle" tabindex="-1" hidden></section>'
     +'<section class="gd-panel performance-panel" id="gardenPerformance"><header class="gd-panel-head"><div><h2>📊 Today\'s setup performance</h2><p>Headline uses the 4h market outcome. Other configured horizons remain visible. Trade outcomes are excluded.</p></div></header><div id="dailyPerformance"><div class="macro-empty"><b>Loading performance</b></div></div></section>'
-    +'<details class="gd-panel gd-strategy-bank" id="strategyBank"><summary><span>🏦 Strategy Bank</span><span class="historical-expand-hint">Expand</span></summary><p>Twenty rule-based strategies, each confirming independently on completed candles. Statistics below are recorded signals and outcomes only; Pending means no signal has resolved yet. Experimental strategies are not proven profitable.</p><div id="strategyBankBody"></div></details>'
-    +'<details class="gd-panel gd-strategy-lab" id="strategyLab"><summary><span>🧪 Strategy Lab</span><span class="historical-expand-hint">Expand</span></summary><p>Registered strategies and their status. Live strategies (Trendline, S/R, Trend/Momentum, SMC) each produce their own Garden setups, notifications and outcomes and are measured separately here. Live does not mean proven profitable. Shadow-mode (research) strategies, if any, are reviewed here only and never become Garden setups or alerts.</p><div id="strategyLabBody"></div><div id="strategyLabReport"></div><div id="strategyLabEvidence" aria-live="polite"></div>'
+    +'<details class="gd-panel gd-strategy-bank" id="strategyBank"><summary><span>🏦 Strategy Bank</span><span class="historical-expand-hint">Expand</span></summary><p>Nineteen supported rule-based strategies (one more is unsupported), each confirming independently on completed candles. Forward statistics are recorded signals and outcomes only; Pending means no signal has resolved yet. No strategy is validated: experimental strategies and live production strategies alike have not demonstrated profitability. Historical backtests are shown separately and are simulated.</p><div id="strategyBankBody"></div></details>'
+    +'<details class="gd-panel gd-strategy-lab" id="strategyLab"><summary><span>🧪 Strategy Lab</span><span class="historical-expand-hint">Expand</span></summary><p>The production strategy registry and its measurements. Production strategies (Trendline, S/R, Trend/Momentum, SMC) each produce their own Garden setups, notifications and outcomes; the Strategy Bank above covers all 19 strategies. Live does not mean proven profitable. Shadow-mode (research) strategies, if any, are reviewed here only and never become Garden setups or alerts.</p><div id="strategyLabBody"></div><div id="strategyLabReport"></div><div id="strategyLabEvidence" aria-live="polite"></div>'
     +'<section class="gd-lab-evaluation"><h4>Historical evaluation · verified outcomes by condition</h4><p class="gd-note">The foundation of TRADeden\'s evaluation layer: what has happened to confirmed setups sharing a recorded condition. Deterministic, per strategy, verified outcomes only. It never creates or changes a setup.</p><div id="strategyLabEvaluation"></div></section></details>'
     +'<details class="gd-panel historical-confirmations" id="historicalConfirmations"><summary><span>📚 Confirmation event archive · today (<b id="historicalConfirmationCount">0</b>)</span><span class="historical-expand-hint">Expand</span></summary><p class="gd-archive-status" id="confirmedArchiveStatus"></p><div id="historicalConfirmationCards" class="gd-grid"></div></details>'
     +'<section class="gd-panel radar-fundamentals"><header class="gd-panel-head"><h2>Macro events that can change the tape</h2><span class="gd-count">US events</span></header><div id="radarFundamentals" class="macro-list"><div class="macro-empty"><b>Loading macro context</b></div></div></section>'
-    +'<footer class="gd-method"><p><b>How TRADeden watches:</b> four independent LIVE strategies — Trendline, Support &amp; Resistance, Trend / Momentum and Smart Money Concepts (SMC) — each evaluate every market on MT5 closed bars with deterministic rules. Each keeps its own setups, lifecycle, confirmations and outcomes; one strategy never suppresses or rewrites another\'s setup. A confirmed setup is a historical event: its confirmed plan never changes.</p><p>TRADeden is decision support, not an auto-trading platform. Not an entry recommendation.</p></footer>'
+    +'<footer class="gd-method"><p><b>How TRADeden watches:</b> a bank of 19 independent strategies (trendline, levels and breakouts, trend and momentum, reversion and smart-money families) evaluates the markets on MT5 completed candles with deterministic rules, alongside the live production strategies. Each strategy confirms on its own rules and keeps its own signals and outcomes; strategies never need to agree, and one never suppresses or rewrites another\'s signal. A confirmed signal is a historical event: its confirmed plan never changes. Every strategy is experimental or live-but-unproven: none has demonstrated profitability.</p><p>TRADeden is decision support, not an auto-trading platform. Not an entry recommendation.</p></footer>'
     +'</div>';
 }
 function area(key,icon,title,text){
@@ -214,9 +220,9 @@ function confirmationSnapshot(row){
   return (confirmedDetailCache.get(id)?.snapshots||[]).find(snapshot=>snapshot.observation_id===observation)||null;
 }
 function paintArchive(rows){
-  const entries=rows.map(row=>archiveEntry(row,latestOutcomes,confirmationSnapshot(row)));
-  // R needs the confirmation snapshot's planned levels: load it only for verified hits.
-  for(const [index,entry] of entries.entries())if((entry.kind==="target"||entry.kind==="stop")&&!confirmationSnapshot(rows[index]))fetchConfirmedDetail(entry.key,()=>repaintCards());
+  const entries=rows.map(row=>row.bank?bankArchiveEntry(row.bankSignal):archiveEntry(row,latestOutcomes,confirmationSnapshot(row)));
+  // R needs the confirmation snapshot's planned levels: load it only for verified hits (production setups).
+  for(const [index,entry] of entries.entries())if(!entry.bank&&(entry.kind==="target"||entry.kind==="stop")&&!confirmationSnapshot(rows[index]))fetchConfirmedDetail(entry.key,()=>repaintCards());
   latestArchive=entries;
   const node=document.getElementById("historyCards");
   if(node)node.innerHTML=entries.length?archivePanel(entries,archiveSummary(entries),{filter:archiveFilter,selectedKey,expanded:historyExpanded,limit:HISTORY_LIMIT})
@@ -237,6 +243,7 @@ function paintResearch(){
   panel.hidden=!row;if(backdrop)backdrop.hidden=!row;
   syncOverlayLock();
   if(!row){panel.innerHTML="";return;}
+  if(row.bank){const scroll=panel.scrollTop;panel.innerHTML=bankResearchPanel(setupCardModel(row),row.bankSignal);panel.scrollTop=scroll;return;}
   const key=analysisKey(row);
   const analysis=key?analystCache.get(key):null;
   const archive=latestArchive.find(entry=>entry.key&&entry.key===row.setup_id)||null;
@@ -309,14 +316,24 @@ function gardenCaption(orbs){
   return [null,null];
 }
 let lastCards={growing:[],bloomed:[],history:[]};
+// Recorded Strategy Bank signals as Garden rows: open ones bloom, finished ones rest in history.
+function bankGardenRows(){
+  if(radarMode!=="LIVE"&&radarMode!=="ENGINE_NO_DATA")return {open:[],closed:[]};
+  const rows=(bankSignalData?.signals||[]).map(signal=>bankGardenRow(signal,bankSignalData?.opportunities||{}));
+  return {open:rows.filter(row=>row.lifecycle_state==="CONFIRMED"),closed:rows.filter(row=>row.lifecycle_state!=="CONFIRMED").slice(0,40)};
+}
 function visibleAreas(){
   const areas=gardenAreas(latestEpisodes,latestMarkets,{registry:latestRegistry});
-  return {growing:filterByStrategy(areas.growing,strategyFilter),bloomed:filterByStrategy(areas.bloomed,strategyFilter),history:filterByStrategy(areas.history,strategyFilter)};
+  const bank=bankGardenRows();
+  return {growing:filterUnified(areas.growing,strategyFilter),bloomed:filterUnified([...areas.bloomed,...bank.open],strategyFilter),
+    history:filterUnified([...areas.history,...bank.closed],strategyFilter)};
 }
 function paintStrategyControls(){
-  const filters=strategyFilters(latestRegistry);
-  if(!filters.some(filter=>filter.key===strategyFilter&&filter.selectable))strategyFilter="all";
-  const bar=document.getElementById("strategyFilterBar");if(bar)bar.innerHTML=strategyFilterBar(filters,strategyFilter);
+  const options=strategyOptions(bankReport,latestRegistry);
+  if(!selectableKeys(options).has(strategyFilter))strategyFilter="all";
+  const bar=document.getElementById("strategyFilterBar");
+  // Rebuilt only when its content changes, so an open dropdown is never replaced under the cursor.
+  if(bar){const html=strategySelect(options,strategyFilter);if(bar.dataset.html!==html){bar.innerHTML=html;bar.dataset.html=html;}}
   const lab=document.getElementById("strategyLabBody");if(lab)lab.innerHTML=strategyLabPanel(latestRegistry,{markets:latestMarkets,performance:latestResult?.performance||null});
 }
 // ----- Strategy Lab measurements (on demand, never part of the scan) ----------
@@ -333,13 +350,36 @@ async function refreshLab(force=false){
   paintLab();
 }
 // ----- Strategy Bank (on demand) ----------------------------------------------------
+async function refreshBankData(force=false){
+  if(radarMode==="OFFLINE"||radarMode==="DEMO")return;
+  if(!force&&Date.now()-bankDataAt<BANK_DATA_MS)return;
+  bankDataAt=Date.now();
+  const [report,signals]=await Promise.all([engineFetch("/api/strategy-bank").catch(()=>null),engineFetch("/api/strategy-bank/signals?limit=300").catch(()=>null)]);
+  if(report)bankReport=report;
+  if(signals)bankSignalData=signals;
+  if(!report&&!signals)return;
+  repaintBankViews();
+}
+function repaintBankViews(){
+  if(!latestResult||!document.getElementById("radarTable"))return;
+  if(lastHeaderModel)paintHeader(lastHeaderModel);
+  paintStrategyControls();
+  repaintCards();
+  paintPriorityWatch(radarMode);
+  markSelection();
+  paintFocus();
+  if(researchOpen)paintResearch();
+  if(latestResult)paintPerformance(latestResult.performance);
+  const node=document.getElementById("strategyBankBody");if(node&&bankReport)node.innerHTML=bankPanel(bankReport);
+}
 let bankFetchedAt=0;
 async function refreshBank(force=false){
   const panel=document.getElementById("strategyBank");
   if(!panel?.open||(!force&&Date.now()-bankFetchedAt<LAB_REFRESH_MS))return;
   bankFetchedAt=Date.now();
   const report=await engineFetch("/api/strategy-bank").catch(()=>null);
-  const node=document.getElementById("strategyBankBody");if(node)node.innerHTML=bankPanel(report);
+  if(report)bankReport=report;
+  const node=document.getElementById("strategyBankBody");if(node)node.innerHTML=bankPanel(report||bankReport);
 }
 async function inspectLabSetup(setupId){
   const node=document.getElementById("strategyLabEvidence");if(!node)return;
@@ -387,7 +427,7 @@ function paintPriorityWatch(mode){
   const episodes=[...(latestEpisodes.current||[]),...(latestEpisodes.confirmed||[]),...(latestEpisodes.closed||[])];
   // Scan changes are only dated from live data; offline/demo never creates attention events.
   if(mode==="LIVE")scanEvents=trackScanEvents(scanEvents,latestMarkets,latestRegistry);
-  try{latestRanking=rankMarkets(latestMarkets,[...areas.bloomed,...areas.growing],latestRegistry,{episodes,scanEvents:mode==="LIVE"?scanEvents:null});}
+  try{latestRanking=rankMarkets(latestMarkets,[...areas.bloomed,...areas.growing,...bankGardenRows().open],latestRegistry,{episodes,scanEvents:mode==="LIVE"?scanEvents:null});}
   catch(error){console.warn("TRADeden: priority ranking failed; showing markets in scan order",error);latestRanking=rankMarkets(latestMarkets,[],null);}
   const slots=priorityWatchSlots(latestRanking);
   const shown=[...slots.priority,...(slots.core?[slots.core]:[])].map(entry=>entry.symbol);
@@ -428,6 +468,12 @@ function closeWatchAll({restoreFocus=true}={}){
 }
 function bindGardenInteractions(){
   const root=document.getElementById("radarRoot");if(!root)return;
+  root.onchange=event=>{
+    if(event.target?.id!=="strategySelect")return;
+    strategyFilter=event.target.value||"all";historyExpanded=false;growingExpanded=false;bloomedExpanded=false;
+    paintStrategyControls();repaintCards();markSelection();
+    if(latestResult){paintConfirmed(latestMarkets,latestResult.performance);paintPerformance(latestResult.performance);}
+  };
   root.onclick=event=>{
     const watchAction=event.target.closest("[data-watch-action]")?.dataset.watchAction;
     if(watchAction==="all"){openWatchAll();return;}
@@ -519,7 +565,7 @@ function paintConfirmed(markets, performance){
   if(!container||!status||!count)return;
   const repaint=()=>{if(container.isConnected)paintConfirmed(markets,performance);};
   for(const market of markets)if(market.strategy_valid===true)fetchConfirmedDetail(market.setup_id,repaint);
-  const entries=confirmedEntries(markets,performance).filter(({event})=>matchesStrategy(event,strategyFilter));
+  const entries=confirmedEntries(markets,performance).filter(({event})=>matchesUnified(event,strategyFilter));
   for(const {event} of entries)fetchConfirmedDetail(event.setup_id,repaint);
   const pending=entries.filter(({event})=>String(event.primary_outcome||event.market_outcomes?.["4h"]||"").toUpperCase()==="PENDING").length;
   const current=entries.filter(({display})=>display.currentlyConfirmed).length;
@@ -562,12 +608,14 @@ function paint(result){
   const status=document.getElementById("radarEngineStatus");if(status)status.textContent={LIVE:"Live MT5 engine",ENGINE_NO_DATA:"Engine online · MT5 "+String(result.mt5Status||"no data"),OFFLINE:"Engine offline",DEMO:"Demo mode · engine offline"}[mode];
   paintPerformance(result.performance);
   refreshLab();
+  refreshBankData();
   if(pendingAnchor)setTimeout(applyPendingAnchor,0);
 }
 // Header numbers: repainted each scan; a value that changed gets a brief transition.
 function paintHeader(model){
   const strategies=document.getElementById("gardenHeaderStrategies"),stats=document.getElementById("gardenHeaderStats");
-  if(strategies)strategies.innerHTML=headerStrategies(model);
+  lastHeaderModel=model;
+  if(strategies)strategies.innerHTML=unifiedHeader(unifiedHeaderModel({report:radarMode==="OFFLINE"||radarMode==="DEMO"?null:bankReport,signals:bankSignalData?.signals||null,registry:latestRegistry}));
   if(stats)stats.innerHTML=headerStats(model);
   for(const node of document.querySelectorAll("#radarRoot .gd-command-head [data-stat]")){
     const key=node.dataset.stat,value=node.textContent;
@@ -580,7 +628,7 @@ function paintMode(mode,result){
   if(root){root.classList.toggle("is-simulated",mode==="DEMO");root.classList.toggle("is-offline",mode==="OFFLINE"||mode==="ENGINE_NO_DATA");root.dataset.mode=mode;}
   const note=document.getElementById("gardenHeroNote");
   if(note)note.textContent=mode==="DEMO"?"Demo mode: every node here is a simulated fixture, not a real setup and not market data."
-    :"Every node is a real setup from a live strategy and its lifecycle. Execution stays manual — TRADeden never places orders.";
+    :"Every node is a real setup or signal from one of TRADeden's strategies (the 19-strategy bank and the live production strategies), grouped into five strategy families. None has proven profitability yet. Execution stays manual: TRADeden never places orders.";
   const eyebrow=document.getElementById("radarEyebrow");
   if(eyebrow)eyebrow.textContent={LIVE:"The TRADeden Garden · live",ENGINE_NO_DATA:"The TRADeden Garden · engine online, no market data",OFFLINE:"The TRADeden Garden · scanner offline",DEMO:"The TRADeden Garden · simulated, not scanning"}[mode];
   if(!banner)return;
@@ -654,7 +702,7 @@ function bindConfirmationAlertControls(){
   };}
   if(test)test.onclick=()=>{dispatchTestSound(()=>playConfirmationTone());};
 }
-function paintPerformance(data){const el=document.getElementById("dailyPerformance");if(!el)return;if(!data){el.innerHTML='<div class="macro-empty"><b>Performance unavailable</b><span>Backend performance endpoint did not respond.</span></div>';return;}if(strategyFilter!=="all"){el.innerHTML=strategyPerformanceBlock(strategyPerformance(data,strategyFilter),strategyTag(strategyFilter),{shadow:strategyStatus(strategyFilter,latestRegistry)==="SHADOW"});return;}const daily=data.daily?.[0]||data.summary||{};const horizons=daily.by_horizon||{};const rows=["15m","1h","4h","24h"].map(h=>{const x=horizons[h]||{};return '<tr><th>'+h+'</th><td>'+Number(x.win||0)+'</td><td>'+Number(x.loss||0)+'</td><td>'+Number(x.pending||0)+'</td><td>'+Number(x.no_hit||0)+'</td><td>'+Number(x.ambiguous||0)+'</td></tr>';}).join("");const h4=horizons["4h"]||{};const wins=Number(h4.win||0),losses=Number(h4.loss||0),denominator=Number(h4.win_rate_denominator??wins+losses);const rate=h4.win_rate;el.innerHTML='<div class="performance-headline"><b>'+wins+'W / '+losses+'L</b><span><b class="gd-combined">ALL LIVE STRATEGIES COMBINED</b> Select a strategy for its own results · 4h win rate '+(rate==null?"—":Number(rate).toFixed(1)+"%")+' · denominator '+denominator+' (wins + losses)</span></div><div class="performance-table-wrap"><table class="performance-table"><thead><tr><th>HORIZON</th><th>W</th><th>L</th><th>PENDING</th><th>NO HIT</th><th>AMBIGUOUS</th></tr></thead><tbody>'+rows+'</tbody></table></div><small>Timezone: '+esc(data.timezone||daily.reporting_timezone||"Africa/Nairobi")+' · Stored MarketOutcome labels per horizon. NO_HIT and AMBIGUOUS are excluded from win-rate denominator.</small>'+verifiedPerformanceBlock(daily.verified);}
+function paintPerformance(data){const el=document.getElementById("dailyPerformance");if(!el)return;if(!data){el.innerHTML='<div class="macro-empty"><b>Performance unavailable</b><span>Backend performance endpoint did not respond.</span></div>';return;}if(strategyFilter!=="all"){const prod=productionIdOf(strategyFilter);if(!prod){el.innerHTML=bankStrategyPerformance(bankReport,strategyFilter);return;}el.innerHTML=strategyPerformanceBlock(strategyPerformance(data,prod),strategyTag(prod),{shadow:strategyStatus(prod,latestRegistry)==="SHADOW"})+(strategyFilter.startsWith("trendline_")?'<p class="gd-note">Production results cover every trendline setup. The Strategy Bank table tracks Break &amp; Retest and Bounce separately.</p>':'');return;}const daily=data.daily?.[0]||data.summary||{};const horizons=daily.by_horizon||{};const rows=["15m","1h","4h","24h"].map(h=>{const x=horizons[h]||{};return '<tr><th>'+h+'</th><td>'+Number(x.win||0)+'</td><td>'+Number(x.loss||0)+'</td><td>'+Number(x.pending||0)+'</td><td>'+Number(x.no_hit||0)+'</td><td>'+Number(x.ambiguous||0)+'</td></tr>';}).join("");const h4=horizons["4h"]||{};const wins=Number(h4.win||0),losses=Number(h4.loss||0),denominator=Number(h4.win_rate_denominator??wins+losses);const rate=h4.win_rate;el.innerHTML='<div class="performance-headline"><b>'+wins+'W / '+losses+'L</b><span><b class="gd-combined">ALL LIVE STRATEGIES COMBINED</b> Select a strategy for its own results · 4h win rate '+(rate==null?"—":Number(rate).toFixed(1)+"%")+' · denominator '+denominator+' (wins + losses)</span></div><div class="performance-table-wrap"><table class="performance-table"><thead><tr><th>HORIZON</th><th>W</th><th>L</th><th>PENDING</th><th>NO HIT</th><th>AMBIGUOUS</th></tr></thead><tbody>'+rows+'</tbody></table></div><small>Timezone: '+esc(data.timezone||daily.reporting_timezone||"Africa/Nairobi")+' · Stored MarketOutcome labels per horizon. NO_HIT and AMBIGUOUS are excluded from win-rate denominator.</small>'+verifiedPerformanceBlock(daily.verified);}
 // Verified, reconciled figures (backend performance.verified_summary): the Strategy Lab's rule,
 // every confirmed setup in exactly one bucket. Rates and R averages appear only with enough decisive outcomes.
 function verifiedPerformanceBlock(v){
