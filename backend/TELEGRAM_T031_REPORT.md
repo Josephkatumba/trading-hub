@@ -1,6 +1,6 @@
 # T-031 Telegram integration: BUILD / VERIFY report
 
-Status: **BUILD and VERIFY complete. Phase 1 connectivity verified: bot @tradedensignalbot reachable, private chat ID stored in backend/.env, test message accepted by Telegram (message_id 4) and receipt confirmed by the owner on 2026-10-19. Live alerts are OFF and need CEO approval.**
+Status: **BUILD and VERIFY complete. Phase 1 connectivity verified: bot @tradedensignalbot reachable, private chat ID stored in backend/.env, test message accepted by Telegram (message_id 4) and receipt confirmed by the owner on 2026-10-19. CEO approved activation on 2026-10-19: live alerts are ON.**
 Branch: `codex/commercial-mvp-phase1` (not committed yet). Date: 2026-10-19.
 
 ## What was built
@@ -57,7 +57,13 @@ Outcomes are tracked only for signals that were actually alerted. The notifier u
   - **End-to-end on the real stores:** `record_markets` → confirmation → alert. A detected-only setup and one that fails 1.5R at the executable price are not sent, and a repeat is not re-sent. Then `resolve_due_market_outcomes` → verified TP → follow-up.
 - **Scanner performance:** the scan code path is unchanged. With alerts disabled, no thread is started.
 
-## Outstanding before CEO approval
+## Activation (2026-10-19, CEO approved)
 
-1. Regenerate the bot token with BotFather (`/revoke`), because it was pasted into a chat. Put the new token in `backend/.env`, then run `python telegram_setup.py check`.
-2. **Activation (only after approval):** set `TRADEDEN_TELEGRAM_ALERTS_ENABLED=1` and restart the engine. First activation records every existing confirmation as `baseline`, so nothing historical is sent. In production, add the three `TRADEDEN_TELEGRAM_*` keys to the protected runtime JSON.
+- `TRADEDEN_TELEGRAM_ALERTS_ENABLED=1` was set in `backend/.env`, and the engine was restarted on port 8000.
+- `/api/health` → `telegram_alerts`: enabled, configured, running, no error. MT5 is CONNECTED and scans are completing.
+- First activation recorded all 395 existing confirmations as `baseline`. No historical signal was sent.
+
+## Outstanding
+
+1. Regenerate the bot token with BotFather (`/revoke`), because it was pasted into a chat. Put the new token in `backend/.env`, run `python telegram_setup.py check`, and restart the engine.
+2. In production, add the three `TRADEDEN_TELEGRAM_*` keys to the protected runtime JSON.
