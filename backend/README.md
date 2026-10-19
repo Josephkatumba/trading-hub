@@ -238,3 +238,34 @@ Outcome verification requires a verified MT5 time basis
 it is `America/New_York+07:00` (server clock = New York + 7 h, verified in Phase 8).
 Without it no strategy accumulates verified outcomes. `time_reverification.py`
 re-checks historical records read-only under the basis, without rewriting them.
+
+## Telegram alerts (T-031)
+
+`telegram_notifier.py` delivers to one private Telegram chat:
+
+- **Signal alerts**: a new confirmation of a LIVE strategy whose snapshot passed the
+  executable-price qualification, with the plan it was confirmed with (instrument,
+  BUY/SELL, strategy, entry, stop loss, take profit, executable R:R, confirmation time in
+  EAT, setup id). Detected, developing, shadow, unqualified, invalidated/expired and
+  stale confirmations are never sent.
+- **Outcome follow-ups**: only for alerted signals, only when the outcome engine has a
+  verified WIN/LOSS (Strategy Lab rule). Labelled as the signal's market path, never as
+  an executed trade. Nothing is inferred from unverified or incomplete candles.
+
+It runs in its own thread (scans never wait on Telegram), reads only appended bytes of
+`setup_confirmations.jsonl`, and records every decision in
+`data/telegram_notifications.jsonl`, so restarts never resend or replay. First activation
+marks every existing confirmation `baseline`; a confirmation first seen more than 10
+minutes late is skipped; an alert undelivered for 30 minutes expires. Retryable errors
+(429 with `retry_after`, 5xx, network) back off; 4xx errors fail without retry.
+
+Setup (the token is never printed; keep it only in `backend/.env` or the protected runtime JSON):
+
+    TRADEDEN_TELEGRAM_BOT_TOKEN=<from BotFather>     # in backend/.env
+    python telegram_setup.py check                   # token reaches the bot
+    python telegram_setup.py discover                # after pressing Start in the bot: stores TRADEDEN_TELEGRAM_CHAT_ID
+    python telegram_setup.py test                    # sends the integration test message
+    python telegram_setup.py status                  # notification history counts
+
+Live alerts start with the engine only with `TRADEDEN_TELEGRAM_ALERTS_ENABLED=1` (default off).
+`/api/health` → `telegram_alerts` shows enabled/configured/running, never the token or chat id.

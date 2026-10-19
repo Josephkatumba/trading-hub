@@ -42,6 +42,7 @@ import qualification
 from trade_planning import apply_plan
 import commercial
 from outcome_identity import unique_outcomes
+import telegram_notifier
 
 try:
     import MetaTrader5 as mt5
@@ -136,11 +137,16 @@ async def lifespan(_app: FastAPI):
     worker = threading.Thread(target=autonomous_market_worker, args=(stop,),
                               name="tradeden-market-scanner", daemon=True)
     worker.start()
+    # Telegram alerts run in their own thread (off unless TRADEDEN_TELEGRAM_ALERTS_ENABLED=1),
+    # so Telegram delivery can never delay a scan.
+    notifier = telegram_notifier.start_notifier(stop)
     try:
         yield
     finally:
         stop.set()
         worker.join(timeout=5)
+        if notifier is not None:
+            notifier.join(timeout=5)
         # Serialize shutdown with scans and browser requests.
         with _SCAN_LOCK:
             close_mt5()
@@ -714,6 +720,7 @@ def health():
         # Additive: SHADOW (observational) strategies and whether the last scan ran them.
         "shadow_strategies": shadow,
         "trendline_v5_shadow": next((item["state"] for item in shadow if item["strategy_id"] == TRENDLINE_V5_SHADOW), "NOT_REGISTERED"),
+        "telegram_alerts": telegram_notifier.status(),
     }
 
 
