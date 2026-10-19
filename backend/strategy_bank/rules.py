@@ -1,4 +1,4 @@
-"""The 20 Strategy Bank strategies: objective specifications and decide() functions.
+"""Strategy Bank strategies: objective specifications and decide() functions (no fixed number).
 
 A decide(ctx, i) function looks only at bars <= i of the context's CLOSED bars (bar i is the candle
 that has just closed) and returns at most one Decision. Entry happens after the close: live at the
@@ -410,8 +410,12 @@ def ichimoku_trend(ctx: Ctx, i: int, tf: str = "H1") -> Decision | None:
 # ----- specifications -------------------------------------------------------------------------------------
 
 LINKED = "LINKED"          # produced by an existing production strategy; attributed, not re-implemented
-EXPERIMENTAL = "EXPERIMENTAL"
+EXPERIMENTAL = "EXPERIMENTAL"  # the T-034 bank strategies: scanned and (CEO-approved) alerting
+RESEARCH = "RESEARCH"      # new strategies: scanned and recorded in shadow, NEVER alerted until promoted
 UNSUPPORTED = "UNSUPPORTED"
+SCANNED_STATUSES = (EXPERIMENTAL, RESEARCH)
+REQUIRED_FIELDS = ("key", "name", "status", "timeframe", "instruments", "entry", "indicators", "confirmation",
+                   "stop", "take_profit", "min_rr", "invalidation", "data")
 COMMON_STOP_RULE = "Stop must sit on the loss side, 0.2-5 ATR from the entry."
 COMMON_INVALIDATION = ("Not issued if the data is stale, the spread exceeds 25% of the risk, the entry quote is more "
                        "than 0.5 ATR from the confirming close, or the executable reward/risk is below the minimum.")
@@ -523,6 +527,43 @@ SPECS: list[dict[str, Any]] = [
 BY_KEY = {s["key"]: s for s in SPECS}
 
 
+def register(spec: dict[str, Any]) -> dict[str, Any]:
+    """Add a strategy to the bank at runtime. There is no limit on the number of strategies: specs are
+    validated, keys must be unique, and numbers are assigned in registration order (`n` is a display
+    number, never an index). New strategies must enter as RESEARCH (or UNSUPPORTED); only an
+    evidence-based promotion in strategy_bank.qualification makes a RESEARCH strategy alert."""
+    missing = [f for f in REQUIRED_FIELDS if f not in spec]
+    if missing:
+        raise ValueError(f"strategy spec {spec.get('key')!r} lacks {missing}")
+    if spec["key"] in BY_KEY:
+        raise ValueError(f"strategy key {spec['key']!r} is already registered")
+    if spec["status"] not in (RESEARCH, UNSUPPORTED):
+        raise ValueError("new strategies are registered as RESEARCH (or UNSUPPORTED), never directly as alerting")
+    if spec["status"] == RESEARCH and not callable(spec.get("decide")):
+        raise ValueError(f"RESEARCH strategy {spec['key']!r} needs a decide() function")
+    spec = {**spec, "n": max((s["n"] for s in SPECS), default=0) + 1}
+    SPECS.append(spec)
+    BY_KEY[spec["key"]] = spec
+    return spec
+
+
 def scanned() -> list[dict[str, Any]]:
-    """Strategies the bank scanner runs itself (EXPERIMENTAL ones with a decide function)."""
-    return [s for s in SPECS if s["status"] == EXPERIMENTAL]
+    """Strategies the bank scanner runs itself: EXPERIMENTAL (alert-approved) and RESEARCH (shadow)."""
+    return [s for s in SPECS if s["status"] in SCANNED_STATUSES and callable(s.get("decide"))]
+
+
+def alerting(spec: dict[str, Any]) -> bool:
+    """May this strategy's signals reach Telegram? EXPERIMENTAL strategies keep their T-034 approval;
+    RESEARCH strategies only after an evidence-based promotion recorded in the qualification registry."""
+    if spec["status"] == EXPERIMENTAL:
+        return True
+    if spec["status"] == RESEARCH:
+        from strategy_bank import qualification
+        return qualification.current_status(spec["key"]) == qualification.QUALIFIED
+    return False
+
+
+def load_expansion() -> list[str]:
+    """Register the expansion strategies the qualification registry admits (idempotent)."""
+    from strategy_bank import expansion
+    return expansion.register_admitted()

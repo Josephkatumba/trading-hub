@@ -229,3 +229,28 @@ Also pending CEO decisions, which affect what subscribers receive today. None ha
   - `src/main.js`: nav link
 - **Data (git-ignored):** `data/strategy_bank/historical.json`. Once enabled, the bank also writes `signals.jsonl`, `opportunities.jsonl` and `telegram_notifications.jsonl` there.
 - **Reproduce the historical results:** `python -m research.bank_backtest` (needs the cached MT5 history from `python -m research.lab generate`).
+
+## T-036 addendum: no strategy limit, promotion gate, expansion research
+
+- **The 20-strategy limit is removed.**
+  - `rules.register(spec)` adds strategies at runtime, with no maximum. It validates required fields, rejects duplicate keys and assigns display numbers in order.
+  - The tests no longer assume 20 rows. A test registers 40 extra strategies.
+- **Promotion gate.**
+  - New strategies enter as **RESEARCH**: scanned and recorded, **never alerted**. They never open an opportunity, so they can't block an alert from the 16 T-034 strategies, whose alert behaviour is unchanged.
+  - A RESEARCH strategy may alert only after `qualification.promote(key, "QUALIFIED", approval=...)`. Code enforces three conditions:
+    - FORWARD_TESTING came first
+    - recorded forward results: at least 60 resolved signals, expectancy ≥ +0.05R and PF ≥ 1.10
+    - a CEO approval reference
+  - Every promotion and demotion is logged with a timestamp.
+- **Qualification registry** (`strategy_bank/qualification.py`, `data/strategy_bank/qualification.jsonl`):
+  - Append-only status history for all bank strategies (baseline dated to the T-034 commit) and research-library strategies (imported with their original timestamps).
+  - `lifecycle_report(start, end)` supplies the daily and weekly reports.
+- **Expansion research** (`strategy_bank/expansion.py`, `research/bank_expansion.py`; results in `data/strategy_bank/expansion_results.json` and the ledger):
+  - 6 new families and 12 pre-registered configurations, using the same pipeline and costs as the bank.
+  - The families: FX session momentum (Elaut et al. 2018), weekend gap fade, Turtle Soup (Raschke & Connors), Heikin-Ashi trend, KAMA trend (Kaufman) and prior-close reversion.
+  - **None was admitted.** Five were rejected on train; prior-close reversion (k=1.5) looked strong on train (+0.30R, CI +0.05 to +0.57, n=171) but lost on validation (-0.08R), so it never reached the test.
+  - All 12 configurations are ARCHIVED with their evidence. No strategy was added just to raise the count.
+- **Capacity on this laptop:**
+  - **Live scanning:** about 1.4 ms per strategy per symbol per M15 close. Over 1,000 strategies would fit a 30 s budget across 16 symbols; the MT5 bar fetch (~0.1–0.3 s per symbol) doesn't grow with strategy count.
+  - **Backtesting:** the heaviest strategy takes ~11 s end to end over 16 symbols on one core, so ~2,500 full backtests an hour in parallel.
+  - **The binding constraint is statistical, not compute:** every extra strategy tested raises the multiple-testing bar.

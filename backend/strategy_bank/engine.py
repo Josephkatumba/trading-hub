@@ -111,7 +111,7 @@ def confirm(spec: dict[str, Any], d: rules.Decision, ctx: rules.Ctx, i: int, quo
     if spec["min_rr"] is not None and rr < spec["min_rr"]:
         return None, f"reward/risk {rr:.2f} below the {spec['min_rr']} minimum"
     signal = {"record_type": "bank_signal", "signal_id": "bank_" + uuid.uuid4().hex, "strategy_key": spec["key"],
-              "strategy_name": spec["name"], "strategy_number": spec["n"], "status": spec["status"],
+              "strategy_name": spec["name"], "strategy_number": spec.get("n"), "status": spec["status"],
               "symbol": ctx.symbol, "direction": d.direction, "timeframe": tf, "confirmed_at": _iso(close_t),
               "detected_at": _iso(now), "entry": entry, "stop_loss": float(stop), "take_profit": float(target),
               "risk": risk, "rr": round(rr, 3), "spread": spread, "atr": atr, "confirming_close": close,
@@ -218,8 +218,22 @@ class Bank:
         return new
 
     def _attach(self, signal: dict[str, Any], now: float) -> None:
-        """Merge into an open opportunity on the same symbol and direction, or open a new one."""
+        """Merge into an open opportunity on the same symbol and direction, or open a new one.
+        Promotion gate: a strategy that may not alert (RESEARCH, not promoted) is attributed to an open
+        opportunity if there is one, but never opens or owns one, so it can neither alert nor block a
+        later alert from an approved strategy."""
         t = datetime.fromisoformat(signal["confirmed_at"]).timestamp()
+        spec = rules.BY_KEY.get(signal["strategy_key"])
+        if spec is not None and not rules.alerting(spec):
+            signal["alert"] = "research only (not alerted)"
+            for opp in self.store.opportunities.values():
+                first = datetime.fromisoformat(opp["first_confirmed_at"]).timestamp()
+                if opp["symbol"] == signal["symbol"] and opp["direction"] == signal["direction"] and 0 <= t - first <= OPPORTUNITY_WINDOW:
+                    signal["opportunity_id"] = opp["opportunity_id"]
+                    self.store.put_opportunity({**opp, "research_strategies": sorted(set(opp.get("research_strategies", [])) | {signal["strategy_name"]}),
+                                                "research_signal_ids": opp.get("research_signal_ids", []) + [signal["signal_id"]]})
+                    break
+            return
         for opp in sorted(self.store.opportunities.values(), key=lambda o: o["first_confirmed_at"], reverse=True):
             if opp["symbol"] != signal["symbol"] or opp["direction"] != signal["direction"]:
                 continue
@@ -287,7 +301,8 @@ def _summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def statistics(store: BankStore, linked_rows: dict[str, list[dict[str, Any]]] | None = None) -> list[dict[str, Any]]:
-    """One row per strategy (all 20), from RECORDED signals and outcomes only."""
+    """One row per registered strategy (any number), from RECORDED signals and outcomes only."""
+    rules.load_expansion()                 # admitted expansion strategies appear as soon as they are admitted
     by_key: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for s in store.signals.values():
         by_key[s["strategy_key"]].append(s)
@@ -300,7 +315,9 @@ def statistics(store: BankStore, linked_rows: dict[str, list[dict[str, Any]]] | 
         for r in rows:
             by_inst[r["symbol"]].append(r)
             by_tf[r.get("timeframe") or spec["timeframe"]].append(r)
+        from strategy_bank import qualification
         out.append({"n": spec["n"], "key": spec["key"], "name": spec["name"], "status": spec["status"],
+                    "alerting": rules.alerting(spec), "qualification": qualification.current_status(spec["key"]),
                     "monitoring": spec["status"] != rules.UNSUPPORTED, "timeframe": spec["timeframe"], **summary,
                     "by_instrument": {k: _summary(v) for k, v in sorted(by_inst.items())},
                     "by_timeframe": {k: _summary(v) for k, v in sorted(by_tf.items())},

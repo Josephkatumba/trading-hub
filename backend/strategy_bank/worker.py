@@ -100,6 +100,12 @@ def run(stop: threading.Event, mt5: Any, ensure: Callable[[], tuple[bool, str | 
         _STATUS["last_error"] = "TRADING_HUB_MT5_SOURCE_TIMEZONE not set: bar times unverifiable, bank not started"
         return
     from observations import confirmation_events
+    from strategy_bank import qualification
+    try:                                   # baseline the lifecycle registry; load admitted (RESEARCH) strategies
+        qualification.sync()
+        rules.load_expansion()
+    except Exception:
+        LOGGER.exception("Strategy bank: qualification sync / expansion load failed (core bank continues)")
     bank = engine.Bank(production_confirmations=lambda: confirmation_events()[-200:])
     fetch = signal_outcomes.mt5_fetch(mt5, ensure, basis)
     alerts = None

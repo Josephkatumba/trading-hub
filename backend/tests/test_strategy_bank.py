@@ -47,7 +47,10 @@ def truncated(fr, close_t):
 
 class SpecTests(unittest.TestCase):
     def test_twenty_objective_specifications(self):
-        self.assertEqual([s["n"] for s in rules.SPECS], list(range(1, 21)))
+        # No fixed number of strategies: display numbers are unique and assigned in registration order.
+        numbers = [s["n"] for s in rules.SPECS]
+        self.assertEqual(numbers, sorted(set(numbers)))
+        self.assertEqual(numbers[:20], list(range(1, 21)))                    # the T-034 core bank
         for s in rules.SPECS:
             for field in ("name", "status", "timeframe", "entry", "indicators", "confirmation", "stop", "take_profit",
                           "invalidation", "data", "instruments"):
@@ -60,7 +63,8 @@ class SpecTests(unittest.TestCase):
         vwap = rules.BY_KEY["vwap_reversion"]
         self.assertEqual(vwap["status"], rules.UNSUPPORTED)
         self.assertIn("tick_volume", vwap["unsupported_reason"])
-        self.assertEqual(len(rules.scanned()), 16)
+        self.assertEqual(len(rules.scanned()), sum(1 for s in rules.SPECS if s["status"] in rules.SCANNED_STATUSES))
+        self.assertEqual(len([s for s in rules.SPECS if s["status"] == rules.EXPERIMENTAL]), 16)   # T-034 approved set unchanged
         vague = ("strong", "significant momentum", "looks", "clearly")
         for s in rules.scanned():
             self.assertFalse(any(w in s["entry"].lower() for w in vague), f"#{s['n']} entry rule is vague")
@@ -305,7 +309,7 @@ class OutcomeAndStatsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             store = engine.BankStore(Path(temp))
             stats = {row["key"]: row for row in engine.statistics(store)}
-            self.assertEqual(len(stats), 20)
+            self.assertEqual(len(stats), len(rules.SPECS))
             self.assertEqual((stats["ema_pullback"]["signals"], stats["ema_pullback"]["win_rate"], stats["ema_pullback"]["expectancy_r"]), (0, None, None))
             for k, (status, r) in enumerate((("TARGET_HIT", 2.0), ("STOP_HIT", -1.0), ("STOP_HIT", -1.0), (None, None))):
                 store.put_signal({"signal_id": f"s{k}", "strategy_key": "ema_pullback", "symbol": "EURUSD", "timeframe": "H1",
@@ -344,8 +348,8 @@ class IsolationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp, mock.patch.object(engine, "bank_dir", lambda: Path(temp)), \
                 mock.patch.object(engine, "linked_production_rows", lambda: {}):
             payload = main.strategy_bank()
-        self.assertEqual(len(payload["strategies"]), 20)
-        self.assertEqual(len(payload["rules"]), 20)
+        self.assertEqual(len(payload["strategies"]), len(rules.SPECS))
+        self.assertEqual(len(payload["rules"]), len(rules.SPECS))
         self.assertIn("not live", payload["historical"]["label"])
         self.assertTrue(all(row["win_rate"] is None for row in payload["strategies"]))
 
