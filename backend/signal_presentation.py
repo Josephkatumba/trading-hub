@@ -5,6 +5,13 @@ nothing is recomputed, re-planned or inferred. When the evidence for a statement
 recorded, the statement is left out, and when too little is recorded the rationale falls
 back to a plain factual sentence.
 
+Rationales are balanced: a recorded reading that materially contradicts the trade (trendline:
+an opposing H1 bias, structure or momentum, or price at the opposing level; SMC: an
+opposing H4 trend) is added as a brief "although ..." caution, at most MAX_CAUTIONS of them,
+and is never dropped to make room for supporting evidence. A caution states a recorded
+reading only; it does not say the trade is invalid. S/R and Trend & Momentum confirmations
+require momentum and higher-timeframe agreement, so they record no contradicting reading.
+
 Setup names map the strategies' own recorded families:
   trendline_v5  BREAK under trendline-first-v5.1 confirms only after the broken line was
                 retested and rejected ("... retest rejected")  -> Break & Retest
@@ -23,8 +30,9 @@ import html
 import math
 from typing import Any
 
-RATIONALE_VERSION = "rationale-v1"
-MAX_WORDS = 35
+RATIONALE_VERSION = "rationale-v2"
+MAX_WORDS = 40
+MAX_CAUTIONS = 2
 STRATEGY_NAMES = {"trendline_v5": "Trendline", "trendline": "Trendline", "support_resistance": "Support & Resistance",
                   "trend_momentum": "Trend & Momentum", "smc": "Smart Money Concepts"}
 
@@ -95,19 +103,49 @@ def _words(text: str) -> int:
     return len(text.split())
 
 
-def _sentence(parts: list[str], optional: list[str], first_only: bool = False) -> str:
-    """Join required parts, then add optional clauses while under MAX_WORDS (with
-    first_only: only the first alternative that fits)."""
+def _caution(cautions: list[str]) -> str:
+    """", although A and B" for the recorded readings that contradict the trade."""
+    items = cautions[:MAX_CAUTIONS]
+    return (", although " + " and ".join(items)) if items else ""
+
+
+def _sentence(parts: list[str], optional: list[str], first_only: bool = False, cautions: list[str] | None = None) -> str:
+    """Required parts, then optional supporting clauses while under MAX_WORDS (first_only:
+    only the first alternative that fits), then the caution. A caution is never dropped to
+    make room for supporting evidence: supporting clauses give way first."""
+    cautions = list(cautions or [])
     text = "".join(parts)
+    while len(cautions) > 1 and _words(text + _caution(cautions)) > MAX_WORDS:
+        cautions.pop()
+    caution = _caution(cautions)
     for clause in optional:
-        if _words(text + clause) <= MAX_WORDS:
+        if _words(text + clause + caution) <= MAX_WORDS:
             text += clause
             if first_only:
                 break
-    return text.rstrip(" ,;") + "."
+    return text.rstrip(" ,;") + caution + "."
 
 
-def _trendline(snapshot: dict[str, Any], direction: str, timeframe: str) -> str | None:
+def _trendline_cautions(f: dict[str, Any], long: bool) -> list[str]:
+    """Recorded readings that materially contradict the trade direction, most important first.
+    Only what the scanner recorded at confirmation; nothing is inferred."""
+    opposite = "bearish" if long else "bullish"
+    cautions = []
+    if str(f.get("higher_timeframe_bias") or "").upper() == opposite.upper():
+        cautions.append(f"the H1 bias is {opposite}")
+    structure = str(f.get("structure") or "").lower()
+    if structure.startswith("lower highs" if long else "higher highs"):
+        cautions.append("the structure still shows " + ("lower highs and lower lows" if long else "higher highs and higher lows"))
+    if str(f.get("momentum") or "").upper() == opposite.upper():
+        cautions.append(f"momentum remains {opposite}")
+    kind = str(f.get("nearest_level_type") or "").upper()
+    distance = _number(f.get("nearest_level_atr"))
+    if distance is not None and abs(distance) <= 0.5 and kind == ("RESISTANCE" if long else "SUPPORT"):
+        cautions.append(f"price is {'at' if abs(distance) < 0.05 else 'near'} {kind.lower()}")
+    return cautions
+
+
+def _trendline(snapshot: dict[str, Any], direction: str, timeframe: str, notes: list[str] | None = None) -> str | None:
     f = _features(snapshot)
     label = str(f.get("trendline") or "").lower()
     family = str(snapshot.get("setup_type") or "").upper()
@@ -128,13 +166,19 @@ def _trendline(snapshot: dict[str, Any], direction: str, timeframe: str) -> str 
     optional = []
     for count in range(len(support), 0, -1):  # the longest evidence list that fits
         optional.append(", with " + (", ".join(support[:count - 1]) + " and " if count > 1 else "") + support[count - 1])
+    cautions = _trendline_cautions(f, long)
     if family == "BREAK" and setup_name("trendline_v5", snapshot, direction) == "Break & Retest":
-        return _sentence([f"Price broke the {line}, retested it and closed {side} it with a rejection candle on {timeframe}"], optional, first_only=True)
-    if family == "BREAK":
-        return _sentence([f"Price closed {side} the {line} on {timeframe}"], optional, first_only=True)
-    if family == "REVERSAL":
-        return _sentence([f"Price tested the {line} and closed back {side} it on {timeframe}"], optional, first_only=True)
-    return None
+        base = f"Price broke the {line}, retested it and closed {side} it with a rejection candle on {timeframe}"
+    elif family == "BREAK":
+        base = f"Price closed {side} the {line} on {timeframe}"
+    elif family == "REVERSAL":
+        base = f"Price tested the {line} and closed back {side} it on {timeframe}"
+    else:
+        return None
+    text = _sentence([base], optional, first_only=True, cautions=cautions)
+    if notes is not None:
+        notes.extend(c for c in cautions if c in text)
+    return text
 
 
 def _support_resistance(snapshot: dict[str, Any], direction: str, timeframe: str, entry: Any) -> str | None:
@@ -177,7 +221,7 @@ def _trend_momentum(snapshot: dict[str, Any], direction: str, timeframe: str, en
     return _sentence(parts, optional)
 
 
-def _smc(snapshot: dict[str, Any], direction: str, timeframe: str, entry: Any) -> str | None:
+def _smc(snapshot: dict[str, Any], direction: str, timeframe: str, entry: Any, notes: list[str] | None = None) -> str | None:
     e = _evidence(snapshot)
     rules = (e.get("confirmation") or {}).get("rules") or {}
     brk = (e.get("structure") or {}).get("last_break") or {}
@@ -194,36 +238,42 @@ def _smc(snapshot: dict[str, Any], direction: str, timeframe: str, entry: Any) -
     if rules.get("poi_retest") and poi.get("type"):
         poi_name = "order block" if poi["type"] == "ORDER_BLOCK" else str(poi["type"]).replace("_", " ").lower()
         parts.append(f"; price retested the {poi_name}" + (f" and confirmed with {_article(str(candle).replace('_', ' '))} candle" if candle else ""))
-    optional = []
-    htf = (e.get("htf") or {}).get("trend")
+    optional, cautions = [], []
+    htf = str((e.get("htf") or {}).get("trend") or "").upper()
     if rules.get("htf_aligned") and htf:
-        optional.append(f", in line with the {str(htf).lower()} H4 trend")
-    return _sentence(parts, optional)
+        optional.append(f", in line with the {htf.lower()} H4 trend")
+    elif htf == ("BEARISH" if direction == "LONG" else "BULLISH"):
+        cautions.append(f"the H4 trend is {htf.lower()}")
+    text = _sentence(parts, optional, cautions=cautions)
+    if notes is not None:
+        notes.extend(c for c in cautions if c in text)
+    return text
 
 
 def rationale(strategy_id: str, snapshot: dict[str, Any] | None, direction: str | None, timeframe: str | None = None,
               entry: Any = None) -> dict[str, Any]:
-    """{"text", "basis", "version"}: basis is "evidence" when built from recorded strategy
-    evidence, "fallback" when that evidence was insufficient."""
+    """{"text", "basis", "cautions", "version"}: basis is "evidence" when built from recorded
+    strategy evidence, "fallback" when that evidence was insufficient; cautions lists the
+    recorded readings that contradict the trade and are mentioned in the text."""
     timeframe = timeframe or (snapshot or {}).get("timeframe") or "M15"
     builders = {"trendline_v5": _trendline, "trendline": _trendline}
-    text = None
+    text, notes = None, []
     if snapshot and direction in ("LONG", "SHORT"):
         try:
             if strategy_id in builders:
-                text = builders[strategy_id](snapshot, direction, timeframe)
+                text = builders[strategy_id](snapshot, direction, timeframe, notes)
             elif strategy_id == "support_resistance":
                 text = _support_resistance(snapshot, direction, timeframe, entry)
             elif strategy_id == "trend_momentum":
                 text = _trend_momentum(snapshot, direction, timeframe, entry)
             elif strategy_id == "smc":
-                text = _smc(snapshot, direction, timeframe, entry)
+                text = _smc(snapshot, direction, timeframe, entry, notes)
         except (TypeError, ValueError, AttributeError, KeyError):
             text = None
     if text:
-        return {"text": text[0].upper() + text[1:], "basis": "evidence", "version": RATIONALE_VERSION}
+        return {"text": text[0].upper() + text[1:], "basis": "evidence", "cautions": notes, "version": RATIONALE_VERSION}
     return {"text": f"All {strategy_name(strategy_id)} confirmation rules passed on the {timeframe} chart.",
-            "basis": "fallback", "version": RATIONALE_VERSION}
+            "basis": "fallback", "cautions": [], "version": RATIONALE_VERSION}
 
 
 def esc(value: Any) -> str:

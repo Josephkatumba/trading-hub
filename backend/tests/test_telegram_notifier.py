@@ -184,11 +184,12 @@ class SignalTests(unittest.TestCase):
         for expected in ("➡️ Entry: <b>2650</b>", "🛑 Stop loss: <b>2645</b>", "🎯 Take profit: <b>2662.5</b>",
                          "⚖️ Risk/reward: 1:2.43", "🕒 Confirmed: 19 Oct 2026, 08:59 EAT", "💡 <b>Trade rationale</b>",
                          "Price broke the falling resistance trendline, retested it and closed above it with a "
-                         "rejection candle on M15, with a higher-high, higher-low structure and bullish price action.",
+                         "rejection candle on M15, with a higher-high, higher-low structure and bullish price action, "
+                         "although momentum remains bearish.",
                          tg.DISCLAIMER):
             self.assertIn(expected, text)
         # Internal identifiers are kept, but never shown.
-        for hidden in ("stp_a", "Signal ID", "trendline-first-v5.1", "trendline_v5", "momentum"):
+        for hidden in ("stp_a", "Signal ID", "trendline-first-v5.1", "trendline_v5"):
             self.assertNotIn(hidden, text)
         self.assertEqual((sent["chat_id"], sent["parse_mode"]), ("555000111", "HTML"))
         record = self.h.notifier.store.get("signal:stp_a")
@@ -197,6 +198,7 @@ class SignalTests(unittest.TestCase):
                          ("stp_a", "trendline-first-v5.1", "cnf_stp_a"))
         self.assertEqual((record["setup_type"], record["setup_name"]), ("BREAK", "Break & Retest"))
         self.assertEqual(record["rationale"]["basis"], "evidence")
+        self.assertEqual(record["rationale"]["cautions"], ["momentum remains bearish"])
         self.assertIn(record["rationale"]["text"], sent["text"])
 
     def test_sell_direction(self):
