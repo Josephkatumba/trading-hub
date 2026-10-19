@@ -151,7 +151,7 @@ async def lifespan(_app: FastAPI):
         background.append(threading.Thread(target=signal_outcomes.run_worker, args=(stop, fetch),
                                            name="tradeden-signal-outcomes", daemon=True))
     if reports.enabled():
-        background.append(threading.Thread(target=reports.run_scheduler, args=(stop,), name="tradeden-reports", daemon=True))
+        background.append(threading.Thread(target=reports.run_scheduler, args=(stop, report_health), name="tradeden-reports", daemon=True))
     # Strategy Bank (20 experimental strategies): off unless TRADEDEN_STRATEGY_BANK_ENABLED=1; its own
     # thread, its own stores; never sends Telegram unless TRADEDEN_STRATEGY_BANK_TELEGRAM_ENABLED=1 too.
     if bank_worker.enabled() and mt5 is not None:
@@ -1182,6 +1182,30 @@ def strategy_bank_signals(limit: int = Query(default=200, ge=1, le=1000)):
                               for oid, opp in store.opportunities.items() if oid in wanted},
             "basis": "Recorded bank signals. R multiples are hypothetical signal outcomes, not executed trades.",
             "timestamp": utc_iso(datetime.now(timezone.utc))}
+
+
+def report_health() -> dict[str, Any]:
+    """System health for the Telegram reports: cheap reads of in-process state, never an MT5 call."""
+    with _STATE_LOCK:
+        scan = dict(_LAST_SCAN)
+    completed = parse_health_time(scan.get("completed_at"))
+    age = (datetime.now(timezone.utc) - completed).total_seconds() if completed else None
+    bank = bank_worker.status()
+    outcome = signal_outcomes.status()
+    return {"scanner": f"{scan.get('status')}" + (f", last scan {int(age)}s ago" if age is not None else ""),
+            "mt5": "connected" if scan.get("status") == "CONNECTED" else str(scan.get("status") or "unknown").lower(),
+            "bank": ("running" if bank.get("running") else "stopped") + (" (Telegram on)" if bank.get("telegram_enabled") else ""),
+            "outcomes": "running" if outcome.get("running") else "off"}
+
+
+@app.get("/api/reports/preview")
+def report_preview(kind: str = Query(default="daily", pattern="^(daily|weekly)$")):
+    """The daily (since the last 23:00 EAT) or weekly (since Saturday 00:00 EAT) report up to now,
+    computed from recorded data. Read-only: nothing is sent or written."""
+    now = datetime.now(timezone.utc)
+    start, end = reports.latest_daily_window(now) if kind == "daily" else reports.window("weekly", now)
+    report, text = reports.build(kind, start, end, reports.Sources(health=report_health), reports.ReportLedger(), on_demand=True)
+    return {"report": report, "text": text}
 
 
 @app.get("/api/market/signal-outcomes")

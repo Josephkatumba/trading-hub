@@ -607,7 +607,7 @@ export const BANDS = Object.freeze({
 export const MAX_ORBS = {history: 18, growing: 18, shaping: 10, bloomed: 10, active: 8};
 
 // Each strategy family grows in its own sector ("branch") of the garden, so strategy identity is
-// visible in the constellation itself (one sector per family: with 19+ strategies, one slice each
+// visible in the constellation itself (one sector per family: with dozens of strategies, one slice each
 // would be unreadable). Every orb still names its exact strategy in the focus and details.
 const SECTOR_WIDTH = (Math.PI * 2) / FAMILIES.length;
 const SECTOR_SPREAD = SECTOR_WIDTH * 0.42;          // half-width used by orbs (a gap between sectors)

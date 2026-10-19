@@ -83,6 +83,7 @@ export function unifiedHeader(model) {
       model.linked + " live production-linked + " + model.experimental + " experimental bank strategies"
       + (model.productionOnly ? "; " + model.productionOnly + " further production strategies also run" : "")
       + (model.unsupported ? "; " + model.unsupported + " unsupported" : "") + ". " + model.monitoring + " · " + model.alerts + ".")
+    + (model.research ? item("research", model.research, "In research", "Strategies recorded and measured in research or shadow mode: they never send alerts until promoted on evidence.") : '')
     + item("validated", model.validated, "Validated", "Strategies with demonstrated positive expectancy after costs. None yet: every strategy is experimental or live-but-unproven.", "is-validation")
     + item("today", model.signalsToday, "Bank signals today", "Strategy bank signals recorded today (local time)")
     + item("open", model.open, "Open", "Bank signals whose take profit or stop loss has not been reached yet")

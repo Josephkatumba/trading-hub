@@ -1,4 +1,4 @@
-// One strategy identity across TRADeden: the 19-strategy bank and the production strategies.
+// One strategy identity across TRADeden: the strategy bank (any size) and the production strategies.
 // Pure functions only (no DOM), unit-tested.
 //
 // Every signal the dashboard shows has exactly one unified strategy key:
@@ -10,7 +10,7 @@
 // Statistics shown are the backend's RECORDED forward results; backtests stay separate.
 import {registerStrategyNames, strategyIdOf} from "./strategyModel.mjs";
 
-// Garden sectors: strategies grow in the branch of their family (19+ thin slices would be unreadable).
+// Garden sectors: strategies grow in the branch of their family (dozens of thin slices would be unreadable).
 export const FAMILIES = Object.freeze([
   Object.freeze({id: "trendline", label: "Trendline", color: "#4f86a8"}),
   Object.freeze({id: "levels", label: "Levels & breakouts", color: "#b3843a"}),
@@ -91,6 +91,7 @@ export function validationOf(status) {
   if (value === "VALIDATED") return {key: "validated", label: "Validated"};
   if (value === "UNSUPPORTED") return {key: "unsupported", label: "Unsupported"};
   if (value === "LINKED" || value === "PRODUCTION") return {key: "unproven", label: "Live · not proven profitable"};
+  if (value && value !== "EXPERIMENTAL") return {key: "research", label: "Research · no alerts"};
   return {key: "experimental", label: "Experimental · not proven profitable"};
 }
 
@@ -110,11 +111,15 @@ export function strategyOptions(report, registry = null) {
   const productionOnly = ["trend_momentum", "smc"].filter(id => live.has(id))
     .map(id => option("prod:" + id, unifiedStrategy("prod:" + id).label, "PRODUCTION"));
   const unsupported = rows.filter(row => upper(row.status) === "UNSUPPORTED").map(row => option(row.key, row.name, "UNSUPPORTED", {n: row.n, reason: row.unsupported_reason || null}));
+  // Any other status (new strategies in research / shadow): selectable, recorded, never alerting.
+  const known = new Set(["EXPERIMENTAL", "VALIDATED", "LINKED", "UNSUPPORTED"]);
+  const research = rows.filter(row => !known.has(upper(row.status))).map(row => option(row.key, row.name, row.status, {n: row.n}));
   return {
     all: {key: "all", label: "All strategies", selectable: true},
     groups: [
       {label: "Strategy bank · experimental", options: bank},
       {label: "Production strategies · live", options: [...linked, ...productionOnly]},
+      ...(research.length ? [{label: "In research · no alerts", options: research}] : []),
       ...(unsupported.length ? [{label: "Unsupported", options: unsupported}] : []),
     ],
   };
@@ -180,6 +185,7 @@ export function unifiedHeaderModel({report = null, signals = null, registry = nu
   const live = new Set((Array.isArray(registry) ? registry : []).filter(item => upper(item?.status) === "LIVE").map(item => String(item.strategy_id)));
   const productionOnly = ["trend_momentum", "smc"].filter(id => live.has(id)).length;
   const supported = rows.filter(row => upper(row.status) !== "UNSUPPORTED");
+  const alerting = new Set(["LINKED", "EXPERIMENTAL", "VALIDATED"]);
   let resolved = 0, wins = 0;
   for (const row of supported) {
     const n = Number(row.resolved) || 0;
@@ -190,7 +196,9 @@ export function unifiedHeaderModel({report = null, signals = null, registry = nu
   const worker = report.worker || {};
   return {
     available: true,
-    active: supported.length, experimental: count("EXPERIMENTAL"), linked: count("LINKED"), validated: count("VALIDATED"),
+    active: rows.filter(row => alerting.has(upper(row.status))).length,
+    research: supported.filter(row => !alerting.has(upper(row.status))).length,
+    experimental: count("EXPERIMENTAL"), linked: count("LINKED"), validated: count("VALIDATED"),
     unsupported: count("UNSUPPORTED"), productionOnly,
     signalsToday: list ? list.filter(signal => Date.parse(signal.confirmed_at) >= dayStart.getTime()).length : null,
     open: list ? list.filter(isOpenSignal).length : null,

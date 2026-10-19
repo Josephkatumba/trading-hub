@@ -143,3 +143,16 @@ test("bank details and per-strategy performance keep forward and historical resu
   assert.match(perf, /FORWARD RESULTS \(RECORDED\)<\/b><b>Pending<\/b>/);
   assert.match(perf, /Historical backtest \(simulated, not live results\):<\/b> 900 trades/);
 });
+
+test("the bank has no fixed size: a new research strategy is listed, never counted as alerting", () => {
+  const grown = {...REPORT, strategies: [...REPORT.strategies,
+    {n: 21, key: "volatility_squeeze_v2", name: "Volatility Squeeze V2", status: "RESEARCH", signals: 0, resolved: 0}]};
+  const options = strategyOptions(grown, REGISTRY);
+  const research = options.groups.find(group => group.label === "In research · no alerts");
+  assert.deepEqual(research.options.map(option => [option.key, option.validation.label]), [["volatility_squeeze_v2", "Research · no alerts"]]);
+  assert.ok(selectableKeys(options).has("volatility_squeeze_v2"));
+  const model = unifiedHeaderModel({report: grown, registry: REGISTRY});
+  assert.deepEqual([model.active, model.research], [5, 1]);
+  assert.match(unifiedHeader(model), /data-stat="bank-research">1</);
+  assert.equal(unifiedStrategy("volatility_squeeze_v2", "Volatility Squeeze V2").label, "Volatility Squeeze V2");
+});
