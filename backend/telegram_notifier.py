@@ -61,9 +61,7 @@ MIN_SEND_INTERVAL_SECONDS = 1.1         # Telegram: about one message per second
 MAX_ATTEMPTS = 8
 MAX_BACKOFF_SECONDS = 300.0
 TERMINAL_LIFECYCLE = ("INVALIDATED", "EXPIRED", "RESOLVED")
-STRATEGY_NAMES = {"trendline": "Trendline", "trendline_v5": "Trendline", "support_resistance": "Support & Resistance",
-                  "trend_momentum": "Trend / Momentum", "smc": "Smart Money Concepts"}
-DISCLAIMER = "Signal only: not an executed trade and not financial advice. TRADEden execution is disabled."
+DISCLAIMER = "⚠️ Trading involves risk. This is not financial advice. Trade at your own discretion."
 
 
 def notifications_file() -> Path:
@@ -106,9 +104,12 @@ class TelegramClient:
     def close(self) -> None:
         self._http.close()
 
-    def _call(self, method: str, payload: dict[str, Any] | None = None) -> Any:
+    def _call(self, method: str, payload: dict[str, Any] | None = None, files: dict[str, Any] | None = None) -> Any:
         try:
-            response = self._http.post(f"{API_BASE}/bot{self._token}/{method}", json=payload or {})
+            if files:
+                response = self._http.post(f"{API_BASE}/bot{self._token}/{method}", data=payload or {}, files=files)
+            else:
+                response = self._http.post(f"{API_BASE}/bot{self._token}/{method}", json=payload or {})
         except httpx.HTTPError as exc:
             raise TelegramError(f"network error ({type(exc).__name__})", retryable=True) from None
         try:
@@ -129,8 +130,16 @@ class TelegramClient:
     def get_updates(self) -> list[dict[str, Any]]:
         return self._call("getUpdates", {"timeout": 0, "allowed_updates": ["message", "my_chat_member"]}) or []
 
-    def send_message(self, chat_id: str, text: str) -> dict[str, Any]:
-        return self._call("sendMessage", {"chat_id": chat_id, "text": text, "disable_web_page_preview": True})
+    def send_message(self, chat_id: str, text: str, parse_mode: str | None = None) -> dict[str, Any]:
+        payload = {"chat_id": chat_id, "text": text, "disable_web_page_preview": True}
+        if parse_mode:
+            payload["parse_mode"] = parse_mode
+        return self._call("sendMessage", payload)
+
+    def send_document(self, chat_id: str, path: Path, caption: str = "") -> dict[str, Any]:
+        with Path(path).open("rb") as handle:
+            return self._call("sendDocument", {"chat_id": str(chat_id), "caption": caption[:1000]},
+                              files={"document": (Path(path).name, handle.read(), "application/pdf")})
 
 
 def private_chats(updates: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
@@ -245,32 +254,46 @@ def _parse_time(value: Any) -> datetime | None:
 
 
 def eat(value: datetime | None) -> str:
-    return value.astimezone(EAT).strftime("%Y-%m-%d %H:%M:%S EAT (UTC+3)") if value else "unavailable"
+    return value.astimezone(EAT).strftime("%d %b %Y, %H:%M EAT") if value else "unavailable"
 
 
 def strategy_name(strategy_id: str | None) -> str:
-    return STRATEGY_NAMES.get(str(strategy_id), str(strategy_id or "unknown").replace("_", " ").title())
+    from signal_presentation import strategy_name as display
+    return display(strategy_id)
 
 
 def side(direction: Any) -> str:
     return {"LONG": "BUY", "SHORT": "SELL"}.get(str(direction), "UNKNOWN")
 
 
-def signal_message(confirmation: dict[str, Any], plan: dict[str, Any]) -> str:
+def presentation(confirmation: dict[str, Any], plan: dict[str, Any], snapshot: dict[str, Any] | None) -> dict[str, Any]:
+    """Setup name and trade rationale from the confirmation's recorded evidence (kept for audit)."""
+    from signal_presentation import rationale, setup_name
+    strategy_id = str(confirmation.get("strategy_id") or "trendline")
+    direction = plan.get("direction") or confirmation.get("direction")
+    timeframe = (snapshot or {}).get("timeframe") or confirmation.get("timeframe") or "M15"
+    return {"setup_name": setup_name(strategy_id, snapshot, direction), "timeframe": timeframe,
+            "rationale": rationale(strategy_id, snapshot, direction, timeframe, plan.get("entry"))}
+
+
+def signal_message(confirmation: dict[str, Any], plan: dict[str, Any], shown: dict[str, Any] | None = None) -> str:
+    """The trader-facing alert (Telegram HTML). Internal identifiers stay in the notification
+    record, never in the message."""
+    from signal_presentation import esc
+    shown = shown or presentation(confirmation, plan, None)
     direction = side(plan.get("direction"))
     rr = _number(plan.get("rr"))
-    lines = [("🟢" if direction == "BUY" else "🔴") + " TRADEden CONFIRMED SIGNAL",
+    lines = [f"📊 <b>{esc(confirmation.get('symbol'))}</b> · {'🟢' if direction == 'BUY' else '🔴'} <b>{direction}</b>",
+             f"{esc(strategy_name(confirmation.get('strategy_id')))} · {esc(shown['setup_name'])} · {esc(shown['timeframe'])}",
              "",
-             f"Instrument: {confirmation.get('symbol')}",
-             f"Direction: {direction}",
-             f"Strategy: {strategy_name(confirmation.get('strategy_id'))} ({confirmation.get('strategy_version')})",
-             f"Entry: {_price(plan.get('entry'))}",
-             f"Stop loss: {_price(plan.get('stop_loss'))}",
-             f"Take profit: {_price(plan.get('take_profit'))}",
-             f"Risk/reward: 1:{rr:.2f} (at the executable price, spread included)" if rr is not None
-             else "Risk/reward: unavailable",
-             f"Confirmed: {eat(_parse_time(confirmation.get('confirmed_at')))}",
-             f"Signal ID: {confirmation.get('setup_id')}",
+             f"➡️ Entry: <b>{_price(plan.get('entry'))}</b>",
+             f"🛑 Stop loss: <b>{_price(plan.get('stop_loss'))}</b>",
+             f"🎯 Take profit: <b>{_price(plan.get('take_profit'))}</b>",
+             f"⚖️ Risk/reward: 1:{rr:.2f}" if rr is not None else "⚖️ Risk/reward: unavailable",
+             f"🕒 Confirmed: {eat(_parse_time(confirmation.get('confirmed_at')))}",
+             "",
+             "💡 <b>Trade rationale</b>",
+             esc(shown["rationale"]["text"]),
              "",
              DISCLAIMER]
     return "\n".join(lines)
@@ -286,25 +309,31 @@ def _delta(text: Any) -> timedelta | None:
 
 
 def outcome_message(signal: dict[str, Any], kind: str, horizon: str | None, outcome: dict[str, Any] | None,
-                    r_multiple: float | None) -> str:
+                    r_multiple: float | None, setup: str | None = None) -> str:
+    """The TP/SL follow-up (Telegram HTML): a signal outcome, never an executed trade."""
+    from signal_presentation import esc
     target = kind == "verified_target"
     confirmed = _parse_time(signal.get("confirmed_at"))
-    lines = [("🎯 TRADEden SIGNAL OUTCOME: TAKE PROFIT REACHED" if target
-              else "🛑 TRADEden SIGNAL OUTCOME: STOP LOSS REACHED"),
+    timeframe = signal.get("timeframe") or "M15"
+    setup = setup or signal.get("setup_name")
+    lines = [(f"🎯 <b>{esc(signal.get('symbol'))}</b> · <b>TAKE PROFIT HIT</b>" if target
+              else f"🛑 <b>{esc(signal.get('symbol'))}</b> · <b>STOP LOSS HIT</b>"),
+             " · ".join(esc(part) for part in (strategy_name(signal.get("strategy_id")), setup,
+                                               side(signal.get("direction")), timeframe) if part),
              "",
-             f"Instrument: {signal.get('symbol')} · {side(signal.get('direction'))} · {strategy_name(signal.get('strategy_id'))}",
-             f"Signal ID: {signal.get('setup_id')}",
-             f"Signal confirmed: {eat(confirmed)}",
-             (f"Take profit {_price(signal.get('take_profit'))} was reached before the stop loss."
-              if target else f"Stop loss {_price(signal.get('stop_loss'))} was reached before the take profit.")]
+             f"➡️ Entry: {_price(signal.get('entry'))}",
+             (f"🎯 Take profit: <b>{_price(signal.get('take_profit'))}</b> reached before the stop loss" if target
+              else f"🛑 Stop loss: <b>{_price(signal.get('stop_loss'))}</b> reached before the take profit")]
+    if r_multiple is not None:
+        lines.append(f"{'📈' if r_multiple >= 0 else '📉'} Signal result: <b>{r_multiple:+.2f}R</b>")
+    lines.append(f"🕒 Confirmed: {eat(confirmed)}")
     offset = _delta((outcome or {}).get("time_to_favorable_movement" if target else "time_to_adverse_movement"))
     if confirmed and offset is not None:
-        lines.append(f"Reached during the {signal.get('timeframe') or 'M15'} candle opening {eat(confirmed + offset)}.")
-    if r_multiple is not None:
-        lines.append(f"Signal result: {r_multiple:+.2f}R")
-    lines += [f"Verified from completed MT5 candles ({horizon} window).",
+        lines.append(f"⏱️ Reached: {eat(confirmed + offset)} ({esc(timeframe)} candle)")
+    lines += ["",
+              f"ℹ️ Signal outcome verified from completed MT5 candles ({esc(horizon)} window). Not an executed trade.",
               "",
-              "This is the outcome of the signal's market path, NOT of an executed trade. TRADEden opened no position."]
+              DISCLAIMER]
     return "\n".join(lines)
 
 
@@ -411,11 +440,14 @@ class TelegramNotifier:
         state = self.source.lifecycle_state(setup_id)
         if state in TERMINAL_LIFECYCLE:
             return skip(f"lifecycle_{state.lower()}")
+        shown = presentation(confirmation, plan, snapshot)
         self.store.record(key, **base, status="pending", attempts=0, next_attempt_at=None,
                           symbol=confirmation.get("symbol"), direction=plan.get("direction"),
-                          strategy_id=confirmation.get("strategy_id"), timeframe=snapshot.get("timeframe"),
+                          strategy_id=confirmation.get("strategy_id"), strategy_version=confirmation.get("strategy_version"),
+                          confirmation_event_id=confirmation.get("confirmation_event_id"), timeframe=shown["timeframe"],
                           entry=plan.get("entry"), stop_loss=plan.get("stop_loss"), take_profit=plan.get("take_profit"),
-                          text=signal_message(confirmation, plan))
+                          rr=plan.get("rr"), setup_type=snapshot.get("setup_type"), setup_name=shown["setup_name"],
+                          rationale=shown["rationale"], format="html", text=signal_message(confirmation, plan, shown))
         return True
 
     # -- outcomes ---------------------------------------------------------------------------------
@@ -436,9 +468,11 @@ class TelegramNotifier:
                 {"setup_id": signal["setup_id"], "observation_id": signal.get("observation_id")}, snapshot)
             if kind in ("verified_target", "verified_stop"):
                 from performance import _plan_r, _r_multiple
+                r_multiple = _r_multiple(kind, _plan_r(snapshot))
+                setup = signal.get("setup_name") or presentation(signal, {"direction": signal.get("direction")}, snapshot)["setup_name"]
                 self.store.record(key, kind="outcome", setup_id=signal["setup_id"], status="pending", attempts=0,
-                                  next_attempt_at=None, outcome=kind, horizon=horizon,
-                                  text=outcome_message(signal, kind, horizon, outcome, _r_multiple(kind, _plan_r(snapshot))))
+                                  next_attempt_at=None, outcome=kind, horizon=horizon, format="html", r_multiple=r_multiple,
+                                  text=outcome_message(signal, kind, horizon, outcome, r_multiple, setup))
             elif confirmed_at is None or (now - confirmed_at).total_seconds() > OUTCOME_TRACK_SECONDS:
                 # No verified TP/SL: nothing is inferred and nothing is sent.
                 self.store.record(key, kind="outcome", setup_id=signal["setup_id"], status="skipped",
@@ -465,7 +499,8 @@ class TelegramNotifier:
             self._last_send = time.monotonic()
             attempts = int(row.get("attempts") or 0) + 1
             try:
-                result = self.client.send_message(self.chat_id, row["text"])
+                result = self.client.send_message(self.chat_id, row["text"],
+                                                  parse_mode="HTML" if row.get("format") == "html" else None)
             except TelegramError as exc:
                 if exc.retryable and attempts < MAX_ATTEMPTS:
                     delay = max(exc.retry_after or 0.0, min(MAX_BACKOFF_SECONDS, 2.0 ** attempts))

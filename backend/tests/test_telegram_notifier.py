@@ -59,7 +59,10 @@ def snapshot(observation_id, direction="LONG", qualified=True, valid=True, entry
     return {"observation_id": observation_id, "observed_at": NOW.isoformat(), "direction": direction,
             "timeframe": "M15", "strategy_version": "trendline-first-v5.1", "reference_price": entry,
             "proposed_entry": entry, "proposed_stop_loss": stop, "proposed_take_profit": target,
-            "invalidation_price": stop, "features": {"rr": 2.4321},
+            "invalidation_price": stop, "setup_type": "BREAK",
+            "features": {"rr": 2.4321, "trendline": "Trendline resistance break retest rejected" if direction == "LONG"
+                         else "Trendline support break retest rejected",
+                         "structure": "Higher highs + higher lows", "price_action": "Bullish price action", "momentum": "BEARISH"},
             "rule_evidence": {"strategy_valid": valid, "qualification": {"qualified": qualified, "executable_rr": 2.4321}}}
 
 
@@ -173,19 +176,34 @@ class SignalTests(unittest.TestCase):
     def test_confirmed_signal_is_sent_with_every_field(self):
         self.h.confirm("stp_a", symbol="XAUUSD", direction="LONG")
         self.assertEqual(self.h.notifier.tick(), 1)
-        text = self.h.telegram.sent[0]["text"]
-        for expected in ("CONFIRMED SIGNAL", "Instrument: XAUUSD", "Direction: BUY", "Strategy: Trendline",
-                         "Entry: 2650", "Stop loss: 2645", "Take profit: 2662.5", "Risk/reward: 1:2.43",
-                         "Confirmed: 2026-10-19 08:59:55 EAT (UTC+3)", "Signal ID: stp_a", "not an executed trade"):
+        sent = self.h.telegram.sent[0]
+        text = sent["text"]
+        lines = text.splitlines()
+        self.assertEqual(lines[0], "📊 <b>XAUUSD</b> · 🟢 <b>BUY</b>")          # instrument first, then direction
+        self.assertEqual(lines[1], "Trendline · Break &amp; Retest · M15")
+        for expected in ("➡️ Entry: <b>2650</b>", "🛑 Stop loss: <b>2645</b>", "🎯 Take profit: <b>2662.5</b>",
+                         "⚖️ Risk/reward: 1:2.43", "🕒 Confirmed: 19 Oct 2026, 08:59 EAT", "💡 <b>Trade rationale</b>",
+                         "Price broke the falling resistance trendline, retested it and closed above it with a "
+                         "rejection candle on M15, with a higher-high, higher-low structure and bullish price action.",
+                         tg.DISCLAIMER):
             self.assertIn(expected, text)
-        self.assertEqual(self.h.telegram.sent[0]["chat_id"], "555000111")
-        self.assertEqual(self.h.status("signal:stp_a"), "sent")
+        # Internal identifiers are kept, but never shown.
+        for hidden in ("stp_a", "Signal ID", "trendline-first-v5.1", "trendline_v5", "momentum"):
+            self.assertNotIn(hidden, text)
+        self.assertEqual((sent["chat_id"], sent["parse_mode"]), ("555000111", "HTML"))
+        record = self.h.notifier.store.get("signal:stp_a")
+        self.assertEqual(record["status"], "sent")
+        self.assertEqual((record["setup_id"], record["strategy_version"], record["confirmation_event_id"]),
+                         ("stp_a", "trendline-first-v5.1", "cnf_stp_a"))
+        self.assertEqual((record["setup_type"], record["setup_name"]), ("BREAK", "Break & Retest"))
+        self.assertEqual(record["rationale"]["basis"], "evidence")
+        self.assertIn(record["rationale"]["text"], sent["text"])
 
     def test_sell_direction(self):
         self.h.source.snapshots["obs_stp_s"] = snapshot("obs_stp_s", "SHORT", entry=1.1, stop=1.102, target=1.095)
         self.h.confirm("stp_s", direction="SHORT", symbol="EURUSD")
         self.h.notifier.tick()
-        self.assertIn("Direction: SELL", self.h.telegram.sent[0]["text"])
+        self.assertIn("🔴 <b>SELL</b>", self.h.telegram.sent[0]["text"])
 
     def test_unconfirmed_and_non_live_signals_are_not_sent(self):
         source = self.h.source
@@ -243,7 +261,8 @@ class SignalTests(unittest.TestCase):
             h.confirm("stp_downtime", age_seconds=tg.MAX_SIGNAL_AGE_SECONDS * 3)
             h.confirm("stp_fresh")
             h.restart().tick()
-            self.assertEqual([m["text"].split("Signal ID: ")[1].split("\n")[0] for m in h.telegram.sent], ["stp_fresh"])
+            self.assertEqual(len(h.telegram.sent), 1)
+            self.assertEqual([r["setup_id"] for r in h.notifier.store.items() if r.get("status") == "sent"], ["stp_fresh"])
 
     def test_partial_trailing_line_is_read_once_complete(self):
         row = {"record_type": "setup_confirmation", "setup_id": "stp_part", "observation_id": "obs_stp_part",
@@ -317,6 +336,24 @@ class ReliabilityTests(unittest.TestCase):
         self.assertEqual(h.telegram.sent, [])
 
 
+class FormatCompatibilityTests(unittest.TestCase):
+    def test_queued_plain_text_record_is_sent_without_html(self):
+        with tempfile.TemporaryDirectory() as temp:
+            h = Harness(Path(temp)).activated()
+            h.notifier.store.record("signal:stp_old", kind="signal", setup_id="stp_old", status="pending", attempts=0,
+                                    confirmed_at=NOW.isoformat(), text="Old <plain> & text")
+            h.notifier.deliver()
+            self.assertEqual(h.telegram.sent[0]["text"], "Old <plain> & text")
+            self.assertNotIn("parse_mode", h.telegram.sent[0])
+
+    def test_html_is_escaped(self):
+        confirmation = {"symbol": "A<B&C", "strategy_id": "support_resistance", "confirmed_at": NOW.isoformat()}
+        text = tg.signal_message(confirmation, {"direction": "SHORT", "entry": 1, "stop_loss": 2, "take_profit": 0.5, "rr": 1.5})
+        self.assertIn("<b>A&lt;B&amp;C</b>", text)
+        self.assertIn("Support &amp; Resistance", text)
+        self.assertIn("🔴 <b>SELL</b>", text)
+
+
 class OutcomeTests(unittest.TestCase):
     def setUp(self):
         self._temp = tempfile.TemporaryDirectory()
@@ -337,19 +374,26 @@ class OutcomeTests(unittest.TestCase):
         for _ in range(3):
             self.advance()
         self.h.restart().tick()
-        outcome = [m["text"] for m in self.h.telegram.sent if "OUTCOME" in m["text"]]
+        outcome = [m["text"] for m in self.h.telegram.sent if "PROFIT HIT" in m["text"] or "LOSS HIT" in m["text"]]
         self.assertEqual(len(outcome), 1)
-        for expected in ("TAKE PROFIT REACHED", "Signal ID: stp_o", "Take profit 2662.5 was reached",
-                         "candle opening 2026-10-19 09:44:55 EAT", "Signal result: +2.43R",
-                         "NOT of an executed trade", "1h window"):
+        lines = outcome[0].splitlines()
+        self.assertEqual(lines[0], "🎯 <b>XAUUSD</b> · <b>TAKE PROFIT HIT</b>")
+        self.assertEqual(lines[1], "Trendline · Break &amp; Retest · BUY · M15")
+        for expected in ("➡️ Entry: 2650", "🎯 Take profit: <b>2662.5</b> reached before the stop loss",
+                         "📈 Signal result: <b>+2.43R</b>", "🕒 Confirmed: 19 Oct 2026, 08:59 EAT",
+                         "⏱️ Reached: 19 Oct 2026, 09:44 EAT (M15 candle)", "Not an executed trade", "1h window",
+                         tg.DISCLAIMER):
             self.assertIn(expected, outcome[0])
+        self.assertNotIn("stp_o", outcome[0])
+        self.assertEqual(self.h.telegram.sent[-1]["parse_mode"], "HTML")
 
     def test_stop_loss_follow_up(self):
         self.h.source.outcomes["stp_o"] = ("verified_stop", "15m", {"time_to_adverse_movement": "0:15:00"})
         self.advance()
         text = self.h.telegram.sent[-1]["text"]
-        self.assertIn("STOP LOSS REACHED", text)
-        self.assertIn("Signal result: -1.00R", text)
+        self.assertIn("🛑 <b>XAUUSD</b> · <b>STOP LOSS HIT</b>", text)
+        self.assertIn("🛑 Stop loss: <b>2645</b> reached before the take profit", text)
+        self.assertIn("📉 Signal result: <b>-1.00R</b>", text)
 
     def test_unverified_or_undecided_outcomes_send_nothing(self):
         for kind in ("pending", "unverified", "verified_other"):
@@ -488,11 +532,13 @@ class EngineIntegrationTests(unittest.TestCase):
                 raise AssertionError(result.stderr)
             payload = json.loads(result.stdout.splitlines()[-1])
         self.assertEqual(len(payload["signals"]), 1, payload["signals"])
-        self.assertIn("Instrument: XAUUSD", payload["signals"][0])
-        self.assertIn("Direction: BUY", payload["signals"][0])
+        self.assertIn("📊 <b>XAUUSD</b>", payload["signals"][0])
+        self.assertIn("🟢 <b>BUY</b>", payload["signals"][0])
         self.assertEqual(len(payload["all"]), 2, payload["all"])
-        self.assertIn("TAKE PROFIT REACHED", payload["all"][1])
-        self.assertIn("NOT of an executed trade", payload["all"][1])
+        self.assertIn("TAKE PROFIT HIT", payload["all"][1])
+        self.assertIn("Not an executed trade", payload["all"][1])
+        self.assertIn("Trendline · Bounce · M15", payload["signals"][0])     # recorded REVERSAL family
+        self.assertIn("💡 <b>Trade rationale</b>", payload["signals"][0])
 
 
 if __name__ == "__main__":
