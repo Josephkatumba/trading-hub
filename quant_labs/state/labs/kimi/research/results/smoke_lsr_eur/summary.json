@@ -1,0 +1,101 @@
+{
+ "tag": "smoke_lsr_eur",
+ "intents": 3,
+ "rejections": {},
+ "gen_stats": {
+  "EURUSD": 3
+ },
+ "periods": {
+  "train:normal": {
+   "attempted": 3,
+   "resolved": 3,
+   "unknown": 0,
+   "win_rate": 0.0,
+   "net_expectancy_r": -1.1423,
+   "total_r": -3.427,
+   "profit_factor": 0.0,
+   "max_dd_r": 3.4267697881828596,
+   "longest_losing_streak": 3,
+   "planned_rr_mean": 2.97,
+   "opp_per_month": 0.26,
+   "weeks": 3,
+   "sign_flip_p": 1.0
+  },
+  "train:stress": {
+   "attempted": 3,
+   "resolved": 3,
+   "unknown": 0,
+   "win_rate": 0.0,
+   "net_expectancy_r": -1.2845,
+   "total_r": -3.854,
+   "profit_factor": 0.0,
+   "max_dd_r": 3.8535395763657188,
+   "longest_losing_streak": 3,
+   "planned_rr_mean": 2.97,
+   "opp_per_month": 0.26,
+   "weeks": 3,
+   "sign_flip_p": 1.0
+  },
+  "validation:normal": {
+   "attempted": 0,
+   "resolved": 0,
+   "unknown": 0,
+   "win_rate": null,
+   "net_expectancy_r": null,
+   "total_r": null,
+   "profit_factor": null,
+   "max_dd_r": null,
+   "longest_losing_streak": null,
+   "planned_rr_mean": null,
+   "opp_per_month": 0.0,
+   "weeks": 0,
+   "sign_flip_p": 1.0
+  },
+  "validation:stress": {
+   "attempted": 0,
+   "resolved": 0,
+   "unknown": 0,
+   "win_rate": null,
+   "net_expectancy_r": null,
+   "total_r": null,
+   "profit_factor": null,
+   "max_dd_r": null,
+   "longest_losing_streak": null,
+   "planned_rr_mean": null,
+   "opp_per_month": 0.0,
+   "weeks": 0,
+   "sign_flip_p": 1.0
+  },
+  "test:normal": {
+   "attempted": 0,
+   "resolved": 0,
+   "unknown": 0,
+   "win_rate": null,
+   "net_expectancy_r": null,
+   "total_r": null,
+   "profit_factor": null,
+   "max_dd_r": null,
+   "longest_losing_streak": null,
+   "planned_rr_mean": null,
+   "opp_per_month": 0.0,
+   "weeks": 0,
+   "sign_flip_p": 1.0
+  },
+  "test:stress": {
+   "attempted": 0,
+   "resolved": 0,
+   "unknown": 0,
+   "win_rate": null,
+   "net_expectancy_r": null,
+   "total_r": null,
+   "profit_factor": null,
+   "max_dd_r": null,
+   "longest_losing_streak": null,
+   "planned_rr_mean": null,
+   "opp_per_month": 0.0,
+   "weeks": 0,
+   "sign_flip_p": 1.0
+  }
+ },
+ "elapsed_s": 0.7
+}

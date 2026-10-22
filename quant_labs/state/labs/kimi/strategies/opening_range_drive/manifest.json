@@ -1,0 +1,32 @@
+{
+ "lab": "kimi",
+ "key": "opening_range_drive",
+ "version": "0.2.0",
+ "name": "Opening Range Drive",
+ "timeframe": "M15",
+ "requirements": {
+  "M15": 1200,
+  "H1": 350,
+  "M1": 90
+ },
+ "instruments": [
+  "EURUSD",
+  "GBPUSD",
+  "GBPJPY",
+  "XAUUSD",
+  "BTCUSD",
+  "ETHUSD"
+ ],
+ "classification": "EXPERIMENTAL",
+ "entry_type": "MARKET_PAPER_QUOTE",
+ "hypothesis": "A tight London opening range (07:00-08:00 UTC) broken by an M15 close on clearly elevated tick volume with a decisive body and H1 agreement signals genuine participation; price travels multiples of the measured range from the breakout.",
+ "risk_model": "One planned risk unit; stop at opening-range midpoint or 0.8 ATR floor; risk 0.6-5 ATR; no broker execution",
+ "planned_rr": "Planned 2.5R extension target from entry",
+ "known_limitations": "No verified positive edge; UTC-fixed windows ignore DST; breakout models suffer in false-breakout regimes; CFD spread proxies; missing histories remain unresolved; tick volume is not centralized volume. Version history: 0.2.0: DST-aware London window (0.1.0 fixed UTC); volume confirmation 1.4x->1.8x median; range cap 3.0->2.5 ATR; body 0.35->0.4 ATR.",
+ "authorship": {
+  "lab": "kimi",
+  "session_reference": "Kimi Code session 2026-10-20 on Windows host katjo under the TradeDen CEO directive of 20 Oct 2026",
+  "statement": "Authored by this actual Kimi Code session; not attributed to Codex or Claude."
+ },
+ "declared_trials_in_phase": 2
+}

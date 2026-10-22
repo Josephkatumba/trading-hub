@@ -1,0 +1,301 @@
+{
+ "status": "COMPLETE",
+ "periods": {
+  "train": {
+   "normal": {
+    "attempted": 3,
+    "resolved": 3,
+    "unknown": 0,
+    "statuses": {
+     "SL": 3
+    },
+    "win_rate": 0.0,
+    "net_expectancy_r": -1.1422565960609532,
+    "total_r": -3.4267697881828596,
+    "profit_factor": 0.0,
+    "max_realized_drawdown_r": 3.4267697881828596,
+    "longest_losing_streak": 3,
+    "planned_rr_mean": 2.9699461166854424,
+    "planned_rr_bands": {
+     "3\u20134": 2,
+     "2\u20133": 1
+    },
+    "realized_win_loss_ratio": null,
+    "opportunities_per_month": 0.26014957264957267,
+    "data_complete_fraction": 1.0,
+    "weekly_bootstrap_expectancy_ci95": [
+     -1.17948717948723,
+     -1.101449275362307
+    ],
+    "weekly_sign_flip_p": 1.0,
+    "independent_entry_weeks": 3,
+    "floating_and_unknown_risk_included_in_drawdown": false
+   },
+   "stress": {
+    "attempted": 3,
+    "resolved": 3,
+    "unknown": 0,
+    "statuses": {
+     "SL": 3
+    },
+    "win_rate": 0.0,
+    "net_expectancy_r": -1.2845131921219062,
+    "total_r": -3.8535395763657183,
+    "profit_factor": 0.0,
+    "max_realized_drawdown_r": 3.8535395763657188,
+    "longest_losing_streak": 3,
+    "planned_rr_mean": 2.9699461166854424,
+    "planned_rr_bands": {
+     "3\u20134": 2,
+     "2\u20133": 1
+    },
+    "realized_win_loss_ratio": null,
+    "opportunities_per_month": 0.26014957264957267,
+    "data_complete_fraction": 1.0,
+    "weekly_bootstrap_expectancy_ci95": [
+     -1.3589743589744596,
+     -1.2028985507246142
+    ],
+    "weekly_sign_flip_p": 1.0,
+    "independent_entry_weeks": 3,
+    "floating_and_unknown_risk_included_in_drawdown": false
+   }
+  },
+  "validation": {
+   "normal": {
+    "attempted": 0,
+    "resolved": 0,
+    "unknown": 0,
+    "statuses": {},
+    "win_rate": null,
+    "net_expectancy_r": null,
+    "total_r": null,
+    "profit_factor": null,
+    "max_realized_drawdown_r": null,
+    "longest_losing_streak": null,
+    "planned_rr_mean": null,
+    "planned_rr_bands": {},
+    "realized_win_loss_ratio": null,
+    "opportunities_per_month": 0.0,
+    "data_complete_fraction": null,
+    "weekly_bootstrap_expectancy_ci95": null,
+    "weekly_sign_flip_p": 1.0,
+    "independent_entry_weeks": 0,
+    "floating_and_unknown_risk_included_in_drawdown": false
+   },
+   "stress": {
+    "attempted": 0,
+    "resolved": 0,
+    "unknown": 0,
+    "statuses": {},
+    "win_rate": null,
+    "net_expectancy_r": null,
+    "total_r": null,
+    "profit_factor": null,
+    "max_realized_drawdown_r": null,
+    "longest_losing_streak": null,
+    "planned_rr_mean": null,
+    "planned_rr_bands": {},
+    "realized_win_loss_ratio": null,
+    "opportunities_per_month": 0.0,
+    "data_complete_fraction": null,
+    "weekly_bootstrap_expectancy_ci95": null,
+    "weekly_sign_flip_p": 1.0,
+    "independent_entry_weeks": 0,
+    "floating_and_unknown_risk_included_in_drawdown": false
+   }
+  },
+  "test": {
+   "normal": {
+    "attempted": 0,
+    "resolved": 0,
+    "unknown": 0,
+    "statuses": {},
+    "win_rate": null,
+    "net_expectancy_r": null,
+    "total_r": null,
+    "profit_factor": null,
+    "max_realized_drawdown_r": null,
+    "longest_losing_streak": null,
+    "planned_rr_mean": null,
+    "planned_rr_bands": {},
+    "realized_win_loss_ratio": null,
+    "opportunities_per_month": 0.0,
+    "data_complete_fraction": null,
+    "weekly_bootstrap_expectancy_ci95": null,
+    "weekly_sign_flip_p": 1.0,
+    "independent_entry_weeks": 0,
+    "floating_and_unknown_risk_included_in_drawdown": false
+   },
+   "stress": {
+    "attempted": 0,
+    "resolved": 0,
+    "unknown": 0,
+    "statuses": {},
+    "win_rate": null,
+    "net_expectancy_r": null,
+    "total_r": null,
+    "profit_factor": null,
+    "max_realized_drawdown_r": null,
+    "longest_losing_streak": null,
+    "planned_rr_mean": null,
+    "planned_rr_bands": {},
+    "realized_win_loss_ratio": null,
+    "opportunities_per_month": 0.0,
+    "data_complete_fraction": null,
+    "weekly_bootstrap_expectancy_ci95": null,
+    "weekly_sign_flip_p": 1.0,
+    "independent_entry_weeks": 0,
+    "floating_and_unknown_risk_included_in_drawdown": false
+   }
+  }
+ },
+ "trades": [
+  {
+   "intent_index": 0,
+   "plan": {
+    "signal_id": "0",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1729063800.0,
+    "entry_at": 1729063800.0,
+    "entry": 1.08832,
+    "stop_loss": 1.08793,
+    "take_profit": 1.08957,
+    "deadline": 1729128600.0,
+    "risk": 0.00038999999999989043,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.17948717948723,
+    "exit_at": 1729064700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.08793,
+    "entry_price": 1.08832,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.3589743589744596,
+    "exit_at": 1729064700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.08793,
+    "entry_price": 1.08832,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 1,
+   "plan": {
+    "signal_id": "1",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1730361600.0,
+    "entry_at": 1730361600.0,
+    "entry": 1.08592,
+    "stop_loss": 1.0864,
+    "take_profit": 1.08442,
+    "deadline": 1730426400.0,
+    "risk": 0.00048000000000003595,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1458333333333224,
+    "exit_at": 1730368800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.0864,
+    "entry_price": 1.08592,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2916666666666448,
+    "exit_at": 1730368800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.0864,
+    "entry_price": 1.08592,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 2,
+   "plan": {
+    "signal_id": "2",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1731919500.0,
+    "entry_at": 1731919500.0,
+    "entry": 1.05481,
+    "stop_loss": 1.0555,
+    "take_profit": 1.05303,
+    "deadline": 1731984300.0,
+    "risk": 0.0006900000000000794,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.101449275362307,
+    "exit_at": 1731922200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.0555,
+    "entry_price": 1.05481,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2028985507246142,
+    "exit_at": 1731922200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.0555,
+    "entry_price": 1.05481,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  }
+ ],
+ "intent_count": 3,
+ "rejections": {},
+ "data_quality": {
+  "EURUSD:M1": {
+   "kept": 82357,
+   "excluded": {
+    "forming": 1,
+    "future": 17643
+   }
+  },
+  "EURUSD:M15": {
+   "kept": 52912,
+   "excluded": {
+    "forming": 1,
+    "future": 1176
+   }
+  }
+ },
+ "forward_test": {
+  "status": "NOT_STARTED",
+  "verified_performance": null
+ },
+ "profitability_certified": false,
+ "causal_strategy_code_review": "REQUIRED; supplied historical intents alone cannot establish absence of look-ahead",
+ "purpose": "RESEARCH",
+ "evaluator_version": "tradeden-shared-eval-1.0.0"
+}

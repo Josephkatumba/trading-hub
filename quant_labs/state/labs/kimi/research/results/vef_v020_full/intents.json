@@ -1,0 +1,1019 @@
+[
+ {
+  "symbol": "BTCUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1736948700.0,
+  "entry_at": 1736948700.0,
+  "stop_loss": 98732.28875,
+  "take_profit": 96828.72249999999,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1739367900.0,
+  "entry_at": 1739367900.0,
+  "stop_loss": 93961.53532142857,
+  "take_profit": 96151.30833333335,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1740063600.0,
+  "entry_at": 1740063600.0,
+  "stop_loss": 96838.11660714286,
+  "take_profit": 97504.94583333335,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1741307400.0,
+  "entry_at": 1741307400.0,
+  "stop_loss": 86369.70357142857,
+  "take_profit": 89988.08583333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1748958300.0,
+  "entry_at": 1748958300.0,
+  "stop_loss": 105763.60457142857,
+  "take_profit": 105394.165,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1751546700.0,
+  "entry_at": 1751546700.0,
+  "stop_loss": 108799.97578571428,
+  "take_profit": 109822.82166666667,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1754561700.0,
+  "entry_at": 1754561700.0,
+  "stop_loss": 115648.08267857143,
+  "take_profit": 114967.63,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1766760300.0,
+  "entry_at": 1766760300.0,
+  "stop_loss": 88164.6875,
+  "take_profit": 88723.79166666667,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1767708900.0,
+  "entry_at": 1767708900.0,
+  "stop_loss": 94203.73214285714,
+  "take_profit": 93787.29166666667,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1771339500.0,
+  "entry_at": 1771339500.0,
+  "stop_loss": 66839.72932142857,
+  "take_profit": 67988.33583333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1773110700.0,
+  "entry_at": 1773110700.0,
+  "stop_loss": 70518.20014285715,
+  "take_profit": 68966.03833333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1773150300.0,
+  "entry_at": 1773150300.0,
+  "stop_loss": 69662.08721428571,
+  "take_profit": 70611.27583333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1775749500.0,
+  "entry_at": 1775749500.0,
+  "stop_loss": 72306.02824999999,
+  "take_profit": 71037.1325,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1776775500.0,
+  "entry_at": 1776775500.0,
+  "stop_loss": 75661.00971428571,
+  "take_profit": 76484.26416666668,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1782091800.0,
+  "entry_at": 1782091800.0,
+  "stop_loss": 64799.44039285715,
+  "take_profit": 63596.583333333336,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1782735300.0,
+  "entry_at": 1782735300.0,
+  "stop_loss": 60746.81503571428,
+  "take_profit": 59938.06583333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1784547900.0,
+  "entry_at": 1784547900.0,
+  "stop_loss": 64908.03971428572,
+  "take_profit": 64156.185833333344,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1788525900.0,
+  "entry_at": 1788525900.0,
+  "stop_loss": 79340.05942857143,
+  "take_profit": 81156.06833333334,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1788966900.0,
+  "entry_at": 1788966900.0,
+  "stop_loss": 78167.49685714286,
+  "take_profit": 79289.89166666666,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "BTCUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1789044300.0,
+  "entry_at": 1789044300.0,
+  "stop_loss": 76949.2564642857,
+  "take_profit": 77902.47083333334,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1729755000.0,
+  "entry_at": 1729755000.0,
+  "stop_loss": 1.0770028214285714,
+  "take_profit": 1.0789475,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1731615300.0,
+  "entry_at": 1731615300.0,
+  "stop_loss": 1.051347857142857,
+  "take_profit": 1.0552266666666665,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1732541400.0,
+  "entry_at": 1732541400.0,
+  "stop_loss": 1.0527089285714286,
+  "take_profit": 1.048475833333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1735286400.0,
+  "entry_at": 1735286400.0,
+  "stop_loss": 1.0425551428571427,
+  "take_profit": 1.0409750000000002,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1737126900.0,
+  "entry_at": 1737126900.0,
+  "stop_loss": 1.0332691785714285,
+  "take_profit": 1.0291808333333332,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1738135800.0,
+  "entry_at": 1738135800.0,
+  "stop_loss": 1.0417674642857144,
+  "take_profit": 1.0438991666666666,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1738343700.0,
+  "entry_at": 1738343700.0,
+  "stop_loss": 1.043606892857143,
+  "take_profit": 1.0383091666666666,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1739517300.0,
+  "entry_at": 1739517300.0,
+  "stop_loss": 1.0472963214285715,
+  "take_profit": 1.0455733333333335,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1740126600.0,
+  "entry_at": 1740126600.0,
+  "stop_loss": 1.0467159285714287,
+  "take_profit": 1.0493658333333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1744010100.0,
+  "entry_at": 1744010100.0,
+  "stop_loss": 1.105271392857143,
+  "take_profit": 1.0992441666666666,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1752193800.0,
+  "entry_at": 1752193800.0,
+  "stop_loss": 1.1673275,
+  "take_profit": 1.170216666666667,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1752679800.0,
+  "entry_at": 1752679800.0,
+  "stop_loss": 1.1698712857142857,
+  "take_profit": 1.1587416666666668,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1755002700.0,
+  "entry_at": 1755002700.0,
+  "stop_loss": 1.1657249642857144,
+  "take_profit": 1.1606566666666667,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1756989900.0,
+  "entry_at": 1756989900.0,
+  "stop_loss": 1.1628662857142857,
+  "take_profit": 1.1647841666666667,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1761309900.0,
+  "entry_at": 1761309900.0,
+  "stop_loss": 1.1648871071428573,
+  "take_profit": 1.1612341666666666,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1765293300.0,
+  "entry_at": 1765293300.0,
+  "stop_loss": 1.1613965357142857,
+  "take_profit": 1.16347,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1766731500.0,
+  "entry_at": 1766731500.0,
+  "stop_loss": 1.1770973571428571,
+  "take_profit": 1.1783824999999999,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1769500800.0,
+  "entry_at": 1769500800.0,
+  "stop_loss": 1.1860170714285714,
+  "take_profit": 1.1874766666666667,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1772119800.0,
+  "entry_at": 1772119800.0,
+  "stop_loss": 1.1780485714285716,
+  "take_profit": 1.1808766666666668,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1777889700.0,
+  "entry_at": 1777889700.0,
+  "stop_loss": 1.1692343571428572,
+  "take_profit": 1.1719433333333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1779348600.0,
+  "entry_at": 1779348600.0,
+  "stop_loss": 1.1593277142857144,
+  "take_profit": 1.1621158333333332,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1779885000.0,
+  "entry_at": 1779885000.0,
+  "stop_loss": 1.1660748571428572,
+  "take_profit": 1.1640458333333334,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1786538700.0,
+  "entry_at": 1786538700.0,
+  "stop_loss": 1.1563370714285715,
+  "take_profit": 1.153925,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1790230500.0,
+  "entry_at": 1790230500.0,
+  "stop_loss": 1.1389834285714284,
+  "take_profit": 1.1380758333333334,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1732169700.0,
+  "entry_at": 1732169700.0,
+  "stop_loss": 195.56591428571429,
+  "take_profit": 196.21291666666664,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1733406300.0,
+  "entry_at": 1733406300.0,
+  "stop_loss": 191.86824642857144,
+  "take_profit": 191.23800000000003,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1735220700.0,
+  "entry_at": 1735220700.0,
+  "stop_loss": 197.64976785714285,
+  "take_profit": 197.39075,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1735539300.0,
+  "entry_at": 1735539300.0,
+  "stop_loss": 198.9641357142857,
+  "take_profit": 198.52274999999997,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1737098100.0,
+  "entry_at": 1737098100.0,
+  "stop_loss": 189.39167142857144,
+  "take_profit": 190.04283333333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1740664800.0,
+  "entry_at": 1740664800.0,
+  "stop_loss": 188.96433214285713,
+  "take_profit": 189.7685,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1742366700.0,
+  "entry_at": 1742366700.0,
+  "stop_loss": 194.71964642857145,
+  "take_profit": 194.27375000000004,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1746069300.0,
+  "entry_at": 1746069300.0,
+  "stop_loss": 190.88226428571429,
+  "take_profit": 190.48775,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1747638900.0,
+  "entry_at": 1747638900.0,
+  "stop_loss": 193.40515,
+  "take_profit": 193.17675,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1755130500.0,
+  "entry_at": 1755130500.0,
+  "stop_loss": 199.4749107142857,
+  "take_profit": 199.93274999999997,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1755872100.0,
+  "entry_at": 1755872100.0,
+  "stop_loss": 198.57232142857143,
+  "take_profit": 199.41808333333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1769613300.0,
+  "entry_at": 1769613300.0,
+  "stop_loss": 211.5277607142857,
+  "take_profit": 210.42441666666664,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1773728100.0,
+  "entry_at": 1773728100.0,
+  "stop_loss": 211.62105714285713,
+  "take_profit": 211.97825,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1778766300.0,
+  "entry_at": 1778766300.0,
+  "stop_loss": 212.719625,
+  "take_profit": 213.37991666666665,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1780380900.0,
+  "entry_at": 1780380900.0,
+  "stop_loss": 215.23911071428572,
+  "take_profit": 214.99274999999997,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1781676900.0,
+  "entry_at": 1781676900.0,
+  "stop_loss": 215.07283928571428,
+  "take_profit": 215.26933333333332,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1788768900.0,
+  "entry_at": 1788768900.0,
+  "stop_loss": 209.22543214285713,
+  "take_profit": 210.70374999999999,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1790583300.0,
+  "entry_at": 1790583300.0,
+  "stop_loss": 207.75454642857144,
+  "take_profit": 208.68958333333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPJPY",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1790732700.0,
+  "entry_at": 1790732700.0,
+  "stop_loss": 207.18228571428574,
+  "take_profit": 208.05425,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1730383200.0,
+  "entry_at": 1730383200.0,
+  "stop_loss": 1.2921671785714286,
+  "take_profit": 1.2980583333333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1731615300.0,
+  "entry_at": 1731615300.0,
+  "stop_loss": 1.2648857857142857,
+  "take_profit": 1.2693800000000002,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1732086900.0,
+  "entry_at": 1732086900.0,
+  "stop_loss": 1.2715582142857143,
+  "take_profit": 1.2685483333333336,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1732578300.0,
+  "entry_at": 1732578300.0,
+  "stop_loss": 1.2533441428571428,
+  "take_profit": 1.2568708333333334,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1735198200.0,
+  "entry_at": 1735198200.0,
+  "stop_loss": 1.2521227142857143,
+  "take_profit": 1.2542450000000003,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1735286400.0,
+  "entry_at": 1735286400.0,
+  "stop_loss": 1.2533093214285713,
+  "take_profit": 1.2524208333333335,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1737421200.0,
+  "entry_at": 1737421200.0,
+  "stop_loss": 1.224568,
+  "take_profit": 1.2329491666666665,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1738020600.0,
+  "entry_at": 1738020600.0,
+  "stop_loss": 1.2443582142857144,
+  "take_profit": 1.2493591666666666,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1738269900.0,
+  "entry_at": 1738269900.0,
+  "stop_loss": 1.2406384285714285,
+  "take_profit": 1.2453241666666666,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1739367900.0,
+  "entry_at": 1739367900.0,
+  "stop_loss": 1.237352392857143,
+  "take_profit": 1.24506,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1748474100.0,
+  "entry_at": 1748474100.0,
+  "stop_loss": 1.3450956428571428,
+  "take_profit": 1.3467566666666668,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1752044400.0,
+  "entry_at": 1752044400.0,
+  "stop_loss": 1.360760142857143,
+  "take_profit": 1.3582925,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1753684200.0,
+  "entry_at": 1753684200.0,
+  "stop_loss": 1.3408612142857141,
+  "take_profit": 1.3435,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1753879500.0,
+  "entry_at": 1753879500.0,
+  "stop_loss": 1.3319607142857144,
+  "take_profit": 1.3367233333333335,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1756431000.0,
+  "entry_at": 1756431000.0,
+  "stop_loss": 1.3494890714285712,
+  "take_profit": 1.3508041666666666,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1759990500.0,
+  "entry_at": 1759990500.0,
+  "stop_loss": 1.3388367499999998,
+  "take_profit": 1.3412300000000001,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1761309900.0,
+  "entry_at": 1761309900.0,
+  "stop_loss": 1.336020107142857,
+  "take_profit": 1.3314033333333335,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1762867800.0,
+  "entry_at": 1762867800.0,
+  "stop_loss": 1.3176528214285714,
+  "take_profit": 1.3144291666666668,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1763646300.0,
+  "entry_at": 1763646300.0,
+  "stop_loss": 1.3098184285714285,
+  "take_profit": 1.3065674999999999,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1765293300.0,
+  "entry_at": 1765293300.0,
+  "stop_loss": 1.3285547500000001,
+  "take_profit": 1.3316466666666666,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1768895100.0,
+  "entry_at": 1768895100.0,
+  "stop_loss": 1.3484117857142857,
+  "take_profit": 1.3440441666666667,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1772119800.0,
+  "entry_at": 1772119800.0,
+  "stop_loss": 1.3498324285714287,
+  "take_profit": 1.3543933333333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1774336500.0,
+  "entry_at": 1774336500.0,
+  "stop_loss": 1.344701142857143,
+  "take_profit": 1.3396916666666667,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1778022000.0,
+  "entry_at": 1778022000.0,
+  "stop_loss": 1.3562092142857143,
+  "take_profit": 1.3540158333333334,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1780319700.0,
+  "entry_at": 1780319700.0,
+  "stop_loss": 1.3436045357142858,
+  "take_profit": 1.346358333333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1780380900.0,
+  "entry_at": 1780380900.0,
+  "stop_loss": 1.3476748571428572,
+  "take_profit": 1.3460708333333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1781095500.0,
+  "entry_at": 1781095500.0,
+  "stop_loss": 1.3407831785714286,
+  "take_profit": 1.3389749999999998,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1783578600.0,
+  "entry_at": 1783578600.0,
+  "stop_loss": 1.342952392857143,
+  "take_profit": 1.3400566666666667,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1785348900.0,
+  "entry_at": 1785348900.0,
+  "stop_loss": 1.334719107142857,
+  "take_profit": 1.3290425000000001,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "GBPUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1786106700.0,
+  "entry_at": 1786106700.0,
+  "stop_loss": 1.35047125,
+  "take_profit": 1.3441541666666668,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1729129500.0,
+  "entry_at": 1729129500.0,
+  "stop_loss": 2681.7355714285713,
+  "take_profit": 2675.5125,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1740103200.0,
+  "entry_at": 1740103200.0,
+  "stop_loss": 2926.2971785714285,
+  "take_profit": 2940.903333333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1744033500.0,
+  "entry_at": 1744033500.0,
+  "stop_loss": 3000.8615714285716,
+  "take_profit": 3031.0099999999998,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1756475100.0,
+  "entry_at": 1756475100.0,
+  "stop_loss": 3426.9286428571427,
+  "take_profit": 3410.540833333334,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1757076300.0,
+  "entry_at": 1757076300.0,
+  "stop_loss": 3587.713464285714,
+  "take_profit": 3551.790833333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1758176100.0,
+  "entry_at": 1758176100.0,
+  "stop_loss": 3633.2689285714287,
+  "take_profit": 3657.485,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1761761700.0,
+  "entry_at": 1761761700.0,
+  "stop_loss": 3977.6579642857146,
+  "take_profit": 3997.3849999999998,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1764827100.0,
+  "entry_at": 1764827100.0,
+  "stop_loss": 4180.005142857143,
+  "take_profit": 4196.880833333334,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1766107800.0,
+  "entry_at": 1766107800.0,
+  "stop_loss": 4309.437785714285,
+  "take_profit": 4331.304166666668,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1767966300.0,
+  "entry_at": 1767966300.0,
+  "stop_loss": 4493.04575,
+  "take_profit": 4470.454166666667,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1772199000.0,
+  "entry_at": 1772199000.0,
+  "stop_loss": 5241.966785714286,
+  "take_profit": 5183.389166666667,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1773902700.0,
+  "entry_at": 1773902700.0,
+  "stop_loss": 4778.028107142857,
+  "take_profit": 4842.802499999999,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1777421700.0,
+  "entry_at": 1777421700.0,
+  "stop_loss": 4611.115321428571,
+  "take_profit": 4594.151666666666,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1778022000.0,
+  "entry_at": 1778022000.0,
+  "stop_loss": 4578.263821428571,
+  "take_profit": 4555.028333333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1778136300.0,
+  "entry_at": 1778136300.0,
+  "stop_loss": 4751.445607142858,
+  "take_profit": 4701.466666666667,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1778502600.0,
+  "entry_at": 1778502600.0,
+  "stop_loss": 4696.776142857143,
+  "take_profit": 4665.824166666666,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1781475300.0,
+  "entry_at": 1781475300.0,
+  "stop_loss": 4311.08425,
+  "take_profit": 4216.640833333333,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1782996300.0,
+  "entry_at": 1782996300.0,
+  "stop_loss": 4142.335928571429,
+  "take_profit": 4065.8025000000002,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1784292300.0,
+  "entry_at": 1784292300.0,
+  "stop_loss": 3964.510392857143,
+  "take_profit": 3993.8033333333337,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "XAUUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1788525900.0,
+  "entry_at": 1788525900.0,
+  "stop_loss": 4375.8760357142855,
+  "take_profit": 4469.295,
+  "horizon_seconds": 64800
+ }
+]

@@ -1,0 +1,15 @@
+{
+  "id": "vol_exhaustion_fade",
+  "version": "0.1.0",
+  "name": "Volatility Exhaustion Fade",
+  "hypothesis": "When the H1 regime is non-trending (10-bar efficiency ratio <= 0.35), an M15 bar expanding beyond 1.6 ATR on elevated tick volume, closing at its range extreme and exceeding the prior 20-bar extreme after a six-bar run, marks local exhaustion; price then rotates back toward the recent mean.",
+  "entry_conditions": "M15 range >= 1.6 ATR(14); close in the extreme 20% of the bar; close beyond the prior 20-bar highest high or lowest low; six-bar move >= 1.2 ATR; tick volume >= 1.3x median of prior 20 bars; H1 ER10 <= 0.35; not Friday after 20:00 UTC, not Saturday, not Sunday before 22:00 UTC; planned RR >= 2.",
+  "exit_conditions": "Fixed stop-loss and take-profit; take-profit at the 12-bar M15 close mean (or 2.2R fallback if the mean is too close); time exit after 24 hours.",
+  "stop_loss_method": "Climax bar extreme plus/minus 0.15 M15 ATR(14) buffer; risk between 0.6 and 5 ATR.",
+  "take_profit_method": "Mean of the prior 12 M15 closes; if that yields RR < 2, a 2.2R structural fallback; admitted only when planned RR >= 2.",
+  "risk_model": "One planned risk unit per opportunity; per-symbol overlap lock enforced by the common evaluator.",
+  "intended_conditions": "Range-bound or rotating intraday regimes in FX, gold and crypto; avoids trending regimes via the H1 efficiency filter.",
+  "limitations": "Efficiency-ratio filter is coarse and can admit late-trend climaxes; mean-reversion trades face unbounded tail risk in regime breaks; excludes indices (shared evaluator cannot finance modes 2/3); spread/risk gate 0.1 not always met; historical partitions already exposed to prior research.",
+  "timeframe": "M15",
+  "declared_trials": 1
+}
