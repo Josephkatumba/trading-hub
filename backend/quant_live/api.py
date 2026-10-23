@@ -9,3 +9,15 @@ def live_models(request:Request):
     if os.getenv('TRADING_HUB_AUTH_MODE','private')!='private' or not request.client or request.client.host not in ('127.0.0.1','::1','testclient'):
         raise HTTPException(403,'Local research owner view only')
     report=snapshot(service.store());return {**report,'runtime':service.status()}
+
+
+@router.get('/api/quant-labs/intelligence/{symbol}')
+def market_intelligence(symbol:str,request:Request):
+    """Explainable XAUUSD/BTCUSD analysis from the live closed-candle cache; internal preview, never sent."""
+    if os.getenv('TRADING_HUB_AUTH_MODE','private')!='private' or not request.client or request.client.host not in ('127.0.0.1','::1','testclient'):
+        raise HTTPException(403,'Local research owner view only')
+    symbol=symbol.upper()
+    if symbol not in ('XAUUSD','BTCUSD'):raise HTTPException(404,'Intelligence is available for XAUUSD and BTCUSD')
+    from market_intel.live import intelligence
+    quote=(service.status().get('latest_inputs',{}).get(symbol) or {}).get('quote')
+    return intelligence(service.store(),symbol,quote)

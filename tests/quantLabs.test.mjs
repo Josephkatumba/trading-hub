@@ -9,3 +9,13 @@ test('leaderboard separates historical and forward results and flags small sampl
  const html=labsContent({labs:[],leaderboard:board,runtime:{telegram_mode:'EXPERIMENTAL_APPROVED'}});
  assert.match(html,/Unified Quant Labs leaderboard/);assert.match(html,/\+0\.33R/);assert.match(html,/small sample/);assert.match(html,/Correlated family/);
  assert.ok(!html.includes('<b>X</b>'));assert.match(html,/APPROVED FOR PAPER CANDIDATES ONLY/);assert.doesNotMatch(html,/NO OUTBOUND DELIVERY/);});
+test('gold and bitcoin intelligence renders explanations, unavailable data and no trade levels',()=>{
+ const intel={symbol:'XAUUSD',name:'Gold',price:4011.03,price_source:'live bid quote',data_timestamp:'2026-10-23T01:30:00+00:00',stale:false,
+  structure:{D1:{state:'DOWN'},H4:{state:'DOWN'},H1:{state:'DOWN'}},regime:{trend:{state:'TRENDING'},volatility:{state:'HIGH'},expansion:{state:'NORMAL'},shock:{state:'NONE'}},
+  sessions:{current:'Asia'},nearest_resistance:{name:'Previous day low',price:4021.13,event:'ACCEPTED',rule:'L1'},nearest_support:null,
+  scenarios:{bullish:{rule:'C1',requires:'H1 close above <x>',currently_met:false},bearish:{rule:'C2',requires:'H1 close below y',currently_met:true},neutral:{rule:'C3',reasons:[]}},
+  explanations:[{conclusion:'Structure D1 DOWN',rules:['T1'],observations:{},data_timestamp:'t',missing:[],conflicts:[]}],
+  macro:{economic_calendar:{state:'UNAVAILABLE',reason:'No authoritative calendar connected'}},not_a_signal:'Market analysis only.'};
+ const html=labsContent({labs:[],intelligence:[intel]});
+ assert.match(html,/Gold &amp; Bitcoin intelligence|Gold & Bitcoin intelligence/);assert.match(html,/XAUUSD intelligence/);assert.match(html,/No authoritative calendar connected/);
+ assert.match(html,/conditions, not trades/);assert.match(html,/<b>met<\/b>/);assert.ok(!html.includes('<x>'));assert.doesNotMatch(html,/Stop loss|Take profit/i);});
