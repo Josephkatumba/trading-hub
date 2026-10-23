@@ -1,26 +1,97 @@
 {
- "as_of": "2026-10-23",
+ "as_of": "2026-10-23 overnight",
  "source": "research/audit/classification.json (Milestone 2-3 audit)",
- "evidence_aliases": {"claude:index_trend_day@0.2.0": "claude:index_trend_day@0.1.0"},
+ "evidence_aliases": {
+  "claude:index_trend_day@0.2.0": "claude:index_trend_day@0.1.0"
+ },
  "alias_note": "index_trend_day 0.2.0 produces intents identical to 0.1.0 (queue marked its job DUPLICATE); 0.1.0 evidence applies.",
- "families": {"codex:trend_reclaim": "trend_reclaim r2-r9 share 54-94% of BTCUSD entries: one hypothesis with different targets, never independent evidence"},
+ "families": {
+  "codex:trend_reclaim": "trend_reclaim r2-r9 share 54-94% of BTCUSD entries: one hypothesis with different targets, never independent evidence"
+ },
  "models": {
-  "claude:index_trend_day": {"category": "B", "label": "Inconclusive · paper candidate"},
-  "claude:crypto_trend_breakout": {"category": "B", "label": "Inconclusive · paper candidate (crypto momentum theme)"},
-  "codex:trend_reclaim_r4": {"category": "B", "label": "Inconclusive on BTCUSD (family representative); EURUSD/XAUUSD rejected"},
-  "claude:index_turn_of_month": {"category": "B", "label": "Inconclusive · prospective observation only"},
-  "codex:range_sweep_reversion": {"category": "C", "label": "Underperforming · test-only gains, no stable regime"},
-  "claude:hourly_shock_drift": {"category": "C", "label": "Underperforming · negative in every split"},
-  "kimi:london_sweep_reversal": {"category": "C", "label": "Underperforming · inverse also failed (pre-registered)"},
-  "kimi:vol_exhaustion_fade": {"category": "C", "label": "Underperforming · in-sample overfit; inverse also failed"},
-  "kimi:opening_range_drive": {"category": "C", "label": "Underperforming · flat before costs; failure inverse also failed"},
-  "codex:trend_reclaim_r2": {"category": "D", "label": "Rejected as independent evidence (same family as r4)"},
-  "codex:trend_reclaim_r3": {"category": "D", "label": "Rejected · XAUUSD significantly negative"},
-  "codex:trend_reclaim_r5": {"category": "D", "label": "Rejected · EURUSD significantly negative (Holm p=0.04)"},
-  "codex:trend_reclaim_r7": {"category": "D", "label": "Rejected · EURUSD significantly negative; BTCUSD gain depends on single trades"},
-  "codex:trend_reclaim_r9": {"category": "D", "label": "Rejected · EURUSD significantly negative; BTCUSD gain depends on single trades"},
-  "codex:compression_escape": {"category": "D", "label": "Rejected · negative over 880 trades"},
-  "claude:index_gap_fade": {"category": "D", "label": "Rejected"},
-  "claude:index_first_candle_drive": {"category": "D", "label": "Rejected · edge decayed to zero"}
+  "claude:index_trend_day": {
+   "category": "B",
+   "label": "Inconclusive \u00b7 paper candidate"
+  },
+  "claude:crypto_trend_breakout": {
+   "category": "B",
+   "label": "Inconclusive \u00b7 paper candidate (crypto momentum theme)"
+  },
+  "codex:trend_reclaim_r4": {
+   "category": "B",
+   "label": "Inconclusive on BTCUSD (family representative); EURUSD/XAUUSD rejected"
+  },
+  "claude:index_turn_of_month": {
+   "category": "B",
+   "label": "Inconclusive \u00b7 prospective observation only"
+  },
+  "codex:range_sweep_reversion": {
+   "category": "C",
+   "label": "Underperforming \u00b7 test-only gains, no stable regime"
+  },
+  "claude:hourly_shock_drift": {
+   "category": "C",
+   "label": "Underperforming \u00b7 negative in every split"
+  },
+  "kimi:london_sweep_reversal": {
+   "category": "C",
+   "label": "Underperforming \u00b7 inverse also failed (pre-registered)"
+  },
+  "kimi:vol_exhaustion_fade": {
+   "category": "C",
+   "label": "Underperforming \u00b7 in-sample overfit; inverse also failed"
+  },
+  "kimi:opening_range_drive": {
+   "category": "C",
+   "label": "Underperforming \u00b7 flat before costs; failure inverse also failed"
+  },
+  "codex:trend_reclaim_r2": {
+   "category": "D",
+   "label": "Rejected as independent evidence (same family as r4)"
+  },
+  "codex:trend_reclaim_r3": {
+   "category": "D",
+   "label": "Rejected \u00b7 XAUUSD significantly negative"
+  },
+  "codex:trend_reclaim_r5": {
+   "category": "D",
+   "label": "Rejected \u00b7 EURUSD significantly negative (Holm p=0.04)"
+  },
+  "codex:trend_reclaim_r7": {
+   "category": "D",
+   "label": "Rejected \u00b7 EURUSD significantly negative; BTCUSD gain depends on single trades"
+  },
+  "codex:trend_reclaim_r9": {
+   "category": "D",
+   "label": "Rejected \u00b7 EURUSD significantly negative; BTCUSD gain depends on single trades"
+  },
+  "codex:compression_escape": {
+   "category": "D",
+   "label": "Rejected \u00b7 negative over 880 trades"
+  },
+  "claude:index_gap_fade": {
+   "category": "D",
+   "label": "Rejected"
+  },
+  "claude:index_first_candle_drive": {
+   "category": "D",
+   "label": "Rejected \u00b7 edge decayed to zero"
+  },
+  "claude:gold_compression_acceptance": {
+   "category": "B",
+   "label": "Inconclusive \u00b7 passed pre-registered train+validation vs always-long; test -0.36R (n=5); ~1 trade/month"
+  },
+  "claude:crypto_pullback_continuation": {
+   "category": "D",
+   "label": "Rejected at train (below always-long baseline)"
+  },
+  "claude:crypto_vol_transition": {
+   "category": "D",
+   "label": "Rejected at train (fails BTC+ETH replication)"
+  },
+  "claude:crypto_extreme_reversion": {
+   "category": "D",
+   "label": "Untestable as specified (no qualifying events)"
+  }
  }
 }

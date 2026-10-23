@@ -1,0 +1,70 @@
+{
+ "model": "crypto_extreme_reversion_baseline_long",
+ "version": "0.1.0",
+ "source_sha256": "c192b54797327f0c3a4b1bc79f4021f7c01380577bc225c73bc0f682c41e22f0",
+ "dataset": "bf130602dca4f955f64160bc9b85f0bc4246195f9685afbde91d1856c2c62cd3",
+ "evaluator_version": "tradeden-shared-eval-1.0.0",
+ "symbols": [
+  "BTCUSD",
+  "ETHUSD"
+ ],
+ "splits_examined": [
+  "train"
+ ],
+ "intents": 0,
+ "replay": {
+  "raw_decisions": 3,
+  "live_gate_rejections": {
+   "SPREAD_OR_NET_RR": 3
+  }
+ },
+ "evaluator_rejections": {},
+ "periods": {
+  "train": {
+   "normal": {
+    "attempted": 0,
+    "resolved": 0,
+    "unknown": 0,
+    "statuses": {},
+    "win_rate": null,
+    "net_expectancy_r": null,
+    "total_r": null,
+    "profit_factor": null,
+    "max_realized_drawdown_r": null,
+    "longest_losing_streak": null,
+    "planned_rr_mean": null,
+    "realized_win_loss_ratio": null,
+    "opportunities_per_month": 0.0,
+    "weekly_bootstrap_expectancy_ci95": null,
+    "weekly_sign_flip_p": 1.0
+   },
+   "stress": {
+    "attempted": 0,
+    "resolved": 0,
+    "unknown": 0,
+    "statuses": {},
+    "win_rate": null,
+    "net_expectancy_r": null,
+    "total_r": null,
+    "profit_factor": null,
+    "max_realized_drawdown_r": null,
+    "longest_losing_streak": null,
+    "planned_rr_mean": null,
+    "realized_win_loss_ratio": null,
+    "opportunities_per_month": 0.0,
+    "weekly_bootstrap_expectancy_ci95": null,
+    "weekly_sign_flip_p": 1.0
+   }
+  }
+ },
+ "by_symbol": {},
+ "frequency": {
+  "weekdays": 251,
+  "qualified_intents_per_weekday": 0.0,
+  "evaluated_trades_per_weekday": 0.0
+ },
+ "seconds": {
+  "replay": 0.7,
+  "evaluate": 0.0
+ }
+}

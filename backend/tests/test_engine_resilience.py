@@ -89,5 +89,17 @@ class WatchdogTests(unittest.TestCase):
         self.assertEqual(self.launched, [])
 
 
+class SingleInstanceTests(unittest.TestCase):
+    def test_second_watchdog_cannot_acquire_lock(self):
+        from ops.watchdog import single_instance_lock
+        first = single_instance_lock()
+        if first is None:
+            self.skipTest('a watchdog is already running on this machine')
+        try:
+            self.assertIsNone(single_instance_lock())
+        finally:
+            first.close()
+
+
 if __name__ == '__main__':
     unittest.main()

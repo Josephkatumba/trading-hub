@@ -85,6 +85,22 @@ class Watchdog:
         return 'RELAUNCHED'
 
 
+LOCK_PORT = 8799
+
+
+def single_instance_lock():
+    """Hold a loopback port for the process lifetime; a second watchdog cannot bind it and exits."""
+    lock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        lock.setsockopt(socket.SOL_SOCKET, getattr(socket, 'SO_EXCLUSIVEADDRUSE', socket.SO_REUSEADDR), 1)
+        lock.bind(('127.0.0.1', LOCK_PORT))
+        lock.listen(1)
+        return lock
+    except OSError:
+        lock.close()
+        return None
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--once', action='store_true')
@@ -96,7 +112,11 @@ def main():
         print(json.dumps({'port_listening': port_listening(), 'health_ok': ok,
                           'mt5_connected': detail.get('mt5_connected'), 'execution_enabled': detail.get('execution_enabled')}))
         return
+    lock = single_instance_lock()
     dog = Watchdog(dry_run=a.dry_run)
+    if lock is None:
+        dog.log(state='WATCHDOG_ALREADY_RUNNING', action='exit (single instance)')
+        return 0
     dog.log(state='WATCHDOG_STARTED', dry_run=a.dry_run)
     while True:
         dog.tick()

@@ -1,0 +1,69 @@
+"""Claude-authored experimental model: Gold Compression Acceptance (pre-registered 2026-10-23, commit bcce22a, H10).
+
+If the previous complete broker day's range was < 0.7 x the daily ATR of the 14 days before it, follow
+the FIRST acceptance beyond that prior-day range on the current broker day (two consecutive M15 closes
+beyond its high or low) between 08:00 London and 18:00 UTC. Stop at the prior-day midpoint; 2.2R; exit
+20:45 UTC. BASELINE=True: same decision times and risk, always LONG. Pure functions only.
+"""
+
+BASELINE = False
+COMPRESSION = 0.7
+TARGET_R = 2.2
+
+@@HELPERS@@
+
+def detect(snapshot):
+    if snapshot['symbol'] != 'XAUUSD':
+        return []
+    bars = snapshot['frames'].get('M15', ())
+    h4 = snapshot['frames'].get('H4', ())
+    if len(bars) < 100 or len(h4) < 100:
+        return []
+    now = bars[-1]['utc'] + 900
+    day = now // 86400
+    if weekday(day) in (0, 6):
+        return []
+    lo_open = day * 86400 + 8 * 3600 - utc_offset('UK', now)
+    if not lo_open < now <= day * 86400 + 18 * 3600:
+        return []
+    days = [d for d in broker_days(h4, 14400, now) if d['bars'] >= 4]
+    if len(days) < 16:
+        return []
+    prior = days[-1]
+    trs = [max(d['high'] - d['low'], abs(d['high'] - p['close']), abs(d['low'] - p['close'])) for p, d in zip(days[-16:-2], days[-15:-1])]
+    atr_d = sum(trs) / len(trs)
+    if atr_d <= 0 or prior['high'] - prior['low'] >= COMPRESSION * atr_d:
+        return []
+    today = broker_day(now)
+    session = [b for b in bars if broker_day(b['utc']) == today and b['utc'] + 900 > lo_open]
+    hi, lo = prior['high'], prior['low']
+    first = None
+    for i in range(1, len(session)):
+        a, b = session[i - 1], session[i]
+        if a['close'] > hi and b['close'] > hi:
+            first = (i, 1)
+            break
+        if a['close'] < lo and b['close'] < lo:
+            first = (i, -1)
+            break
+    if first is None or session[first[0]] is not bars[-1]:
+        return []
+    side = first[1]
+    horizon = seconds_to_cutoff('XAUUSD', now)
+    if horizon < 3600 or horizon > 12 * 3600:
+        return []
+    atr = atr_of(bars, 14)
+    mid = (hi + lo) / 2
+    quote = snapshot['quote']
+    risk_dist = abs((quote['ask'] if side > 0 else quote['bid']) - mid)
+    if BASELINE:
+        side = 1
+    long = side > 0
+    entry = quote['ask'] if long else quote['bid']
+    stop = entry - risk_dist if long else entry + risk_dist
+    if risk_dist <= 0 or atr <= 0:
+        return []
+    target = entry + TARGET_R * risk_dist if long else entry - TARGET_R * risk_dist
+    why = ('Baseline: always long at the same decision time and risk. ' if BASELINE else '') + \
+        'Prior gold day compressed to %.2f daily ATR; first two-candle acceptance %s its range; stop at the prior-day midpoint, exit 20:45 UTC.' % ((hi - lo) / atr_d, 'above' if first[1] > 0 else 'below')
+    return [{'direction': 'LONG' if long else 'SHORT', 'stop_loss': stop, 'take_profit': target, 'horizon_seconds': horizon, 'atr': atr, 'rationale': why}]
