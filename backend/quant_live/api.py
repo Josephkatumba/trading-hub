@@ -23,3 +23,12 @@ def market_intelligence(symbol:str,request:Request):
     from market_intel.live import intelligence
     quote=(service.status().get('latest_inputs',{}).get(symbol) or {}).get('quote')
     return intelligence(service.store(),symbol,quote)
+
+
+@router.get('/api/quant-labs/intelligence-center')
+def intelligence_center(request:Request):
+    """Telegram Intelligence Center: all three notification categories, read-only."""
+    if os.getenv('TRADING_HUB_AUTH_MODE','private')!='private' or not request.client or request.client.host not in ('127.0.0.1','::1','testclient'):
+        raise HTTPException(403,'Local research owner view only')
+    from .intel_center import center
+    return center(service.store(),service.status())

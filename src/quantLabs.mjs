@@ -27,10 +27,26 @@ export function intelContent(i){
  <details><summary>Unavailable data (not estimated)</summary><ul>${unavailable||'<li>none</li>'}</ul></details>
  <p class="sub">${esc(i.not_a_signal)}</p></article>`;
 }
+export function centerContent(c){
+ if(!c||!c.categories)return '';
+ const ts=v=>v==null?'never':date(v);
+ const card=(k,v)=>`<article class="panel"><h3>${esc(v.label)}</h3><p><span class="ql-tag">${esc(v.mode)}</span> Approval ${v.approved?'recorded':'<b>not approved</b>'} · flag ${v.flag?'on':'off'}${v.preview_generation===false?' · preview generation off':''}</p>
+ ${v.strategies?`<details><summary>${esc(v.strategies.length)} strategies</summary><p>${v.strategies.map(esc).join('<br>')}</p></details>`:''}
+ ${v.schedule?`<p class="sub">${esc(v.schedule)}</p><p>Next: ${(v.next||[]).map(n=>`${esc(n.briefing)} ${ts(n.at)}`).join(' · ')}</p>`:''}
+ <p>Last successful delivery: ${ts(v.last_sent)} · failures 24h: ${esc(v.failures_24h||0)}${v.previews!=null?` · previews: ${esc(v.previews)}`:''}</p>
+ ${v.latest?`<details><summary>Latest ${esc(v.latest.state)} · ${esc(v.latest.id)}</summary><pre>${esc(v.latest.message)}</pre></details>`:''}
+ ${(v.skipped_7d||[]).length?`<details><summary>Skipped briefings (7 days): ${esc(v.skipped_7d.length)}</summary><p>${v.skipped_7d.map(x=>esc(x.id+' · '+x.state)).join('<br>')}</p></details>`:''}
+ <details><summary>Controls (owner CLI, recorded approval)</summary><p><code>${esc(v.controls?.approve)}</code></p><p><code>${esc(v.controls?.revoke)}</code></p><p>${esc(v.controls?.flag)}</p></details></article>`;
+ const intel=Object.entries(c.intelligence||{}).map(([k,v])=>`${esc(k)}: ${v.status?esc(v.status):(v.stale?'<b>STALE</b>':'current')+' · data to '+esc(v.data_timestamp)+' · '+esc(v.regime)+' / vol '+esc(v.volatility)}`).join('<br>');
+ return `<section class="ql-section"><h2>Telegram Intelligence Center</h2><p class="sub">${esc(c.note)} Broker execution ${esc(c.broker_execution)}.</p>
+ <dl class="ql-stats"><div><dt>Engine health</dt><dd>${esc(c.health?.status)}</dd></div><div><dt>Last market data</dt><dd>${ts(c.last_market_data_update)}</dd></div><div><dt>Latest Telegram delivery</dt><dd>${ts(c.latest_successful_delivery)}</dd></div></dl>
+ <p>${intel}</p><div class="ql-labs">${Object.entries(c.categories).map(([k,v])=>card(k,v)).join('')}</div></section>`;
+}
 export function labsContent(data){
  const p=data.performance||{},signals=data.signals||[],runtime=data.runtime||{};
  const summary=(p)=>`<dl class="ql-stats"><div><dt>Resolved / unresolved</dt><dd>${esc(p.resolved||0)} / ${esc(p.unresolved||0)}</dd></div><div><dt>Win rate</dt><dd>${p.win_rate==null?'—':num(p.win_rate*100,1)+'%'}</dd></div><div><dt>Net paper R</dt><dd>${num(p.net_paper_r)}</dd></div><div><dt>Profit factor</dt><dd>${num(p.profit_factor)}</dd></div><div><dt>Paper drawdown R</dt><dd>${num(p.max_realized_paper_drawdown_r)}</dd></div></dl>`;
  return `${runtime.source==='SYNTHETIC_BROWSER_TEST'?'<p class="ql-notice"><b>SYNTHETIC TEST DATA</b> · Pipeline demonstration only. These numbers are not observed market performance.</p>':''}<p class="ql-notice"><b>${runtime.telegram_mode==='EXPERIMENTAL_APPROVED'?'EXPERIMENTAL · TELEGRAM DELIVERY APPROVED FOR PAPER CANDIDATES ONLY':'EXPERIMENTAL · NO OUTBOUND DELIVERY'}</b><br>${runtime.enabled?'Collector consumer enabled':'Collector consumer disabled'} · ${runtime.running?'Running':'Stopped'}${data.health?` · Engine health <b>${esc(data.health.status)}</b>${(data.health.reasons||[]).length?' ('+esc(data.health.reasons.join('; '))+')':''}`:''} · Actual executed R unavailable. Paper outcomes use assumed costs and do not establish profitability.</p>
+ ${centerContent(data.center)}
  ${leaderboardContent(data.leaderboard)}
  ${(data.intelligence||[]).length?`<section class="ql-section"><h2>Gold & Bitcoin intelligence</h2><p class="sub">Explainable market analysis from closed MT5 candles. Internal view only: not trade signals and not sent to Telegram.</p><div class="ql-labs">${data.intelligence.map(intelContent).join('')}</div></section>`:''}
  <div class="ql-labs">${(data.labs||[]).map(lab=>`<article class="panel"><h2>${esc(lab.name)}</h2><span class="ql-tag">${esc(lab.status)}</span>${(lab.models||[]).map(m=>`<h3>${esc(m.name)} <small>v${esc(m.version)}</small></h3><p>${esc(m.status)} · Scan ${m.scan_enabled?'enabled':'disabled'} · Alerts ${m.alert_enabled?'enabled':'disabled'}</p><details><summary>Authorship & version evidence</summary><p>${esc(m.authorship?.session_reference)}</p><code>${esc(m.sha)}</code></details>`).join('')||'<p>Awaiting a model authored and registered by this actual AI session.</p>'}${summary(lab.performance||{})}</article>`).join('')}</div>
@@ -47,6 +63,7 @@ export function initQuantLabs(){
   const root=document.getElementById('quantLabsData');if(!root||current!==generation)return;
   controller=new AbortController();const timeout=setTimeout(()=>controller?.abort(),8000);
   try{const {engineFetch}=await import('./engine.js');const data=await engineFetch('/api/quant-labs/live',{signal:controller.signal});
+   data.center=await engineFetch('/api/quant-labs/intelligence-center',{signal:controller.signal}).catch(()=>null);
    data.intelligence=(await Promise.all(['XAUUSD','BTCUSD'].map(sym=>engineFetch('/api/quant-labs/intelligence/'+sym,{signal:controller.signal}).catch(()=>null)))).filter(Boolean);if(current===generation&&root.isConnected)root.innerHTML=labsContent(data);}
   catch(error){if(current===generation&&root.isConnected)root.textContent='Local Quant Labs unavailable. Start the updated local engine to view its status.';}
   finally{clearTimeout(timeout);if(current===generation)timer=setTimeout(refresh,15000);}

@@ -143,6 +143,11 @@ class Runtime:
                         with self.store.db() as c:self.store.event(c,None,'QUALITY_REJECTED',{'lab':model['lab'],'key':model['key'],'version':model['version'],'symbol':snapshot['symbol'],'reason':reason,'input_sha256':snapshot['input_sha256']},now)
                 self.store.finish_run(marker,'COMPLETE',{**ident,'quality_rejection':quality,'decisions':len(decisions),'resources':result.get('resources',{}),'input_sha256':snapshot['input_sha256'],'source_sha256':model['sha'],'input_data_timestamp':snapshot['asof']})
             self.resolve(snapshot['symbol'],now)
+            # Category B: research observations from non-approved models (preview unless separately approved).
+            from . import research_observations
+            scope={(i['lab'],i['key'],i['version']) for i in (self.store.delivery_approval() or {}).get('scope',[])}
+            if any((g['lab'],g['model_key'],g['model_version']) not in scope for g in generated):research_observations.collect(self.store,now)
+            research_observations.deliver(self.store,now=now)
             notifier=ExperimentalNotifier(self.store);notifier.process(now)
             return {'status':'COMPLETE','signals':generated,'runs':runs,'telegram_mode':'EXPERIMENTAL_APPROVED' if notifier.live else 'DRY_RUN','outbound_calls':notifier.calls}
         finally:self.store.release(owner)

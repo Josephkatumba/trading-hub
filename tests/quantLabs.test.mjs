@@ -19,3 +19,13 @@ test('gold and bitcoin intelligence renders explanations, unavailable data and n
  const html=labsContent({labs:[],intelligence:[intel]});
  assert.match(html,/Gold &amp; Bitcoin intelligence|Gold & Bitcoin intelligence/);assert.match(html,/XAUUSD intelligence/);assert.match(html,/No authoritative calendar connected/);
  assert.match(html,/conditions, not trades/);assert.match(html,/<b>met<\/b>/);assert.ok(!html.includes('<x>'));assert.doesNotMatch(html,/Stop loss|Take profit/i);});
+test('Telegram Intelligence Center shows three independent categories, approvals and controls',()=>{
+ const cat=(label,mode,approved,flag,extra={})=>({label,mode,approved,flag,failures_24h:0,last_sent:null,controls:{approve:'python -m quant_live approve',revoke:'python -m quant_live revoke',flag:'FLAG=1'},...extra});
+ const c={note:'Read-only view.',broker_execution:'DISABLED',health:{status:'OK'},last_market_data_update:1792722058,latest_successful_delivery:null,
+  intelligence:{XAUUSD:{stale:true,data_timestamp:'t',regime:'TRENDING',volatility:'HIGH'}},
+  categories:{qualified_signals:cat('A · Qualified experimental signals','LIVE',true,true,{strategies:['Index Trend-Day v0.2.0']}),
+   research_observations:cat('B · Research observations','PREVIEW',false,false,{previews:0,latest:{state:'PREVIEW',id:'obs:x',message:'<script>x</script>'}}),
+   intel_briefings:cat('C · Briefings','PREVIEW',false,false,{schedule:'08:00 EAT',next:[{briefing:'morning',at:1792731600}],skipped_7d:[{id:'brief:morning:d',state:'SKIPPED_LATE'}]})}};
+ const html=labsContent({labs:[],center:c});
+ assert.match(html,/Telegram Intelligence Center/);assert.match(html,/A · Qualified experimental signals/);assert.match(html,/B · Research observations/);assert.match(html,/C · Briefings/);
+ assert.match(html,/<b>not approved<\/b>/);assert.match(html,/SKIPPED_LATE/);assert.match(html,/<b>STALE<\/b>/);assert.match(html,/Broker execution DISABLED/);assert.ok(!html.includes('<script>x'));});

@@ -1,0 +1,15 @@
+{
+ "status": "PENDING_CEO_REVIEW",
+ "category": "intel_briefings",
+ "schedule": "08:00 EAT morning (Gold & Bitcoin), 15:00 EAT New York (Gold focus); skipped when data is stale, the market is closed, or the slot was missed by more than 1 hour",
+ "previews": "research/previews/TELEGRAM_CATEGORY_PREVIEWS.md and the Telegram Intelligence Center",
+ "approval_file_to_use": {
+  "approved_by": "CEO Joseph Katumba",
+  "directive": "<directive reference>",
+  "production": false
+ },
+ "commands": [
+  "python -m quant_live --store data/quant_live approve-category --category intel_briefings --approval <file>",
+  "set TRADEDEN_INTEL_BRIEFINGS_TELEGRAM_ENABLED=1 in backend/.env and restart the engine"
+ ]
+}

@@ -66,7 +66,7 @@ def build(symbol, frames, quote, now, context=None):
     quote_age = now - quote['tick_at'] if quote and quote.get('tick_at') else None
     stale = last_close_at is None or now - last_close_at > 1800 or (quote_age is not None and quote_age > 120)
     price = quote.get('bid') if quote else (m15[-1]['close'] if m15 else None)
-    trend = {tf: R.trend(bs) for tf, bs in (('D1', d1), ('H4', h4), ('H1', h1))}
+    trend = {tf: R.trend(bs) for tf, bs in (('D1', d1), ('H4', h4), ('H1', h1), ('M15', m15))}
     days, today = R.broker_days(h1, now)
     pd = days[-1] if days else None
     pw = R.previous_week(days)
@@ -167,7 +167,7 @@ def render_telegram(intel):
     st, rg, sc = intel['structure'], intel['regime'], intel['scenarios']
     lines = [f"🧭 <b>{intel['symbol']} MARKET INTELLIGENCE</b> · internal preview",
              f"Price {f(intel['price'])} ({intel['price_source']}) · data to {intel['data_timestamp']}" + (' · ⚠️ STALE' if intel['stale'] else ''),
-             f"Structure: D1 {st['D1']['state']} · H4 {st['H4']['state']} · H1 {st['H1']['state']}",
+             f"Structure: D1 {st['D1']['state']} · H4 {st['H4']['state']} · H1 {st['H1']['state']} · M15 {st['M15']['state']}",
              f"Regime: {rg['trend']['state']} · volatility {rg['volatility']['state']} · range {rg['expansion']['state']}"
              + (' · ⚠️ volatility shock (cause unverified)' if rg.get('shock', {}).get('state') == 'SHOCK' else ''),
              f"Session: {intel['sessions']['current']}"]

@@ -166,6 +166,9 @@ async def lifespan(_app: FastAPI):
                 return None
             return signal_outcomes.mt5_fetch(mt5, ensure_mt5, os.getenv("TRADING_HUB_MT5_SOURCE_TIMEZONE"))(broker, timeframe, start, end)
     quant_worker = quant_live_service.start(stop, quant_history)
+    # Gold/Bitcoin intelligence briefings: preview generation only unless separately approved and flagged.
+    from market_intel import briefings as intel_briefings
+    intel_briefings.start(stop)
     for thread in background:
         thread.start()
     try:

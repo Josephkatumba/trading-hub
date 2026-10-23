@@ -12,6 +12,8 @@ from .model_host import validate_source
 LAB_NAMES={'codex':'Codex Quant Lab','claude':'Claude Quant Lab','kimi':'Kimi Quant Lab'}
 # Evidence tiers for approved EXPERIMENTAL paper delivery. Neither is production.
 TIERS={'PAPER_CANDIDATE':'EXPERIMENTAL','RESEARCH_ONLY':'EXPERIMENTAL · RESEARCH ONLY (no positive out-of-sample evidence)'}
+# Independent outbound categories beside the experimental trade-signal approval ('delivery_approval').
+CATEGORIES=('research_observations','intel_briefings')
 PROJECT=Path(__file__).resolve().parents[2]
 class Store:
     def __init__(self,folder):
@@ -101,6 +103,45 @@ class Store:
         with self.db() as c:
             c.execute('UPDATE outbox SET state=?,body=?,updated=? WHERE signal=? AND state="IN_FLIGHT"',(state,json.dumps(body),at,sid))
             self.event(c,sid,'TELEGRAM_'+state,body,at)
+    # ----- Notification categories B (research observations) and C (intelligence briefings) -----
+    def _notifications(self,c):
+        c.execute('CREATE TABLE IF NOT EXISTS notifications(id TEXT PRIMARY KEY,category TEXT,ref TEXT,state TEXT,message TEXT,body TEXT,created REAL,updated REAL)')
+    def category_approval(self,category):
+        if category not in CATEGORIES:raise ValueError('unknown notification category')
+        with self.db() as c:r=c.execute('SELECT value FROM settings WHERE key=?',('approval:'+category,)).fetchone()
+        value=json.loads(r['value']) if r else None
+        return value if isinstance(value,dict) and value.get('approved') is True else None
+    def approve_category(self,category,approval):
+        """Explicit CEO approval for outbound delivery of one category; never covers trade signals or production."""
+        if category not in CATEGORIES:raise ValueError('unknown notification category')
+        if not str(approval.get('approved_by','')).strip() or not str(approval.get('directive','')).strip():raise ValueError('named approver and directive required')
+        if approval.get('production') is not False:raise ValueError('production delivery cannot be approved here')
+        record={**approval,'category':category,'approved':True,'recorded_at':time.time()}
+        with self.db() as c:
+            c.execute('INSERT OR REPLACE INTO settings VALUES(?,?)',('approval:'+category,json.dumps(record)))
+            self.event(c,None,'CATEGORY_APPROVAL',record,record['recorded_at'])
+        return record
+    def revoke_category(self,category,reason):
+        if category not in CATEGORIES:raise ValueError('unknown notification category')
+        with self.db() as c:
+            c.execute('INSERT OR REPLACE INTO settings VALUES(?,?)',('approval:'+category,'null'))
+            self.event(c,None,'CATEGORY_REVOKED',{'category':category,'reason':reason},time.time())
+    def notify_record(self,nid,category,ref,state,message,body,at):
+        """Insert once (id is the dedupe key: same observation or briefing slot never recorded twice)."""
+        with self.db() as c:
+            self._notifications(c)
+            return c.execute('INSERT OR IGNORE INTO notifications VALUES(?,?,?,?,?,?,?,?)',(nid,category,ref,state,message,json.dumps(body),at,at)).rowcount==1
+    def notify_transition(self,nid,old,new,body,at):
+        with self.db() as c:
+            self._notifications(c)
+            ok=c.execute('UPDATE notifications SET state=?,body=?,updated=? WHERE id=? AND state=?',(new,json.dumps(body),at,nid,old)).rowcount==1
+            if ok:self.event(c,None,'NOTIFY_'+new,{'id':nid,**body},at)
+            return ok
+    def notifications(self,category=None,limit=200):
+        with self.db() as c:
+            self._notifications(c)
+            rows=c.execute('SELECT * FROM notifications WHERE (? IS NULL OR category=?) ORDER BY created DESC LIMIT ?',(category,category,limit)).fetchall()
+        return [{**dict(r),'body':json.loads(r['body'] or '{}')} for r in rows]
     def event(self,c,sid,kind,body,at):c.execute('INSERT INTO events(signal,kind,body,at) VALUES(?,?,?,?)',(sid,kind,json.dumps(body),at))
     def claim(self,marker,at):
         with self.db() as c:
@@ -115,13 +156,17 @@ class Store:
             c.execute('UPDATE runs SET state="INTERRUPTED" WHERE state="RUNNING"')
             # A remote send may have succeeded before a crash. Never replay it automatically.
             c.execute('UPDATE outbox SET state="DELIVERY_UNKNOWN" WHERE state="IN_FLIGHT"')
+            self._notifications(c);c.execute('UPDATE notifications SET state="DELIVERY_UNKNOWN" WHERE state="IN_FLIGHT"')
             # Repair a power loss between durable signal creation and preview enqueue.
             # The notifier still applies expiry/status and never sends in this release.
             from .telegram import message
             for row in c.execute('SELECT s.body FROM signals s LEFT JOIN outbox o ON o.signal=s.id WHERE o.signal IS NULL').fetchall():
                 signal=json.loads(row['body'])
                 if signal.get('confirmed'):
-                    c.execute('INSERT OR IGNORE INTO outbox VALUES(?,?,?,?,?)',(signal['signal_id'],'QUEUED',message(signal),'{}',time.time()))
+                    try:text=message(signal)
+                    except ValueError as exc:  # incomplete record: never formatted or sent; recovery continues
+                        self.event(c,signal.get('signal_id'),'RECOVERY_SKIPPED_INCOMPLETE',{'reason':str(exc)},time.time());continue
+                    c.execute('INSERT OR IGNORE INTO outbox VALUES(?,?,?,?,?)',(signal['signal_id'],'QUEUED',text,'{}',time.time()))
             return True
     def lease(self,owner,at,seconds=20):
         with self.db() as c:

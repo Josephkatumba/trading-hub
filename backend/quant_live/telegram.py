@@ -26,6 +26,21 @@ def delivery_enabled():return os.getenv(DELIVERY_ENV,'').strip()=='1'
 def _p(x):return format(x,'.10g')
 
 RESEARCHERS={'claude':'Claude','codex':'Codex','kimi':'Kimi'}
+REGIMES={'TRENDING':'TRENDING (H1 efficiency >= 0.35, rule R1)','RANGING':'RANGING (H1 efficiency <= 0.20, rule R1)',
+         'MIXED':'MIXED (H1 efficiency 0.20-0.35, rule R1)','UNAVAILABLE':'unavailable (fewer than 25 closed H1 candles)'}
+_SEND_LOCK=__import__('threading').Lock();_LAST_SEND=[0.0]
+
+def throttle(sleep=time.sleep):
+    """One process-wide Telegram pace for every Quant Labs category (existing 1.1 s rule)."""
+    with _SEND_LOCK:
+        wait=MIN_INTERVAL-(time.monotonic()-_LAST_SEND[0])
+        if wait>0:sleep(wait)
+        _LAST_SEND[0]=time.monotonic()
+
+def transport_from_env():
+    import telegram_notifier as tn
+    token,chat=os.getenv(tn.TOKEN_ENV,''),os.getenv(tn.CHAT_ENV,'').strip()
+    return (tn.TelegramClient(token),chat) if token and chat else (None,None)
 OUTCOME_MAX_AGE=1800
 SESSIONS={'UTC_00_07':'Asia (00-07 UTC)','UTC_07_12':'London (07-12 UTC)','UTC_12_16':'London/New York overlap (12-16 UTC)','UTC_16_24':'New York afternoon (16-24 UTC)'}
 
@@ -37,8 +52,8 @@ def message(s,tier=None):
     rr='1:'+format(s['planned_rr'],'.2f')
     if s.get('net_planned_rr') is not None:rr+=' (after est. costs 1:'+format(s['net_planned_rr'],'.2f')+')'
     context=['Session: '+SESSIONS.get(s.get('session'),'unknown')]
-    if s.get('atr'):context.append('risk '+_p(s['risk'])+' = '+format(s['risk']/s['atr'],'.2f')+'x model ATR')
-    if s.get('spread') is not None:context.append('spread at signal '+_p(s['spread']))
+    if s.get('atr'):context.append('risk '+format(s['risk'],'.6g')+' = '+format(s['risk']/s['atr'],'.2f')+'x model ATR')
+    if s.get('spread') is not None:context.append('spread at signal '+format(s['spread'],'.6g'))
     classification='EXPERIMENTAL PAPER SIGNAL'+(' · RESEARCH ONLY (no positive out-of-sample evidence)' if tier=='RESEARCH_ONLY' else '')
     return '\n'.join([
         '🔬 <b>TRADEDEN QUANT LABS SIGNAL</b>',
@@ -51,6 +66,7 @@ def message(s,tier=None):
         '🛑 Stop Loss: '+_p(s['stop_loss']),
         '💰 Take Profit: '+_p(s['take_profit']),
         '⚖️ Risk/Reward: '+rr,
+        '🌡️ Market regime: '+escape(REGIMES.get(s.get('regime_at_entry'),'not recorded for this signal')),
         '📋 <b>WHY THIS SIGNAL?</b>',
         escape(str(s.get('rationale') or 'The model supplied no rationale.')),
         escape('; '.join(context))+'.',
@@ -130,9 +146,7 @@ class ExperimentalNotifier:
             with self.store.db() as c:c.execute('UPDATE outbox SET state="SUPPRESSED",body=?,updated=? WHERE signal=? AND state="QUEUED"',(json.dumps({'reason':str(exc)}),now,s['signal_id']))
             return 1
         if not self.store.claim_delivery(s['signal_id'],now):return 0
-        wait=MIN_INTERVAL-(time.monotonic()-self._last)
-        if wait>0:self.sleep(wait)
-        self._last=time.monotonic();self.calls+=1
+        throttle(self.sleep);self.calls+=1
         try:result=transport.send_message(self.chat_id,text,parse_mode='HTML')
         except Exception as exc:
             status=getattr(exc,'status',None)
