@@ -36,6 +36,8 @@ def intelligence(store, symbol, quote=None, now=None):
     if symbol == 'BTCUSD':
         context['nas100_h1'] = frames(store, 'NAS100', now, {'H1': 200})['H1']
     intel = build(symbol, frames(store, symbol, now), quote, now, context)
+    from .readiness import readiness
+    intel['strategy_readiness'] = readiness(store, symbol, intel, now)
     intel['telegram_preview'] = render_telegram(intel)
     intel['telegram_status'] = 'INTERNAL_PREVIEW_ONLY (no scheduled or outbound delivery without CEO approval)'
     return intel

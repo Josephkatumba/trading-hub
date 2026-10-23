@@ -23,6 +23,7 @@ export function intelContent(i){
  <dl class="ql-stats"><div><dt>Structure D1 / H4 / H1</dt><dd>${esc(st.D1?.state)} / ${esc(st.H4?.state)} / ${esc(st.H1?.state)}</dd></div><div><dt>Regime</dt><dd>${esc(rg.trend?.state)} · vol ${esc(rg.volatility?.state)}</dd></div><div><dt>Range</dt><dd>${esc(rg.expansion?.state)}${rg.shock?.state==='SHOCK'?' · SHOCK':''}</dd></div><div><dt>Session</dt><dd>${esc(sess.current)}</dd></div></dl>
  <p>Above: ${lvl(i.nearest_resistance)}<br>Below: ${lvl(i.nearest_support)}</p>
  <h3>Scenarios <small>conditions, not trades</small></h3><ul><li>Bullish (${esc(sc.bullish?.rule)}): ${esc(sc.bullish?.requires)}${sc.bullish?.currently_met?' · <b>met</b>':''}</li><li>Bearish (${esc(sc.bearish?.rule)}): ${esc(sc.bearish?.requires)}${sc.bearish?.currently_met?' · <b>met</b>':''}</li><li>Caution (${esc(sc.neutral?.rule)}): ${esc((sc.neutral?.reasons||[]).join('; ')||'no avoid-conditions active')}</li></ul>
+ ${i.strategy_readiness?`<h3>What our strategies are waiting for</h3><p>${esc(i.strategy_readiness.summary)}</p><ul>${(i.strategy_readiness.items||[]).map(x=>`<li><b>${esc(x.strategy)}</b> <small>(${esc(x.category)} · ${esc(x.state)})</small>: ${esc(x.statement||'')}</li>`).join('')}</ul>`:''}
  <details><summary>Explainability: observations, rules, timestamps</summary>${explain}</details>
  <details><summary>Unavailable data (not estimated)</summary><ul>${unavailable||'<li>none</li>'}</ul></details>
  <p class="sub">${esc(i.not_a_signal)}</p></article>`;

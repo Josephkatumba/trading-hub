@@ -46,7 +46,32 @@ def summary(store, start, end):
             'stale_input': states.get('REJECTED', 0),
             'missing_data': sum(1 for b in bodies if b.get('data_shortfall')),
             'unevaluated_closed_candles_all_time': sum(sum(d['closed_bars_not_evaluated'].values()) for d in diag.values()),
-            'telegram': dict(Counter(r['state'] for r in outbox))}
+            'telegram': dict(Counter(r['state'] for r in outbox)),
+            **extended(store, start, end, window_signals)}
+
+
+def extended(store, start, end, window_signals):
+    """Classifications, regimes, engine health vs uptime, market coverage and per-category Telegram status."""
+    out = {'regimes': dict(Counter(s.get('regime_at_entry', 'UNTAGGED') for s in window_signals if s.get('confirmed')))}
+    try:
+        from .leaderboard import _load
+        cats = (_load('leaderboard_categories.json') or {}).get('models', {})
+        live = {f"{m['lab']}:{m['key']}" for m in store.models() if m['scan_enabled']}
+        out['classifications'] = dict(Counter(cats.get(k, {}).get('category', 'UNCLASSIFIED') for k in live))
+    except Exception:
+        out['classifications'] = None
+    try:
+        from . import service
+        from .health import health
+        h = health(store, service.status(), end)
+        out['engine_health'] = h['status']
+        out['uptime_24h'] = h['uptime_24h']
+        out['coverage'] = dict(Counter(v['state'] for v in h['inputs'].values()))
+    except Exception:
+        out['engine_health'] = out['uptime_24h'] = out['coverage'] = None
+    out['notifications'] = {c: dict(Counter(n['state'] for n in store.notifications(c, 500) if start <= n['created'] < end))
+                            for c in ('research_observations', 'intel_briefings')}
+    return out
 
 
 def lines(s):
@@ -62,7 +87,15 @@ def lines(s):
             f"  Forward expectancy (all time): {exp} over {s['forward_resolved_all_time']} resolved",
             f"  Best: {best}   Worst: {worst}",
             f"  Scanner errors: {s['scanner_errors']}   Stale input: {s['stale_input']}   Missing data: {s['missing_data']}",
-            '  Telegram: ' + (', '.join(f'{k} {v}' for k, v in sorted(s['telegram'].items())) or 'no messages'),
+            '  Telegram A (signals): ' + (', '.join(f'{k} {v}' for k, v in sorted(s['telegram'].items())) or 'no messages')
+            + ' · B (observations): ' + (', '.join(f'{k} {v}' for k, v in sorted((s.get('notifications') or {}).get('research_observations', {}).items())) or 'none')
+            + ' · C (briefings): ' + (', '.join(f'{k} {v}' for k, v in sorted((s.get('notifications') or {}).get('intel_briefings', {}).items())) or 'none'),
+            '  Signal regimes: ' + (', '.join(f'{k} {v}' for k, v in sorted((s.get('regimes') or {}).items())) or 'no signals'),
+            '  Strategy classifications (A promising / B inconclusive / C underperforming / D rejected): '
+            + (', '.join(f'{k} {v}' for k, v in sorted((s.get('classifications') or {}).items())) or 'unavailable'),
+            f"  Engine now: {s.get('engine_health') or 'unknown'} · uptime last 24h: "
+            + (f"{s['uptime_24h']['coverage'] * 100:.0f}%" if s.get('uptime_24h') else 'unknown')
+            + ' · markets: ' + (', '.join(f'{k} {v}' for k, v in sorted((s.get('coverage') or {}).items())) or 'unknown'),
             '  Experimental research only, separate from production. Not validated; paper outcomes after estimated costs.']
 
 
