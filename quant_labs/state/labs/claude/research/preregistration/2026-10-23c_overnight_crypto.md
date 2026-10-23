@@ -54,3 +54,19 @@
 ## Baselines
 
 The same decision times, risk and exit as the hypothesis, **always LONG**. A mechanism has to beat 2024–26 crypto drift, not just be positive.
+
+## Train-gate outcomes (recorded before H10 was written)
+
+* **H7:** +0.012R (n=154), stress −0.035R, below the baseline (+0.084R); BTC negative → **rejected**.
+* **H8:** +0.089R (n=31), above the baseline (−0.108R), but BTC −0.083R → **rejected** (fails the BTC+ETH replication rule).
+* **H9:** zero qualifying events in train → **untestable as specified**, not amended.
+
+## Addendum H10 — Gold daily compression → intraday breakout acceptance (`gold_compression_acceptance` 0.1.0)
+
+* **Mechanism:** volatility clusters, and a compressed day precedes expansion. Here the *direction* comes from acceptance beyond the prior day's range, not from the London session; overnight statistics show London direction carries no information.
+* **Rules:** XAUUSD, M15.
+  * The previous complete broker day's range is < 0.7 × the daily ATR of the 14 days before it (H4 grouped into broker days).
+  * Between 08:00 London and 18:00 UTC, the **first** time two consecutive M15 candles close beyond the prior-day high (BUY) or low (SELL) on the current broker day, follow the move.
+* **Risk:** stop at the prior-day midpoint; target 2.2R; exit 20:45 UTC.
+* **Baseline:** the same decision times and risk, always LONG.
+* **Gate:** the same as above. A single instrument, so there's no replication rule; that is disclosed as a weakness.
