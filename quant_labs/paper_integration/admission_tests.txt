@@ -1,0 +1,11 @@
+test_each_model_registered_experimental_with_no_alerts_and_immutable_source (test_codex_paper_integration.CodexPaperAdmissionTests.test_each_model_registered_experimental_with_no_alerts_and_immutable_source) ... ok
+test_forward_metrics_rebuild_after_late_ambiguity_and_exclude_duplicates (test_codex_paper_integration.CodexPaperAdmissionTests.test_forward_metrics_rebuild_after_late_ambiguity_and_exclude_duplicates) ... ok
+test_known_exit_releases_at_exit_but_unknown_revision_relocks (test_codex_paper_integration.CodexPaperAdmissionTests.test_known_exit_releases_at_exit_but_unknown_revision_relocks) ... ok
+test_missing_outcome_locks_to_original_deadline_not_forever (test_codex_paper_integration.CodexPaperAdmissionTests.test_missing_outcome_locks_to_original_deadline_not_forever) ... ok
+test_models_markets_and_unrelated_production_unchanged (test_codex_paper_integration.CodexPaperAdmissionTests.test_models_markets_and_unrelated_production_unchanged) ... ok
+test_overlap_and_duplicate_excluded_with_atomic_guard (test_codex_paper_integration.CodexPaperAdmissionTests.test_overlap_and_duplicate_excluded_with_atomic_guard) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.414s
+
+OK

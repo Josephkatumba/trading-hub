@@ -38,6 +38,49 @@ Refinement discipline: 0.2.0 parameters were chosen a priori (session clock
 alignment; selectivity against noise) before inspecting 0.2.0 outcomes on any
 period. Validation is used to accept/reject; test is reported once, not tuned.
 
+## Canonical queue outcomes (operator run, 2026-10-23)
+
+Five of six queued jobs COMPLETE; canonical test expectancy matches the local
+replications above (lsr 0.1.0 -0.61, lsr 0.2.0 -0.43, vef 0.1.0 -0.16,
+vef 0.2.0 -0.35, ord 0.1.0 -0.04 R/tr). `opening_range_drive 0.2.0`
+(job `472ccf43…`) is FAILED as an operational failure, not a statistical
+rejection; it stays FAILED in `experiments.jsonl` and needs an operator retry.
+
+## Phase 2: failure analysis and screening round
+
+`research/failure_analysis.py` (output `results/failure_analysis.json`,
+`results/regime_by_period.json`) broke the six rejected versions down by
+exit status, MFE/MAE, hour, weekday and H1 efficiency-ratio regime. Signs flip
+between partitions in every bucket; no stable sub-regime survived.
+
+Six new candidates (`strategies/candidates/*`, all 0.1.0, one declared trial
+each) were then screened with `harness.py run --screen`: intents generated only
+for train + validation, so the test period stays sealed (0 test intents).
+The first screening pass capped generation at the validation boundary and
+produced train-only figures; it was re-run on 2026-10-23 by a Claude Code
+session at the owner's request to complete the screen. Train figures reproduced
+exactly; no candidate source, manifest or parameter was changed.
+
+| # | Candidate 0.1.0 | Class | Train expR normal / stress (n) | Val expR normal / stress (n) | Val PF | Verdict |
+|---|---|---|---|---|---|---|
+| 7 | asian_range_drive | inversion of lsr (continuation) | -0.31 / -0.39 (110) | -0.02 / -0.12 (51) | 0.97 | REJECTED |
+| 8 | daily_extreme_reversion | prior-day failed auction | -0.23 / -0.30 (676) | -0.35 / -0.42 (367) | 0.62 | REJECTED |
+| 9 | failed_or_reversion | inversion of ord (fade) | -0.08 / -0.16 (990) | -0.08 / -0.17 (520) | 0.89 | REJECTED |
+| 10 | h1_momentum | H1 trend persistence | -0.06 / -0.11 (707) | -0.04 / -0.08 (388) | 0.94 | REJECTED |
+| 11 | vol_expansion_continuation | inversion of vef (continuation) | -0.22 / -0.37 (838) | -0.21 / -0.39 (413) | 0.75 | REJECTED |
+| 12 | xau_afternoon_drift | session time-of-day drift | -0.14 / -0.22 (1477) | -0.06 / -0.15 (762) | 0.91 | REJECTED |
+
+n = resolved trades, pooled over EURUSD, GBPUSD, GBPJPY, XAUUSD, BTCUSD, ETHUSD.
+`xau_afternoon_drift` has no symbol filter, so it was screened on all six
+markets despite its name. `h1_momentum` had 21 `confirming_bar_unavailable`
+evaluator rejections. Weekly sign-flip p-values are all ≥ 0.54.
+
+Verdict: all six fail the train gate and validation under normal costs, and
+are worse under stress. Inverting the three rejected families did not produce
+an edge in the opposite direction, so their losses come from costs and noise,
+not from a tradable signal with the wrong sign. None goes on to test or
+registration. Results: `results/scr_<candidate>/summary.json`.
+
 ## Method notes
 
 - Causal replay: model `detect(snapshot)` sees only completed bars (close <= signal

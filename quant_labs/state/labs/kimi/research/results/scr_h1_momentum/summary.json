@@ -1,0 +1,108 @@
+{
+ "tag": "scr_h1_momentum",
+ "intents": 1372,
+ "rejections": {
+  "confirming_bar_unavailable": 21
+ },
+ "gen_stats": {
+  "EURUSD": 242,
+  "GBPUSD": 270,
+  "GBPJPY": 228,
+  "XAUUSD": 236,
+  "BTCUSD": 246,
+  "ETHUSD": 150
+ },
+ "periods": {
+  "train:normal": {
+   "attempted": 887,
+   "resolved": 707,
+   "unknown": 180,
+   "win_rate": 0.3678,
+   "net_expectancy_r": -0.0639,
+   "total_r": -45.154,
+   "profit_factor": 0.895,
+   "max_dd_r": 70.88440039293621,
+   "longest_losing_streak": 14,
+   "planned_rr_mean": 1.98,
+   "opp_per_month": 76.92,
+   "weeks": 51,
+   "sign_flip_p": 0.8635
+  },
+  "train:stress": {
+   "attempted": 887,
+   "resolved": 707,
+   "unknown": 180,
+   "win_rate": 0.3607,
+   "net_expectancy_r": -0.1117,
+   "total_r": -78.955,
+   "profit_factor": 0.824,
+   "max_dd_r": 99.79729081610874,
+   "longest_losing_streak": 14,
+   "planned_rr_mean": 1.98,
+   "opp_per_month": 76.92,
+   "weeks": 51,
+   "sign_flip_p": 0.9655
+  },
+  "validation:normal": {
+   "attempted": 464,
+   "resolved": 388,
+   "unknown": 76,
+   "win_rate": 0.3763,
+   "net_expectancy_r": -0.0372,
+   "total_r": -14.432,
+   "profit_factor": 0.938,
+   "max_dd_r": 48.880506554582276,
+   "longest_losing_streak": 12,
+   "planned_rr_mean": 1.99,
+   "opp_per_month": 77.6,
+   "weeks": 27,
+   "sign_flip_p": 0.7065
+  },
+  "validation:stress": {
+   "attempted": 464,
+   "resolved": 389,
+   "unknown": 75,
+   "win_rate": 0.3676,
+   "net_expectancy_r": -0.078,
+   "total_r": -30.346,
+   "profit_factor": 0.875,
+   "max_dd_r": 56.49999794854775,
+   "longest_losing_streak": 12,
+   "planned_rr_mean": 1.99,
+   "opp_per_month": 77.6,
+   "weeks": 27,
+   "sign_flip_p": 0.8545
+  },
+  "test:normal": {
+   "attempted": 0,
+   "resolved": 0,
+   "unknown": 0,
+   "win_rate": null,
+   "net_expectancy_r": null,
+   "total_r": null,
+   "profit_factor": null,
+   "max_dd_r": null,
+   "longest_losing_streak": null,
+   "planned_rr_mean": null,
+   "opp_per_month": 0.0,
+   "weeks": 0,
+   "sign_flip_p": 1.0
+  },
+  "test:stress": {
+   "attempted": 0,
+   "resolved": 0,
+   "unknown": 0,
+   "win_rate": null,
+   "net_expectancy_r": null,
+   "total_r": null,
+   "profit_factor": null,
+   "max_dd_r": null,
+   "longest_losing_streak": null,
+   "planned_rr_mean": null,
+   "opp_per_month": 0.0,
+   "weeks": 0,
+   "sign_flip_p": 1.0
+  }
+ },
+ "elapsed_s": 8.7
+}

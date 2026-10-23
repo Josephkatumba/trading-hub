@@ -1,0 +1,708 @@
+{
+  "observed_at": 1792714098.756932,
+  "models": [
+    {
+      "key": "trend_reclaim_r2",
+      "version": "0.1.0",
+      "started": 1792713930.4761264,
+      "source_sha256": "4ee1a3da7d17b11b2dcddd9b7caddec5eb64e5a3ba0fa830ca043454221de165",
+      "status": "EXPERIMENTAL",
+      "scan_enabled": 1,
+      "alert_enabled": 0,
+      "run_states": {
+        "COMPLETE": 3
+      },
+      "runs": [
+        {
+          "marker": "307da27f1aa8e65e6b3209f96c47a2e8d6dca10997282a920fe1c6afcbe33911",
+          "state": "COMPLETE",
+          "at": 1792713956.340745,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.3984375,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.046875,
+            "max_processes": 1
+          },
+          "input_sha256": "91bc619ff67a08248e0b8ee0522041fdf940658bdc306a5aa26d7e9d5ea9b4d6",
+          "source_sha256": "4ee1a3da7d17b11b2dcddd9b7caddec5eb64e5a3ba0fa830ca043454221de165",
+          "input_data_timestamp": 1792713956.292119,
+          "symbol": "XAUUSD",
+          "bar_closed_at": 1792713600
+        },
+        {
+          "marker": "a787900df6dbf2cf1feeb467ea295ac8906dd71b7f3a663a8e612a097031958a",
+          "state": "COMPLETE",
+          "at": 1792713959.0344841,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 14.51953125,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.046875,
+            "max_processes": 1
+          },
+          "input_sha256": "25e55bb313663a705bd6606eb4006e128c7ed81a39909473760c59b2ae8aa761",
+          "source_sha256": "4ee1a3da7d17b11b2dcddd9b7caddec5eb64e5a3ba0fa830ca043454221de165",
+          "input_data_timestamp": 1792713956.316252,
+          "symbol": "BTCUSD",
+          "bar_closed_at": 1792713600
+        },
+        {
+          "marker": "5ee5961d673ba03262e035f1f2f8f4f3f19f5f5d5de93a94bf0e7d7b5a6e9486",
+          "state": "COMPLETE",
+          "at": 1792713959.6872978,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.2109375,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.078125,
+            "max_processes": 1
+          },
+          "input_sha256": "aaa705c889b4719dfa6244d1c32b7182395db60517622ce6d7535341c439fa61",
+          "source_sha256": "4ee1a3da7d17b11b2dcddd9b7caddec5eb64e5a3ba0fa830ca043454221de165",
+          "input_data_timestamp": 1792713956.377248,
+          "symbol": "EURUSD",
+          "bar_closed_at": 1792713600
+        }
+      ],
+      "raw_detections": 0,
+      "statistics": {
+        "detected": 0,
+        "confirmed": 0,
+        "triggered_entries": 0,
+        "entry_basis": "market paper quote at confirmation (no pending orders)",
+        "tp_hits": 0,
+        "sl_hits": 0,
+        "expired_time_exits": 0,
+        "open": 0,
+        "unknown_outcome": 0,
+        "quality_rejected": 0,
+        "resolved": 0,
+        "unresolved": 0,
+        "win_rate": null,
+        "net_paper_r": null,
+        "average_r": null,
+        "net_expectancy_r": null,
+        "profit_factor": null,
+        "max_realized_paper_drawdown_r": null,
+        "actual_realized_r": null,
+        "basis": "simulated paper outcomes net of estimated costs (commission, spread-based slippage, financing modes 1/5); no broker fills; unknown paths excluded and counted separately"
+      },
+      "revision_overlap_exclusions": [],
+      "admission_rejections": []
+    },
+    {
+      "key": "trend_reclaim_r3",
+      "version": "0.1.0",
+      "started": 1792713930.4761672,
+      "source_sha256": "d8e5ff85cc2d76ca9855794d7b38d4a7f9393df233a1c27d2fce97cf88fa9f93",
+      "status": "EXPERIMENTAL",
+      "scan_enabled": 1,
+      "alert_enabled": 0,
+      "run_states": {
+        "COMPLETE": 3
+      },
+      "runs": [
+        {
+          "marker": "4b307466c4bd1ffcfcbc8e8af040b646fd7694ed49afebd4a6a4b0f78cd26719",
+          "state": "COMPLETE",
+          "at": 1792713957.0160322,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.1796875,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.078125,
+            "max_processes": 1
+          },
+          "input_sha256": "91bc619ff67a08248e0b8ee0522041fdf940658bdc306a5aa26d7e9d5ea9b4d6",
+          "source_sha256": "d8e5ff85cc2d76ca9855794d7b38d4a7f9393df233a1c27d2fce97cf88fa9f93",
+          "input_data_timestamp": 1792713956.292119,
+          "symbol": "XAUUSD",
+          "bar_closed_at": 1792713600
+        },
+        {
+          "marker": "15ddfbfd66be4a4d52305839801aa22d536da96629c2984d1c2f92ad2d47ebf8",
+          "state": "COMPLETE",
+          "at": 1792713959.8484068,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.265625,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.03125,
+            "max_processes": 1
+          },
+          "input_sha256": "aaa705c889b4719dfa6244d1c32b7182395db60517622ce6d7535341c439fa61",
+          "source_sha256": "d8e5ff85cc2d76ca9855794d7b38d4a7f9393df233a1c27d2fce97cf88fa9f93",
+          "input_data_timestamp": 1792713956.377248,
+          "symbol": "EURUSD",
+          "bar_closed_at": 1792713600
+        },
+        {
+          "marker": "91619a19a9f8f610c0dbc7a4725bbb48bae264f2be14f5ed8e94e2dfaade6760",
+          "state": "COMPLETE",
+          "at": 1792713990.1862216,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 14.27734375,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.078125,
+            "max_processes": 1
+          },
+          "input_sha256": "96bccf5b52d05a968bd151b58922cd4c3f486f4bff5756e82e3aac0fc4a291b0",
+          "source_sha256": "d8e5ff85cc2d76ca9855794d7b38d4a7f9393df233a1c27d2fce97cf88fa9f93",
+          "input_data_timestamp": 1792713988.109388,
+          "symbol": "BTCUSD",
+          "bar_closed_at": 1792713600
+        }
+      ],
+      "raw_detections": 0,
+      "statistics": {
+        "detected": 0,
+        "confirmed": 0,
+        "triggered_entries": 0,
+        "entry_basis": "market paper quote at confirmation (no pending orders)",
+        "tp_hits": 0,
+        "sl_hits": 0,
+        "expired_time_exits": 0,
+        "open": 0,
+        "unknown_outcome": 0,
+        "quality_rejected": 0,
+        "resolved": 0,
+        "unresolved": 0,
+        "win_rate": null,
+        "net_paper_r": null,
+        "average_r": null,
+        "net_expectancy_r": null,
+        "profit_factor": null,
+        "max_realized_paper_drawdown_r": null,
+        "actual_realized_r": null,
+        "basis": "simulated paper outcomes net of estimated costs (commission, spread-based slippage, financing modes 1/5); no broker fills; unknown paths excluded and counted separately"
+      },
+      "revision_overlap_exclusions": [],
+      "admission_rejections": []
+    },
+    {
+      "key": "trend_reclaim_r4",
+      "version": "0.1.0",
+      "started": 1792713930.4761777,
+      "source_sha256": "2d1dc3166601a34b37af6264b6cf1570d2a7715217c69280448c3790663b1195",
+      "status": "EXPERIMENTAL",
+      "scan_enabled": 1,
+      "alert_enabled": 0,
+      "run_states": {
+        "COMPLETE": 3
+      },
+      "runs": [
+        {
+          "marker": "e7267d4da34bccd4605563a05ca6bdebeaf19dcc7c1805938379eeb2314549d2",
+          "state": "COMPLETE",
+          "at": 1792713957.7855961,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.421875,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.109375,
+            "max_processes": 1
+          },
+          "input_sha256": "91bc619ff67a08248e0b8ee0522041fdf940658bdc306a5aa26d7e9d5ea9b4d6",
+          "source_sha256": "2d1dc3166601a34b37af6264b6cf1570d2a7715217c69280448c3790663b1195",
+          "input_data_timestamp": 1792713956.292119,
+          "symbol": "XAUUSD",
+          "bar_closed_at": 1792713600
+        },
+        {
+          "marker": "6dc11d44abfc3d04e9e10edd88bc23b4047a4e0b364a674a26dd99c55bfffc9d",
+          "state": "COMPLETE",
+          "at": 1792713990.3867877,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 14.7109375,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.0625,
+            "max_processes": 1
+          },
+          "input_sha256": "96bccf5b52d05a968bd151b58922cd4c3f486f4bff5756e82e3aac0fc4a291b0",
+          "source_sha256": "2d1dc3166601a34b37af6264b6cf1570d2a7715217c69280448c3790663b1195",
+          "input_data_timestamp": 1792713988.109388,
+          "symbol": "BTCUSD",
+          "bar_closed_at": 1792713600
+        },
+        {
+          "marker": "d842030dc92007610bf46b52ba212a2e96670c880880a480a913850a860a1793",
+          "state": "COMPLETE",
+          "at": 1792713991.3580766,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.3359375,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.0625,
+            "max_processes": 1
+          },
+          "input_sha256": "5526141aabf9d6947ae59a0b1d12c3aafd9574a01c4b3a7feba8b5787a7a245a",
+          "source_sha256": "2d1dc3166601a34b37af6264b6cf1570d2a7715217c69280448c3790663b1195",
+          "input_data_timestamp": 1792713988.156628,
+          "symbol": "EURUSD",
+          "bar_closed_at": 1792713600
+        }
+      ],
+      "raw_detections": 0,
+      "statistics": {
+        "detected": 0,
+        "confirmed": 0,
+        "triggered_entries": 0,
+        "entry_basis": "market paper quote at confirmation (no pending orders)",
+        "tp_hits": 0,
+        "sl_hits": 0,
+        "expired_time_exits": 0,
+        "open": 0,
+        "unknown_outcome": 0,
+        "quality_rejected": 0,
+        "resolved": 0,
+        "unresolved": 0,
+        "win_rate": null,
+        "net_paper_r": null,
+        "average_r": null,
+        "net_expectancy_r": null,
+        "profit_factor": null,
+        "max_realized_paper_drawdown_r": null,
+        "actual_realized_r": null,
+        "basis": "simulated paper outcomes net of estimated costs (commission, spread-based slippage, financing modes 1/5); no broker fills; unknown paths excluded and counted separately"
+      },
+      "revision_overlap_exclusions": [],
+      "admission_rejections": []
+    },
+    {
+      "key": "trend_reclaim_r5",
+      "version": "0.1.0",
+      "started": 1792713930.4761848,
+      "source_sha256": "053fcadbc08a100c4e4b951da873bc33853c647713ba4c2043bfb5b2e13ef48f",
+      "status": "EXPERIMENTAL",
+      "scan_enabled": 1,
+      "alert_enabled": 0,
+      "run_states": {
+        "COMPLETE": 3
+      },
+      "runs": [
+        {
+          "marker": "16f31d10822da63aeee6831851175e3f5c15b2f041b03c5f2e0757218e3950ed",
+          "state": "COMPLETE",
+          "at": 1792713958.241586,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.19140625,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.078125,
+            "max_processes": 1
+          },
+          "input_sha256": "91bc619ff67a08248e0b8ee0522041fdf940658bdc306a5aa26d7e9d5ea9b4d6",
+          "source_sha256": "053fcadbc08a100c4e4b951da873bc33853c647713ba4c2043bfb5b2e13ef48f",
+          "input_data_timestamp": 1792713956.292119,
+          "symbol": "XAUUSD",
+          "bar_closed_at": 1792713600
+        },
+        {
+          "marker": "d5aeed3920ddcca1be37de9c678188c50c4ecb945093974b3238d12ea4d1ac46",
+          "state": "COMPLETE",
+          "at": 1792713990.5678263,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.4140625,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.078125,
+            "max_processes": 1
+          },
+          "input_sha256": "96bccf5b52d05a968bd151b58922cd4c3f486f4bff5756e82e3aac0fc4a291b0",
+          "source_sha256": "053fcadbc08a100c4e4b951da873bc33853c647713ba4c2043bfb5b2e13ef48f",
+          "input_data_timestamp": 1792713988.109388,
+          "symbol": "BTCUSD",
+          "bar_closed_at": 1792713600
+        },
+        {
+          "marker": "794c0ff6e6312ad64a13655838b2307ee1cc8af1e0c29da6c73a91d3423a48dc",
+          "state": "COMPLETE",
+          "at": 1792713991.5475779,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.44140625,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.078125,
+            "max_processes": 1
+          },
+          "input_sha256": "5526141aabf9d6947ae59a0b1d12c3aafd9574a01c4b3a7feba8b5787a7a245a",
+          "source_sha256": "053fcadbc08a100c4e4b951da873bc33853c647713ba4c2043bfb5b2e13ef48f",
+          "input_data_timestamp": 1792713988.156628,
+          "symbol": "EURUSD",
+          "bar_closed_at": 1792713600
+        }
+      ],
+      "raw_detections": 0,
+      "statistics": {
+        "detected": 0,
+        "confirmed": 0,
+        "triggered_entries": 0,
+        "entry_basis": "market paper quote at confirmation (no pending orders)",
+        "tp_hits": 0,
+        "sl_hits": 0,
+        "expired_time_exits": 0,
+        "open": 0,
+        "unknown_outcome": 0,
+        "quality_rejected": 0,
+        "resolved": 0,
+        "unresolved": 0,
+        "win_rate": null,
+        "net_paper_r": null,
+        "average_r": null,
+        "net_expectancy_r": null,
+        "profit_factor": null,
+        "max_realized_paper_drawdown_r": null,
+        "actual_realized_r": null,
+        "basis": "simulated paper outcomes net of estimated costs (commission, spread-based slippage, financing modes 1/5); no broker fills; unknown paths excluded and counted separately"
+      },
+      "revision_overlap_exclusions": [],
+      "admission_rejections": []
+    },
+    {
+      "key": "trend_reclaim_r7",
+      "version": "0.1.0",
+      "started": 1792713930.4761913,
+      "source_sha256": "7407e6466adcd1d44ae2d6a6cd5644ff37fed505bd557df4bdbc61559e2e667e",
+      "status": "EXPERIMENTAL",
+      "scan_enabled": 1,
+      "alert_enabled": 0,
+      "run_states": {
+        "COMPLETE": 3
+      },
+      "runs": [
+        {
+          "marker": "47b42b3e0bd483595779aae926ff12bd164c0e118b4b4420640faa17f2a5d118",
+          "state": "COMPLETE",
+          "at": 1792713958.3939188,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.40625,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.0625,
+            "max_processes": 1
+          },
+          "input_sha256": "91bc619ff67a08248e0b8ee0522041fdf940658bdc306a5aa26d7e9d5ea9b4d6",
+          "source_sha256": "7407e6466adcd1d44ae2d6a6cd5644ff37fed505bd557df4bdbc61559e2e667e",
+          "input_data_timestamp": 1792713956.292119,
+          "symbol": "XAUUSD",
+          "bar_closed_at": 1792713600
+        },
+        {
+          "marker": "f8f1eb9fb5669fead88978d5091f7cc6f95e1d00d2b655be2454c36c376c767b",
+          "state": "COMPLETE",
+          "at": 1792713990.731163,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.26171875,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.109375,
+            "max_processes": 1
+          },
+          "input_sha256": "96bccf5b52d05a968bd151b58922cd4c3f486f4bff5756e82e3aac0fc4a291b0",
+          "source_sha256": "7407e6466adcd1d44ae2d6a6cd5644ff37fed505bd557df4bdbc61559e2e667e",
+          "input_data_timestamp": 1792713988.109388,
+          "symbol": "BTCUSD",
+          "bar_closed_at": 1792713600
+        },
+        {
+          "marker": "ea9ba4744592ea03ab0fe1f36a6da5036dde0a59b2ade6cb11269c45b29cd71d",
+          "state": "COMPLETE",
+          "at": 1792713991.7028449,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.3203125,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.09375,
+            "max_processes": 1
+          },
+          "input_sha256": "5526141aabf9d6947ae59a0b1d12c3aafd9574a01c4b3a7feba8b5787a7a245a",
+          "source_sha256": "7407e6466adcd1d44ae2d6a6cd5644ff37fed505bd557df4bdbc61559e2e667e",
+          "input_data_timestamp": 1792713988.156628,
+          "symbol": "EURUSD",
+          "bar_closed_at": 1792713600
+        }
+      ],
+      "raw_detections": 0,
+      "statistics": {
+        "detected": 0,
+        "confirmed": 0,
+        "triggered_entries": 0,
+        "entry_basis": "market paper quote at confirmation (no pending orders)",
+        "tp_hits": 0,
+        "sl_hits": 0,
+        "expired_time_exits": 0,
+        "open": 0,
+        "unknown_outcome": 0,
+        "quality_rejected": 0,
+        "resolved": 0,
+        "unresolved": 0,
+        "win_rate": null,
+        "net_paper_r": null,
+        "average_r": null,
+        "net_expectancy_r": null,
+        "profit_factor": null,
+        "max_realized_paper_drawdown_r": null,
+        "actual_realized_r": null,
+        "basis": "simulated paper outcomes net of estimated costs (commission, spread-based slippage, financing modes 1/5); no broker fills; unknown paths excluded and counted separately"
+      },
+      "revision_overlap_exclusions": [],
+      "admission_rejections": []
+    },
+    {
+      "key": "trend_reclaim_r9",
+      "version": "0.1.0",
+      "started": 1792713930.476197,
+      "source_sha256": "182f3823d0a8e977436a02d556a73f3900013ec623dbc7a590bee303eff9f5ca",
+      "status": "EXPERIMENTAL",
+      "scan_enabled": 1,
+      "alert_enabled": 0,
+      "run_states": {
+        "COMPLETE": 3
+      },
+      "runs": [
+        {
+          "marker": "1b175c80ce2e33fc1ff6f26a5282ddcd9e4b3e66639d3befae72021b0de8f085",
+          "state": "COMPLETE",
+          "at": 1792713958.5506356,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.2734375,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.078125,
+            "max_processes": 1
+          },
+          "input_sha256": "91bc619ff67a08248e0b8ee0522041fdf940658bdc306a5aa26d7e9d5ea9b4d6",
+          "source_sha256": "182f3823d0a8e977436a02d556a73f3900013ec623dbc7a590bee303eff9f5ca",
+          "input_data_timestamp": 1792713956.292119,
+          "symbol": "XAUUSD",
+          "bar_closed_at": 1792713600
+        },
+        {
+          "marker": "73faaf6e581f15fcda19749b158c912dd01f4fdf2eaa32a896b19147a482aa10",
+          "state": "COMPLETE",
+          "at": 1792713990.8857515,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 14.55078125,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.0625,
+            "max_processes": 1
+          },
+          "input_sha256": "96bccf5b52d05a968bd151b58922cd4c3f486f4bff5756e82e3aac0fc4a291b0",
+          "source_sha256": "182f3823d0a8e977436a02d556a73f3900013ec623dbc7a590bee303eff9f5ca",
+          "input_data_timestamp": 1792713988.109388,
+          "symbol": "BTCUSD",
+          "bar_closed_at": 1792713600
+        },
+        {
+          "marker": "c907482ecdbb3d1a075fef68ee0eaf3c6ba09d80d2d86e63ca8380252fef1d1b",
+          "state": "COMPLETE",
+          "at": 1792713991.8503487,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.09765625,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.09375,
+            "max_processes": 1
+          },
+          "input_sha256": "5526141aabf9d6947ae59a0b1d12c3aafd9574a01c4b3a7feba8b5787a7a245a",
+          "source_sha256": "182f3823d0a8e977436a02d556a73f3900013ec623dbc7a590bee303eff9f5ca",
+          "input_data_timestamp": 1792713988.156628,
+          "symbol": "EURUSD",
+          "bar_closed_at": 1792713600
+        }
+      ],
+      "raw_detections": 0,
+      "statistics": {
+        "detected": 0,
+        "confirmed": 0,
+        "triggered_entries": 0,
+        "entry_basis": "market paper quote at confirmation (no pending orders)",
+        "tp_hits": 0,
+        "sl_hits": 0,
+        "expired_time_exits": 0,
+        "open": 0,
+        "unknown_outcome": 0,
+        "quality_rejected": 0,
+        "resolved": 0,
+        "unresolved": 0,
+        "win_rate": null,
+        "net_paper_r": null,
+        "average_r": null,
+        "net_expectancy_r": null,
+        "profit_factor": null,
+        "max_realized_paper_drawdown_r": null,
+        "actual_realized_r": null,
+        "basis": "simulated paper outcomes net of estimated costs (commission, spread-based slippage, financing modes 1/5); no broker fills; unknown paths excluded and counted separately"
+      },
+      "revision_overlap_exclusions": [],
+      "admission_rejections": []
+    },
+    {
+      "key": "range_sweep_reversion",
+      "version": "0.1.0",
+      "started": 1792713930.4762037,
+      "source_sha256": "a98503aa2235fccdeb89a378019c01770fb15d94290a640001c168228a94809c",
+      "status": "EXPERIMENTAL",
+      "scan_enabled": 1,
+      "alert_enabled": 0,
+      "run_states": {
+        "COMPLETE": 3
+      },
+      "runs": [
+        {
+          "marker": "47756c56e44ad19e0af60ff3cb43d82cfab5584b0c1f0e4497f36f7d948c637e",
+          "state": "COMPLETE",
+          "at": 1792713958.8351688,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.21875,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.0625,
+            "max_processes": 1
+          },
+          "input_sha256": "25e55bb313663a705bd6606eb4006e128c7ed81a39909473760c59b2ae8aa761",
+          "source_sha256": "a98503aa2235fccdeb89a378019c01770fb15d94290a640001c168228a94809c",
+          "input_data_timestamp": 1792713956.316252,
+          "symbol": "BTCUSD",
+          "bar_closed_at": 1792713600
+        },
+        {
+          "marker": "5f0c5a9785083a23e0682dbfb53431ca515fc79c132e70f844b082310f72dcd9",
+          "state": "COMPLETE",
+          "at": 1792713959.4842398,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.19921875,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.0625,
+            "max_processes": 1
+          },
+          "input_sha256": "aaa705c889b4719dfa6244d1c32b7182395db60517622ce6d7535341c439fa61",
+          "source_sha256": "a98503aa2235fccdeb89a378019c01770fb15d94290a640001c168228a94809c",
+          "input_data_timestamp": 1792713956.377248,
+          "symbol": "EURUSD",
+          "bar_closed_at": 1792713600
+        },
+        {
+          "marker": "cda831e3a78c02316ba0e4fd0d23b36372c4f5294b494792dc35d636b8b22cdd",
+          "state": "COMPLETE",
+          "at": 1792713988.4489477,
+          "decisions": 0,
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 15.40234375,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.0625,
+            "max_processes": 1
+          },
+          "input_sha256": "304314129a3277afc9916a5b5d5e0452e414a380b7497005e5f1343d90cb7fc2",
+          "source_sha256": "a98503aa2235fccdeb89a378019c01770fb15d94290a640001c168228a94809c",
+          "input_data_timestamp": 1792713988.087726,
+          "symbol": "XAUUSD",
+          "bar_closed_at": 1792713600
+        }
+      ],
+      "raw_detections": 0,
+      "statistics": {
+        "detected": 0,
+        "confirmed": 0,
+        "triggered_entries": 0,
+        "entry_basis": "market paper quote at confirmation (no pending orders)",
+        "tp_hits": 0,
+        "sl_hits": 0,
+        "expired_time_exits": 0,
+        "open": 0,
+        "unknown_outcome": 0,
+        "quality_rejected": 0,
+        "resolved": 0,
+        "unresolved": 0,
+        "win_rate": null,
+        "net_paper_r": null,
+        "average_r": null,
+        "net_expectancy_r": null,
+        "profit_factor": null,
+        "max_realized_paper_drawdown_r": null,
+        "actual_realized_r": null,
+        "basis": "simulated paper outcomes net of estimated costs (commission, spread-based slippage, financing modes 1/5); no broker fills; unknown paths excluded and counted separately"
+      },
+      "revision_overlap_exclusions": [],
+      "admission_rejections": []
+    }
+  ],
+  "basis": "Forward only since per-model enrollment; latest outcome revision; chronological same-model/symbol overlap exclusion; no historical results imported.",
+  "family_pooling": "No pooled return or independent-discovery claim across correlated target variants.",
+  "runtime": {
+    "running": true,
+    "last_processed": 1792714089.3302164,
+    "last_error": null,
+    "enabled": true,
+    "telegram_mode": "DRY_RUN",
+    "outbound_activation_approved": false
+  }
+}

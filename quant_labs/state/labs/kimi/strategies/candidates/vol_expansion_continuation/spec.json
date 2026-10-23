@@ -1,0 +1,15 @@
+{
+ "id": "vol_expansion_continuation",
+ "version": "0.1.0",
+ "name": "Vol Expansion Continuation",
+ "hypothesis": "Volume climax bars continue in the climax direction; the extreme is liquidity fuel.",
+ "entry_conditions": "Volume climax bars continue in the climax direction; the extreme is liquidity fuel.",
+ "exit_conditions": "Fixed SL/TP with time exit.",
+ "stop_loss_method": "Structural extreme plus ATR buffer.",
+ "take_profit_method": "2R-2.5R planned.",
+ "risk_model": "One planned risk unit.",
+ "intended_conditions": "Screening candidate.",
+ "limitations": "Screening candidate; see journal.",
+ "timeframe": "M15",
+ "declared_trials": 1
+}

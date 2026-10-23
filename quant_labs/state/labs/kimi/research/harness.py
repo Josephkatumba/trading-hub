@@ -31,6 +31,7 @@ START = E.epoch(E.POLICY["train_start"])
 VAL = E.epoch(E.POLICY["validation_start"])
 TEST = E.epoch(E.POLICY["test_start"])
 END = E.epoch(E.POLICY["test_end"])
+GEN_HI = END  # --screen lowers this to TEST so no test-period intents are generated
 
 
 def load_module(path):
@@ -44,7 +45,7 @@ def load_module(path):
 def load_symbol(ds, symbol):
     """Frames truncated exactly like engine.evaluate: completed bars only up to test_end."""
     out = {}
-    for tf in ("M15", "H1", "M1"):
+    for tf in ("M15", "H1", "H4", "D1", "M1"):
         bars = ds.read(symbol, tf)
         bars = [b for b in bars if b["utc"] + TF[tf] <= END]
         out[tf] = bars
@@ -110,7 +111,7 @@ def generate(ds, module, manifest, symbols, hours=None, limit=None, verbose=True
         for i in range(len(m15) - 1):
             bar = m15[i]
             t = bar["utc"] + 900
-            if t < START or t >= END:
+            if t < START or t >= GEN_HI:
                 continue
             if hours is not None and (int(t) // 3600) % 24 not in hours:
                 continue
@@ -207,9 +208,14 @@ def main():
     p.add_argument("--symbols", default="EURUSD,GBPUSD,GBPJPY,XAUUSD,BTCUSD,ETHUSD")
     p.add_argument("--hours", default=None, help="comma list of UTC bar-close hours to scan (harness prefilter)")
     p.add_argument("--limit", type=int, default=None, help="max intents per symbol (smoke tests)")
+    p.add_argument("--screen", action="store_true", help="train+validation only; no test intents generated")
     p.add_argument("--tag", required=True)
     p.add_argument("--outroot", default=str(Path(__file__).resolve().parent / "results"))
     args = p.parse_args()
+
+    if args.screen:
+        global GEN_HI
+        GEN_HI = TEST  # generate train+validation intents only; test period never emitted
 
     outdir = Path(args.outroot) / args.tag
     outdir.mkdir(parents=True, exist_ok=True)

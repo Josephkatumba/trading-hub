@@ -1,0 +1,15 @@
+{
+ "id": "h1_momentum",
+ "version": "0.1.0",
+ "name": "H1 Momentum",
+ "hypothesis": "Decisive H1 closes beyond 20-hour extremes on volume persist for 24h.",
+ "entry_conditions": "Decisive H1 closes beyond 20-hour extremes on volume persist for 24h.",
+ "exit_conditions": "Fixed SL/TP with time exit.",
+ "stop_loss_method": "Structural extreme plus ATR buffer.",
+ "take_profit_method": "2R-2.5R planned.",
+ "risk_model": "One planned risk unit.",
+ "intended_conditions": "Screening candidate.",
+ "limitations": "Screening candidate; see journal.",
+ "timeframe": "H1",
+ "declared_trials": 1
+}
