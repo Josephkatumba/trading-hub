@@ -3,6 +3,8 @@ state/owner/
 state/labs/*/.lab-token
 state/runtime/
 state/control.sqlite3*
+state/m5/runtime/
+state/m5/control_m5.sqlite3*
 state/shared/blobs/
 verification/resource_probe/
 verification/tests_tmp*/
