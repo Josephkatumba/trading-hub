@@ -1,0 +1,24 @@
+diff --git a/main.py b/main.py
+index 31d98e5..0dbeeb0 100644
+--- a/backend/main.py
++++ b/backend/main.py
+@@ -47,6 +47,7 @@ import signal_outcomes
+ import reports
+ from strategy_bank import worker as bank_worker
+ from quant_live import service as quant_live_service
++import financing_snapshot
+ from quant_live.api import router as quant_live_router
+ 
+ try:
+@@ -515,6 +516,11 @@ def _market_snapshot() -> list[dict[str, Any]]:
+                 continue
+             tick = mt5.symbol_info_tick(actual)
+             info = mt5.symbol_info(actual)
++            # Read-only financing metadata from the info already fetched (off unless
++            # TRADEDEN_FINANCING_SNAPSHOT_ENABLED=1; one append-only line per symbol per UTC day).
++            if financing_snapshot.enabled() and info:
++                account = mt5.account_info()
++                financing_snapshot.offer(requested, actual, info, getattr(account, "currency", None))
+             rates = mt5.copy_rates_from_pos(actual, mt5.TIMEFRAME_M15, 0, 300)
+             h1_rates = mt5.copy_rates_from_pos(actual, mt5.TIMEFRAME_H1, 0, 160)
+             if not tick or not info:

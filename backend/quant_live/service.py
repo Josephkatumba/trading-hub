@@ -93,4 +93,7 @@ def _start(stop,history_fetch=None):
         finally:_last['running']=False
     _thread=threading.Thread(target=loop,name='tradeden-quant-model-consumer',daemon=True);_thread.start();return _thread
 def status():
-    with _lock:return {'enabled':enabled(),'telegram_mode':'DRY_RUN','outbound_activation_approved':False,**_last,'latest_inputs':dict(_inputs)}
+    from .telegram import delivery_enabled
+    approved=bool(store().delivery_approval()) if enabled() else False
+    with _lock:return {'enabled':enabled(),'telegram_mode':'EXPERIMENTAL_APPROVED' if approved and delivery_enabled() else 'DRY_RUN',
+                       'outbound_activation_approved':approved,'delivery_flag':delivery_enabled(),**_last,'latest_inputs':dict(_inputs)}

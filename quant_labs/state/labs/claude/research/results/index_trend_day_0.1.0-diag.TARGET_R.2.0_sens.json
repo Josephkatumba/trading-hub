@@ -1,0 +1,103 @@
+{
+ "model": "index_trend_day",
+ "version": "0.1.0-diag.TARGET_R.2.0",
+ "source_sha256": "d5a117ac5663502217145b089aa610cfd8c11b108e0db756e1a998d204fd9b0c",
+ "dataset": "bf130602dca4f955f64160bc9b85f0bc4246195f9685afbde91d1856c2c62cd3",
+ "evaluator_version": "tradeden-shared-eval-1.0.0",
+ "symbols": [
+  "NAS100",
+  "US500",
+  "GER40"
+ ],
+ "splits_examined": [
+  "train",
+  "validation"
+ ],
+ "intents": 0,
+ "replay": {
+  "raw_decisions": 172,
+  "live_gate_rejections": {
+   "SPREAD_OR_NET_RR": 172
+  }
+ },
+ "evaluator_rejections": {},
+ "periods": {
+  "train": {
+   "normal": {
+    "attempted": 0,
+    "resolved": 0,
+    "unknown": 0,
+    "statuses": {},
+    "win_rate": null,
+    "net_expectancy_r": null,
+    "total_r": null,
+    "profit_factor": null,
+    "max_realized_drawdown_r": null,
+    "longest_losing_streak": null,
+    "planned_rr_mean": null,
+    "realized_win_loss_ratio": null,
+    "opportunities_per_month": 0.0,
+    "weekly_bootstrap_expectancy_ci95": null,
+    "weekly_sign_flip_p": 1.0
+   },
+   "stress": {
+    "attempted": 0,
+    "resolved": 0,
+    "unknown": 0,
+    "statuses": {},
+    "win_rate": null,
+    "net_expectancy_r": null,
+    "total_r": null,
+    "profit_factor": null,
+    "max_realized_drawdown_r": null,
+    "longest_losing_streak": null,
+    "planned_rr_mean": null,
+    "realized_win_loss_ratio": null,
+    "opportunities_per_month": 0.0,
+    "weekly_bootstrap_expectancy_ci95": null,
+    "weekly_sign_flip_p": 1.0
+   }
+  },
+  "validation": {
+   "normal": {
+    "attempted": 0,
+    "resolved": 0,
+    "unknown": 0,
+    "statuses": {},
+    "win_rate": null,
+    "net_expectancy_r": null,
+    "total_r": null,
+    "profit_factor": null,
+    "max_realized_drawdown_r": null,
+    "longest_losing_streak": null,
+    "planned_rr_mean": null,
+    "realized_win_loss_ratio": null,
+    "opportunities_per_month": 0.0,
+    "weekly_bootstrap_expectancy_ci95": null,
+    "weekly_sign_flip_p": 1.0
+   },
+   "stress": {
+    "attempted": 0,
+    "resolved": 0,
+    "unknown": 0,
+    "statuses": {},
+    "win_rate": null,
+    "net_expectancy_r": null,
+    "total_r": null,
+    "profit_factor": null,
+    "max_realized_drawdown_r": null,
+    "longest_losing_streak": null,
+    "planned_rr_mean": null,
+    "realized_win_loss_ratio": null,
+    "opportunities_per_month": 0.0,
+    "weekly_bootstrap_expectancy_ci95": null,
+    "weekly_sign_flip_p": 1.0
+   }
+  }
+ },
+ "by_symbol": {},
+ "seconds": {
+  "replay": 1.4,
+  "evaluate": 0.0
+ }
+}

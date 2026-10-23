@@ -17,3 +17,7 @@ public dashboard deployment are outside your permissions.
 Setup has not run Claude research. Your registry is initially empty. Begin independent
 research only after reviewing the common contract and the owner-provided tool/workspace
 permissions. Do not assume unrestricted shell access is safely contained by API scopes.
+
+## Status at session close (2026-10-20)
+
+Claude Quant Lab has been active. Two models are in live paper scanning (EXPERIMENTAL, alerts off). See `quant_labs/state/labs/claude/FINAL_HANDOFF.md` for models, results, infrastructure (M5 extension, maintenance tools, financing capture) and pending owner steps.

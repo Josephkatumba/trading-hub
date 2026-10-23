@@ -1,0 +1,41 @@
+{
+  "lab": "claude",
+  "key": "session_mean_reversion",
+  "version": "0.1.0",
+  "name": "Session-Mean Stretch Reversion",
+  "timeframe": "M15",
+  "requirements": {
+    "M15": 120,
+    "H1": 40
+  },
+  "instruments": [
+    "XAUUSD",
+    "XAGUSD",
+    "EURUSD",
+    "GBPUSD",
+    "USDJPY",
+    "AUDUSD",
+    "NZDUSD",
+    "USDCAD",
+    "USDCHF",
+    "EURJPY",
+    "GBPJPY",
+    "BTCUSD",
+    "ETHUSD",
+    "NAS100",
+    "US500",
+    "GER40"
+  ],
+  "classification": "EXPERIMENTAL",
+  "entry_type": "MARKET_PAPER_QUOTE",
+  "hypothesis": "In range-bound H1 regimes, a 2.5 SD stretch from the broker-day mean rejected at a new session extreme reverts to the mean.",
+  "risk_model": "One planned risk unit; stop beyond the session extreme plus 0.25 M15 ATR; target = session mean, admitted only at >=2.2R; exit by min(6h, next broker gap).",
+  "planned_rr": "Variable, >=2.2R (session-mean target)",
+  "known_limitations": "No verified edge. M15 both-barrier candles need M1 (only since Jul 2026) and are otherwise AMBIGUOUS; CFD spread proxies; correlated instruments; broker holiday calendar unverified.",
+  "declared_trials_in_phase": 1,
+  "authorship": {
+    "lab": "claude",
+    "session_reference": "Claude Code (claude-opus-5-5) desktop session 14e835e0-e7e8-43cf-b286-855a18365bd7, 2026-10-20",
+    "statement": "Created by this actual Claude Code session; not attributed to Codex or Kimi."
+  }
+}

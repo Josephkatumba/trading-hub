@@ -1,0 +1,22 @@
+{
+  "status": "COMPLETE",
+  "lab": "claude",
+  "source_sha256": "4737b593e749fe9bc4939b7450e66fe5f369f7b84a91877dc6c34b52e277e155",
+  "source": "MT5_SHARED_CACHE_PROBE",
+  "input_sha256": "9c3c12ec53210878143cd981a30d4ed247400a252e649de6620dc8d789fa4d72",
+  "asof": 1792451012.719281,
+  "symbol": "US500",
+  "resources": {
+    "enforced": true,
+    "memory_limit_mb": 192.0,
+    "peak_committed_mb": 13.8359375,
+    "cpu_cap_percent": 15.0,
+    "cpu_limit_seconds": 4.0,
+    "cpu_seconds_used": 0.09375,
+    "max_processes": 1
+  },
+  "decisions": [],
+  "scope": "read-only real-data capability probe, not live model admission or a committed signal",
+  "live_writes": 0,
+  "outbound_calls": 0
+}

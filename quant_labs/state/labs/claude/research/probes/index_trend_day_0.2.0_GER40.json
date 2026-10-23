@@ -1,0 +1,22 @@
+{
+  "status": "COMPLETE",
+  "lab": "claude",
+  "source_sha256": "a940ff332b23c16d13aaa3c9cc5bb3842e58f3ec7672e41f44211bf930e1f728",
+  "source": "MT5_SHARED_CACHE_PROBE",
+  "input_sha256": "642eee1031e599ae636f33df2502cacea43dc586237db6fd4c2a25d897869e8d",
+  "asof": 1792451146.684261,
+  "symbol": "GER40",
+  "resources": {
+    "enforced": true,
+    "memory_limit_mb": 192.0,
+    "peak_committed_mb": 13.78125,
+    "cpu_cap_percent": 15.0,
+    "cpu_limit_seconds": 4.0,
+    "cpu_seconds_used": 0.09375,
+    "max_processes": 1
+  },
+  "decisions": [],
+  "scope": "read-only real-data capability probe, not live model admission or a committed signal",
+  "live_writes": 0,
+  "outbound_calls": 0
+}

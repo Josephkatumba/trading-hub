@@ -15,11 +15,16 @@ def main():
     state=commands.add_parser('status');state.add_argument('--lab',choices=['codex','claude','kimi'],required=True)
     state.add_argument('--key',required=True);state.add_argument('--version',required=True)
     state.add_argument('--set',dest='status',choices=['EXPERIMENTAL','ARCHIVED','DISABLED','REJECTED'],required=True)
+    approve=commands.add_parser('approve-delivery',help='Record an explicit CEO approval for EXPERIMENTAL paper-signal Telegram delivery')
+    approve.add_argument('--approval',required=True,help='JSON file: approved_by, directive, production=false, scope=[{lab,key,version,tier}]')
+    revoke=commands.add_parser('revoke-delivery');revoke.add_argument('--reason',required=True)
     commands.add_parser('report');args=parser.parse_args();store=Store(args.store)
     if args.command=='register':
         manifest=json.loads(Path(args.manifest).read_text(encoding='utf-8'))
         store.register(manifest,Path(args.source).read_text(encoding='utf-8'),{'lab':manifest['lab'],'session_reference':args.session_reference})
     elif args.command=='status':store.set_status(args.lab,args.key,args.version,args.status)
+    elif args.command=='approve-delivery':store.approve_delivery(json.loads(Path(args.approval).read_text(encoding='utf-8')))
+    elif args.command=='revoke-delivery':store.revoke_delivery(args.reason)
     print(json.dumps(snapshot(store),indent=2))
 
 if __name__=='__main__':main()

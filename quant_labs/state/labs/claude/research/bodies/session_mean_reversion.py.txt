@@ -1,0 +1,75 @@
+"""Claude-authored experimental model: Session-Mean Stretch Reversion. No verified edge.
+
+Mechanism (inventory/mean reversion in non-trending regimes): when the H1 market is
+range-bound (low efficiency ratio), a move that stretches price beyond 2.5 standard
+deviations from the current broker day's average price and is rejected at a new
+session extreme reflects temporary liquidity demand that market makers lean against.
+Target is the session mean itself; trade only when that mean is at least 2.2R away
+from a stop placed beyond the session extreme.
+
+Uses only closed candles from the supplied snapshot. Pure functions only.
+"""
+
+import math
+
+STRETCH = 2.5          # (close - session mean) / session standard deviation
+MAX_EFFICIENCY = 0.30  # H1 efficiency ratio over 24 bars (range-bound regime)
+WICK = 0.5             # rejection wick share of the signal candle range
+STOP_BUFFER = 0.25
+MIN_RR = 2.2
+HORIZON = 6 * 3600
+MIN_HORIZON = 2 * 3600
+CRYPTO = {'BTCUSD', 'ETHUSD'}
+
+@@HELPERS@@
+
+def detect(snapshot):
+    symbol = snapshot['symbol']
+    bars = snapshot['frames'].get('M15', ())
+    h1 = snapshot['frames'].get('H1', ())
+    if len(bars) < 40 or len(h1) < 30:
+        return []
+    last = bars[-1]
+    now = last['utc'] + 900
+    hour = now % 86400 // 3600
+    if symbol not in CRYPTO and not 6 <= hour < 19:
+        return []
+    closes = [b['close'] for b in h1[-25:]]
+    path = sum(abs(closes[i] - closes[i - 1]) for i in range(1, len(closes)))
+    if path <= 0 or abs(closes[-1] - closes[0]) / path > MAX_EFFICIENCY:
+        return []
+    today = broker_day(now)
+    session = [b for b in bars if broker_day(b['utc']) == today]
+    if len(session) < 16:
+        return []
+    typical = [(b['high'] + b['low'] + b['close']) / 3 for b in session]
+    mean = sum(typical) / len(typical)
+    sd = math.sqrt(sum((x - mean) ** 2 for x in typical) / len(typical))
+    atr = atr_of(bars, 14)
+    if sd <= 0 or atr <= 0:
+        return []
+    rng = last['high'] - last['low']
+    if rng <= 0:
+        return []
+    hi = max(b['high'] for b in session)
+    lo = min(b['low'] for b in session)
+    z = (last['close'] - mean) / sd
+    direction = None
+    if z >= STRETCH and last['high'] >= hi and (last['high'] - max(last['open'], last['close'])) >= WICK * rng and last['close'] < last['open']:
+        direction, stop = 'SHORT', hi + STOP_BUFFER * atr
+    elif z <= -STRETCH and last['low'] <= lo and (min(last['open'], last['close']) - last['low']) >= WICK * rng and last['close'] > last['open']:
+        direction, stop = 'LONG', lo - STOP_BUFFER * atr
+    if direction is None:
+        return []
+    horizon = min(HORIZON, seconds_to_cutoff(symbol, now))
+    if horizon < MIN_HORIZON:
+        return []
+    quote = snapshot['quote']
+    long = direction == 'LONG'
+    entry = quote['ask'] if long else quote['bid']
+    risk = entry - stop if long else stop - entry
+    reward = mean - entry if long else entry - mean
+    if risk <= 0 or reward < MIN_RR * risk:
+        return []
+    return [{'direction': direction, 'stop_loss': stop, 'take_profit': mean, 'horizon_seconds': horizon, 'atr': atr,
+             'rationale': 'Range-bound H1 regime; close %.1f session SD from the broker-day mean with a rejection wick at the session extreme; target the session mean (%.1fR).' % (abs(z), reward / risk)}]

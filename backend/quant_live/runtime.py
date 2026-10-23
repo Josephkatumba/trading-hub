@@ -17,6 +17,14 @@ from .model_host import LaboratoryProvider
 from .telegram import message,ExperimentalNotifier
 
 def numeric(v):return isinstance(v,(int,float)) and not isinstance(v,bool) and math.isfinite(v)
+def weekend_seconds(start,end):
+    """Seconds of Saturday/Sunday (UTC) inside [start,end]."""
+    if not end>start:return 0
+    total=0;day=int(start//86400)
+    while day*86400<end:
+        if (day+4)%7 in (0,6):total+=max(0,min(end,(day+1)*86400)-max(start,day*86400))
+        day+=1
+    return total
 def qualify(snapshot,model,d,now):
     q=snapshot.get('quote',{});meta=snapshot.get('metadata',{});tf=model['manifest']['timeframe'];bars=snapshot['frames'].get(tf,[])
     if not snapshot.get('time_verified'):return None,'UNVERIFIED_TIME'
@@ -26,7 +34,12 @@ def qualify(snapshot,model,d,now):
     for required in model['manifest'].get('requirements',{}):
         if required=='M1':continue # Minute history refines outcomes; missing paths stay unknown.
         history=snapshot['frames'].get(required,[])
-        if not history or not 0<=now-(history[-1]['utc']+TF_SECONDS[required])<=2*TF_SECONDS[required]:return None,'STALE_OR_MISSING_MODEL_CONTEXT'
+        if not history:return None,'STALE_OR_MISSING_MODEL_CONTEXT'
+        last_close=history[-1]['utc']+TF_SECONDS[required]
+        # Higher-timeframe context legitimately ages over the weekend market close (e.g. Friday's D1
+        # on Monday). Only weekend hours actually spanned are excused; midweek staleness still fails.
+        allowance=2*TF_SECONDS[required]+(weekend_seconds(last_close,now) if TF_SECONDS[required]>=14400 else 0)
+        if not 0<=now-last_close<=allowance:return None,'STALE_OR_MISSING_MODEL_CONTEXT'
     if not all(numeric(q.get(k)) and q[k]>0 for k in ('bid','ask')) or q['ask']<q['bid']:return None,'INVALID_QUOTE'
     direction=d.get('direction')
     if direction not in ('LONG','SHORT'):return None,'INVALID_DIRECTION'
@@ -94,17 +107,19 @@ class Runtime:
                 close=bars[-1]['utc']+TF_SECONDS[model['manifest']['timeframe']]
                 marker=hashlib.sha256(canonical([model['lab'],model['key'],model['version'],snapshot['symbol'],close])).hexdigest()
                 if not self.store.claim(marker,now):continue
+                ident={'lab':model['lab'],'key':model['key'],'version':model['version'],'symbol':snapshot['symbol'],'bar_closed_at':close,
+                       'data_shortfall':{tf:[len(snapshot['frames'].get(tf,[])),n] for tf,n in model['manifest'].get('requirements',{}).items() if len(snapshot['frames'].get(tf,[]))<n}}
                 # Fail closed before spending a model worker on stale/unverified input.
                 tick=snapshot.get('quote',{}).get('tick_at')
                 if not numeric(tick) or not -5<=now-tick<=30 or not 0<=now-close<=2*TF_SECONDS[model['manifest']['timeframe']]:
-                    self.store.finish_run(marker,'REJECTED',{'reason':'STALE_OR_FUTURE_INPUT'});continue
+                    self.store.finish_run(marker,'REJECTED',{**ident,'reason':'STALE_OR_FUTURE_INPUT'});continue
                 result=self.runner(self.store,model,snapshot);runs.append({'model':model['key'],**result})
                 if live_clock:now=time.time()
                 current=self.store.model(model['lab'],model['key'],model['version'])
                 if not current or current['status']!='EXPERIMENTAL' or not current['scan_enabled']:
-                    self.store.finish_run(marker,'REVOKED',{'reason':'MODEL_DISABLED_DURING_RUN'});continue
-                if result['status']!='COMPLETE':self.store.finish_run(marker,result['status'],result);continue
-                decisions=result['decisions']
+                    self.store.finish_run(marker,'REVOKED',{**ident,'reason':'MODEL_DISABLED_DURING_RUN'});continue
+                if result['status']!='COMPLETE':self.store.finish_run(marker,result['status'],{**ident,**result});continue
+                decisions=result['decisions'];quality=None
                 # One economic signal per model/symbol/closed bar.
                 for decision in decisions[:1]:
                     signal,reason=qualify(snapshot,model,decision,now)
@@ -116,12 +131,12 @@ class Runtime:
                                   'model_version':model['version'],'symbol':snapshot['symbol'],'timeframe':model['manifest']['timeframe'],
                                   'signal_bar_closed_at':close,'entry_at':now,'input_sha256':snapshot['input_sha256'],
                                   'classification':'EXPERIMENTAL','actual_realized_r':None,'planned_rr':None,'session':session(now)}
-                        self.store.record(detected,False,reason)
+                        self.store.record(detected,False,reason);quality=reason
                         with self.store.db() as c:self.store.event(c,None,'QUALITY_REJECTED',{'lab':model['lab'],'key':model['key'],'version':model['version'],'symbol':snapshot['symbol'],'reason':reason,'input_sha256':snapshot['input_sha256']},now)
-                self.store.finish_run(marker,'COMPLETE',{'decisions':len(decisions),'resources':result.get('resources',{}),'input_sha256':snapshot['input_sha256'],'source_sha256':model['sha'],'input_data_timestamp':snapshot['asof']})
+                self.store.finish_run(marker,'COMPLETE',{**ident,'quality_rejection':quality,'decisions':len(decisions),'resources':result.get('resources',{}),'input_sha256':snapshot['input_sha256'],'source_sha256':model['sha'],'input_data_timestamp':snapshot['asof']})
             self.resolve(snapshot['symbol'],now)
-            ExperimentalNotifier(self.store).process(now)
-            return {'status':'COMPLETE','signals':generated,'runs':runs,'telegram_mode':'DRY_RUN','outbound_calls':0}
+            notifier=ExperimentalNotifier(self.store);notifier.process(now)
+            return {'status':'COMPLETE','signals':generated,'runs':runs,'telegram_mode':'EXPERIMENTAL_APPROVED' if notifier.live else 'DRY_RUN','outbound_calls':notifier.calls}
         finally:self.store.release(owner)
     def resolve(self,symbol,now):
         written=0;budget=time.monotonic()+5

@@ -1,0 +1,14 @@
+{
+  "job": "ef60a5f387d9491ea474eace42b8dc5f",
+  "status": "FAILED",
+  "resources": {
+    "cpu_cap_percent": 20.0,
+    "cpu_limit_seconds": 20.0,
+    "cpu_seconds_used": 0.84375,
+    "enforced": true,
+    "max_processes": 1,
+    "memory_limit_mb": 384.0,
+    "peak_committed_mb": 127.03125
+  },
+  "reason": "PermissionError(13, 'Access is denied')"
+}

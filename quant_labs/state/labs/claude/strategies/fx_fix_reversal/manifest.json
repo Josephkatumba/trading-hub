@@ -1,0 +1,36 @@
+{
+  "lab": "claude",
+  "key": "fx_fix_reversal",
+  "version": "0.1.0",
+  "name": "London Fix Pressure Reversal",
+  "timeframe": "M15",
+  "requirements": {
+    "M15": 40,
+    "H4": 120
+  },
+  "instruments": [
+    "EURUSD",
+    "GBPUSD",
+    "USDJPY",
+    "AUDUSD",
+    "NZDUSD",
+    "USDCAD",
+    "USDCHF",
+    "EURJPY",
+    "GBPJPY",
+    "XAUUSD",
+    "XAGUSD"
+  ],
+  "classification": "EXPERIMENTAL",
+  "entry_type": "MARKET_PAPER_QUOTE",
+  "hypothesis": "Price pressure from pre-hedging into the 16:00 London fix (15:00-16:15 London move >=0.25 daily ATR) reverses after the fix window.",
+  "risk_model": "One planned risk unit; stop beyond the 15:00-16:15 extreme plus 0.2 M15 ATR; 2.2R objective; 3-hour limit or next broker gap.",
+  "planned_rr": "2.2R fixed target",
+  "known_limitations": "No verified edge. M15 both-barrier candles need M1 (only since Jul 2026) and are otherwise AMBIGUOUS; CFD spread proxies; correlated instruments; broker holiday calendar unverified.",
+  "declared_trials_in_phase": 1,
+  "authorship": {
+    "lab": "claude",
+    "session_reference": "Claude Code (claude-opus-5-5) desktop session 14e835e0-e7e8-43cf-b286-855a18365bd7, 2026-10-20",
+    "statement": "Created by this actual Claude Code session; not attributed to Codex or Kimi."
+  }
+}

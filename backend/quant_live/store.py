@@ -10,6 +10,8 @@ from .adapter import canonical
 from .model_host import validate_source
 
 LAB_NAMES={'codex':'Codex Quant Lab','claude':'Claude Quant Lab','kimi':'Kimi Quant Lab'}
+# Evidence tiers for approved EXPERIMENTAL paper delivery. Neither is production.
+TIERS={'PAPER_CANDIDATE':'EXPERIMENTAL','RESEARCH_ONLY':'EXPERIMENTAL · RESEARCH ONLY (no positive out-of-sample evidence)'}
 PROJECT=Path(__file__).resolve().parents[2]
 class Store:
     def __init__(self,folder):
@@ -64,6 +66,41 @@ class Store:
         with self.db() as c:
             c.execute('UPDATE models SET status=?,scan_enabled=?,alert_enabled=0 WHERE lab=? AND key=? AND version=?',(status,int(status=='EXPERIMENTAL'),lab,key,version))
             c.execute('INSERT INTO events(signal,kind,body,at) VALUES(NULL,"MODEL_STATUS",?,?)',(json.dumps({'lab':lab,'key':key,'version':version,'status':status}),time.time()))
+    def delivery_approval(self):
+        with self.db() as c:r=c.execute('SELECT value FROM settings WHERE key="delivery_approval"').fetchone()
+        value=json.loads(r['value']) if r else None
+        return value if isinstance(value,dict) and value.get('approved') is True else None
+    def approve_delivery(self,approval):
+        """Record an explicit CEO approval for EXPERIMENTAL paper-signal delivery of listed models only."""
+        if not str(approval.get('approved_by','')).strip() or not str(approval.get('directive','')).strip():raise ValueError('named approver and directive required')
+        if approval.get('production') is not False:raise ValueError('production delivery cannot be approved here')
+        scope=approval.get('scope')
+        if not isinstance(scope,list) or not scope:raise ValueError('explicit model scope required')
+        for item in scope:
+            if item.get('tier') not in TIERS:raise ValueError('unknown evidence tier')
+            m=self.model(item.get('lab'),item.get('key'),item.get('version'))
+            if not m or m['status']!='EXPERIMENTAL':raise ValueError('only registered EXPERIMENTAL models can be approved')
+        record={**approval,'approved':True,'recorded_at':time.time()}
+        with self.db() as c:
+            c.execute('UPDATE settings SET value=? WHERE key="delivery_approval"',(json.dumps(record),))
+            c.execute('UPDATE models SET alert_enabled=0')
+            for item in scope:c.execute('UPDATE models SET alert_enabled=1 WHERE lab=? AND key=? AND version=? AND status="EXPERIMENTAL"',(item['lab'],item['key'],item['version']))
+            self.event(c,None,'DELIVERY_APPROVAL',record,record['recorded_at'])
+        return record
+    def revoke_delivery(self,reason):
+        with self.db() as c:
+            c.execute('UPDATE settings SET value="null" WHERE key="delivery_approval"');c.execute('UPDATE models SET alert_enabled=0')
+            self.event(c,None,'DELIVERY_REVOKED',{'reason':reason},time.time())
+    def tier(self,lab,key,version):
+        approval=self.delivery_approval() or {}
+        return next((i['tier'] for i in approval.get('scope',[]) if (i['lab'],i['key'],i['version'])==(lab,key,version)),None)
+    def claim_delivery(self,sid,at):
+        """Atomic QUEUED -> IN_FLIGHT; a crash afterwards becomes DELIVERY_UNKNOWN and is never replayed."""
+        with self.db() as c:return c.execute('UPDATE outbox SET state="IN_FLIGHT",updated=? WHERE signal=? AND state="QUEUED"',(at,sid)).rowcount==1
+    def finish_delivery(self,sid,state,body,at):
+        with self.db() as c:
+            c.execute('UPDATE outbox SET state=?,body=?,updated=? WHERE signal=? AND state="IN_FLIGHT"',(state,json.dumps(body),at,sid))
+            self.event(c,sid,'TELEGRAM_'+state,body,at)
     def event(self,c,sid,kind,body,at):c.execute('INSERT INTO events(signal,kind,body,at) VALUES(?,?,?,?)',(sid,kind,json.dumps(body),at))
     def claim(self,marker,at):
         with self.db() as c:
@@ -148,6 +185,12 @@ class Store:
         status=result['status'];stage='TP_HIT' if status=='TP' else 'SL_HIT' if status=='SL' else 'CLOSED' if status=='TIME_EXIT' else 'ACTIVE' if status=='PENDING' else 'UNRESOLVED'
         c.execute('UPDATE signals SET state=? WHERE id=?',(stage,sid));self.event(c,sid,stage,revision,at)
         if stage in ('TP_HIT','SL_HIT'):self.event(c,sid,'CLOSED',{'outcome':stage},at)
+        # Outcome update only for a signal that was actually delivered; first final outcome only.
+        sent=c.execute('SELECT 1 FROM outbox WHERE signal=? AND state="SENT"',(sid,)).fetchone()
+        if sent and status in ('TP','SL','TIME_EXIT') and result.get('simulated_net_r') is not None:
+            from .telegram import outcome_message
+            row=c.execute('SELECT body FROM signals WHERE id=?',(sid,)).fetchone()
+            c.execute('INSERT OR IGNORE INTO outbox VALUES(?,?,?,?,?)',(sid+'#outcome','QUEUED',outcome_message(json.loads(row['body']),result),'{}',at))
         return True
     def outcomes(self):
         with self.db() as c:rows=c.execute('SELECT o.* FROM outcomes o JOIN (SELECT signal,max(seq) seq FROM outcomes GROUP BY signal) x ON o.seq=x.seq').fetchall()

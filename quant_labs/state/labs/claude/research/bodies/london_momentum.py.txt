@@ -1,0 +1,73 @@
+"""Claude-authored experimental model: London-Session Momentum Carry. No verified edge.
+
+Mechanism (intraday momentum, replicated on FX/metals; Elaut, Frommel & Lampaert 2018
+report early-session returns predicting late-session FX returns): when a currency pair
+or metal has trended decisively through the London morning and sits at its session
+extreme at 13:00 London time, US-session participants arriving into the London/New
+York overlap tend to extend the move into the 16:00 London fix. One decision per
+instrument per day; flat by 16:30 London. A replication of the intraday-momentum
+family in different markets and sessions, disclosed as such.
+
+Daily ATR from H4 broker days (Monday-safe). Pure functions only.
+"""
+
+SESSION_START = 8 * 60     # London local minutes
+DECISION = 13 * 60
+EXIT = 16 * 60 + 30
+MOVE_ATR = 0.5
+EXTREME_FRAC = 0.75
+STOP_ATR = 0.30
+TARGET_R = 2.2
+
+@@HELPERS@@
+
+def detect(snapshot):
+    bars = snapshot['frames'].get('M15', ())
+    h4 = snapshot['frames'].get('H4', ())
+    if len(bars) < 30 or len(h4) < 60:
+        return []
+    now = bars[-1]['utc'] + 900
+    offset = utc_offset('UK', now)
+    day = (now + offset) // 86400
+    if weekday(day) in (0, 6):
+        return []
+    start = day * 86400 + SESSION_START * 60 - offset
+    if now != day * 86400 + DECISION * 60 - offset:
+        return []
+    session = [b for b in bars if start <= b['utc'] < now]
+    if len(session) != (DECISION - SESSION_START) // 15 or session[0]['utc'] != start:
+        return []
+    days = [d for d in broker_days(h4, 14400, start) if d['bars'] >= 4]
+    if len(days) < 15:
+        return []
+    trs = []
+    for i in range(len(days) - 14, len(days)):
+        d, pc = days[i], days[i - 1]['close']
+        trs.append(max(d['high'] - d['low'], abs(d['high'] - pc), abs(d['low'] - pc)))
+    atr_d = sum(trs) / len(trs)
+    atr = atr_of(bars, 14)
+    if atr_d <= 0 or atr <= 0:
+        return []
+    hi = max(b['high'] for b in session)
+    lo = min(b['low'] for b in session)
+    if hi <= lo:
+        return []
+    move = session[-1]['close'] - session[0]['open']
+    location = (session[-1]['close'] - lo) / (hi - lo)
+    if move >= MOVE_ATR * atr_d and location >= EXTREME_FRAC:
+        direction = 'LONG'
+    elif -move >= MOVE_ATR * atr_d and location <= 1 - EXTREME_FRAC:
+        direction = 'SHORT'
+    else:
+        return []
+    horizon = min(day * 86400 + EXIT * 60 - offset - now, seconds_to_cutoff(snapshot['symbol'], now))
+    if horizon < 3600:
+        return []
+    quote = snapshot['quote']
+    long = direction == 'LONG'
+    entry = quote['ask'] if long else quote['bid']
+    risk = STOP_ATR * atr_d
+    stop = entry - risk if long else entry + risk
+    target = entry + TARGET_R * risk if long else entry - TARGET_R * risk
+    return [{'direction': direction, 'stop_loss': stop, 'take_profit': target, 'horizon_seconds': horizon, 'atr': atr,
+             'rationale': 'London morning trend of %.2f daily ATR closing in the outer quarter of the session range at 13:00 London; flat by 16:30 London.' % (abs(move) / atr_d)}]

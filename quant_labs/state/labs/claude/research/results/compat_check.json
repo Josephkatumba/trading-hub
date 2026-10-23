@@ -1,0 +1,27 @@
+{
+ "index_trend_day": {
+  "version": "0.2.0",
+  "snapshots": 12,
+  "direct_equals_restricted": 12,
+  "live_qualify": {
+   "ADMITTED": 12
+  }
+ },
+ "crypto_trend_breakout": {
+  "version": "0.3.0",
+  "snapshots": 12,
+  "direct_equals_restricted": 12,
+  "live_qualify": {
+   "ADMITTED": 12
+  }
+ },
+ "index_turn_of_month": {
+  "version": "0.1.0",
+  "snapshots": 12,
+  "direct_equals_restricted": 12,
+  "live_qualify": {
+   "ADMITTED": 8,
+   "STALE_OR_MISSING_MODEL_CONTEXT": 4
+  }
+ }
+}

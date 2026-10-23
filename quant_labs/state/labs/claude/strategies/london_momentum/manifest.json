@@ -1,0 +1,35 @@
+{
+  "lab": "claude",
+  "key": "london_momentum",
+  "version": "0.1.0",
+  "name": "London-Session Momentum Carry",
+  "timeframe": "M15",
+  "requirements": {
+    "M15": 40,
+    "H4": 120
+  },
+  "instruments": [
+    "XAUUSD",
+    "XAGUSD",
+    "EURUSD",
+    "GBPUSD",
+    "USDJPY",
+    "AUDUSD",
+    "USDCAD",
+    "USDCHF",
+    "EURJPY",
+    "GBPJPY"
+  ],
+  "classification": "EXPERIMENTAL",
+  "entry_type": "MARKET_PAPER_QUOTE",
+  "hypothesis": "FX/metals that trend >=0.5 daily ATR through the London morning and sit in the outer quarter of the session range at 13:00 London extend into the 16:00 London fix.",
+  "risk_model": "One planned risk unit; fixed 0.30 daily-ATR stop; 2.2R objective; one decision per instrument per day; flat by 16:30 London.",
+  "planned_rr": "2.2R fixed target",
+  "known_limitations": "No verified edge. M15 both-barrier candles need M1 (only since Jul 2026) and are otherwise AMBIGUOUS; CFD spread proxies; correlated instruments; broker holiday calendar unverified.",
+  "declared_trials_in_phase": 1,
+  "authorship": {
+    "lab": "claude",
+    "session_reference": "Claude Code (claude-opus-5-5) desktop session 14e835e0-e7e8-43cf-b286-855a18365bd7, 2026-10-20",
+    "statement": "Created by this actual Claude Code session; not attributed to Codex or Kimi."
+  }
+}

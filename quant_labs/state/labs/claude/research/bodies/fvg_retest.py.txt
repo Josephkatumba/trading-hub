@@ -1,0 +1,89 @@
+"""Claude-authored experimental model: Fair-Value-Gap Retest Continuation. No verified edge.
+
+Mechanism (order-flow imbalance): a displacement candle that leaves a three-candle
+price gap (candle 3 low above candle 1 high, or the bearish mirror) marks one-sided
+aggressive flow. When price first returns into that unfilled gap and the retest candle
+closes back out of it in the displacement direction, with the H1 trend agreeing,
+resting interest at the imbalance is assumed to defend it and the move resumes.
+Stop beyond the far side of the gap; fixed 2.5R objective; exits before broker gaps.
+
+Uses only closed candles from the supplied snapshot. Pure functions only.
+"""
+
+SEARCH = 16            # look back this many M15 candles for an unfilled gap
+MIN_DISPLACEMENT = 1.0 # displacement candle body in M15 ATRs
+MIN_GAP = 0.25         # gap size in M15 ATRs
+STOP_BUFFER = 0.25
+TARGET_R = 2.5
+HORIZON = 8 * 3600
+MIN_HORIZON = 2 * 3600
+
+@@HELPERS@@
+
+def h1_trend(h1):
+    closes = [b['close'] for b in h1[-80:]]
+    k = 2.0 / 51
+    ema = closes[0]
+    series = []
+    for x in closes:
+        ema = ema + k * (x - ema)
+        series.append(ema)
+    if closes[-1] > series[-1] and series[-1] > series[-6]:
+        return 1
+    if closes[-1] < series[-1] and series[-1] < series[-6]:
+        return -1
+    return 0
+
+
+def detect(snapshot):
+    bars = snapshot['frames'].get('M15', ())
+    h1 = snapshot['frames'].get('H1', ())
+    if len(bars) < SEARCH + 20 or len(h1) < 80:
+        return []
+    trend = h1_trend(h1)
+    if trend == 0:
+        return []
+    atr = atr_of(bars, 14)
+    if atr <= 0:
+        return []
+    last = bars[-1]
+    n = len(bars)
+    for j in range(n - 2, n - SEARCH, -1):
+        a, m, c = bars[j - 2], bars[j - 1], bars[j]
+        after = bars[j + 1:n - 1]
+        if trend > 0:
+            top, bottom = c['low'], a['high']
+            if top - bottom < MIN_GAP * atr or m['close'] - m['open'] < MIN_DISPLACEMENT * atr:
+                continue
+            if any(b['low'] <= top for b in after):
+                break  # most recent valid gap already retested: not a first touch
+            if last['low'] <= top and last['low'] > bottom - 0.5 * atr and last['close'] > top and last['close'] > last['open']:
+                direction = 'LONG'
+                stop = min(bottom, last['low']) - STOP_BUFFER * atr
+            else:
+                continue
+        else:
+            top, bottom = a['low'], c['high']
+            if top - bottom < MIN_GAP * atr or m['open'] - m['close'] < MIN_DISPLACEMENT * atr:
+                continue
+            if any(b['high'] >= bottom for b in after):
+                break
+            if last['high'] >= bottom and last['high'] < top + 0.5 * atr and last['close'] < bottom and last['close'] < last['open']:
+                direction = 'SHORT'
+                stop = max(top, last['high']) + STOP_BUFFER * atr
+            else:
+                continue
+        now = last['utc'] + 900
+        horizon = min(HORIZON, seconds_to_cutoff(snapshot['symbol'], now))
+        if horizon < MIN_HORIZON:
+            return []
+        quote = snapshot['quote']
+        long = direction == 'LONG'
+        entry = quote['ask'] if long else quote['bid']
+        risk = entry - stop if long else stop - entry
+        if risk <= 0:
+            return []
+        target = entry + TARGET_R * risk if long else entry - TARGET_R * risk
+        return [{'direction': direction, 'stop_loss': stop, 'take_profit': target, 'horizon_seconds': horizon, 'atr': atr,
+                 'rationale': 'First retest of an unfilled M15 fair-value gap left by a %.1f-ATR displacement, rejected in the H1 trend direction; stop beyond the gap, 2.5R objective.' % (abs(m['close'] - m['open']) / atr)}]
+    return []

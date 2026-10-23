@@ -1,0 +1,18 @@
+{
+  "approved_by": "CEO Joseph Katumba",
+  "directive": "TRADEDEN QUANT LABS: LIVE SIGNAL INTEGRATION (Priority HIGH), 2026-10-23: integrate the five October 20 strategies into live monitoring and Telegram as clearly labelled EXPERIMENTAL paper signals; no production delivery; no automatic trading.",
+  "production": false,
+  "evidence_basis": "Frozen shared evaluator v1 (bbc0c08a...) after realistic costs. PAPER_CANDIDATE = positive in train, validation and test but not statistically significant after multiple-testing correction. RESEARCH_ONLY = no positive out-of-sample evidence.",
+  "scope": [
+    {"lab": "claude", "key": "index_trend_day", "version": "0.2.0", "tier": "PAPER_CANDIDATE",
+     "evidence": "train +0.159R (103), validation +0.117R (66), test +0.159R (56); pooled p=0.04 unadjusted"},
+    {"lab": "claude", "key": "crypto_trend_breakout", "version": "0.3.0", "tier": "PAPER_CANDIDATE",
+     "evidence": "train +0.205R (40), validation +0.171R (14), test +0.652R (15); small sample"},
+    {"lab": "codex", "key": "compression_escape", "version": "0.1.0", "tier": "RESEARCH_ONLY",
+     "evidence": "lab-harness replay of Codex's unmodified source: train -0.051R (430), validation -0.275R (242), test -0.005R (208); never run through the shared queue"},
+    {"lab": "claude", "key": "hourly_shock_drift", "version": "0.1.0", "tier": "RESEARCH_ONLY",
+     "evidence": "official: train -0.099R (613), validation -0.130R (316), test -0.075R (328)"},
+    {"lab": "claude", "key": "index_gap_fade", "version": "0.1.0", "tier": "RESEARCH_ONLY",
+     "evidence": "official: train -0.049R (37), validation +0.083R (17), test -0.494R (31)"}
+  ]
+}

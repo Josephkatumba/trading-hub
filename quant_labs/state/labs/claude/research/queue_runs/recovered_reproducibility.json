@@ -1,0 +1,18 @@
+[
+ {
+  "strategy": "hourly_shock_drift",
+  "original_job": "ef60a5f387d9491ea474eace42b8dc5f",
+  "request_sha256": "caf6e137916c1327ac431eb86ac5f7668befcaf117ee15071ea062f9c436e531",
+  "evaluator": "bbc0c08a5728abca935bc95db1d5d85a773a93e8042309d192ff3dd56a736c8b",
+  "status": "COMPLETE",
+  "identical_periods_and_trades": true
+ },
+ {
+  "strategy": "index_gap_fade",
+  "original_job": "7faf75d85651499580e55f99afb13ca7",
+  "request_sha256": "3665181c49c09967e5ca959a963143313e10bbd446192bf3d0b0ccc15566cf68",
+  "evaluator": "bbc0c08a5728abca935bc95db1d5d85a773a93e8042309d192ff3dd56a736c8b",
+  "status": "COMPLETE",
+  "identical_periods_and_trades": true
+ }
+]

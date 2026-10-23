@@ -1,0 +1,22 @@
+{
+  "status": "COMPLETE",
+  "lab": "claude",
+  "source_sha256": "1f0d83b4e7735c27a520a7f7e784c7ce296aefde668aaeeae03e122538c2a4be",
+  "source": "MT5_SHARED_CACHE_PROBE",
+  "input_sha256": "f0c5e182aa1377ecfca269e60054c3aa57dc1b668cd0fcc9fc042ab228333d4a",
+  "asof": 1792451012.696205,
+  "symbol": "NAS100",
+  "resources": {
+    "enforced": true,
+    "memory_limit_mb": 192.0,
+    "peak_committed_mb": 13.71875,
+    "cpu_cap_percent": 15.0,
+    "cpu_limit_seconds": 4.0,
+    "cpu_seconds_used": 0.0625,
+    "max_processes": 1
+  },
+  "decisions": [],
+  "scope": "read-only real-data capability probe, not live model admission or a committed signal",
+  "live_writes": 0,
+  "outbound_calls": 0
+}
