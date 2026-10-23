@@ -50,6 +50,16 @@ def by_instrument(evidence, lab, key, version):
     return out or None
 
 
+HISTORICAL_MONTHS = 23.5  # 2024-10-15 .. 2026-10-01 evaluation window
+
+
+def by_regime(signals, outcomes):
+    groups = {}
+    for s in signals:
+        groups.setdefault(s.get('regime_at_entry', 'UNTAGGED'), []).append(s)
+    return {k: {x: metrics(v, outcomes)[x] for x in ('confirmed', 'resolved', 'average_r', 'net_paper_r')} for k, v in groups.items()}
+
+
 def leaderboard(store, signals=None, outcomes=None):
     evidence, cats = _load('evidence.json'), _load('leaderboard_categories.json') or {}
     signals = store.signals(1000) if signals is None else signals
@@ -62,7 +72,10 @@ def leaderboard(store, signals=None, outcomes=None):
         source = cats.get('evidence_aliases', {}).get(ident, ident)
         s_lab, rest = source.split(':', 1)
         s_key, s_version = rest.split('@')
-        forward = metrics([s for s in signals if (s['lab'], s['model_key'], s['model_version']) == (lab, key, version)], outcomes)
+        mine = [s for s in signals if (s['lab'], s['model_key'], s['model_version']) == (lab, key, version)]
+        forward = metrics(mine, outcomes)
+        import time as _time
+        weeks = max((_time.time() - (m.get('registered') or _time.time())) / 604800, 1 / 7)
         category = cats.get('models', {}).get(f'{lab}:{key}', {'category': 'UNCLASSIFIED', 'label': 'Not yet audited'})
         family = next((note for prefix, note in cats.get('families', {}).items() if f'{lab}:{key}'.startswith(prefix)), None)
         rows.append({
@@ -71,6 +84,8 @@ def leaderboard(store, signals=None, outcomes=None):
             'status': m['status'], 'category': category['category'], 'category_label': category['label'],
             'evidence_tier': store.tier(lab, key, version), 'telegram_enabled': bool(m['alert_enabled']),
             'family': family, 'historical': historical(evidence, s_lab, s_key, s_version),
+            'frequency': {'forward_signals_per_week': forward['confirmed'] / weeks, 'forward_window_days': weeks * 7},
+            'forward_by_regime': by_regime(mine, outcomes),
             'test_by_instrument': by_instrument(evidence, s_lab, s_key, s_version),
             'historical_source': None if source == ident else f'evidence of {source} (identical intents)',
             'forward': {**{k: forward[k] for k in ('confirmed', 'resolved', 'win_rate', 'average_r', 'net_paper_r', 'max_realized_paper_drawdown_r',
@@ -78,6 +93,9 @@ def leaderboard(store, signals=None, outcomes=None):
                         'insufficient_sample': forward['resolved'] < MIN_SAMPLE},
             'last_successful_evaluation': diag.get(ident, {}).get('last_successful_evaluation')})
     order = {'A': 0, 'B': 1, 'C': 2, 'D': 3}
+    for r in rows:
+        h = r['historical']
+        r['frequency']['historical_trades_per_month'] = (sum(h[x]['n'] for x in ('train', 'validation', 'test')) / HISTORICAL_MONTHS) if h else None
     rows.sort(key=lambda r: (order.get(r['category'], 4), r['researcher'], r['strategy']))
     return {'rows': rows, 'min_sample': MIN_SAMPLE, 'historical_note': (
         'Historical = frozen shared evaluator after realistic costs; all splits were previously exposed to research, none is an untouched holdout. '

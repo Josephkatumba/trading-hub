@@ -81,11 +81,37 @@ def refresh(mt5, download, symbols, start, end, out_dir, old_cache=OLD_CACHE):
     return report
 
 
+PRESAMPLE_END = '2024-08-14'  # first bar of the shared research snapshot; nothing at or after it is fetched
+
+
+def presample(mt5, download, symbols, start, end, out_dir, old_cache=OLD_CACHE, timeframes=('M15', 'H1', 'H4', 'D1', 'M1')):
+    """Genuinely unseen pre-sample history [start, end) for every timeframe, into a separate new cache.
+    Bars at or after `end` are dropped so the untouched holdout cannot overlap the exposed research window."""
+    out_dir.mkdir(parents=True, exist_ok=False)
+    old_manifest = json.loads((old_cache / 'manifest.json').read_text(encoding='utf-8'))
+    manifest = {**old_manifest, 'start': start.isoformat(), 'end': end.isoformat(), 'symbols': {},
+                'presample': {'purpose': 'untouched holdout before the shared research window', 'excludes_from': end.isoformat()}}
+    report, cutoff = {}, end.timestamp()
+    for symbol in symbols:
+        entry = {'meta': old_manifest['symbols'][symbol]['meta']}
+        for tf in timeframes:
+            bars = [b for b in download(mt5, entry['meta']['broker_symbol'], tf, start, end) if b['utc'] < cutoff]
+            with gzip.open(out_dir / f'{symbol}_{tf}.json.gz', 'wt', encoding='utf-8') as f:
+                json.dump(bars, f, separators=(',', ':'))
+            entry[tf] = {'bars': len(bars), 'first': datetime.fromtimestamp(bars[0]['utc'], timezone.utc).isoformat() if bars else None,
+                         'last': datetime.fromtimestamp(bars[-1]['utc'], timezone.utc).isoformat() if bars else None}
+            report.setdefault(symbol, {})[tf] = {**entry[tf], 'gaps_reported_not_filled': gaps(bars, {'M1': 60, 'M15': 900, 'H1': 3600, 'H4': 14400, 'D1': 86400}[tf])}
+        manifest['symbols'][symbol] = entry
+    (out_dir / 'manifest.json').write_text(json.dumps(manifest, indent=1), encoding='utf-8')
+    return report
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--start', default='2024-10-15')
     p.add_argument('--min-maxbars', type=int, default=1_000_000)
     p.add_argument('--apply', action='store_true')
+    p.add_argument('--presample-start', default=None, help='also fetch untouched pre-sample history from this date (e.g. 2022-01-01) up to 2024-08-14')
     a = p.parse_args()
     old_manifest = json.loads((OLD_CACHE / 'manifest.json').read_text(encoding='utf-8'))
     symbols = sorted(s for s, v in old_manifest['symbols'].items() if 'meta' in v)
@@ -107,12 +133,19 @@ def main():
         stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
         out = ROOT / f'backend/data/research/bars_m1_extended_{stamp}'
         report = refresh(mt5, download, symbols, datetime.fromisoformat(a.start).replace(tzinfo=timezone.utc), datetime.now(timezone.utc), out)
+        pre_report, pre_out = None, None
+        if a.presample_start:
+            pre_out = ROOT / f'backend/data/research/bars_presample_{stamp}'
+            pre_report = presample(mt5, download, symbols, datetime.fromisoformat(a.presample_start).replace(tzinfo=timezone.utc),
+                                   datetime.fromisoformat(PRESAMPLE_END).replace(tzinfo=timezone.utc), pre_out)
     finally:
         mt5.shutdown()  # closes this script's IPC connection only
     sys.path.insert(0, str(ROOT))
     from quant_labs.data import snapshot
     dataset = snapshot(out, ROOT / 'quant_labs/state/shared')
+    pre_dataset = snapshot(pre_out, ROOT / 'quant_labs/state/shared') if pre_out else None
     result = {'maxbars': maxbars, 'cache': str(out), 'new_dataset': dataset, 'symbols': report,
+              'presample': {'cache': str(pre_out), 'dataset': pre_dataset, 'symbols': pre_report} if pre_out else None,
               'adoption': 'NOT ADOPTED: control-plane dataset setting unchanged; owner decision required'}
     (out / 'REFRESH_REPORT.json').write_text(json.dumps(result, indent=1), encoding='utf-8')
     print(json.dumps(result, indent=1))

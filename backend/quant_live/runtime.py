@@ -17,6 +17,13 @@ from .model_host import LaboratoryProvider
 from .telegram import message,ExperimentalNotifier
 
 def numeric(v):return isinstance(v,(int,float)) and not isinstance(v,bool) and math.isfinite(v)
+def regime_at_entry(snapshot):
+    """Rule R1 (market_intel) on the snapshot's closed H1 candles: forward diagnostic only, never a filter."""
+    h1=snapshot['frames'].get('H1',[])
+    if len(h1)<25:return 'UNAVAILABLE'
+    c=[b['close'] for b in h1[-25:]];path=sum(abs(c[i]-c[i-1]) for i in range(1,25))
+    er=abs(c[-1]-c[0])/path if path else 0
+    return 'TRENDING' if er>=0.35 else 'RANGING' if er<=0.20 else 'MIXED'
 def weekend_seconds(start,end):
     """Seconds of Saturday/Sunday (UTC) inside [start,end]."""
     if not end>start:return 0
@@ -123,6 +130,7 @@ class Runtime:
                 # One economic signal per model/symbol/closed bar.
                 for decision in decisions[:1]:
                     signal,reason=qualify(snapshot,model,decision,now)
+                    if signal:signal={**signal,'detection':'REAL_TIME','regime_at_entry':regime_at_entry(snapshot)}
                     if signal and self.store.record(signal,True):
                         self.store.queue_message(signal['signal_id'],message(signal),now);generated.append(signal)
                     elif reason:

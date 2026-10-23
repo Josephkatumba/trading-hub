@@ -8,7 +8,9 @@ router=APIRouter()
 def live_models(request:Request):
     if os.getenv('TRADING_HUB_AUTH_MODE','private')!='private' or not request.client or request.client.host not in ('127.0.0.1','::1','testclient'):
         raise HTTPException(403,'Local research owner view only')
-    report=snapshot(service.store());return {**report,'runtime':service.status()}
+    store=service.store();report=snapshot(store);runtime=service.status()
+    from .health import health
+    return {**report,'runtime':runtime,'health':health(store,runtime)}
 
 
 @router.get('/api/quant-labs/intelligence/{symbol}')

@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from .m1_history_refresh import refresh, compare_overlap, gaps
+from .m1_history_refresh import refresh, compare_overlap, gaps, presample
 
 
 def bars(times, price=1.0):
@@ -48,6 +48,15 @@ class M1RefreshTests(unittest.TestCase):
         self.assertEqual({p.name: p.read_bytes() for p in self.old.iterdir()}, before)
         with self.assertRaises(FileExistsError):  # never overwrites an existing output cache
             refresh(None, download, ['NAS100'], datetime(2024, 10, 15, tzinfo=timezone.utc), datetime(2026, 10, 20, tzinfo=timezone.utc), out, self.old)
+
+    def test_presample_never_overlaps_the_research_window(self):
+        end = datetime(2024, 8, 14, tzinfo=timezone.utc)
+        inside, after = end.timestamp() - 3600, end.timestamp() + 900
+        report = presample(None, lambda m, b, tf, s0, e0: bars([inside, after]), ['NAS100'], datetime(2022, 1, 1, tzinfo=timezone.utc), end,
+                           Path(self.tmp.name) / 'pre', self.old, timeframes=('M15', 'H1'))
+        with gzip.open(Path(self.tmp.name) / 'pre' / 'NAS100_M15.json.gz', 'rt') as f:
+            self.assertEqual([b['utc'] for b in json.load(f)], [inside])
+        self.assertEqual(report['NAS100']['M15']['bars'], 1)
 
     def test_overlap_revision_detected(self):
         self.assertEqual(compare_overlap(bars([60]), bars([60], price=2.0))['differing_minutes'], 1)
