@@ -1,0 +1,74 @@
+"""Claude-authored experimental model: Bitcoin Weekend Momentum (pre-registered 2026-10-23, commit 862075e, H6).
+
+At the close of the first H4 candle opening at or after Saturday 00:00 UTC (after the broker's Friday
+gap): if BTCUSD moved >= 1.0 weekly ATR from the week's first H4 open on/after Monday 00:00 UTC to the
+last close before Friday 21:00 UTC, follow that direction. Weekly ATR = mean range of the previous
+8 such Monday-Friday windows. Stop 0.5 weekly ATR; 2.0R; exit Sunday 20:00 UTC.
+The decision's 'atr' field is the mean daily range of the last 14 UTC days (the holding-period
+volatility unit used by the live stop-distance gate). BASELINE = True gives B6: always LONG each weekend.
+Pure functions only.
+"""
+
+BASELINE = False
+MOVE_WATR = 1.0
+STOP_WATR = 0.5
+TARGET_R = 2.0
+WEEKS = 8
+
+@@HELPERS@@
+
+def week_window(monday0, h4):
+    """Range and move of the Monday 00:00 UTC -> Friday 21:00 UTC window, from H4 candles closed by then."""
+    end = monday0 + 4 * 86400 + 21 * 3600
+    seg = [b for b in h4 if monday0 <= b['utc'] and b['utc'] + 14400 <= end]
+    if len(seg) < 20:
+        return None
+    return {'open': seg[0]['open'], 'close': seg[-1]['close'], 'high': max(b['high'] for b in seg), 'low': min(b['low'] for b in seg)}
+
+
+def detect(snapshot):
+    if snapshot['symbol'] != 'BTCUSD':
+        return []
+    h4 = snapshot['frames'].get('H4', ())
+    if len(h4) < 300:
+        return []
+    last, prev = h4[-1], h4[-2]
+    now = last['utc'] + 14400
+    day = last['utc'] // 86400
+    saturday0 = day * 86400 if weekday(day) == 6 else None
+    if saturday0 is None or not (last['utc'] >= saturday0 and prev['utc'] < saturday0):
+        return []
+    monday0 = saturday0 - 5 * 86400
+    this = week_window(monday0, h4)
+    prior = [week_window(monday0 - 7 * 86400 * k, h4) for k in range(1, WEEKS + 1)]
+    if this is None or any(w is None for w in prior):
+        return []
+    watr = sum(w['high'] - w['low'] for w in prior) / WEEKS
+    move = this['close'] - this['open']
+    if BASELINE:
+        direction = 'LONG'
+    elif abs(move) >= MOVE_WATR * watr:
+        direction = 'LONG' if move > 0 else 'SHORT'
+    else:
+        return []
+    exit_at = saturday0 + 86400 + 20 * 3600
+    horizon = exit_at - now
+    if horizon < 6 * 3600:
+        return []
+    daily = []
+    for k in range(1, 15):
+        seg = [b for b in h4 if (day - k) * 86400 <= b['utc'] < (day - k + 1) * 86400]
+        if seg:
+            daily.append(max(b['high'] for b in seg) - min(b['low'] for b in seg))
+    if len(daily) < 10:
+        return []
+    atr = sum(daily) / len(daily)
+    quote = snapshot['quote']
+    long = direction == 'LONG'
+    entry = quote['ask'] if long else quote['bid']
+    risk = STOP_WATR * watr
+    stop = entry - risk if long else entry + risk
+    target = entry + TARGET_R * risk if long else entry - TARGET_R * risk
+    why = 'Baseline B6: always long each weekend at the same time and risk.' if BASELINE else \
+        'Bitcoin moved %.2f weekly ATR during the trading week; following that direction through the weekend to Sunday 20:00 UTC.' % (abs(move) / watr)
+    return [{'direction': direction, 'stop_loss': stop, 'take_profit': target, 'horizon_seconds': horizon, 'atr': atr, 'rationale': why}]

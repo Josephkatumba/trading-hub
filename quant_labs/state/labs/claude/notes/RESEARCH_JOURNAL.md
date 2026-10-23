@@ -122,3 +122,11 @@ correlation 0.22, combined +0.272R / 150 trades, weekly-clustered p=0.16.
 | 20 | failed_orb_reversal @0.1.0 | 674ab1e | -0.095 (428) | REJECTED at train gate |
 
 Range Sweep Reversion regime diagnostic: no stable conditional edge (research/audit/range_sweep_regimes.json).
+
+## Phase 3 (2026-10-23): pre-registered gold & bitcoin hypotheses (commit 862075e)
+
+| # | Hypothesis | Train | Validation | Verdict |
+|---|---|---|---|---|
+| H4 | Regime conditioning (R1 TRENDING at entry) of momentum candidates | crypto breakout: no effect; index trend-day: opposite in validation; Codex R4 BTCUSD: TRENDING +0.46/+0.44R vs OTHER +0.02/+0.00R (test +0.58 vs -0.08) | (same) | NOT ADOPTED: pre-registered minimum of 15 trades per cell not met; R4 regime effect recorded as a forward-monitoring diagnostic only |
+| H5 | gold_session_drift 0.1.0 (vs always-long baseline B5) | +0.213R (49), stress +0.203; baseline +0.045 | +0.028R (19) < baseline +0.044 | REJECTED at validation (fails baseline condition); test not run |
+| H6 | btc_weekend_momentum 0.1.0 (vs B6) | 2 resolved trades: 2.0R target fails the live net-RR>=2 gate after costs | not run | INVALID AS SPECIFIED; not amended post hoc; ~3 qualifying weekends/year, underpowered |
