@@ -56,6 +56,7 @@ def snapshot(store):
     return {'mode':'EXPERIMENTAL_PAPER_SIGNALS','telegram_mode':'EXPERIMENTAL_APPROVED' if approval and delivery_enabled() else 'DRY_RUN',
             'outbound_activation_approved':bool(approval),'delivery_approval':approval,'production_models':[],
             'diagnostics':__import__('quant_live.diagnostics',fromlist=['diagnostics']).diagnostics(store),
+            'leaderboard':__import__('quant_live.leaderboard',fromlist=['leaderboard']).leaderboard(store,signals,outcomes),
             'labs':[{'id':lab,'name':name,'status':'READY' if any(m['lab']==lab for m in models) else 'PENDING_ACTUAL_AI_MODEL',
                      'models':[{k:m[k] for k in ('key','version','status','scan_enabled','alert_enabled','sha')}|{'name':m['manifest']['name'],'classification':'EXPERIMENTAL','evidence_tier':store.tier(m['lab'],m['key'],m['version']),'timeframe':m['manifest']['timeframe'],'instruments':m['manifest']['instruments'],'authorship':m['manifest']['authorship'],'performance':groups['model_version'].get(m['lab']+':'+m['key']+'@'+m['version'],metrics([],{}))} for m in models if m['lab']==lab],
                      'performance':groups['lab'].get(lab,metrics([],{}))} for lab,name in LAB_NAMES.items()],

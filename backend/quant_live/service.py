@@ -46,7 +46,8 @@ def requirements():
         if not model['scan_enabled'] or model['status']!='EXPERIMENTAL':continue
         for tf,count in model['manifest'].get('requirements',{}).items():
             if tf in ('M1','M5','M15','H1','H4','D1') and isinstance(count,int) and 1<=count<=12000:
-                plan[tf]=max(plan.get(tf,0),count)
+                # +1: the newest fetched candle is still forming and is discarded, so N closed candles need N+1.
+                plan[tf]=max(plan.get(tf,0),min(count+1,12000))
     return plan
 def offer(symbol,broker,frames,quote,metadata,basis,normalize):
     if not enabled():return

@@ -200,6 +200,7 @@ class Sources:
         self.health = overrides.get("health") or (lambda: {})
         self.research = overrides.get("research") or default_research
         self.live = overrides.get("live") or (lambda: set(LIVE_PRODUCTION))
+        self.quant_labs = overrides.get("quant_labs") or _default_quant_labs
 
     @staticmethod
     def _confirmations() -> list[dict[str, Any]]:
@@ -228,6 +229,23 @@ class Sources:
     def _lifecycle() -> list[dict[str, Any]]:
         from observations import lifecycle_events
         return [row for row in lifecycle_events() if row.get("to_state") in ("INVALIDATED", "EXPIRED")]
+
+
+def _default_quant_labs(start: datetime, end: datetime) -> dict[str, Any] | None:
+    """Quant Labs experimental research summary for the window (None when unavailable or disabled)."""
+    try:
+        from quant_live.research_report import default_source
+        return default_source(start, end)
+    except Exception:
+        LOGGER.exception("Quant Labs summary unavailable for the report")
+        return None
+
+
+def _quant_labs_lines(report: dict[str, Any]) -> list[str]:
+    if "quant_labs" not in report:
+        return []
+    from quant_live.research_report import lines
+    return ["", "QUANT LABS (experimental research · separate from production)"] + lines(report["quant_labs"])
 
 
 def default_research(start: datetime, end: datetime) -> dict[str, Any] | None:
@@ -565,6 +583,7 @@ def render_daily(report: dict[str, Any], delayed: bool = False, on_demand: bool 
               "  Daily rankings rest on very few signals: treat them as noise, not evidence.",
               "", "11-12. STRATEGY RESEARCH"] + _research_lines(report.get("research"), weekly=False)
     lines += ["", "13-14. SYSTEM HEALTH AND DELIVERY"] + _health_lines(report)
+    lines += _quant_labs_lines(report)
     lines += ["", "15. OBSERVATIONS"] + [f"  • {o}" for o in report["observations"]]
     lines += ["", LABELS, OFFLINE_NOTE]
     return "\n".join(lines)
@@ -609,6 +628,7 @@ def render_weekly(report: dict[str, Any], delayed: bool = False) -> str:
               "", "E. NEXT WEEK'S RESEARCH PRIORITIES", "  Market conditions:"] + [f"  • {x}" for x in report["priorities"]["markets"]]
     lines += ["  Further validation:"] + [f"  • {x}" for x in report["priorities"]["validation"]]
     lines += ["  Strategy bank improvements:"] + [f"  • {x}" for x in report["priorities"]["improvements"]]
+    lines += _quant_labs_lines(report)
     lines += ["", "SYSTEM HEALTH AND DELIVERY"] + _health_lines(report) + ["", LABELS, OFFLINE_NOTE]
     return "\n".join(lines)
 
@@ -680,8 +700,10 @@ def build(kind: str, start: datetime, end: datetime, sources: Sources, ledger: R
           delayed: bool = False, on_demand: bool = False) -> tuple[dict[str, Any], str]:
     if kind == "weekly":
         report = compute_weekly(start, end, sources, ledger)
+        report["quant_labs"] = sources.quant_labs(start, end)
         return report, render_weekly(report, delayed)
     report = compute_daily(start, end, sources, ledger)
+    report["quant_labs"] = sources.quant_labs(start, end)
     return report, render_daily(report, delayed, on_demand)
 
 
