@@ -1,0 +1,60 @@
+"""Claude-authored experimental model: Volatility Climax Acceleration (pre-registered 2026-10-23, commit 674ab1e).
+
+Inverse of Kimi's Volatility Exhaustion Fade question: inside an established H1 trend, does
+an M15 volatility climax mark acceleration rather than exhaustion?
+Climax: range >= 1.6 ATR(M15,14), close in outer 20% of range, close beyond the prior
+20-candle extreme. Regime: H1 efficiency ratio (24 candles) >= 0.35 in the climax direction.
+Trade with the climax; stop at the climax midpoint; 2.5R; 8h or next data gap.
+Independent Claude implementation; Kimi's code is not used. Pure functions only.
+"""
+
+SYMBOLS = {'EURUSD', 'GBPUSD', 'GBPJPY', 'XAUUSD', 'BTCUSD', 'ETHUSD'}
+CLIMAX_ATR = 1.6
+CLOSE_FRAC = 0.8
+LOOKBACK = 20
+MIN_EFFICIENCY = 0.35
+TARGET_R = 2.5
+HORIZON = 8 * 3600
+MIN_HORIZON = 2 * 3600
+
+@@HELPERS@@
+
+def detect(snapshot):
+    if snapshot['symbol'] not in SYMBOLS:
+        return []
+    bars = snapshot['frames'].get('M15', ())
+    h1 = snapshot['frames'].get('H1', ())
+    if len(bars) < LOOKBACK + 16 or len(h1) < 26:
+        return []
+    last = bars[-1]
+    atr = atr_of(bars, 14)
+    rng = last['high'] - last['low']
+    if atr <= 0 or rng < CLIMAX_ATR * atr:
+        return []
+    location = (last['close'] - last['low']) / rng
+    prior = bars[-LOOKBACK - 1:-1]
+    if location >= CLOSE_FRAC and last['close'] > max(b['high'] for b in prior):
+        side = 1
+    elif location <= 1 - CLOSE_FRAC and last['close'] < min(b['low'] for b in prior):
+        side = -1
+    else:
+        return []
+    closes = [b['close'] for b in h1[-25:]]
+    path = sum(abs(closes[i] - closes[i - 1]) for i in range(1, len(closes)))
+    move = closes[-1] - closes[0]
+    if path <= 0 or abs(move) / path < MIN_EFFICIENCY or (move > 0) != (side > 0):
+        return []
+    now = last['utc'] + 900
+    horizon = min(HORIZON, seconds_to_cutoff(snapshot['symbol'], now))
+    if horizon < MIN_HORIZON:
+        return []
+    quote = snapshot['quote']
+    long = side > 0
+    entry = quote['ask'] if long else quote['bid']
+    stop = (last['high'] + last['low']) / 2
+    risk = entry - stop if long else stop - entry
+    if risk <= 0:
+        return []
+    target = entry + TARGET_R * risk if long else entry - TARGET_R * risk
+    return [{'direction': 'LONG' if long else 'SHORT', 'stop_loss': stop, 'take_profit': target, 'horizon_seconds': horizon, 'atr': atr,
+             'rationale': 'M15 climax of %.1fx ATR closing at its extreme beyond the 20-candle range, inside an H1 trend (efficiency %.2f); trading acceleration, stop at the climax midpoint, 2.5R.' % (rng / atr, abs(move) / path)}]

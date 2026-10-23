@@ -107,3 +107,18 @@ Later-split figures for train-rejected models were produced afterwards for the r
 index_orb_m5 could not be registered: the research ledger rejects timeframe M5.
 Only index_first_candle_drive was submitted (8-job lab cap); other intents await queue capacity.
 Conclusion: no phase-2 model qualifies. Higher signal frequency came with worse expectancy.
+
+## Milestone 2-3 (2026-10-23): cross-lab audit and pre-registered hypotheses
+
+Audit of 87 instrument cells (all labs) with Holm correction: no positive cell survives; five
+losing cells do (Trend Reclaim EURUSD/XAUUSD). Classification in research/audit/classification.json.
+Crypto momentum theme (crypto_trend_breakout 0.3.0 + Codex BTCUSD trend_reclaim_r4): weekly
+correlation 0.22, combined +0.272R / 150 trades, weekly-clustered p=0.16.
+
+| # | Model @ version | Pre-registered | Train net R (n) | Verdict |
+|---|---|---|---|---|
+| 18 | london_sweep_continuation @0.1.0 | 674ab1e | -0.046 (115) | REJECTED at train gate |
+| 19 | vol_climax_acceleration @0.1.0 | 674ab1e | -0.181 (406) | REJECTED at train gate |
+| 20 | failed_orb_reversal @0.1.0 | 674ab1e | -0.095 (428) | REJECTED at train gate |
+
+Range Sweep Reversion regime diagnostic: no stable conditional edge (research/audit/range_sweep_regimes.json).

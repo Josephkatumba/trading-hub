@@ -1,0 +1,65 @@
+"""Claude-authored experimental model: London Sweep Continuation (pre-registered 2026-10-23, commit 674ab1e).
+
+Inverse of Kimi's London Sweep Reversal question: when London sweeps the Asian range and
+the sweep candle closes back inside, does price continue in the SWEEP direction?
+Asian range 00:00-05:45 UTC opens (>=20 candles, width <= 4 ATR). First sweep of the day,
+candle closing 07:15-10:00 UTC. Trade in the sweep direction; stop beyond the sweep candle's
+opposite extreme + 0.15 ATR; 2.5R target; time limit 16:00 UTC or next data gap.
+Independent Claude implementation; Kimi's code is not used. Pure functions only.
+"""
+
+SYMBOLS = {'EURUSD', 'GBPUSD', 'GBPJPY', 'XAUUSD', 'BTCUSD', 'ETHUSD'}
+SWEEP_ATR = 0.05
+MAX_RANGE_ATR = 4.0
+STOP_BUFFER = 0.15
+TARGET_R = 2.5
+
+@@HELPERS@@
+
+def detect(snapshot):
+    if snapshot['symbol'] not in SYMBOLS:
+        return []
+    bars = snapshot['frames'].get('M15', ())
+    if len(bars) < 60:
+        return []
+    last = bars[-1]
+    now = last['utc'] + 900
+    tod = now % 86400
+    if not 7 * 3600 + 900 <= tod <= 10 * 3600:
+        return []
+    day0 = now - tod
+    asian = [b for b in bars if day0 <= b['utc'] < day0 + 6 * 3600]
+    if len(asian) < 20:
+        return []
+    atr = atr_of(bars, 14)
+    hi = max(b['high'] for b in asian)
+    lo = min(b['low'] for b in asian)
+    if atr <= 0 or hi - lo > MAX_RANGE_ATR * atr:
+        return []
+
+    def swept_low(b):
+        return b['low'] < lo - SWEEP_ATR * atr and b['close'] > lo
+
+    def swept_high(b):
+        return b['high'] > hi + SWEEP_ATR * atr and b['close'] < hi
+    earlier = [b for b in bars[:-1] if day0 + 7 * 3600 + 900 <= b['utc'] + 900]
+    if any(swept_low(b) or swept_high(b) for b in earlier):
+        return []  # first sweep of the day only
+    if swept_low(last):
+        direction, stop = 'SHORT', last['high'] + STOP_BUFFER * atr
+    elif swept_high(last):
+        direction, stop = 'LONG', last['low'] - STOP_BUFFER * atr
+    else:
+        return []
+    horizon = min(day0 + 16 * 3600 - now, seconds_to_cutoff(snapshot['symbol'], now))
+    if horizon < 3600:
+        return []
+    quote = snapshot['quote']
+    long = direction == 'LONG'
+    entry = quote['ask'] if long else quote['bid']
+    risk = entry - stop if long else stop - entry
+    if risk <= 0:
+        return []
+    target = entry + TARGET_R * risk if long else entry - TARGET_R * risk
+    return [{'direction': direction, 'stop_loss': stop, 'take_profit': target, 'horizon_seconds': horizon, 'atr': atr,
+             'rationale': 'London candle swept the Asian %s and closed back inside; trading continuation in the sweep direction (pre-registered inverse of the reversal hypothesis); stop beyond the sweep candle, 2.5R.' % ('low' if direction == 'SHORT' else 'high')}]

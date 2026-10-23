@@ -1,0 +1,31 @@
+{
+  "lab": "claude",
+  "key": "london_sweep_continuation",
+  "version": "0.1.0",
+  "name": "London Sweep Continuation",
+  "timeframe": "M15",
+  "requirements": {
+    "M15": 120
+  },
+  "instruments": [
+    "EURUSD",
+    "GBPUSD",
+    "GBPJPY",
+    "XAUUSD",
+    "BTCUSD",
+    "ETHUSD"
+  ],
+  "classification": "EXPERIMENTAL",
+  "entry_type": "MARKET_PAPER_QUOTE",
+  "hypothesis": "Asian-range sweeps in London continue in the sweep direction (pre-registered inverse of Kimi London Sweep Reversal).",
+  "risk_model": "One planned risk unit; Stop beyond sweep candle opposite extreme +0.15 ATR; 2.5R; time limit 16:00 UTC or next data gap.",
+  "planned_rr": "2.5R fixed",
+  "known_limitations": "No verified edge. Pre-registered (commit 674ab1e) single-pass evaluation; all historical splits previously exposed. Correlated instruments.",
+  "declared_trials_in_phase": 1,
+  "preregistration": "research/preregistration/2026-10-23_failure_inverse_hypotheses.md",
+  "authorship": {
+    "lab": "claude",
+    "session_reference": "Claude Code (claude-opus-5-5) desktop session 14e835e0-e7e8-43cf-b286-855a18365bd7, 2026-10-23",
+    "statement": "Created by this actual Claude Code session; not attributed to Codex or Kimi."
+  }
+}

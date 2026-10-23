@@ -1,0 +1,75 @@
+"""Claude-authored experimental model: Failed London Opening-Range Breakout (pre-registered 2026-10-23, commit 674ab1e).
+
+Inverse of Kimi's Opening Range Drive question: are FAILED London opening-range breakouts
+informative? Opening range = four M15 candles from 08:00 London (DST-aware). Breakout = a
+close beyond the range by >= 0.1 ATR within the next 12 candles; failure = a close back inside
+the range within the following 4 candles. Trade opposite the breakout at the failure close;
+stop beyond the breakout extreme + 0.15 ATR; 2.2R; time limit 16:00 London or next data gap.
+First breakout/failure per day only. Independent Claude implementation. Pure functions only.
+"""
+
+SYMBOLS = {'EURUSD', 'GBPUSD', 'GBPJPY', 'XAUUSD', 'BTCUSD', 'ETHUSD'}
+BREAK_ATR = 0.1
+BREAK_WINDOW = 12
+FAIL_WINDOW = 4
+STOP_BUFFER = 0.15
+TARGET_R = 2.2
+
+@@HELPERS@@
+
+def detect(snapshot):
+    if snapshot['symbol'] not in SYMBOLS:
+        return []
+    bars = snapshot['frames'].get('M15', ())
+    if len(bars) < 60:
+        return []
+    last = bars[-1]
+    now = last['utc'] + 900
+    offset = utc_offset('UK', now)
+    day = (now + offset) // 86400
+    if weekday(day) in (0, 6):
+        return []
+    start = day * 86400 + 8 * 3600 - offset
+    rng_bars = [b for b in bars if start <= b['utc'] < start + 3600]
+    if len(rng_bars) != 4 or [b['utc'] for b in rng_bars] != [start + 900 * k for k in range(4)]:
+        return []
+    atr = atr_of(bars, 14)
+    if atr <= 0:
+        return []
+    hi = max(b['high'] for b in rng_bars)
+    lo = min(b['low'] for b in rng_bars)
+    after = [b for b in bars if b['utc'] >= start + 3600]
+    brk = None
+    for i, b in enumerate(after):
+        if b['utc'] >= start + 3600 + BREAK_WINDOW * 900:
+            break
+        if b['close'] > hi + BREAK_ATR * atr or b['close'] < lo - BREAK_ATR * atr:
+            brk = i
+            break
+    if brk is None:
+        return []
+    up = after[brk]['close'] > hi
+    fail = None
+    for j in range(brk + 1, min(brk + 1 + FAIL_WINDOW, len(after))):
+        if lo <= after[j]['close'] <= hi:
+            fail = j
+            break
+    if fail is None or after[fail] is not last:
+        return []  # the signal is the first failure close, and it must be the latest closed candle
+    segment = after[brk:fail + 1]
+    if up:
+        direction, stop = 'SHORT', max(b['high'] for b in segment) + STOP_BUFFER * atr
+    else:
+        direction, stop = 'LONG', min(b['low'] for b in segment) - STOP_BUFFER * atr
+    horizon = min(day * 86400 + 16 * 3600 - offset - now, seconds_to_cutoff(snapshot['symbol'], now))
+    if horizon < 3600:
+        return []
+    quote = snapshot['quote']
+    long = direction == 'LONG'
+    entry = quote['ask'] if long else quote['bid']
+    risk = entry - stop if long else stop - entry
+    if risk <= 0:
+        return []
+    target = entry + TARGET_R * risk if long else entry - TARGET_R * risk
+    return [{'direction': direction, 'stop_loss': stop, 'take_profit': target, 'horizon_seconds': horizon, 'atr': atr,
+             'rationale': 'London opening-range breakout %s failed: price closed back inside the range within %d candles; trading the failure, stop beyond the breakout extreme, 2.2R.' % ('up' if up else 'down', fail - brk)}]
