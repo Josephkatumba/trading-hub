@@ -48,7 +48,7 @@ class WatchdogTests(unittest.TestCase):
         states = iter(port_states)
         dog = Watchdog(probe_port=lambda: next(states), probe_health=lambda: (True, {'mt5_connected': True}),
                        launcher=lambda: self.launched.append(self.t[0]), clock=lambda: self.t[0],
-                       log_path=Path(self.tmpdir.name) / 'w.jsonl', dry_run=dry_run)
+                       log_path=Path(self.tmpdir.name) / 'w.jsonl', dry_run=dry_run, intent=lambda: {'state': 'RUNNING'})
         return dog
 
     def setUp(self):

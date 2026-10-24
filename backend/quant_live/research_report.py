@@ -94,7 +94,7 @@ def lines(s):
             '  Strategy classifications (A promising / B inconclusive / C underperforming / D rejected): '
             + (', '.join(f'{k} {v}' for k, v in sorted((s.get('classifications') or {}).items())) or 'unavailable'),
             f"  Engine now: {s.get('engine_health') or 'unknown'} · uptime last 24h: "
-            + (f"{s['uptime_24h']['coverage'] * 100:.0f}%" if s.get('uptime_24h') else 'unknown')
+            + (f"{s['uptime_24h']['coverage'] * 100:.0f}%" if (s.get('uptime_24h') or {}).get('coverage') is not None else 'unknown')
             + ' · markets: ' + (', '.join(f'{k} {v}' for k, v in sorted((s.get('coverage') or {}).items())) or 'unknown'),
             '  Experimental research only, separate from production. Not validated; paper outcomes after estimated costs.']
 

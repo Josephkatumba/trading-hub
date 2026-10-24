@@ -15,6 +15,7 @@ from fastapi import FastAPI, Query, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
+from ops.control import read_state, set_state
 
 load_dotenv()
 
@@ -89,29 +90,42 @@ def ensure_mt5() -> tuple[bool, str | None]:
     if mt5 is None:
         return False, "MetaTrader5 package is unavailable"
     with _MT5_LOCK:
+        if read_state()['state'] != 'RUNNING':
+            return False, 'Tradeden is paused or stopped; explicitly resume to connect MT5'
         if _MT5_SESSION["initialized"]:
             try:
                 terminal = mt5.terminal_info()
                 if terminal is not None and getattr(terminal, "connected", True):
                     return True, None
+                if terminal is None:
+                    set_state('PAUSED', 'MT5 disappeared; explicit resume required', expected='RUNNING')
+                    close_mt5()
+                    return False, 'MT5 closed; Tradeden paused'
+                # The terminal owns broker reconnection. Reinitializing IPC here can
+                # reopen a terminal whose window is in the middle of closing.
+                return False, 'MT5 broker connection unavailable; waiting for terminal recovery'
             except Exception:
                 LOGGER.exception("MT5 liveness check failed")
-            # Terminal went away: drop the stale session and reconnect below.
-            _MT5_SESSION["initialized"] = False
-            try:
-                mt5.shutdown()
-            except Exception:
-                LOGGER.exception("MT5 shutdown of stale session failed")
+                set_state('PAUSED', 'MT5 liveness check failed; explicit resume required', expected='RUNNING')
+                close_mt5()
+                return False, 'MT5 connection failed; Tradeden paused'
         try:
+            retry_at = _MT5_SESSION.get('retry_at', 0)
+            if monotonic_time.monotonic() < retry_at:
+                return False, 'MT5 recovery cooldown (60 seconds)'
+            _MT5_SESSION['retry_at'] = monotonic_time.monotonic() + 60
             terminal_path = os.getenv("TRADING_HUB_MT5_TERMINAL_PATH")
             connected = bool(mt5.initialize(path=terminal_path, timeout=15000) if terminal_path else mt5.initialize())
         except Exception as exc:
             LOGGER.exception("MT5 initialization failed")
+            set_state('PAUSED', 'MT5 initialization exception; explicit resume required', expected='RUNNING')
             return False, str(exc)
         _MT5_SESSION["initializations"] += 1
         _MT5_SESSION["initialized"] = connected
         if connected:
+            _MT5_SESSION['retry_at'] = 0
             return True, None
+        set_state("PAUSED", "MT5 initialization failed; explicit resume required", expected="RUNNING")
         return False, str(getattr(mt5, "last_error", lambda: "MT5 terminal is unavailable")())
 
 
@@ -138,6 +152,10 @@ def autonomous_market_worker(stop):
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    if read_state()['state'] != 'RUNNING':
+        # Keep the dashboard API available, without starting delivery or scan workers.
+        yield
+        return
     stop = threading.Event()
     worker = threading.Thread(target=autonomous_market_worker, args=(stop,),
                               name="tradeden-market-scanner", daemon=True)
@@ -756,6 +774,7 @@ def health():
         "strategy_id": TRENDLINE,
         "strategies": [{"strategy_id": item["strategy_id"], "version": item["version"], "status": item["status"]} for item in STRATEGIES.describe()],
         "execution_enabled": False,
+        "process_control": read_state(),
         "mt5_available": mt5 is not None,
         "mt5_connected": connected,
         "mt5_status": "CONNECTED" if connected else "OFFLINE" if mt5 is not None else "UNAVAILABLE",

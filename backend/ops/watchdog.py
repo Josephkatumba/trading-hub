@@ -18,6 +18,7 @@ import sys
 import time
 import urllib.request
 from pathlib import Path
+from ops.control import read_state
 
 ROOT = Path(__file__).resolve().parents[2]
 PORT = 8000
@@ -60,7 +61,7 @@ def launch():
     with log_path.open('a', encoding='utf-8') as log:
         log.write(f'\n--- watchdog relaunch {time.strftime("%Y-%m-%d %H:%M:%S")} ---\n')
         log.flush()
-        args = [str(exe), '-m', 'uvicorn', 'main:app', '--host', '127.0.0.1', '--port', str(PORT)]
+        args = [str(exe), '-m', 'ops.engine']
         kw = dict(cwd=str(backend), env=env, stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, close_fds=True)
         try:  # outlive the watchdog's Task Scheduler job when the job allows it
             subprocess.Popen(args, creationflags=flags | getattr(subprocess, 'CREATE_BREAKAWAY_FROM_JOB', 0), **kw)
@@ -69,7 +70,8 @@ def launch():
 
 
 class Watchdog:
-    def __init__(self, probe_port=port_listening, probe_health=health_ok, launcher=launch, clock=time.time, log_path=None, dry_run=False):
+    def __init__(self, probe_port=port_listening, probe_health=health_ok, launcher=launch, clock=time.time, log_path=None, dry_run=False, intent=read_state):
+        self.intent = intent
         self.probe_port, self.probe_health, self.launcher, self.clock, self.dry_run = probe_port, probe_health, launcher, clock, dry_run
         self.log_path = Path(log_path or ROOT / 'backend/data/ops/watchdog.jsonl')
         self.fails, self.launches, self.grace_until = 0, [], 0.0
@@ -80,6 +82,10 @@ class Watchdog:
             f.write(json.dumps({'at': self.clock(), **row}) + '\n')
 
     def tick(self):
+        state = self.intent()['state']
+        if state != 'RUNNING':
+            self.fails = 0
+            return state
         now = self.clock()
         if now < self.grace_until:
             return 'GRACE'
@@ -109,12 +115,12 @@ class Watchdog:
 LOCK_PORT = 8799
 
 
-def single_instance_lock():
+def single_instance_lock(port=LOCK_PORT):
     """Hold a loopback port for the process lifetime; a second watchdog cannot bind it and exits."""
     lock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         lock.setsockopt(socket.SOL_SOCKET, getattr(socket, 'SO_EXCLUSIVEADDRUSE', socket.SO_REUSEADDR), 1)
-        lock.bind(('127.0.0.1', LOCK_PORT))
+        lock.bind(('127.0.0.1', port))
         lock.listen(1)
         return lock
     except OSError:
@@ -140,8 +146,13 @@ def main():
         return 0
     dog.log(state='WATCHDOG_STARTED', dry_run=a.dry_run)
     while True:
-        dog.tick()
-        time.sleep(CHECK_SECONDS)
+        if dog.tick() == 'STOPPED':
+            break
+        # Check owner intent each second, without increasing health-probe frequency.
+        for _ in range(CHECK_SECONDS):
+            time.sleep(1)
+            if read_state()['state'] != 'RUNNING':
+                break
 
 
 if __name__ == '__main__':

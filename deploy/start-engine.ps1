@@ -18,5 +18,5 @@ if ($env:TRADING_HUB_PRIVATE_BETA -eq '1') {
     & (Join-Path $taskRepo '.venv/Scripts/python.exe') beta_preflight.py --online
     if ($LASTEXITCODE -ne 0) { throw 'Private beta preflight failed; engine not started' }
 }
-& (Join-Path $taskRepo '.venv/Scripts/python.exe') -m uvicorn main:app --host 127.0.0.1 --port 8000 --workers 1 --no-access-log
+& (Join-Path $taskRepo '.venv/Scripts/python.exe') -m ops.engine
 exit $LASTEXITCODE

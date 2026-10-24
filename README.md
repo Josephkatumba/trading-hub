@@ -23,7 +23,9 @@ Account connection → trade normalization → analytics → trading fingerprint
 1. Open MetaTrader 5 and log in.
 2. Double-click `START TRADING HUB.bat`. It starts the market engine on
    `http://127.0.0.1:8000` (loopback only) and the dashboard on
-   `http://localhost:5173/trading-hub/`. `STOP TRADING HUB.bat` stops both.
+   `http://localhost:5173/trading-hub/`. `PAUSE TRADING HUB.bat` suspends market and delivery workers while retaining the dashboard API.
+   `STOP TRADING HUB.bat` stops the managed engine and watchdog; close the dashboard window separately.
+   MT5 stays under your control. See [process controls](docs/mt5-process-control.md).
 3. Market Radar connects to `http://127.0.0.1:8000` by default; no URL needs editing.
    Port 8000 is the only engine port. See `backend/README.md` for details and for
    what must change before exposing the engine beyond this machine.
