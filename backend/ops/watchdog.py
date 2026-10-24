@@ -11,6 +11,7 @@ grace period after each launch, and appends every decision to data/ops/watchdog.
 """
 import argparse
 import json
+import os
 import socket
 import subprocess
 import sys
@@ -42,9 +43,29 @@ def health_ok(timeout=20):
 
 
 def launch():
-    """Same command as 'START TRADING HUB.bat' uses for the engine, in its own console window."""
-    cmd = f'title Trading Hub - Market Engine && cd /d "{ROOT}" && call backend\\start_engine.bat'
-    subprocess.Popen(['cmd.exe', '/k', cmd], cwd=str(ROOT), creationflags=getattr(subprocess, 'CREATE_NEW_CONSOLE', 0), close_fds=True)
+    """Start the engine the way backend/start_engine.bat does (uvicorn on 127.0.0.1:8000), but hidden.
+
+    No cmd.exe wrapper: Popen escapes embedded quotes as \\" which cmd cannot parse, so the old
+    'cmd /k cd /d "..."' relaunch failed and left a visible error window every time. Output goes to
+    data/ops/engine.log instead of a console.
+    """
+    backend = ROOT / 'backend'
+    exe = Path(sys.executable)
+    if exe.name.lower() == 'pythonw.exe' and (exe.parent / 'python.exe').exists():
+        exe = exe.parent / 'python.exe'
+    log_path = backend / 'data/ops/engine.log'
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    env = {**os.environ, 'PYTHONUTF8': '1', 'PYTHONIOENCODING': 'utf-8', 'PYTHONUNBUFFERED': '1'}
+    flags = getattr(subprocess, 'CREATE_NO_WINDOW', 0) | getattr(subprocess, 'CREATE_NEW_PROCESS_GROUP', 0)
+    with log_path.open('a', encoding='utf-8') as log:
+        log.write(f'\n--- watchdog relaunch {time.strftime("%Y-%m-%d %H:%M:%S")} ---\n')
+        log.flush()
+        args = [str(exe), '-m', 'uvicorn', 'main:app', '--host', '127.0.0.1', '--port', str(PORT)]
+        kw = dict(cwd=str(backend), env=env, stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, close_fds=True)
+        try:  # outlive the watchdog's Task Scheduler job when the job allows it
+            subprocess.Popen(args, creationflags=flags | getattr(subprocess, 'CREATE_BREAKAWAY_FROM_JOB', 0), **kw)
+        except OSError:
+            subprocess.Popen(args, creationflags=flags, **kw)
 
 
 class Watchdog:
