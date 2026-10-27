@@ -1,0 +1,2752 @@
+{
+  "version": "intelligence-quality-preview-1",
+  "dataset": "bf130602dca4f955f64160bc9b85f0bc4246195f9685afbde91d1856c2c62cd3",
+  "sampling": "last 120 available D1 closes, one context per day",
+  "quote_assumption": "synthetic fresh bid=ask=last closed M15 close; not observed execution quotes",
+  "performance": "NOT_EVALUATED: no strategy, entries or fills; no win-rate/expectancy claim",
+  "production_enabled": false,
+  "markets": {
+    "XAUUSD": {
+      "observations": 120,
+      "baseline_stale": 4,
+      "baseline_met_contexts": 0,
+      "preview_met_contexts": 0,
+      "preview_blocked": 120,
+      "blocker_counts": {
+        "D1: recent gaps require session-calendar verification": 120,
+        "H1: recent gaps require session-calendar verification": 120,
+        "H4: recent gaps require session-calendar verification": 120,
+        "D1 and H4 trends point in opposite directions": 18,
+        "H1 regime RANGING and price inside the previous-day range": 53,
+        "volatility shock in the last closed H1 candle (cause not verified)": 3,
+        "H1: stale or absent history": 4,
+        "M15: stale or absent history": 4,
+        "market data is stale": 4,
+        "M15: recent gaps require session-calendar verification": 2
+      },
+      "records": [
+        {
+          "at": 1777928400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1778014800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1778101200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1778187600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification",
+            "volatility shock in the last closed H1 candle (cause not verified)"
+          ]
+        },
+        {
+          "at": 1778274000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1778533200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1778619600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1778706000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1778792400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1778878800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1779138000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1779224400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1779310800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1779397200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1779483600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1779742800.0,
+          "baseline_stale": true,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H1: stale or absent history",
+            "H4: recent gaps require session-calendar verification",
+            "M15: stale or absent history",
+            "market data is stale"
+          ]
+        },
+        {
+          "at": 1779829200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1779915600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1780002000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1780088400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1780347600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1780434000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1780520400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1780606800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1780693200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1780952400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1781038800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1781125200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1781211600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1781298000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1781557200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification",
+            "M15: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1781643600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1781730000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification",
+            "volatility shock in the last closed H1 candle (cause not verified)"
+          ]
+        },
+        {
+          "at": 1781816400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1781902800.0,
+          "baseline_stale": true,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H1: stale or absent history",
+            "H4: recent gaps require session-calendar verification",
+            "M15: stale or absent history",
+            "market data is stale"
+          ]
+        },
+        {
+          "at": 1782162000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1782248400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1782334800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1782421200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1782507600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1782766800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification",
+            "M15: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1782853200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1782939600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1783026000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1783112400.0,
+          "baseline_stale": true,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H1: stale or absent history",
+            "H4: recent gaps require session-calendar verification",
+            "M15: stale or absent history",
+            "market data is stale"
+          ]
+        },
+        {
+          "at": 1783371600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1783458000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1783544400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1783630800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1783717200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1783976400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1784062800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1784149200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1784235600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1784322000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1784581200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1784667600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1784754000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1784840400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1784926800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1785186000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1785272400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1785358800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification",
+            "volatility shock in the last closed H1 candle (cause not verified)"
+          ]
+        },
+        {
+          "at": 1785445200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1785531600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1785790800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1785877200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1785963600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1786050000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1786136400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1786395600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1786482000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1786568400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1786654800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1786741200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1787000400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1787086800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1787173200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1787259600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1787346000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1787605200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1787691600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1787778000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1787864400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1787950800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1788210000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1788296400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1788382800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1788469200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1788555600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1788814800.0,
+          "baseline_stale": true,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H1: stale or absent history",
+            "H4: recent gaps require session-calendar verification",
+            "M15: stale or absent history",
+            "market data is stale"
+          ]
+        },
+        {
+          "at": 1788901200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1788987600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1789074000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1789160400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1789419600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1789506000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1789592400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1789678800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1789765200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1790024400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1790110800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1790197200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1790283600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1790370000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1790629200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1790715600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1790802000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1790888400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1790974800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1791234000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1791320400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1791406800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1791493200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1791579600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1791838800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1791925200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1792011600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1792098000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1792184400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1: recent gaps require session-calendar verification",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "H4: recent gaps require session-calendar verification"
+          ]
+        }
+      ]
+    },
+    "BTCUSD": {
+      "observations": 120,
+      "baseline_stale": 0,
+      "baseline_met_contexts": 0,
+      "preview_met_contexts": 0,
+      "preview_blocked": 91,
+      "blocker_counts": {
+        "H1 regime RANGING and price inside the previous-day range": 71,
+        "volatility shock in the last closed H1 candle (cause not verified)": 6,
+        "H1: recent gaps require session-calendar verification": 7,
+        "M15: recent gaps require session-calendar verification": 3,
+        "D1 and H4 trends point in opposite directions": 33
+      },
+      "records": [
+        {
+          "at": 1782075600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1782162000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1782248400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1782334800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range",
+            "volatility shock in the last closed H1 candle (cause not verified)"
+          ]
+        },
+        {
+          "at": 1782421200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1782507600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1782594000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "M15: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1782680400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1782766800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification",
+            "M15: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1782853200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1782939600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1783026000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1783112400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions"
+          ]
+        },
+        {
+          "at": 1783198800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1783285200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions"
+          ]
+        },
+        {
+          "at": 1783371600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1783458000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1783544400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1783630800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions"
+          ]
+        },
+        {
+          "at": 1783717200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1783803600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions"
+          ]
+        },
+        {
+          "at": 1783890000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1783976400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1784062800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions"
+          ]
+        },
+        {
+          "at": 1784149200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1784235600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions"
+          ]
+        },
+        {
+          "at": 1784322000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1784408400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions"
+          ]
+        },
+        {
+          "at": 1784494800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1784581200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1784667600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1784754000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1784840400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1784926800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1785013200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1: recent gaps require session-calendar verification",
+            "M15: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1785099600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1785186000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range",
+            "H1: recent gaps require session-calendar verification"
+          ]
+        },
+        {
+          "at": 1785272400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1785358800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1785445200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1785531600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1785618000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1785704400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1785790800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1785877200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1785963600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1786050000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1786136400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1786222800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1786309200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1786395600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1786482000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1786568400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1786654800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1786741200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1786827600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1786914000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1787000400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1787086800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1787173200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "volatility shock in the last closed H1 candle (cause not verified)"
+          ]
+        },
+        {
+          "at": 1787259600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "volatility shock in the last closed H1 candle (cause not verified)"
+          ]
+        },
+        {
+          "at": 1787346000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "volatility shock in the last closed H1 candle (cause not verified)"
+          ]
+        },
+        {
+          "at": 1787432400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1787518800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1787605200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1787691600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range",
+            "volatility shock in the last closed H1 candle (cause not verified)"
+          ]
+        },
+        {
+          "at": 1787778000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1787864400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1787950800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1788037200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1788123600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1788210000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1788296400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1788382800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1788469200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1788555600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1788642000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1788728400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1788814800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1788901200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1788987600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1789074000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions"
+          ]
+        },
+        {
+          "at": 1789160400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1789246800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1789333200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1789419600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1789506000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions"
+          ]
+        },
+        {
+          "at": 1789592400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1789678800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1789765200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1789851600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1789938000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1790024400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "volatility shock in the last closed H1 candle (cause not verified)"
+          ]
+        },
+        {
+          "at": 1790110800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1790197200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1790283600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1790370000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1790456400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1790542800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1790629200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1790715600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1790802000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1790888400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1790974800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1791061200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1791147600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1791234000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1791320400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1791406800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1791493200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions"
+          ]
+        },
+        {
+          "at": 1791579600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1791666000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions"
+          ]
+        },
+        {
+          "at": 1791752400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "CONTEXT_ONLY",
+          "blockers": []
+        },
+        {
+          "at": 1791838800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1791925200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1792011600.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions"
+          ]
+        },
+        {
+          "at": 1792098000.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1792184400.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1792270800.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        },
+        {
+          "at": 1792357200.0,
+          "baseline_stale": false,
+          "baseline_scenarios_met": [],
+          "preview_scenarios_met": [],
+          "preview_status": "BLOCKED",
+          "blockers": [
+            "D1 and H4 trends point in opposite directions",
+            "H1 regime RANGING and price inside the previous-day range"
+          ]
+        }
+      ]
+    }
+  },
+  "source_sha256": {
+    "backend\\research\\intelligence_compare.py": "fba6b06b7445a59511b59c5a15faff0432eff67801794bda0d9e6c427dc185b9",
+    "backend\\research\\intelligence_preview.py": "847e105f197aa6ff541df66c026d77972f64bfde7d48ff8231b25838c8f49ffe",
+    "backend\\market_intel\\engine.py": "256cb1b5a33e39b368bac64c1e3fa8e8d38580b1c620dc092b7b04a70eab4bdb",
+    "backend\\market_intel\\rules.py": "025cf1624556c49df490212f4911aff442d18c908831c526f28245889b64e036"
+  }
+}

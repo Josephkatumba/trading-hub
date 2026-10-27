@@ -1,0 +1,8 @@
+{
+ "cold_seconds": 0.6738191000040388,
+ "mean_warm_seconds_20_repeats": 0.05174311500013573,
+ "python_peak_allocation_bytes": 525860,
+ "python_retained_allocation_bytes": 76442,
+ "calendar_cache": "CacheInfo(hits=3877, misses=113, maxsize=8192, currsize=113)",
+ "limits": "One Gold context; tracing overhead included; input loading and full historical data allocations excluded; no production measurement or RSS claim."
+}

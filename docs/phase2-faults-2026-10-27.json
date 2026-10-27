@@ -1,0 +1,2942 @@
+{
+ "dataset": "bf130602dca4f955f64160bc9b85f0bc4246195f9685afbde91d1856c2c62cd3",
+ "sample_unit": "one prefix per 30-day epoch bucket per market",
+ "scope": "known data faults only; baseline stale flag is not a generic fault detector; no predictive-accuracy claim",
+ "summary": {
+  "future_quote": {
+   "n": 46,
+   "detected": 46,
+   "baseline_stale_flags": 0
+  },
+  "h4_gap": {
+   "n": 46,
+   "detected": 46,
+   "baseline_stale_flags": 0
+  },
+  "misaligned_h4": {
+   "n": 46,
+   "detected": 46,
+   "baseline_stale_flags": 0
+  },
+  "missing_h4": {
+   "n": 46,
+   "detected": 46,
+   "baseline_stale_flags": 0
+  },
+  "missing_quote": {
+   "n": 46,
+   "detected": 46,
+   "baseline_stale_flags": 0
+  },
+  "stale_h4": {
+   "n": 46,
+   "detected": 46,
+   "baseline_stale_flags": 0
+  },
+  "stale_quote": {
+   "n": 46,
+   "detected": 46,
+   "baseline_stale_flags": 46
+  }
+ },
+ "records": [
+  {
+   "symbol": "XAUUSD",
+   "at": 1735776000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1735776000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1735776000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1735776000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1735776000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1735776000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1735776000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1736726400.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1736726400.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1736726400.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1736726400.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1736726400.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1736726400.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1736726400.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1739232000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1739232000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1739232000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1739232000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1739232000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1739232000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1739232000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1741824000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1741824000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1741824000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1741824000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1741824000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1741824000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1741824000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1744585200.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1744585200.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1744585200.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1744585200.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1744585200.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1744585200.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1744585200.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1747008000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1747008000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1747008000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1747008000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1747008000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1747008000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1747008000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1749600000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1749600000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1749600000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1749600000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1749600000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1749600000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1749600000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1752192000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1752192000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1752192000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1752192000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1752192000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1752192000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1752192000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1754866800.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1754866800.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1754866800.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1754866800.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1754866800.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1754866800.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1754866800.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1757376000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1757376000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1757376000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1757376000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1757376000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1757376000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1757376000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1759968000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1759968000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1759968000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1759968000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1759968000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1759968000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1759968000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1762732800.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1762732800.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1762732800.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1762732800.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1762732800.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1762732800.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1762732800.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1765152000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1765152000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1765152000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1765152000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1765152000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1765152000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1765152000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1767744000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1767744000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1767744000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1767744000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1767744000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1767744000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1767744000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1770336000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1770336000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1770336000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1770336000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1770336000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1770336000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1770336000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1773010800.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1773010800.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1773010800.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1773010800.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1773010800.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1773010800.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1773010800.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1775520000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1775520000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1775520000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1775520000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1775520000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1775520000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1775520000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1778112000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1778112000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1778112000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1778112000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1778112000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1778112000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1778112000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1780873200.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1780873200.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1780873200.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1780873200.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1780873200.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1780873200.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1780873200.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1783296000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1783296000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1783296000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1783296000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1783296000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1783296000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1783296000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1785888000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1785888000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1785888000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1785888000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1785888000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1785888000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1785888000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1788480000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1788480000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1788480000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1788480000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1788480000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1788480000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1788480000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1791154800.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1791154800.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1791154800.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1791154800.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1791154800.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1791154800.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "XAUUSD",
+   "at": 1791154800.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1735689600.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1735689600.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1735689600.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1735689600.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1735689600.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1735689600.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1735689600.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1736640000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1736640000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1736640000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1736640000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1736640000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1736640000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1736640000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1739232000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1739232000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1739232000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1739232000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1739232000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1739232000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1739232000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1741824000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1741824000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1741824000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1741824000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1741824000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1741824000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1741824000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1744416000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1744416000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1744416000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1744416000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1744416000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1744416000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1744416000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1747008000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1747008000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1747008000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1747008000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1747008000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1747008000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1747008000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1749600000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1749600000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1749600000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1749600000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1749600000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1749600000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1749600000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1752192000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1752192000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1752192000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1752192000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1752192000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1752192000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1752192000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1754784000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1754784000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1754784000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1754784000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1754784000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1754784000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1754784000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1757376000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1757376000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1757376000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1757376000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1757376000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1757376000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1757376000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1759968000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1759968000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1759968000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1759968000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1759968000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1759968000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1759968000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1762560000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1762560000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1762560000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1762560000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1762560000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1762560000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1762560000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1765152000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1765152000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1765152000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1765152000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1765152000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1765152000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1765152000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1767744000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1767744000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1767744000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1767744000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1767744000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1767744000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1767744000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1770336000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1770336000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1770336000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1770336000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1770336000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1770336000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1770336000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1772928000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1772928000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1772928000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1772928000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1772928000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1772928000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1772928000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1775520000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1775520000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1775520000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1775520000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1775520000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1775520000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1775520000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1778112000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1778112000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1778112000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1778112000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1778112000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1778112000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1778112000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1780704000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1780704000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1780704000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1780704000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1780704000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1780704000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1780704000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "DOWN",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1783296000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1783296000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1783296000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1783296000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1783296000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1783296000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1783296000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1785888000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1785888000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1785888000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1785888000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1785888000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1785888000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1785888000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1788480000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1788480000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "NEUTRAL",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1788480000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1788480000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1788480000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1788480000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1788480000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1791072000.0,
+   "defect": "missing_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UNAVAILABLE",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1791072000.0,
+   "defect": "stale_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1791072000.0,
+   "defect": "misaligned_h4",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1791072000.0,
+   "defect": "h4_gap",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1791072000.0,
+   "defect": "future_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1791072000.0,
+   "defect": "stale_quote",
+   "upgraded_detected": true,
+   "baseline_stale": true,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  },
+  {
+   "symbol": "BTCUSD",
+   "at": 1791072000.0,
+   "defect": "missing_quote",
+   "upgraded_detected": true,
+   "baseline_stale": false,
+   "baseline_h4_state": "UP",
+   "upgraded_status": "BLOCKED"
+  }
+ ]
+}

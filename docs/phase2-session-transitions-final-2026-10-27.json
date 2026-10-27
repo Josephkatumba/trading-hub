@@ -1,0 +1,447 @@
+{
+ "dataset": "bf130602dca4f955f64160bc9b85f0bc4246195f9685afbde91d1856c2c62cd3",
+ "authority": "PUBLISHED_INDICATIVE_NOT_ACCOUNT_VERIFIED",
+ "historical_schedule_verified": false,
+ "markets": {
+  "XAUUSD": {
+   "M15": {
+    "bars": 51430,
+    "gaps": {
+     "COMPATIBLE_WITH_PUBLISHED_CLOSURE": 538,
+     "UNEXPECTED_OR_UNKNOWN": 27
+    },
+    "examples": [
+     {
+      "from": 1723668300.0,
+      "to": 1723672800.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1723754700.0,
+      "to": 1723759200.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1723841100.0,
+      "to": 1724018400.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1724100300.0,
+      "to": 1724104800.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1724186700.0,
+      "to": 1724191200.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1724273100.0,
+      "to": 1724277600.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1724359500.0,
+      "to": 1724364000.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1724445900.0,
+      "to": 1724623200.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     }
+    ]
+   },
+   "H1": {
+    "bars": 12867,
+    "gaps": {
+     "COMPATIBLE_WITH_PUBLISHED_CLOSURE": 539,
+     "UNEXPECTED_OR_UNKNOWN": 24
+    },
+    "examples": [
+     {
+      "from": 1723665600.0,
+      "to": 1723672800.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1723752000.0,
+      "to": 1723759200.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1723838400.0,
+      "to": 1724018400.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1724097600.0,
+      "to": 1724104800.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1724184000.0,
+      "to": 1724191200.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1724270400.0,
+      "to": 1724277600.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1724356800.0,
+      "to": 1724364000.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1724443200.0,
+      "to": 1724623200.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     }
+    ]
+   },
+   "H4": {
+    "bars": 3497,
+    "gaps": {
+     "COMPATIBLE_WITH_PUBLISHED_CLOSURE": 113,
+     "UNEXPECTED_OR_UNKNOWN": 9
+    },
+    "examples": [
+     {
+      "from": 1721408400.0,
+      "to": 1721595600.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1722013200.0,
+      "to": 1722200400.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1722618000.0,
+      "to": 1722805200.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1723222800.0,
+      "to": 1723410000.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1723827600.0,
+      "to": 1724014800.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1724432400.0,
+      "to": 1724619600.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1725037200.0,
+      "to": 1725224400.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1725642000.0,
+      "to": 1725829200.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     }
+    ]
+   },
+   "D1": {
+    "bars": 816,
+    "gaps": {
+     "COMPATIBLE_WITH_PUBLISHED_CLOSURE": 159,
+     "UNEXPECTED_OR_UNKNOWN": 9
+    },
+    "examples": [
+     {
+      "from": 1692910800.0,
+      "to": 1693170000.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1693515600.0,
+      "to": 1693774800.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1694120400.0,
+      "to": 1694379600.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1694725200.0,
+      "to": 1694984400.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1695330000.0,
+      "to": 1695589200.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1695934800.0,
+      "to": 1696194000.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1696539600.0,
+      "to": 1696798800.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1697144400.0,
+      "to": 1697403600.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     }
+    ]
+   }
+  },
+  "BTCUSD": {
+   "M15": {
+    "bars": 75827,
+    "gaps": {
+     "COMPATIBLE_WITH_PUBLISHED_CLOSURE": 113,
+     "UNEXPECTED_OR_UNKNOWN": 20
+    },
+    "examples": [
+     {
+      "from": 1723841100.0,
+      "to": 1723844700.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1724445900.0,
+      "to": 1724449500.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1725050700.0,
+      "to": 1725054300.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1725632100.0,
+      "to": 1725633900.0,
+      "classification": "UNEXPECTED_OR_UNKNOWN",
+      "missing_expected": 1
+     },
+     {
+      "from": 1725655500.0,
+      "to": 1725659100.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1726260300.0,
+      "to": 1726263900.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1726865100.0,
+      "to": 1726868700.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1727469900.0,
+      "to": 1727473500.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     }
+    ]
+   },
+   "H1": {
+    "bars": 19048,
+    "gaps": {
+     "COMPATIBLE_WITH_PUBLISHED_CLOSURE": 2,
+     "UNEXPECTED_OR_UNKNOWN": 12
+    },
+    "examples": [
+     {
+      "from": 1730606400.0,
+      "to": 1730617200.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1748667600.0,
+      "to": 1748710800.0,
+      "classification": "UNEXPECTED_OR_UNKNOWN",
+      "missing_expected": 11
+     },
+     {
+      "from": 1749240000.0,
+      "to": 1749247200.0,
+      "classification": "UNEXPECTED_OR_UNKNOWN",
+      "missing_expected": 1
+     },
+     {
+      "from": 1754744400.0,
+      "to": 1754751600.0,
+      "classification": "UNEXPECTED_OR_UNKNOWN",
+      "missing_expected": 1
+     },
+     {
+      "from": 1758916800.0,
+      "to": 1758924000.0,
+      "classification": "UNEXPECTED_OR_UNKNOWN",
+      "missing_expected": 1
+     },
+     {
+      "from": 1761393600.0,
+      "to": 1761400800.0,
+      "classification": "UNEXPECTED_OR_UNKNOWN",
+      "missing_expected": 1
+     },
+     {
+      "from": 1762056000.0,
+      "to": 1762066800.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1772290800.0,
+      "to": 1772323200.0,
+      "classification": "UNEXPECTED_OR_UNKNOWN",
+      "missing_expected": 8
+     }
+    ]
+   },
+   "H4": {
+    "bars": 4947,
+    "gaps": {
+     "COMPATIBLE_WITH_PUBLISHED_CLOSURE": 4,
+     "UNEXPECTED_OR_UNKNOWN": 2
+    },
+    "examples": [
+     {
+      "from": 1730595600.0,
+      "to": 1730628000.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1741500000.0,
+      "to": 1741510800.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1748667600.0,
+      "to": 1748710800.0,
+      "classification": "UNEXPECTED_OR_UNKNOWN",
+      "missing_expected": 2
+     },
+     {
+      "from": 1762045200.0,
+      "to": 1762077600.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1772287200.0,
+      "to": 1772316000.0,
+      "classification": "UNEXPECTED_OR_UNKNOWN",
+      "missing_expected": 1
+     },
+     {
+      "from": 1772949600.0,
+      "to": 1772960400.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     }
+    ]
+   },
+   "D1": {
+    "bars": 1155,
+    "gaps": {
+     "COMPATIBLE_WITH_PUBLISHED_CLOSURE": 6
+    },
+    "examples": [
+     {
+      "from": 1699131600.0,
+      "to": 1699221600.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1710021600.0,
+      "to": 1710104400.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1730581200.0,
+      "to": 1730671200.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1741471200.0,
+      "to": 1741554000.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1762030800.0,
+      "to": 1762120800.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     },
+     {
+      "from": 1772920800.0,
+      "to": 1773003600.0,
+      "classification": "COMPATIBLE_WITH_PUBLISHED_CLOSURE",
+      "missing_expected": 0
+     }
+    ]
+   }
+  }
+ },
+ "source_sha256": {
+  "backend\\research\\phase2_sessions.py": "214fb0666a219703081ba54c51790a8d006e906b42c306fadb4c6c4201fc92ba",
+  "backend\\research\\broker_calendar.py": "de7c5f5def6f5c5df56f36d05523d7833b6c3865d85a18b5cf7983f01c7bf4da",
+  "backend\\research\\broker_sessions.json": "1bfa04a15f286d6ee57cee79a90942f1aac7c1f7f368c92c72cbf5017e7b10d7"
+ }
+}
