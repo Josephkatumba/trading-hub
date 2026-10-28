@@ -29,7 +29,8 @@ def normalize_candles(rates, basis):
 @router.get("/api/market/chart")
 def intelligence_chart(symbol: str = Query("XAUUSD", max_length=32),
                        timeframe: str = Query("M15", pattern="^(M5|M15|H1|H4|D1)$"),
-                       limit: int = Query(300, ge=20, le=500)):
+                       limit: int = Query(300, ge=20, le=500),
+                       research: bool = False):
     import main
     from observations import setup_episodes
     from outcomes import outcomes_for_setups, MARKET_OUTCOMES_FILE
@@ -50,9 +51,13 @@ def intelligence_chart(symbol: str = Query("XAUUSD", max_length=32),
         info = main.mt5.symbol_info(actual)
     if not candles:
         raise HTTPException(503, "Candle time basis unverified")
-    episodes = [r for r in setup_episodes("all", 200, per_strategy=True) if r.get("symbol") == symbol]
+    # Overview never reads research history. The research payload is a bounded
+    # episode window, not a claim to cover the entire append-only archive.
+    episodes = ([r for r in setup_episodes("all", 500, include_shadow=True)
+                 if r.get("symbol") == symbol and r.get("timeframe") == timeframe]
+                if research else [])
     ids = [r["setup_id"] for r in episodes]
-    outcomes = unique_outcomes(outcomes_for_setups(ids, MARKET_OUTCOMES_FILE))[-1000:]
+    outcomes = unique_outcomes(outcomes_for_setups(ids, MARKET_OUTCOMES_FILE))[-1000:] if ids else []
     from observations import snapshots_by_observation_id
     snapshots = snapshots_by_observation_id(r.get("observation_id") for r in outcomes)
     overlays = []
@@ -61,14 +66,18 @@ def intelligence_chart(symbol: str = Query("XAUUSD", max_length=32),
         units = {"15m": 900, "1h": 3600, "4h": 14400, "24h": 86400}.get(row.get("horizon"))
         if not snapshot or not units:
             continue
-        observed = datetime.fromisoformat(snapshot["observed_at"])
+        try:
+            observed = datetime.fromisoformat(snapshot["observed_at"])
+        except (KeyError, TypeError, ValueError):
+            continue
         if observed.tzinfo is None:
             continue
         frame = TIMEFRAMES.get(row.get("timeframe"), 900)
         end = math.ceil((observed.timestamp() + units) / frame) * frame
-        overlays.append({**row, "symbol": symbol, "observed_at": snapshot["observed_at"],
+        overlays.append({**row, "symbol": symbol, "strategy_id": snapshot.get("strategy_id"), "observed_at": snapshot["observed_at"],
                          "horizon_end": datetime.fromtimestamp(end, timezone.utc).isoformat()})
     return {"symbol": symbol, "timeframe": timeframe, "candles": candles,
             "digits": getattr(info, "digits", None), "tick_size": getattr(info, "trade_tick_size", None),
             "episodes": episodes, "outcomes": overlays, "source": "MT5", "time_basis": "verified UTC",
+            "research_window": "Latest 500 episodes across instruments; up to 1000 unique evaluations. Filters apply within this window.",
             "timestamp": datetime.now(timezone.utc).isoformat()}
