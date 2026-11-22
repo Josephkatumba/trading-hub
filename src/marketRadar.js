@@ -18,6 +18,7 @@ import {bankGardenRow, filterUnified, matchesUnified, productionIdOf, selectable
 import {mountGarden, prefersReducedMotion} from "./garden/gardenMount.mjs";
 import {evidenceModel, evidencePanel, labReportPanel} from "./garden/strategyLab.mjs";
 import {bankPanel, bankResearchPanel, bankStrategyPerformance} from "./garden/strategyBank.mjs";
+import {qualityPanel} from "./garden/signalQuality.mjs";
 import {marketWatchGroups, priorityWatchSlots, rankMarkets, trackScanEvents} from "./garden/priorityWatch.mjs";
 
 const DEMO_MARKETS = [
@@ -124,6 +125,7 @@ export function renderMarketRadar(){
     +'<section class="gd-research gd-watch-all" id="gardenWatchAll" role="dialog" aria-modal="true" aria-labelledby="gardenWatchAllTitle" tabindex="-1" hidden></section>'
     +'<section class="gd-panel performance-panel" id="gardenPerformance"><header class="gd-panel-head"><div><h2>📊 Today\'s setup performance</h2><p>Headline uses the 4h market outcome. Other configured horizons remain visible. Trade outcomes are excluded.</p></div></header><div id="dailyPerformance"><div class="macro-empty"><b>Loading performance</b></div></div></section>'
     +'<details class="gd-panel gd-strategy-bank" id="strategyBank"><summary><span>🏦 Strategy Bank</span><span class="historical-expand-hint">Expand</span></summary><p>Every rule-based strategy in the bank, each confirming independently on completed candles. The bank has no fixed size: new strategies join as research and produce alerts only after an evidence-based promotion. Forward statistics are recorded signals and outcomes only; Pending means no signal has resolved yet. No strategy is validated: experimental strategies and live production strategies alike have not demonstrated profitability. Historical backtests are shown separately and are simulated.</p><div id="strategyBankBody"></div></details>'
+    +'<details class="gd-panel gd-signal-quality" id="signalQuality"><summary><span>🎯 Signal Quality</span><span class="historical-expand-hint">Expand</span></summary><p>Why signals win or lose, and whether the quality-gated engine does better than the old one. Live figures are recorded signals (hypothetical R). The engine comparison is a historical walk-forward: simulated on MT5 history, out of sample, net of costs. Neither is a promise of future results.</p><div id="signalQualityBody"></div></details>'
     +'<details class="gd-panel gd-strategy-lab" id="strategyLab"><summary><span>🧪 Strategy Lab</span><span class="historical-expand-hint">Expand</span></summary><p>The production strategy registry and its measurements. Production strategies (Trendline, S/R, Trend/Momentum, SMC) each produce their own Garden setups, notifications and outcomes; the Strategy Bank above covers all 19 strategies. Live does not mean proven profitable. Shadow-mode (research) strategies, if any, are reviewed here only and never become Garden setups or alerts.</p><div id="strategyLabBody"></div><div id="strategyLabReport"></div><div id="strategyLabEvidence" aria-live="polite"></div>'
     +'<section class="gd-lab-evaluation"><h4>Historical evaluation · verified outcomes by condition</h4><p class="gd-note">The foundation of TRADeden\'s evaluation layer: what has happened to confirmed setups sharing a recorded condition. Deterministic, per strategy, verified outcomes only. It never creates or changes a setup.</p><div id="strategyLabEvaluation"></div></section></details>'
     +'<details class="gd-panel historical-confirmations" id="historicalConfirmations"><summary><span>📚 Confirmation event archive · today (<b id="historicalConfirmationCount">0</b>)</span><span class="historical-expand-hint">Expand</span></summary><p class="gd-archive-status" id="confirmedArchiveStatus"></p><div id="historicalConfirmationCards" class="gd-grid"></div></details>'
@@ -381,6 +383,14 @@ async function refreshBank(force=false){
   if(report)bankReport=report;
   const node=document.getElementById("strategyBankBody");if(node)node.innerHTML=bankPanel(report||bankReport);
 }
+let qualityFetchedAt=0;
+async function refreshQuality(force=false){
+  const panel=document.getElementById("signalQuality");
+  if(!panel?.open||(!force&&Date.now()-qualityFetchedAt<LAB_REFRESH_MS))return;
+  qualityFetchedAt=Date.now();
+  const report=await engineFetch("/api/signal-quality").catch(()=>null);
+  const node=document.getElementById("signalQualityBody");if(node)node.innerHTML=qualityPanel(report);
+}
 async function inspectLabSetup(setupId){
   const node=document.getElementById("strategyLabEvidence");if(!node)return;
   node.innerHTML='<p class="gd-na">Loading recorded evidence…</p>';
@@ -526,6 +536,7 @@ function bindGardenInteractions(){
   };
   const lab=document.getElementById("strategyLab");if(lab)lab.ontoggle=()=>{if(lab.open)refreshLab(true);};
   const bank=document.getElementById("strategyBank");if(bank)bank.ontoggle=()=>{if(bank.open)refreshBank(true);};
+  const quality=document.getElementById("signalQuality");if(quality)quality.ontoggle=()=>{if(quality.open)refreshQuality(true);};
   root.onkeydown=event=>{
     if(event.key==="Escape"&&researchOpen){event.preventDefault();closeResearch();return;}
     if(event.key==="Escape"&&watchAllOpen){event.preventDefault();closeWatchAll();return;}
@@ -776,7 +787,7 @@ export function scrollToGardenSection(id){
 function applyPendingAnchor(){
   const target=pendingAnchor&&document.getElementById(pendingAnchor);
   pendingAnchor=null;
-  if(target&&target.id==="strategyBank")target.open=true;   // nav link opens (and so loads) the bank
+  if(target&&(target.id==="strategyBank"||target.id==="signalQuality"))target.open=true;   // nav link opens (and so loads) the panel
   if(target)target.scrollIntoView({block:"start"});
 }
 export function stopMarketRadar(){radarPoller?.stop();disposeGarden();researchOpen=false;watchAllOpen=false;shownWatchSymbols=null;scanEvents=null;document.body.classList.remove("gd-research-open");}

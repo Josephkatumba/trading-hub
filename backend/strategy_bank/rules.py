@@ -61,7 +61,9 @@ class Ctx:
                   "rsi": lambda: ind.rsi(c, *(args or (14,))), "macd": lambda: ind.macd(c),
                   "prior_max": lambda: ind.prior_max(h, *args), "prior_min": lambda: ind.prior_min(l, *args),
                   "ichimoku": lambda: ind.ichimoku(h, l), "swing_points": lambda: ind.swing_points(h, l, *(args or (3,))),
-                  "swings": lambda: ind.swings(h, l, *(args or (3,)))}[name]
+                  "swings": lambda: ind.swings(h, l, *(args or (3,))),
+                  "adx": lambda: ind.adx(h, l, c, *(args or (14,))),
+                  "std": lambda: ind.rolling_std(c, *args)}[name]
             self._cache[key] = fn()
         return self._cache[key]
 

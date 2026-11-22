@@ -18,7 +18,7 @@ let state={view:"radar",trades:getTrades(),importOpen:false,selectedTrade:null,f
 // Navigation: the Garden is the product; watch tools sit beside it; journal
 // tools stay available but quieter. Items with an anchor open a Garden section.
 const NAV={
- watch:[["markets","Markets","◎"],["analytics","Setup Lab","◒"],["insights","Analyst","✦"],["radar","Setup performance","▦","gardenPerformance"],["radar","Alerts","◔","gardenAlerts"],["radar","Strategy Bank","▤","strategyBank"]],
+ watch:[["markets","Markets","◎"],["analytics","Setup Lab","◒"],["insights","Analyst","✦"],["radar","Setup performance","▦","gardenPerformance"],["radar","Alerts","◔","gardenAlerts"],["radar","Strategy Bank","▤","strategyBank"],["radar","Signal Quality","◎","signalQuality"]],
  journal:[["overview","Portfolio","⌂"],["trades","Trades","↗"],["accounts","Accounts","◈"]]
 };
 if(localLabsAvailable(location.hostname))NAV.watch.push(["quantLabs","Quant Labs","⚗"]);

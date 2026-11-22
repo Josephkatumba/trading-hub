@@ -1,0 +1,6204 @@
+{
+ "generated_at": "2026-11-22T18:10:39+00:00",
+ "label": "HISTORICAL WALK-FORWARD (simulated on MT5 history, out-of-sample quarters; not live results)",
+ "method": "Walk-forward validation of the signal quality engine against the existing baseline.\n\nDesign (protects against look-ahead and overfitting):\n  - expanding-window walk-forward: six test quarters from 2025-04-01 to 2026-10-12; each fold trains only\n    on signals whose BASE trade had already EXITED before the test quarter starts (purged: no training\n    label overlaps the test period)\n  - inside each fold, per-strategy exit selection (target / stop variants) and the scorecard are fitted on\n    the training rows only; the test quarter is scored once\n  - grade thresholds and regime caps are fixed a priori (signal_quality/model.py), not tuned\n  - all results net of spread, commission, stop slippage and financing; every policy is also re-run at 2x costs\n  - a random-selection control keeps the same number of signals per test quarter at random (20 seeds):\n    a quality filter must beat chance selection, not just the unfiltered baseline\n  - one position per strategy and symbol is enforced AFTER filtering (a rejected signal never blocks a later one)",
+ "data": {
+  "signals": 95659,
+  "out_of_sample_signals": 74000,
+  "from": "2024-10-15",
+  "to": "2026-10-12"
+ },
+ "folds": [
+  {
+   "test_from": "2025-04-01",
+   "test_to": "2025-07-01",
+   "train_signals": 21586,
+   "test_signals": 12133
+  },
+  {
+   "test_from": "2025-07-01",
+   "test_to": "2025-10-01",
+   "train_signals": 33698,
+   "test_signals": 12329
+  },
+  {
+   "test_from": "2025-10-01",
+   "test_to": "2026-01-01",
+   "train_signals": 46022,
+   "test_signals": 12281
+  },
+  {
+   "test_from": "2026-01-01",
+   "test_to": "2026-04-01",
+   "train_signals": 58319,
+   "test_signals": 11949
+  },
+  {
+   "test_from": "2026-04-01",
+   "test_to": "2026-07-01",
+   "train_signals": 70278,
+   "test_signals": 11982
+  },
+  {
+   "test_from": "2026-07-01",
+   "test_to": "2026-10-12",
+   "train_signals": 82260,
+   "test_signals": 13326
+  }
+ ],
+ "exit_choices": [
+  {
+   "test_from": "2025-04-01",
+   "changed": {
+    "breakout": "t1",
+    "ema_crossover": "t3",
+    "ema_pullback": "t3",
+    "ichimoku": "t1",
+    "liquidity_sweep": "t1",
+    "market_structure_break": "t1.5",
+    "rsi_divergence": "wide",
+    "support_resistance": "t1",
+    "trendline_bounce": "atr"
+   }
+  },
+  {
+   "test_from": "2025-07-01",
+   "changed": {
+    "ema_crossover": "t3",
+    "ema_pullback": "atr",
+    "fair_value_gap": "t3",
+    "ichimoku": "atr",
+    "liquidity_sweep": "atr",
+    "macd_momentum": "trail",
+    "market_structure_break": "t1.5",
+    "opening_range_breakout": "atr",
+    "order_block_retest": "t1",
+    "rsi_divergence": "t1",
+    "support_resistance": "t1",
+    "trendline_bounce": "atr"
+   }
+  },
+  {
+   "test_from": "2025-10-01",
+   "changed": {
+    "ema_crossover": "t3",
+    "ema_pullback": "atr",
+    "fair_value_gap": "t3",
+    "inside_bar_breakout": "wide",
+    "liquidity_sweep": "atr",
+    "market_structure_break": "t3",
+    "opening_range_breakout": "atr",
+    "order_block_retest": "t1",
+    "support_resistance": "t1",
+    "trendline_bounce": "atr"
+   }
+  },
+  {
+   "test_from": "2026-01-01",
+   "changed": {
+    "ema_crossover": "t3",
+    "ema_pullback": "atr",
+    "fair_value_gap": "t3",
+    "ichimoku": "wide",
+    "inside_bar_breakout": "wide",
+    "liquidity_sweep": "wide",
+    "market_structure_break": "t1.5",
+    "opening_range_breakout": "atr",
+    "support_resistance": "wide",
+    "trendline_bounce": "atr",
+    "trendline_break_retest": "atr"
+   }
+  },
+  {
+   "test_from": "2026-04-01",
+   "changed": {
+    "ema_crossover": "t3",
+    "ichimoku": "wide",
+    "inside_bar_breakout": "wide",
+    "liquidity_sweep": "t1",
+    "market_structure_break": "t1.5",
+    "opening_range_breakout": "atr",
+    "support_resistance": "wide",
+    "trendline_bounce": "atr",
+    "trendline_break_retest": "wide"
+   }
+  },
+  {
+   "test_from": "2026-07-01",
+   "changed": {
+    "ema_crossover": "t3",
+    "fair_value_gap": "t3",
+    "ichimoku": "wide",
+    "inside_bar_breakout": "wide",
+    "liquidity_sweep": "atr",
+    "market_structure_break": "t1.5",
+    "opening_range_breakout": "atr",
+    "support_resistance": "wide",
+    "trendline_bounce": "atr",
+    "trendline_break_retest": "atr"
+   }
+  }
+ ],
+ "all_instruments": {
+  "policies": {
+   "baseline": {
+    "signals_selected": 74000,
+    "selection_rate": 1.0,
+    "costs_1x": {
+     "trades": 47569,
+     "sufficient": true,
+     "wins": 15400,
+     "losses": 32132,
+     "ambiguous": 37,
+     "win_rate": 0.324,
+     "expectancy_r": -0.0955,
+     "expectancy_ci95": [
+      -0.1084,
+      -0.0827
+     ],
+     "p_expectancy_positive": 0.0,
+     "t_stat": -14.12,
+     "profit_factor": 0.867,
+     "total_r": -4541.32,
+     "max_drawdown_r": 4662.802,
+     "avg_win_r": 1.916,
+     "avg_loss_r": -1.058,
+     "trades_per_month": 2590.6
+    },
+    "costs_2x": {
+     "trades": 47569,
+     "expectancy_r": -0.1858,
+     "profit_factor": 0.761,
+     "total_r": -8837.46
+    },
+    "by_fold": {
+     "2026-07-01": {
+      "trades": 8648,
+      "win_rate": 0.3116,
+      "expectancy_r": -0.1418,
+      "profit_factor": 0.806,
+      "total_r": -1226.19,
+      "max_drawdown_r": 1236.97,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 7898,
+      "win_rate": 0.3267,
+      "expectancy_r": -0.0826,
+      "profit_factor": 0.885,
+      "total_r": -652.77,
+      "max_drawdown_r": 686.092,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 7896,
+      "win_rate": 0.3232,
+      "expectancy_r": -0.1007,
+      "profit_factor": 0.86,
+      "total_r": -795.25,
+      "max_drawdown_r": 864.104,
+      "sufficient": true
+     },
+     "2025-04-01": {
+      "trades": 7770,
+      "win_rate": 0.33,
+      "expectancy_r": -0.0627,
+      "profit_factor": 0.91,
+      "total_r": -487.25,
+      "max_drawdown_r": 680.378,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 7691,
+      "win_rate": 0.3225,
+      "expectancy_r": -0.1171,
+      "profit_factor": 0.839,
+      "total_r": -900.4,
+      "max_drawdown_r": 906.394,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 7666,
+      "win_rate": 0.3315,
+      "expectancy_r": -0.0625,
+      "profit_factor": 0.911,
+      "total_r": -479.46,
+      "max_drawdown_r": 502.514,
+      "sufficient": true
+     }
+    }
+   },
+   "exits_only": {
+    "signals_selected": 74000,
+    "selection_rate": 1.0,
+    "costs_1x": {
+     "trades": 44906,
+     "sufficient": true,
+     "wins": 15798,
+     "losses": 29082,
+     "ambiguous": 26,
+     "win_rate": 0.352,
+     "expectancy_r": -0.0666,
+     "expectancy_ci95": [
+      -0.0794,
+      -0.0539
+     ],
+     "p_expectancy_positive": 0.0,
+     "t_stat": -10.21,
+     "profit_factor": 0.901,
+     "total_r": -2990.7,
+     "max_drawdown_r": 3135.047,
+     "avg_win_r": 1.718,
+     "avg_loss_r": -1.035,
+     "trades_per_month": 2445.6
+    },
+    "costs_2x": {
+     "trades": 44906,
+     "expectancy_r": -0.1366,
+     "profit_factor": 0.809,
+     "total_r": -6135.52
+    },
+    "by_fold": {
+     "2026-07-01": {
+      "trades": 7909,
+      "win_rate": 0.3421,
+      "expectancy_r": -0.1006,
+      "profit_factor": 0.853,
+      "total_r": -795.39,
+      "max_drawdown_r": 801.807,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 7882,
+      "win_rate": 0.3376,
+      "expectancy_r": -0.0781,
+      "profit_factor": 0.884,
+      "total_r": -615.56,
+      "max_drawdown_r": 723.681,
+      "sufficient": true
+     },
+     "2025-04-01": {
+      "trades": 7533,
+      "win_rate": 0.3659,
+      "expectancy_r": -0.0543,
+      "profit_factor": 0.917,
+      "total_r": -408.89,
+      "max_drawdown_r": 617.107,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 7462,
+      "win_rate": 0.3449,
+      "expectancy_r": -0.0577,
+      "profit_factor": 0.916,
+      "total_r": -430.56,
+      "max_drawdown_r": 466.01,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 7092,
+      "win_rate": 0.3594,
+      "expectancy_r": -0.0779,
+      "profit_factor": 0.884,
+      "total_r": -552.49,
+      "max_drawdown_r": 555.266,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 7028,
+      "win_rate": 0.3644,
+      "expectancy_r": -0.0267,
+      "profit_factor": 0.959,
+      "total_r": -187.82,
+      "max_drawdown_r": 322.078,
+      "sufficient": true
+     }
+    }
+   },
+   "quality_A": {
+    "signals_selected": 2832,
+    "selection_rate": 0.0383,
+    "costs_1x": {
+     "trades": 2503,
+     "sufficient": true,
+     "wins": 913,
+     "losses": 1589,
+     "ambiguous": 1,
+     "win_rate": 0.3649,
+     "expectancy_r": -0.0008,
+     "expectancy_ci95": [
+      -0.054,
+      0.0518
+     ],
+     "p_expectancy_positive": 0.493,
+     "t_stat": -0.03,
+     "profit_factor": 0.999,
+     "total_r": -1.91,
+     "max_drawdown_r": 114.677,
+     "avg_win_r": 1.729,
+     "avg_loss_r": -0.994,
+     "trades_per_month": 136.3
+    },
+    "costs_2x": {
+     "trades": 2503,
+     "expectancy_r": -0.0278,
+     "profit_factor": 0.957,
+     "total_r": -69.57
+    },
+    "by_fold": {
+     "2025-04-01": {
+      "trades": 780,
+      "win_rate": 0.3423,
+      "expectancy_r": -0.0618,
+      "profit_factor": 0.906,
+      "total_r": -48.21,
+      "max_drawdown_r": 102.282,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 507,
+      "win_rate": 0.3814,
+      "expectancy_r": 0.0223,
+      "profit_factor": 1.036,
+      "total_r": 11.31,
+      "max_drawdown_r": 64.792,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 382,
+      "win_rate": 0.4005,
+      "expectancy_r": 0.1407,
+      "profit_factor": 1.249,
+      "total_r": 53.75,
+      "max_drawdown_r": 22.211,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 315,
+      "win_rate": 0.3905,
+      "expectancy_r": 0.0588,
+      "profit_factor": 1.097,
+      "total_r": 18.52,
+      "max_drawdown_r": 26.161,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 289,
+      "win_rate": 0.3426,
+      "expectancy_r": -0.0855,
+      "profit_factor": 0.873,
+      "total_r": -24.7,
+      "max_drawdown_r": 57.732,
+      "sufficient": true
+     },
+     "2026-07-01": {
+      "trades": 230,
+      "win_rate": 0.3391,
+      "expectancy_r": -0.0548,
+      "profit_factor": 0.916,
+      "total_r": -12.59,
+      "max_drawdown_r": 19.856,
+      "sufficient": true
+     }
+    }
+   },
+   "quality_B": {
+    "signals_selected": 10772,
+    "selection_rate": 0.1456,
+    "costs_1x": {
+     "trades": 8921,
+     "sufficient": true,
+     "wins": 3154,
+     "losses": 5765,
+     "ambiguous": 2,
+     "win_rate": 0.3536,
+     "expectancy_r": -0.035,
+     "expectancy_ci95": [
+      -0.0627,
+      -0.0075
+     ],
+     "p_expectancy_positive": 0.008,
+     "t_stat": -2.43,
+     "profit_factor": 0.946,
+     "total_r": -312.33,
+     "max_drawdown_r": 387.276,
+     "avg_win_r": 1.735,
+     "avg_loss_r": -1.003,
+     "trades_per_month": 485.8
+    },
+    "costs_2x": {
+     "trades": 8921,
+     "expectancy_r": -0.0751,
+     "profit_factor": 0.889,
+     "total_r": -669.66
+    },
+    "by_fold": {
+     "2025-04-01": {
+      "trades": 2032,
+      "win_rate": 0.3469,
+      "expectancy_r": -0.0527,
+      "profit_factor": 0.92,
+      "total_r": -107.14,
+      "max_drawdown_r": 214.126,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 1616,
+      "win_rate": 0.3662,
+      "expectancy_r": -0.0133,
+      "profit_factor": 0.98,
+      "total_r": -21.44,
+      "max_drawdown_r": 132.279,
+      "sufficient": true
+     },
+     "2026-07-01": {
+      "trades": 1366,
+      "win_rate": 0.347,
+      "expectancy_r": -0.0804,
+      "profit_factor": 0.876,
+      "total_r": -109.76,
+      "max_drawdown_r": 132.964,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 1331,
+      "win_rate": 0.3636,
+      "expectancy_r": 0.0214,
+      "profit_factor": 1.034,
+      "total_r": 28.5,
+      "max_drawdown_r": 54.497,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 1321,
+      "win_rate": 0.3376,
+      "expectancy_r": -0.074,
+      "profit_factor": 0.89,
+      "total_r": -97.78,
+      "max_drawdown_r": 133.708,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 1255,
+      "win_rate": 0.3618,
+      "expectancy_r": -0.0037,
+      "profit_factor": 0.994,
+      "total_r": -4.7,
+      "max_drawdown_r": 84.381,
+      "sufficient": true
+     }
+    }
+   },
+   "combined_A": {
+    "signals_selected": 3152,
+    "selection_rate": 0.0426,
+    "costs_1x": {
+     "trades": 2878,
+     "sufficient": true,
+     "wins": 1065,
+     "losses": 1812,
+     "ambiguous": 1,
+     "win_rate": 0.3702,
+     "expectancy_r": -0.0283,
+     "expectancy_ci95": [
+      -0.0776,
+      0.0201
+     ],
+     "p_expectancy_positive": 0.117,
+     "t_stat": -1.15,
+     "profit_factor": 0.955,
+     "total_r": -81.51,
+     "max_drawdown_r": 134.582,
+     "avg_win_r": 1.611,
+     "avg_loss_r": -0.991,
+     "trades_per_month": 156.7
+    },
+    "costs_2x": {
+     "trades": 2878,
+     "expectancy_r": -0.0629,
+     "profit_factor": 0.903,
+     "total_r": -181.11
+    },
+    "by_fold": {
+     "2025-04-01": {
+      "trades": 883,
+      "win_rate": 0.3749,
+      "expectancy_r": -0.0447,
+      "profit_factor": 0.929,
+      "total_r": -39.44,
+      "max_drawdown_r": 98.045,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 629,
+      "win_rate": 0.3583,
+      "expectancy_r": -0.0179,
+      "profit_factor": 0.972,
+      "total_r": -11.25,
+      "max_drawdown_r": 58.101,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 450,
+      "win_rate": 0.3733,
+      "expectancy_r": 0.0417,
+      "profit_factor": 1.07,
+      "total_r": 18.78,
+      "max_drawdown_r": 44.979,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 362,
+      "win_rate": 0.3702,
+      "expectancy_r": -0.0426,
+      "profit_factor": 0.931,
+      "total_r": -15.42,
+      "max_drawdown_r": 44.038,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 316,
+      "win_rate": 0.3544,
+      "expectancy_r": -0.1003,
+      "profit_factor": 0.847,
+      "total_r": -31.68,
+      "max_drawdown_r": 49.196,
+      "sufficient": true
+     },
+     "2026-07-01": {
+      "trades": 238,
+      "win_rate": 0.3992,
+      "expectancy_r": -0.0105,
+      "profit_factor": 0.982,
+      "total_r": -2.49,
+      "max_drawdown_r": 23.142,
+      "sufficient": true
+     }
+    }
+   },
+   "combined_B": {
+    "signals_selected": 12618,
+    "selection_rate": 0.1705,
+    "costs_1x": {
+     "trades": 10384,
+     "sufficient": true,
+     "wins": 3816,
+     "losses": 6565,
+     "ambiguous": 3,
+     "win_rate": 0.3676,
+     "expectancy_r": -0.0359,
+     "expectancy_ci95": [
+      -0.0613,
+      -0.0093
+     ],
+     "p_expectancy_positive": 0.005,
+     "t_stat": -2.75,
+     "profit_factor": 0.944,
+     "total_r": -373.2,
+     "max_drawdown_r": 448.881,
+     "avg_win_r": 1.634,
+     "avg_loss_r": -1.006,
+     "trades_per_month": 565.5
+    },
+    "costs_2x": {
+     "trades": 10384,
+     "expectancy_r": -0.0781,
+     "profit_factor": 0.882,
+     "total_r": -810.56
+    },
+    "by_fold": {
+     "2025-04-01": {
+      "trades": 2254,
+      "win_rate": 0.3744,
+      "expectancy_r": -0.0397,
+      "profit_factor": 0.937,
+      "total_r": -89.39,
+      "max_drawdown_r": 200.123,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 1945,
+      "win_rate": 0.3677,
+      "expectancy_r": -0.0112,
+      "profit_factor": 0.983,
+      "total_r": -21.77,
+      "max_drawdown_r": 138.954,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 1588,
+      "win_rate": 0.3696,
+      "expectancy_r": -0.0437,
+      "profit_factor": 0.932,
+      "total_r": -69.44,
+      "max_drawdown_r": 105.541,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 1561,
+      "win_rate": 0.3684,
+      "expectancy_r": -0.0421,
+      "profit_factor": 0.934,
+      "total_r": -65.74,
+      "max_drawdown_r": 132.635,
+      "sufficient": true
+     },
+     "2026-07-01": {
+      "trades": 1530,
+      "win_rate": 0.3562,
+      "expectancy_r": -0.0905,
+      "profit_factor": 0.859,
+      "total_r": -138.46,
+      "max_drawdown_r": 147.357,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 1506,
+      "win_rate": 0.3659,
+      "expectancy_r": 0.0077,
+      "profit_factor": 1.012,
+      "total_r": 11.6,
+      "max_drawdown_r": 78.002,
+      "sufficient": true
+     }
+    }
+   },
+   "combined_A_nocaps": {
+    "signals_selected": 4322,
+    "selection_rate": 0.0584,
+    "costs_1x": {
+     "trades": 3703,
+     "sufficient": true,
+     "wins": 1380,
+     "losses": 2322,
+     "ambiguous": 1,
+     "win_rate": 0.3728,
+     "expectancy_r": -0.0047,
+     "expectancy_ci95": [
+      -0.0476,
+      0.0381
+     ],
+     "p_expectancy_positive": 0.409,
+     "t_stat": -0.21,
+     "profit_factor": 0.992,
+     "total_r": -17.44,
+     "max_drawdown_r": 90.917,
+     "avg_win_r": 1.668,
+     "avg_loss_r": -0.998,
+     "trades_per_month": 201.7
+    },
+    "costs_2x": {
+     "trades": 3703,
+     "expectancy_r": -0.0425,
+     "profit_factor": 0.935,
+     "total_r": -157.2
+    },
+    "by_fold": {
+     "2025-04-01": {
+      "trades": 1122,
+      "win_rate": 0.3895,
+      "expectancy_r": 0.0093,
+      "profit_factor": 1.015,
+      "total_r": 10.41,
+      "max_drawdown_r": 74.477,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 825,
+      "win_rate": 0.3544,
+      "expectancy_r": -0.0185,
+      "profit_factor": 0.971,
+      "total_r": -15.29,
+      "max_drawdown_r": 61.305,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 557,
+      "win_rate": 0.3698,
+      "expectancy_r": 0.0529,
+      "profit_factor": 1.087,
+      "total_r": 29.46,
+      "max_drawdown_r": 33.643,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 453,
+      "win_rate": 0.3731,
+      "expectancy_r": -0.004,
+      "profit_factor": 0.994,
+      "total_r": -1.79,
+      "max_drawdown_r": 45.779,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 423,
+      "win_rate": 0.3617,
+      "expectancy_r": -0.0742,
+      "profit_factor": 0.887,
+      "total_r": -31.39,
+      "max_drawdown_r": 60.731,
+      "sufficient": true
+     },
+     "2026-07-01": {
+      "trades": 323,
+      "win_rate": 0.3808,
+      "expectancy_r": -0.0274,
+      "profit_factor": 0.956,
+      "total_r": -8.85,
+      "max_drawdown_r": 33.736,
+      "sufficient": true
+     }
+    }
+   },
+   "entry_confirm": {
+    "signals_selected": 74000,
+    "selection_rate": 1.0,
+    "costs_1x": {
+     "trades": 27585,
+     "sufficient": true,
+     "wins": 10858,
+     "losses": 16699,
+     "ambiguous": 28,
+     "win_rate": 0.394,
+     "expectancy_r": -0.0788,
+     "expectancy_ci95": [
+      -0.0947,
+      -0.0633
+     ],
+     "p_expectancy_positive": 0.0,
+     "t_stat": -10.13,
+     "profit_factor": 0.876,
+     "total_r": -2172.43,
+     "max_drawdown_r": 2257.065,
+     "avg_win_r": 1.41,
+     "avg_loss_r": -1.045,
+     "trades_per_month": 1502.3
+    },
+    "costs_2x": {
+     "trades": 27585,
+     "expectancy_r": -0.1521,
+     "profit_factor": 0.777,
+     "total_r": -4195.48
+    },
+    "by_fold": {
+     "2026-07-01": {
+      "trades": 5069,
+      "win_rate": 0.3686,
+      "expectancy_r": -0.1469,
+      "profit_factor": 0.777,
+      "total_r": -744.62,
+      "max_drawdown_r": 752.011,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 4650,
+      "win_rate": 0.4022,
+      "expectancy_r": -0.0702,
+      "profit_factor": 0.888,
+      "total_r": -326.25,
+      "max_drawdown_r": 360.488,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 4606,
+      "win_rate": 0.4036,
+      "expectancy_r": -0.0552,
+      "profit_factor": 0.912,
+      "total_r": -254.41,
+      "max_drawdown_r": 273.26,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 4441,
+      "win_rate": 0.3987,
+      "expectancy_r": -0.0663,
+      "profit_factor": 0.894,
+      "total_r": -294.55,
+      "max_drawdown_r": 345.614,
+      "sufficient": true
+     },
+     "2025-04-01": {
+      "trades": 4432,
+      "win_rate": 0.4008,
+      "expectancy_r": -0.042,
+      "profit_factor": 0.932,
+      "total_r": -185.96,
+      "max_drawdown_r": 343.699,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 4387,
+      "win_rate": 0.3932,
+      "expectancy_r": -0.0836,
+      "profit_factor": 0.87,
+      "total_r": -366.64,
+      "max_drawdown_r": 374.01,
+      "sufficient": true
+     }
+    }
+   },
+   "entry_pullback": {
+    "signals_selected": 74000,
+    "selection_rate": 1.0,
+    "costs_1x": {
+     "trades": 29967,
+     "sufficient": true,
+     "wins": 6424,
+     "losses": 23533,
+     "ambiguous": 10,
+     "win_rate": 0.2144,
+     "expectancy_r": -0.1723,
+     "expectancy_ci95": [
+      -0.1932,
+      -0.1509
+     ],
+     "p_expectancy_positive": 0.0,
+     "t_stat": -15.98,
+     "profit_factor": 0.799,
+     "total_r": -5163.56,
+     "max_drawdown_r": 5207.224,
+     "avg_win_r": 3.196,
+     "avg_loss_r": -1.091,
+     "trades_per_month": 1632.0
+    },
+    "costs_2x": {
+     "trades": 29967,
+     "expectancy_r": -0.2961,
+     "profit_factor": 0.687,
+     "total_r": -8873.59
+    },
+    "by_fold": {
+     "2026-07-01": {
+      "trades": 5398,
+      "win_rate": 0.2046,
+      "expectancy_r": -0.2388,
+      "profit_factor": 0.728,
+      "total_r": -1289.05,
+      "max_drawdown_r": 1293.122,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 5047,
+      "win_rate": 0.2185,
+      "expectancy_r": -0.1672,
+      "profit_factor": 0.806,
+      "total_r": -843.64,
+      "max_drawdown_r": 843.67,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 4952,
+      "win_rate": 0.2108,
+      "expectancy_r": -0.181,
+      "profit_factor": 0.79,
+      "total_r": -896.29,
+      "max_drawdown_r": 928.876,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 4872,
+      "win_rate": 0.2284,
+      "expectancy_r": -0.0933,
+      "profit_factor": 0.887,
+      "total_r": -454.64,
+      "max_drawdown_r": 475.266,
+      "sufficient": true
+     },
+     "2025-04-01": {
+      "trades": 4866,
+      "win_rate": 0.215,
+      "expectancy_r": -0.1448,
+      "profit_factor": 0.827,
+      "total_r": -704.49,
+      "max_drawdown_r": 811.222,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 4832,
+      "win_rate": 0.2103,
+      "expectancy_r": -0.2019,
+      "profit_factor": 0.768,
+      "total_r": -975.44,
+      "max_drawdown_r": 1002.693,
+      "sufficient": true
+     }
+    }
+   }
+  }
+ },
+ "target_instruments": {
+  "policies": {
+   "baseline": {
+    "signals_selected": 29452,
+    "selection_rate": 1.0,
+    "costs_1x": {
+     "trades": 18976,
+     "sufficient": true,
+     "wins": 6248,
+     "losses": 12715,
+     "ambiguous": 13,
+     "win_rate": 0.3295,
+     "expectancy_r": -0.0609,
+     "expectancy_ci95": [
+      -0.0808,
+      -0.0393
+     ],
+     "p_expectancy_positive": 0.0,
+     "t_stat": -5.76,
+     "profit_factor": 0.912,
+     "total_r": -1154.97,
+     "max_drawdown_r": 1211.073,
+     "avg_win_r": 1.912,
+     "avg_loss_r": -1.029,
+     "trades_per_month": 1033.4
+    },
+    "costs_2x": {
+     "trades": 18976,
+     "expectancy_r": -0.1261,
+     "profit_factor": 0.827,
+     "total_r": -2393.17
+    },
+    "by_fold": {
+     "2026-07-01": {
+      "trades": 3422,
+      "win_rate": 0.3043,
+      "expectancy_r": -0.1499,
+      "profit_factor": 0.79,
+      "total_r": -512.92,
+      "max_drawdown_r": 535.627,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 3242,
+      "win_rate": 0.3299,
+      "expectancy_r": -0.0578,
+      "profit_factor": 0.916,
+      "total_r": -187.48,
+      "max_drawdown_r": 247.395,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 3140,
+      "win_rate": 0.3298,
+      "expectancy_r": -0.0434,
+      "profit_factor": 0.937,
+      "total_r": -136.14,
+      "max_drawdown_r": 266.94,
+      "sufficient": true
+     },
+     "2025-04-01": {
+      "trades": 3098,
+      "win_rate": 0.33,
+      "expectancy_r": -0.0645,
+      "profit_factor": 0.907,
+      "total_r": -199.94,
+      "max_drawdown_r": 293.582,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 3051,
+      "win_rate": 0.3317,
+      "expectancy_r": -0.0612,
+      "profit_factor": 0.912,
+      "total_r": -186.79,
+      "max_drawdown_r": 213.66,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 3023,
+      "win_rate": 0.3544,
+      "expectancy_r": 0.0226,
+      "profit_factor": 1.034,
+      "total_r": 68.3,
+      "max_drawdown_r": 114.784,
+      "sufficient": true
+     }
+    }
+   },
+   "exits_only": {
+    "signals_selected": 29452,
+    "selection_rate": 1.0,
+    "costs_1x": {
+     "trades": 17950,
+     "sufficient": true,
+     "wins": 6370,
+     "losses": 11570,
+     "ambiguous": 10,
+     "win_rate": 0.3551,
+     "expectancy_r": -0.0414,
+     "expectancy_ci95": [
+      -0.0612,
+      -0.0211
+     ],
+     "p_expectancy_positive": 0.0,
+     "t_stat": -4.04,
+     "profit_factor": 0.937,
+     "total_r": -743.68,
+     "max_drawdown_r": 818.04,
+     "avg_win_r": 1.734,
+     "avg_loss_r": -1.018,
+     "trades_per_month": 977.5
+    },
+    "costs_2x": {
+     "trades": 17950,
+     "expectancy_r": -0.0921,
+     "profit_factor": 0.866,
+     "total_r": -1653.8
+    },
+    "by_fold": {
+     "2025-07-01": {
+      "trades": 3219,
+      "win_rate": 0.35,
+      "expectancy_r": -0.0113,
+      "profit_factor": 0.982,
+      "total_r": -36.41,
+      "max_drawdown_r": 152.428,
+      "sufficient": true
+     },
+     "2026-07-01": {
+      "trades": 3156,
+      "win_rate": 0.3295,
+      "expectancy_r": -0.1223,
+      "profit_factor": 0.821,
+      "total_r": -385.88,
+      "max_drawdown_r": 415.695,
+      "sufficient": true
+     },
+     "2025-04-01": {
+      "trades": 3007,
+      "win_rate": 0.3628,
+      "expectancy_r": -0.059,
+      "profit_factor": 0.91,
+      "total_r": -177.51,
+      "max_drawdown_r": 252.506,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 2962,
+      "win_rate": 0.3412,
+      "expectancy_r": -0.0445,
+      "profit_factor": 0.934,
+      "total_r": -131.8,
+      "max_drawdown_r": 241.775,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 2826,
+      "win_rate": 0.3659,
+      "expectancy_r": -0.0512,
+      "profit_factor": 0.921,
+      "total_r": -144.69,
+      "max_drawdown_r": 158.347,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 2780,
+      "win_rate": 0.3853,
+      "expectancy_r": 0.0477,
+      "profit_factor": 1.076,
+      "total_r": 132.61,
+      "max_drawdown_r": 117.86,
+      "sufficient": true
+     }
+    }
+   },
+   "quality_A": {
+    "signals_selected": 1895,
+    "selection_rate": 0.0643,
+    "costs_1x": {
+     "trades": 1646,
+     "sufficient": true,
+     "wins": 591,
+     "losses": 1055,
+     "ambiguous": 0,
+     "win_rate": 0.3591,
+     "expectancy_r": -0.0041,
+     "expectancy_ci95": [
+      -0.0716,
+      0.0616
+     ],
+     "p_expectancy_positive": 0.448,
+     "t_stat": -0.12,
+     "profit_factor": 0.994,
+     "total_r": -6.68,
+     "max_drawdown_r": 103.607,
+     "avg_win_r": 1.764,
+     "avg_loss_r": -0.994,
+     "trades_per_month": 89.6
+    },
+    "costs_2x": {
+     "trades": 1646,
+     "expectancy_r": -0.0296,
+     "profit_factor": 0.955,
+     "total_r": -48.77
+    },
+    "by_fold": {
+     "2025-04-01": {
+      "trades": 498,
+      "win_rate": 0.3133,
+      "expectancy_r": -0.1504,
+      "profit_factor": 0.78,
+      "total_r": -74.89,
+      "max_drawdown_r": 103.607,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 285,
+      "win_rate": 0.3789,
+      "expectancy_r": 0.0519,
+      "profit_factor": 1.083,
+      "total_r": 14.8,
+      "max_drawdown_r": 43.855,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 239,
+      "win_rate": 0.3598,
+      "expectancy_r": -0.0363,
+      "profit_factor": 0.945,
+      "total_r": -8.68,
+      "max_drawdown_r": 47.999,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 217,
+      "win_rate": 0.3871,
+      "expectancy_r": 0.1318,
+      "profit_factor": 1.225,
+      "total_r": 28.59,
+      "max_drawdown_r": 17.219,
+      "sufficient": true
+     },
+     "2026-07-01": {
+      "trades": 206,
+      "win_rate": 0.3398,
+      "expectancy_r": -0.0379,
+      "profit_factor": 0.942,
+      "total_r": -7.81,
+      "max_drawdown_r": 19.221,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 201,
+      "win_rate": 0.4328,
+      "expectancy_r": 0.2055,
+      "profit_factor": 1.368,
+      "total_r": 41.3,
+      "max_drawdown_r": 10.372,
+      "sufficient": true
+     }
+    }
+   },
+   "quality_B": {
+    "signals_selected": 6016,
+    "selection_rate": 0.2043,
+    "costs_1x": {
+     "trades": 4891,
+     "sufficient": true,
+     "wins": 1712,
+     "losses": 3178,
+     "ambiguous": 1,
+     "win_rate": 0.3501,
+     "expectancy_r": -0.0421,
+     "expectancy_ci95": [
+      -0.0803,
+      -0.0049
+     ],
+     "p_expectancy_positive": 0.013,
+     "t_stat": -2.17,
+     "profit_factor": 0.935,
+     "total_r": -205.83,
+     "max_drawdown_r": 232.532,
+     "avg_win_r": 1.732,
+     "avg_loss_r": -0.998,
+     "trades_per_month": 266.4
+    },
+    "costs_2x": {
+     "trades": 4891,
+     "expectancy_r": -0.0749,
+     "profit_factor": 0.888,
+     "total_r": -366.36
+    },
+    "by_fold": {
+     "2025-04-01": {
+      "trades": 1076,
+      "win_rate": 0.3197,
+      "expectancy_r": -0.14,
+      "profit_factor": 0.795,
+      "total_r": -150.67,
+      "max_drawdown_r": 166.277,
+      "sufficient": true
+     },
+     "2026-07-01": {
+      "trades": 859,
+      "win_rate": 0.3446,
+      "expectancy_r": -0.0858,
+      "profit_factor": 0.867,
+      "total_r": -73.73,
+      "max_drawdown_r": 91.19,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 840,
+      "win_rate": 0.3611,
+      "expectancy_r": -0.0168,
+      "profit_factor": 0.974,
+      "total_r": -14.12,
+      "max_drawdown_r": 73.642,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 763,
+      "win_rate": 0.3277,
+      "expectancy_r": -0.11,
+      "profit_factor": 0.837,
+      "total_r": -83.89,
+      "max_drawdown_r": 110.082,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 677,
+      "win_rate": 0.3663,
+      "expectancy_r": 0.0474,
+      "profit_factor": 1.076,
+      "total_r": 32.09,
+      "max_drawdown_r": 34.631,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 676,
+      "win_rate": 0.4009,
+      "expectancy_r": 0.125,
+      "profit_factor": 1.21,
+      "total_r": 84.49,
+      "max_drawdown_r": 55.82,
+      "sufficient": true
+     }
+    }
+   },
+   "combined_A": {
+    "signals_selected": 1935,
+    "selection_rate": 0.0657,
+    "costs_1x": {
+     "trades": 1750,
+     "sufficient": true,
+     "wins": 632,
+     "losses": 1117,
+     "ambiguous": 1,
+     "win_rate": 0.3613,
+     "expectancy_r": -0.0472,
+     "expectancy_ci95": [
+      -0.111,
+      0.0141
+     ],
+     "p_expectancy_positive": 0.068,
+     "t_stat": -1.5,
+     "profit_factor": 0.925,
+     "total_r": -82.59,
+     "max_drawdown_r": 111.638,
+     "avg_win_r": 1.612,
+     "avg_loss_r": -0.985,
+     "trades_per_month": 95.3
+    },
+    "costs_2x": {
+     "trades": 1750,
+     "expectancy_r": -0.0772,
+     "profit_factor": 0.881,
+     "total_r": -135.02
+    },
+    "by_fold": {
+     "2025-04-01": {
+      "trades": 539,
+      "win_rate": 0.3321,
+      "expectancy_r": -0.1525,
+      "profit_factor": 0.773,
+      "total_r": -82.18,
+      "max_drawdown_r": 97.612,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 275,
+      "win_rate": 0.3394,
+      "expectancy_r": -0.0461,
+      "profit_factor": 0.928,
+      "total_r": -12.69,
+      "max_drawdown_r": 31.973,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 257,
+      "win_rate": 0.358,
+      "expectancy_r": -0.0894,
+      "profit_factor": 0.863,
+      "total_r": -22.98,
+      "max_drawdown_r": 42.873,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 242,
+      "win_rate": 0.3636,
+      "expectancy_r": 0.0269,
+      "profit_factor": 1.044,
+      "total_r": 6.5,
+      "max_drawdown_r": 37.003,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 232,
+      "win_rate": 0.4181,
+      "expectancy_r": 0.1078,
+      "profit_factor": 1.192,
+      "total_r": 25.02,
+      "max_drawdown_r": 22.239,
+      "sufficient": true
+     },
+     "2026-07-01": {
+      "trades": 205,
+      "win_rate": 0.4049,
+      "expectancy_r": 0.0182,
+      "profit_factor": 1.031,
+      "total_r": 3.73,
+      "max_drawdown_r": 20.031,
+      "sufficient": true
+     }
+    }
+   },
+   "combined_B": {
+    "signals_selected": 6682,
+    "selection_rate": 0.2269,
+    "costs_1x": {
+     "trades": 5375,
+     "sufficient": true,
+     "wins": 1955,
+     "losses": 3419,
+     "ambiguous": 1,
+     "win_rate": 0.3638,
+     "expectancy_r": -0.0424,
+     "expectancy_ci95": [
+      -0.0775,
+      -0.0079
+     ],
+     "p_expectancy_positive": 0.008,
+     "t_stat": -2.35,
+     "profit_factor": 0.933,
+     "total_r": -228.02,
+     "max_drawdown_r": 253.41,
+     "avg_win_r": 1.63,
+     "avg_loss_r": -0.998,
+     "trades_per_month": 292.7
+    },
+    "costs_2x": {
+     "trades": 5375,
+     "expectancy_r": -0.0791,
+     "profit_factor": 0.879,
+     "total_r": -425.3
+    },
+    "by_fold": {
+     "2025-04-01": {
+      "trades": 1159,
+      "win_rate": 0.3451,
+      "expectancy_r": -0.1184,
+      "profit_factor": 0.821,
+      "total_r": -137.24,
+      "max_drawdown_r": 161.4,
+      "sufficient": true
+     },
+     "2026-07-01": {
+      "trades": 926,
+      "win_rate": 0.3553,
+      "expectancy_r": -0.0898,
+      "profit_factor": 0.859,
+      "total_r": -83.17,
+      "max_drawdown_r": 100.617,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 906,
+      "win_rate": 0.3609,
+      "expectancy_r": -0.0752,
+      "profit_factor": 0.883,
+      "total_r": -68.14,
+      "max_drawdown_r": 91.864,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 876,
+      "win_rate": 0.3669,
+      "expectancy_r": 0.0066,
+      "profit_factor": 1.01,
+      "total_r": 5.77,
+      "max_drawdown_r": 80.025,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 795,
+      "win_rate": 0.4013,
+      "expectancy_r": 0.0626,
+      "profit_factor": 1.106,
+      "total_r": 49.74,
+      "max_drawdown_r": 69.893,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 713,
+      "win_rate": 0.3633,
+      "expectancy_r": 0.007,
+      "profit_factor": 1.011,
+      "total_r": 5.02,
+      "max_drawdown_r": 46.182,
+      "sufficient": true
+     }
+    }
+   },
+   "combined_A_nocaps": {
+    "signals_selected": 2706,
+    "selection_rate": 0.0919,
+    "costs_1x": {
+     "trades": 2280,
+     "sufficient": true,
+     "wins": 821,
+     "losses": 1458,
+     "ambiguous": 1,
+     "win_rate": 0.3602,
+     "expectancy_r": -0.0335,
+     "expectancy_ci95": [
+      -0.0875,
+      0.024
+     ],
+     "p_expectancy_positive": 0.117,
+     "t_stat": -1.19,
+     "profit_factor": 0.947,
+     "total_r": -76.49,
+     "max_drawdown_r": 119.923,
+     "avg_win_r": 1.671,
+     "avg_loss_r": -0.993,
+     "trades_per_month": 124.2
+    },
+    "costs_2x": {
+     "trades": 2280,
+     "expectancy_r": -0.0668,
+     "profit_factor": 0.898,
+     "total_r": -152.27
+    },
+    "by_fold": {
+     "2025-04-01": {
+      "trades": 697,
+      "win_rate": 0.3472,
+      "expectancy_r": -0.0968,
+      "profit_factor": 0.852,
+      "total_r": -67.5,
+      "max_drawdown_r": 88.126,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 376,
+      "win_rate": 0.328,
+      "expectancy_r": -0.077,
+      "profit_factor": 0.883,
+      "total_r": -28.94,
+      "max_drawdown_r": 38.925,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 329,
+      "win_rate": 0.3708,
+      "expectancy_r": -0.0379,
+      "profit_factor": 0.941,
+      "total_r": -12.46,
+      "max_drawdown_r": 43.537,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 312,
+      "win_rate": 0.3558,
+      "expectancy_r": 0.0201,
+      "profit_factor": 1.032,
+      "total_r": 6.27,
+      "max_drawdown_r": 41.164,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 292,
+      "win_rate": 0.4007,
+      "expectancy_r": 0.0893,
+      "profit_factor": 1.152,
+      "total_r": 26.06,
+      "max_drawdown_r": 28.057,
+      "sufficient": true
+     },
+     "2026-07-01": {
+      "trades": 274,
+      "win_rate": 0.3869,
+      "expectancy_r": 0.0003,
+      "profit_factor": 1.0,
+      "total_r": 0.08,
+      "max_drawdown_r": 22.446,
+      "sufficient": true
+     }
+    }
+   },
+   "entry_confirm": {
+    "signals_selected": 29452,
+    "selection_rate": 1.0,
+    "costs_1x": {
+     "trades": 10993,
+     "sufficient": true,
+     "wins": 4313,
+     "losses": 6672,
+     "ambiguous": 8,
+     "win_rate": 0.3926,
+     "expectancy_r": -0.064,
+     "expectancy_ci95": [
+      -0.0878,
+      -0.0409
+     ],
+     "p_expectancy_positive": 0.0,
+     "t_stat": -5.31,
+     "profit_factor": 0.897,
+     "total_r": -703.4,
+     "max_drawdown_r": 749.272,
+     "avg_win_r": 1.417,
+     "avg_loss_r": -1.02,
+     "trades_per_month": 598.7
+    },
+    "costs_2x": {
+     "trades": 10993,
+     "expectancy_r": -0.1189,
+     "profit_factor": 0.818,
+     "total_r": -1307.42
+    },
+    "by_fold": {
+     "2026-07-01": {
+      "trades": 2004,
+      "win_rate": 0.3498,
+      "expectancy_r": -0.1679,
+      "profit_factor": 0.745,
+      "total_r": -336.46,
+      "max_drawdown_r": 341.607,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 1881,
+      "win_rate": 0.4025,
+      "expectancy_r": -0.0547,
+      "profit_factor": 0.91,
+      "total_r": -102.96,
+      "max_drawdown_r": 120.568,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 1826,
+      "win_rate": 0.3995,
+      "expectancy_r": -0.0503,
+      "profit_factor": 0.918,
+      "total_r": -91.84,
+      "max_drawdown_r": 160.18,
+      "sufficient": true
+     },
+     "2025-04-01": {
+      "trades": 1779,
+      "win_rate": 0.4074,
+      "expectancy_r": -0.0267,
+      "profit_factor": 0.956,
+      "total_r": -47.52,
+      "max_drawdown_r": 133.038,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 1761,
+      "win_rate": 0.3952,
+      "expectancy_r": -0.0489,
+      "profit_factor": 0.922,
+      "total_r": -86.16,
+      "max_drawdown_r": 111.634,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 1742,
+      "win_rate": 0.4064,
+      "expectancy_r": -0.0221,
+      "profit_factor": 0.963,
+      "total_r": -38.47,
+      "max_drawdown_r": 113.236,
+      "sufficient": true
+     }
+    }
+   },
+   "entry_pullback": {
+    "signals_selected": 29452,
+    "selection_rate": 1.0,
+    "costs_1x": {
+     "trades": 11990,
+     "sufficient": true,
+     "wins": 2655,
+     "losses": 9330,
+     "ambiguous": 5,
+     "win_rate": 0.2215,
+     "expectancy_r": -0.1084,
+     "expectancy_ci95": [
+      -0.1412,
+      -0.0745
+     ],
+     "p_expectancy_positive": 0.0,
+     "t_stat": -6.34,
+     "profit_factor": 0.867,
+     "total_r": -1300.31,
+     "max_drawdown_r": 1321.165,
+     "avg_win_r": 3.204,
+     "avg_loss_r": -1.051,
+     "trades_per_month": 653.0
+    },
+    "costs_2x": {
+     "trades": 11990,
+     "expectancy_r": -0.193,
+     "profit_factor": 0.779,
+     "total_r": -2314.64
+    },
+    "by_fold": {
+     "2026-07-01": {
+      "trades": 2142,
+      "win_rate": 0.2018,
+      "expectancy_r": -0.2176,
+      "profit_factor": 0.742,
+      "total_r": -466.1,
+      "max_drawdown_r": 469.046,
+      "sufficient": true
+     },
+     "2025-07-01": {
+      "trades": 2072,
+      "win_rate": 0.2199,
+      "expectancy_r": -0.1054,
+      "profit_factor": 0.87,
+      "total_r": -218.48,
+      "max_drawdown_r": 262.4,
+      "sufficient": true
+     },
+     "2025-10-01": {
+      "trades": 2024,
+      "win_rate": 0.2224,
+      "expectancy_r": -0.1021,
+      "profit_factor": 0.875,
+      "total_r": -206.65,
+      "max_drawdown_r": 234.776,
+      "sufficient": true
+     },
+     "2026-01-01": {
+      "trades": 1963,
+      "win_rate": 0.2532,
+      "expectancy_r": 0.0345,
+      "profit_factor": 1.044,
+      "total_r": 67.82,
+      "max_drawdown_r": 92.701,
+      "sufficient": true
+     },
+     "2026-04-01": {
+      "trades": 1915,
+      "win_rate": 0.2287,
+      "expectancy_r": -0.0768,
+      "profit_factor": 0.906,
+      "total_r": -147.08,
+      "max_drawdown_r": 165.311,
+      "sufficient": true
+     },
+     "2025-04-01": {
+      "trades": 1874,
+      "win_rate": 0.2044,
+      "expectancy_r": -0.176,
+      "profit_factor": 0.789,
+      "total_r": -329.82,
+      "max_drawdown_r": 385.371,
+      "sufficient": true
+     }
+    }
+   }
+  }
+ },
+ "grade_calibration": {
+  "base_exits": {
+   "A+": {
+    "trades": 175,
+    "win_rate": 0.3543,
+    "expectancy_r": -0.0187,
+    "profit_factor": 0.97,
+    "expectancy_ci95": [
+     -0.2157,
+     0.1747
+    ]
+   },
+   "A": {
+    "trades": 2657,
+    "win_rate": 0.3701,
+    "expectancy_r": 0.0245,
+    "profit_factor": 1.039,
+    "expectancy_ci95": [
+     -0.028,
+     0.077
+    ]
+   },
+   "B": {
+    "trades": 7940,
+    "win_rate": 0.3445,
+    "expectancy_r": -0.0509,
+    "profit_factor": 0.923,
+    "expectancy_ci95": [
+     -0.0803,
+     -0.0213
+    ]
+   },
+   "C": {
+    "trades": 23395,
+    "win_rate": 0.3484,
+    "expectancy_r": -0.0213,
+    "profit_factor": 0.968,
+    "expectancy_ci95": [
+     -0.0398,
+     -0.0031
+    ]
+   },
+   "REJECTED": {
+    "trades": 39833,
+    "win_rate": 0.2997,
+    "expectancy_r": -0.1478,
+    "profit_factor": 0.806,
+    "expectancy_ci95": [
+     -0.1631,
+     -0.1323
+    ]
+   }
+  },
+  "combined": {
+   "A+": {
+    "trades": 184,
+    "win_rate": 0.3859,
+    "expectancy_r": -0.0391,
+    "profit_factor": 0.935,
+    "expectancy_ci95": [
+     -0.2158,
+     0.1515
+    ]
+   },
+   "A": {
+    "trades": 2968,
+    "win_rate": 0.3711,
+    "expectancy_r": -0.0173,
+    "profit_factor": 0.972,
+    "expectancy_ci95": [
+     -0.0648,
+     0.0304
+    ]
+   },
+   "B": {
+    "trades": 9466,
+    "win_rate": 0.3642,
+    "expectancy_r": -0.0361,
+    "profit_factor": 0.944,
+    "expectancy_ci95": [
+     -0.0625,
+     -0.0089
+    ]
+   },
+   "C": {
+    "trades": 28586,
+    "win_rate": 0.3591,
+    "expectancy_r": -0.03,
+    "profit_factor": 0.955,
+    "expectancy_ci95": [
+     -0.0461,
+     -0.0131
+    ]
+   },
+   "REJECTED": {
+    "trades": 32796,
+    "win_rate": 0.3353,
+    "expectancy_r": -0.1028,
+    "profit_factor": 0.854,
+    "expectancy_ci95": [
+     -0.1181,
+     -0.0876
+    ]
+   }
+  },
+  "target_instruments": {
+   "A+": {
+    "trades": 130,
+    "win_rate": 0.3615,
+    "expectancy_r": 0.0304,
+    "profit_factor": 1.05,
+    "expectancy_ci95": [
+     -0.1992,
+     0.27
+    ]
+   },
+   "A": {
+    "trades": 1765,
+    "win_rate": 0.3643,
+    "expectancy_r": 0.0197,
+    "profit_factor": 1.031,
+    "expectancy_ci95": [
+     -0.0442,
+     0.0858
+    ]
+   },
+   "B": {
+    "trades": 4121,
+    "win_rate": 0.3439,
+    "expectancy_r": -0.0527,
+    "profit_factor": 0.92,
+    "expectancy_ci95": [
+     -0.0944,
+     -0.0107
+    ]
+   },
+   "C": {
+    "trades": 10591,
+    "win_rate": 0.3511,
+    "expectancy_r": 0.0002,
+    "profit_factor": 1.0,
+    "expectancy_ci95": [
+     -0.0275,
+     0.0276
+    ]
+   },
+   "REJECTED": {
+    "trades": 12845,
+    "win_rate": 0.2986,
+    "expectancy_r": -0.1114,
+    "profit_factor": 0.849,
+    "expectancy_ci95": [
+     -0.1378,
+     -0.0848
+    ]
+   }
+  }
+ },
+ "random_control": {
+  "combined_A": {
+   "seeds": 20,
+   "expectancy_r_mean": -0.0646,
+   "expectancy_r_range": [
+    -0.1085,
+    -0.0316
+   ]
+  },
+  "quality_A": {
+   "seeds": 20,
+   "expectancy_r_mean": -0.0561,
+   "expectancy_r_range": [
+    -0.0908,
+    -0.0119
+   ]
+  }
+ },
+ "breakdowns": {
+  "symbol": {
+   "baseline": {
+    "BTCUSD": {
+     "trades": 3649,
+     "win_rate": 0.336,
+     "expectancy_r": -0.0078,
+     "profit_factor": 0.988,
+     "total_r": -28.6,
+     "max_drawdown_r": 96.137,
+     "sufficient": true
+    },
+    "ETHUSD": {
+     "trades": 3476,
+     "win_rate": 0.2917,
+     "expectancy_r": -0.1711,
+     "profit_factor": 0.773,
+     "total_r": -594.65,
+     "max_drawdown_r": 627.564,
+     "sufficient": true
+    },
+    "GER40": {
+     "trades": 3180,
+     "win_rate": 0.3439,
+     "expectancy_r": -0.0502,
+     "profit_factor": 0.925,
+     "total_r": -159.66,
+     "max_drawdown_r": 205.673,
+     "sufficient": true
+    },
+    "EURUSD": {
+     "trades": 3008,
+     "win_rate": 0.326,
+     "expectancy_r": -0.0982,
+     "profit_factor": 0.863,
+     "total_r": -295.27,
+     "max_drawdown_r": 348.305,
+     "sufficient": true
+    },
+    "USDCHF": {
+     "trades": 2979,
+     "win_rate": 0.2875,
+     "expectancy_r": -0.2588,
+     "profit_factor": 0.676,
+     "total_r": -770.97,
+     "max_drawdown_r": 790.427,
+     "sufficient": true
+    },
+    "GBPUSD": {
+     "trades": 2942,
+     "win_rate": 0.3156,
+     "expectancy_r": -0.1148,
+     "profit_factor": 0.843,
+     "total_r": -337.65,
+     "max_drawdown_r": 420.29,
+     "sufficient": true
+    },
+    "US500": {
+     "trades": 2938,
+     "win_rate": 0.3271,
+     "expectancy_r": -0.0971,
+     "profit_factor": 0.86,
+     "total_r": -285.17,
+     "max_drawdown_r": 313.468,
+     "sufficient": true
+    },
+    "NAS100": {
+     "trades": 2937,
+     "win_rate": 0.3305,
+     "expectancy_r": -0.0838,
+     "profit_factor": 0.878,
+     "total_r": -246.07,
+     "max_drawdown_r": 279.577,
+     "sufficient": true
+    },
+    "GBPJPY": {
+     "trades": 2934,
+     "win_rate": 0.3054,
+     "expectancy_r": -0.1516,
+     "profit_factor": 0.795,
+     "total_r": -444.73,
+     "max_drawdown_r": 452.792,
+     "sufficient": true
+    },
+    "EURJPY": {
+     "trades": 2866,
+     "win_rate": 0.3251,
+     "expectancy_r": -0.0977,
+     "profit_factor": 0.865,
+     "total_r": -280.05,
+     "max_drawdown_r": 305.307,
+     "sufficient": true
+    },
+    "USDJPY": {
+     "trades": 2847,
+     "win_rate": 0.3465,
+     "expectancy_r": -0.0352,
+     "profit_factor": 0.95,
+     "total_r": -100.15,
+     "max_drawdown_r": 240.331,
+     "sufficient": true
+    },
+    "NZDUSD": {
+     "trades": 2841,
+     "win_rate": 0.3187,
+     "expectancy_r": -0.1397,
+     "profit_factor": 0.814,
+     "total_r": -396.84,
+     "max_drawdown_r": 427.788,
+     "sufficient": true
+    },
+    "XAUUSD": {
+     "trades": 2796,
+     "win_rate": 0.353,
+     "expectancy_r": 0.0569,
+     "profit_factor": 1.087,
+     "total_r": 159.17,
+     "max_drawdown_r": 65.034,
+     "sufficient": true
+    },
+    "AUDUSD": {
+     "trades": 2779,
+     "win_rate": 0.312,
+     "expectancy_r": -0.1831,
+     "profit_factor": 0.759,
+     "total_r": -508.76,
+     "max_drawdown_r": 516.119,
+     "sufficient": true
+    },
+    "USDCAD": {
+     "trades": 2705,
+     "win_rate": 0.353,
+     "expectancy_r": -0.0245,
+     "profit_factor": 0.965,
+     "total_r": -66.24,
+     "max_drawdown_r": 122.646,
+     "sufficient": true
+    },
+    "XAGUSD": {
+     "trades": 2692,
+     "win_rate": 0.3169,
+     "expectancy_r": -0.069,
+     "profit_factor": 0.901,
+     "total_r": -185.69,
+     "max_drawdown_r": 222.196,
+     "sufficient": true
+    }
+   },
+   "quality_A": {
+    "XAUUSD": {
+     "trades": 770,
+     "win_rate": 0.3844,
+     "expectancy_r": 0.0911,
+     "profit_factor": 1.149,
+     "total_r": 70.15,
+     "max_drawdown_r": 43.816,
+     "sufficient": true
+    },
+    "BTCUSD": {
+     "trades": 407,
+     "win_rate": 0.3415,
+     "expectancy_r": -0.0002,
+     "profit_factor": 1.0,
+     "total_r": -0.09,
+     "max_drawdown_r": 33.832,
+     "sufficient": true
+    },
+    "USDJPY": {
+     "trades": 377,
+     "win_rate": 0.4005,
+     "expectancy_r": 0.0855,
+     "profit_factor": 1.146,
+     "total_r": 32.23,
+     "max_drawdown_r": 24.559,
+     "sufficient": true
+    },
+    "GER40": {
+     "trades": 258,
+     "win_rate": 0.3682,
+     "expectancy_r": -0.0611,
+     "profit_factor": 0.903,
+     "total_r": -15.77,
+     "max_drawdown_r": 20.936,
+     "sufficient": true
+    },
+    "EURJPY": {
+     "trades": 180,
+     "win_rate": 0.3278,
+     "expectancy_r": -0.1817,
+     "profit_factor": 0.735,
+     "total_r": -32.7,
+     "max_drawdown_r": 32.728,
+     "sufficient": true
+    },
+    "USDCAD": {
+     "trades": 81,
+     "win_rate": 0.3875,
+     "expectancy_r": 0.0531,
+     "profit_factor": 1.084,
+     "total_r": 4.3,
+     "max_drawdown_r": 18.157,
+     "sufficient": true
+    },
+    "US500": {
+     "trades": 80,
+     "win_rate": 0.3375,
+     "expectancy_r": -0.124,
+     "profit_factor": 0.793,
+     "total_r": -9.92,
+     "max_drawdown_r": 12.624,
+     "sufficient": true
+    },
+    "NAS100": {
+     "trades": 68,
+     "win_rate": 0.3529,
+     "expectancy_r": -0.2065,
+     "profit_factor": 0.644,
+     "total_r": -14.04,
+     "max_drawdown_r": 22.353,
+     "sufficient": true
+    },
+    "ETHUSD": {
+     "trades": 63,
+     "win_rate": 0.1587,
+     "expectancy_r": -0.5876,
+     "profit_factor": 0.336,
+     "total_r": -37.02,
+     "max_drawdown_r": 41.695,
+     "sufficient": true
+    },
+    "GBPJPY": {
+     "trades": 55,
+     "win_rate": 0.3455,
+     "expectancy_r": -0.066,
+     "profit_factor": 0.899,
+     "total_r": -3.63,
+     "max_drawdown_r": 9.085,
+     "sufficient": true
+    },
+    "GBPUSD": {
+     "trades": 49,
+     "win_rate": 0.3878,
+     "expectancy_r": 0.0992,
+     "profit_factor": 1.168,
+     "total_r": 4.86,
+     "max_drawdown_r": 15.079,
+     "sufficient": true
+    },
+    "EURUSD": {
+     "trades": 38,
+     "win_rate": 0.3158,
+     "expectancy_r": -0.0996,
+     "profit_factor": 0.86,
+     "total_r": -3.78,
+     "max_drawdown_r": 10.838,
+     "sufficient": true
+    },
+    "XAGUSD": {
+     "trades": 34,
+     "win_rate": 0.3529,
+     "expectancy_r": -0.0419,
+     "profit_factor": 0.925,
+     "total_r": -1.43,
+     "max_drawdown_r": 7.06,
+     "sufficient": true
+    },
+    "NZDUSD": {
+     "trades": 19,
+     "win_rate": 0.4737,
+     "expectancy_r": 0.252,
+     "profit_factor": 1.453,
+     "total_r": 4.79,
+     "max_drawdown_r": 4.377,
+     "sufficient": false
+    },
+    "USDCHF": {
+     "trades": 14,
+     "win_rate": 0.2143,
+     "expectancy_r": -0.4389,
+     "profit_factor": 0.477,
+     "total_r": -6.14,
+     "max_drawdown_r": 8.059,
+     "sufficient": false
+    },
+    "AUDUSD": {
+     "trades": 10,
+     "win_rate": 0.7,
+     "expectancy_r": 0.6278,
+     "profit_factor": 2.994,
+     "total_r": 6.28,
+     "max_drawdown_r": 2.108,
+     "sufficient": false
+    }
+   }
+  },
+  "strategy": {
+   "baseline": {
+    "trendline_bounce": {
+     "trades": 6292,
+     "win_rate": 0.2391,
+     "expectancy_r": -0.2357,
+     "profit_factor": 0.729,
+     "total_r": -1482.87,
+     "max_drawdown_r": 1514.547,
+     "sufficient": true
+    },
+    "donchian": {
+     "trades": 5194,
+     "win_rate": 0.3319,
+     "expectancy_r": -0.0532,
+     "profit_factor": 0.924,
+     "total_r": -276.06,
+     "max_drawdown_r": 324.049,
+     "sufficient": true
+    },
+    "atr_breakout": {
+     "trades": 4507,
+     "win_rate": 0.3198,
+     "expectancy_r": -0.0862,
+     "profit_factor": 0.88,
+     "total_r": -388.31,
+     "max_drawdown_r": 413.634,
+     "sufficient": true
+    },
+    "inside_bar_breakout": {
+     "trades": 4406,
+     "win_rate": 0.3214,
+     "expectancy_r": -0.0992,
+     "profit_factor": 0.862,
+     "total_r": -437.25,
+     "max_drawdown_r": 484.446,
+     "sufficient": true
+    },
+    "ema_pullback": {
+     "trades": 4077,
+     "win_rate": 0.315,
+     "expectancy_r": -0.1196,
+     "profit_factor": 0.835,
+     "total_r": -487.77,
+     "max_drawdown_r": 497.262,
+     "sufficient": true
+    },
+    "ichimoku": {
+     "trades": 3931,
+     "win_rate": 0.3266,
+     "expectancy_r": -0.0826,
+     "profit_factor": 0.884,
+     "total_r": -324.7,
+     "max_drawdown_r": 333.74,
+     "sufficient": true
+    },
+    "macd_momentum": {
+     "trades": 3352,
+     "win_rate": 0.3389,
+     "expectancy_r": -0.03,
+     "profit_factor": 0.957,
+     "total_r": -100.51,
+     "max_drawdown_r": 135.838,
+     "sufficient": true
+    },
+    "london_breakout": {
+     "trades": 3201,
+     "win_rate": 0.4164,
+     "expectancy_r": -0.0095,
+     "profit_factor": 0.982,
+     "total_r": -30.54,
+     "max_drawdown_r": 217.139,
+     "sufficient": true
+    },
+    "liquidity_sweep": {
+     "trades": 2253,
+     "win_rate": 0.3206,
+     "expectancy_r": -0.0859,
+     "profit_factor": 0.88,
+     "total_r": -193.59,
+     "max_drawdown_r": 218.152,
+     "sufficient": true
+    },
+    "ema_crossover": {
+     "trades": 1808,
+     "win_rate": 0.3153,
+     "expectancy_r": -0.1107,
+     "profit_factor": 0.849,
+     "total_r": -200.06,
+     "max_drawdown_r": 207.07,
+     "sufficient": true
+    },
+    "trendline_break_retest": {
+     "trades": 1661,
+     "win_rate": 0.238,
+     "expectancy_r": -0.2547,
+     "profit_factor": 0.707,
+     "total_r": -422.98,
+     "max_drawdown_r": 439.949,
+     "sufficient": true
+    },
+    "breakout": {
+     "trades": 1471,
+     "win_rate": 0.3385,
+     "expectancy_r": -0.069,
+     "profit_factor": 0.9,
+     "total_r": -101.52,
+     "max_drawdown_r": 120.792,
+     "sufficient": true
+    },
+    "market_structure_break": {
+     "trades": 1126,
+     "win_rate": 0.3544,
+     "expectancy_r": 0.001,
+     "profit_factor": 1.001,
+     "total_r": 1.12,
+     "max_drawdown_r": 54.514,
+     "sufficient": true
+    },
+    "opening_range_breakout": {
+     "trades": 1036,
+     "win_rate": 0.4546,
+     "expectancy_r": -0.0266,
+     "profit_factor": 0.938,
+     "total_r": -27.6,
+     "max_drawdown_r": 55.455,
+     "sufficient": true
+    },
+    "rsi_divergence": {
+     "trades": 697,
+     "win_rate": 0.3286,
+     "expectancy_r": -0.0568,
+     "profit_factor": 0.918,
+     "total_r": -39.58,
+     "max_drawdown_r": 52.633,
+     "sufficient": true
+    },
+    "fair_value_gap": {
+     "trades": 682,
+     "win_rate": 0.3475,
+     "expectancy_r": -0.0114,
+     "profit_factor": 0.983,
+     "total_r": -7.77,
+     "max_drawdown_r": 61.838,
+     "sufficient": true
+    },
+    "bollinger_reversion": {
+     "trades": 595,
+     "win_rate": 0.57,
+     "expectancy_r": 0.0535,
+     "profit_factor": 1.118,
+     "total_r": 31.85,
+     "max_drawdown_r": 23.662,
+     "sufficient": true
+    },
+    "order_block_retest": {
+     "trades": 536,
+     "win_rate": 0.3675,
+     "expectancy_r": 0.0395,
+     "profit_factor": 1.059,
+     "total_r": 21.16,
+     "max_drawdown_r": 41.17,
+     "sufficient": true
+    },
+    "support_resistance": {
+     "trades": 519,
+     "win_rate": 0.3012,
+     "expectancy_r": -0.1261,
+     "profit_factor": 0.832,
+     "total_r": -65.44,
+     "max_drawdown_r": 79.563,
+     "sufficient": true
+    },
+    "smc": {
+     "trades": 149,
+     "win_rate": 0.3557,
+     "expectancy_r": 0.0562,
+     "profit_factor": 1.081,
+     "total_r": 8.37,
+     "max_drawdown_r": 25.978,
+     "sufficient": true
+    },
+    "trend_momentum": {
+     "trades": 76,
+     "win_rate": 0.2763,
+     "expectancy_r": -0.2276,
+     "profit_factor": 0.698,
+     "total_r": -17.29,
+     "max_drawdown_r": 18.183,
+     "sufficient": true
+    }
+   },
+   "quality_A": {
+    "donchian": {
+     "trades": 443,
+     "win_rate": 0.3567,
+     "expectancy_r": 0.043,
+     "profit_factor": 1.065,
+     "total_r": 19.05,
+     "max_drawdown_r": 26.693,
+     "sufficient": true
+    },
+    "london_breakout": {
+     "trades": 427,
+     "win_rate": 0.4296,
+     "expectancy_r": 0.0249,
+     "profit_factor": 1.05,
+     "total_r": 10.61,
+     "max_drawdown_r": 23.608,
+     "sufficient": true
+    },
+    "atr_breakout": {
+     "trades": 377,
+     "win_rate": 0.321,
+     "expectancy_r": -0.0684,
+     "profit_factor": 0.903,
+     "total_r": -25.78,
+     "max_drawdown_r": 50.984,
+     "sufficient": true
+    },
+    "inside_bar_breakout": {
+     "trades": 273,
+     "win_rate": 0.326,
+     "expectancy_r": -0.0405,
+     "profit_factor": 0.941,
+     "total_r": -11.04,
+     "max_drawdown_r": 44.343,
+     "sufficient": true
+    },
+    "breakout": {
+     "trades": 165,
+     "win_rate": 0.3879,
+     "expectancy_r": 0.1405,
+     "profit_factor": 1.227,
+     "total_r": 23.18,
+     "max_drawdown_r": 22.421,
+     "sufficient": true
+    },
+    "ichimoku": {
+     "trades": 145,
+     "win_rate": 0.3655,
+     "expectancy_r": 0.0675,
+     "profit_factor": 1.101,
+     "total_r": 9.79,
+     "max_drawdown_r": 13.281,
+     "sufficient": true
+    },
+    "opening_range_breakout": {
+     "trades": 134,
+     "win_rate": 0.3881,
+     "expectancy_r": -0.1662,
+     "profit_factor": 0.668,
+     "total_r": -22.27,
+     "max_drawdown_r": 23.708,
+     "sufficient": true
+    },
+    "macd_momentum": {
+     "trades": 97,
+     "win_rate": 0.3711,
+     "expectancy_r": 0.0915,
+     "profit_factor": 1.142,
+     "total_r": 8.88,
+     "max_drawdown_r": 14.759,
+     "sufficient": true
+    },
+    "liquidity_sweep": {
+     "trades": 96,
+     "win_rate": 0.2917,
+     "expectancy_r": -0.164,
+     "profit_factor": 0.778,
+     "total_r": -15.74,
+     "max_drawdown_r": 24.657,
+     "sufficient": true
+    },
+    "ema_pullback": {
+     "trades": 78,
+     "win_rate": 0.3846,
+     "expectancy_r": 0.124,
+     "profit_factor": 1.198,
+     "total_r": 9.67,
+     "max_drawdown_r": 8.248,
+     "sufficient": true
+    },
+    "market_structure_break": {
+     "trades": 64,
+     "win_rate": 0.3906,
+     "expectancy_r": 0.1477,
+     "profit_factor": 1.241,
+     "total_r": 9.45,
+     "max_drawdown_r": 8.351,
+     "sufficient": true
+    },
+    "trendline_break_retest": {
+     "trades": 63,
+     "win_rate": 0.254,
+     "expectancy_r": -0.2699,
+     "profit_factor": 0.657,
+     "total_r": -17.0,
+     "max_drawdown_r": 25.479,
+     "sufficient": true
+    },
+    "bollinger_reversion": {
+     "trades": 51,
+     "win_rate": 0.5686,
+     "expectancy_r": 0.0626,
+     "profit_factor": 1.143,
+     "total_r": 3.19,
+     "max_drawdown_r": 5.893,
+     "sufficient": true
+    },
+    "ema_crossover": {
+     "trades": 31,
+     "win_rate": 0.3871,
+     "expectancy_r": 0.1296,
+     "profit_factor": 1.203,
+     "total_r": 4.02,
+     "max_drawdown_r": 5.152,
+     "sufficient": true
+    },
+    "fair_value_gap": {
+     "trades": 24,
+     "win_rate": 0.375,
+     "expectancy_r": 0.0071,
+     "profit_factor": 1.011,
+     "total_r": 0.17,
+     "max_drawdown_r": 6.864,
+     "sufficient": false
+    },
+    "rsi_divergence": {
+     "trades": 13,
+     "win_rate": 0.1538,
+     "expectancy_r": -0.5038,
+     "profit_factor": 0.377,
+     "total_r": -6.55,
+     "max_drawdown_r": 6.55,
+     "sufficient": false
+    },
+    "order_block_retest": {
+     "trades": 9,
+     "win_rate": 0.2222,
+     "expectancy_r": -0.3359,
+     "profit_factor": 0.572,
+     "total_r": -3.02,
+     "max_drawdown_r": 6.039,
+     "sufficient": false
+    },
+    "support_resistance": {
+     "trades": 7,
+     "win_rate": 0.2857,
+     "expectancy_r": -0.009,
+     "profit_factor": 0.988,
+     "total_r": -0.06,
+     "max_drawdown_r": 3.027,
+     "sufficient": false
+    },
+    "trendline_bounce": {
+     "trades": 6,
+     "win_rate": 0.3333,
+     "expectancy_r": 0.2592,
+     "profit_factor": 1.38,
+     "total_r": 1.56,
+     "max_drawdown_r": 2.081,
+     "sufficient": false
+    }
+   }
+  },
+  "session": {
+   "baseline": {
+    "LONDON": {
+     "trades": 12455,
+     "win_rate": 0.3421,
+     "expectancy_r": -0.0693,
+     "profit_factor": 0.896,
+     "total_r": -862.7,
+     "max_drawdown_r": 906.509,
+     "sufficient": true
+    },
+    "ASIA": {
+     "trades": 11168,
+     "win_rate": 0.3237,
+     "expectancy_r": -0.0417,
+     "profit_factor": 0.941,
+     "total_r": -465.76,
+     "max_drawdown_r": 539.385,
+     "sufficient": true
+    },
+    "LONDON_NY_OVERLAP": {
+     "trades": 10316,
+     "win_rate": 0.3367,
+     "expectancy_r": -0.0697,
+     "profit_factor": 0.899,
+     "total_r": -718.65,
+     "max_drawdown_r": 777.561,
+     "sufficient": true
+    },
+    "NEW_YORK": {
+     "trades": 9602,
+     "win_rate": 0.3014,
+     "expectancy_r": -0.1912,
+     "profit_factor": 0.758,
+     "total_r": -1835.69,
+     "max_drawdown_r": 1838.636,
+     "sufficient": true
+    },
+    "LATE_US": {
+     "trades": 4028,
+     "win_rate": 0.2901,
+     "expectancy_r": -0.1635,
+     "profit_factor": 0.785,
+     "total_r": -658.52,
+     "max_drawdown_r": 786.477,
+     "sufficient": true
+    }
+   },
+   "quality_A": {
+    "LONDON": {
+     "trades": 900,
+     "win_rate": 0.3871,
+     "expectancy_r": -0.0119,
+     "profit_factor": 0.98,
+     "total_r": -10.7,
+     "max_drawdown_r": 43.033,
+     "sufficient": true
+    },
+    "ASIA": {
+     "trades": 837,
+     "win_rate": 0.3536,
+     "expectancy_r": 0.0362,
+     "profit_factor": 1.055,
+     "total_r": 30.31,
+     "max_drawdown_r": 63.52,
+     "sufficient": true
+    },
+    "LONDON_NY_OVERLAP": {
+     "trades": 574,
+     "win_rate": 0.3537,
+     "expectancy_r": -0.0289,
+     "profit_factor": 0.956,
+     "total_r": -16.6,
+     "max_drawdown_r": 49.213,
+     "sufficient": true
+    },
+    "LATE_US": {
+     "trades": 145,
+     "win_rate": 0.3655,
+     "expectancy_r": 0.0666,
+     "profit_factor": 1.103,
+     "total_r": 9.65,
+     "max_drawdown_r": 17.353,
+     "sufficient": true
+    },
+    "NEW_YORK": {
+     "trades": 47,
+     "win_rate": 0.2766,
+     "expectancy_r": -0.31,
+     "profit_factor": 0.58,
+     "total_r": -14.57,
+     "max_drawdown_r": 15.612,
+     "sufficient": true
+    }
+   }
+  },
+  "regime": {
+   "baseline": {
+    "RANGING": {
+     "trades": 18998,
+     "win_rate": 0.3323,
+     "expectancy_r": -0.0918,
+     "profit_factor": 0.871,
+     "total_r": -1743.66,
+     "max_drawdown_r": 1745.468,
+     "sufficient": true
+    },
+    "TRENDING": {
+     "trades": 11854,
+     "win_rate": 0.3058,
+     "expectancy_r": -0.1236,
+     "profit_factor": 0.832,
+     "total_r": -1464.88,
+     "max_drawdown_r": 1518.272,
+     "sufficient": true
+    },
+    "BREAKOUT": {
+     "trades": 8443,
+     "win_rate": 0.3292,
+     "expectancy_r": -0.0832,
+     "profit_factor": 0.882,
+     "total_r": -702.69,
+     "max_drawdown_r": 730.112,
+     "sufficient": true
+    },
+    "HIGH_VOLATILITY": {
+     "trades": 3218,
+     "win_rate": 0.3235,
+     "expectancy_r": -0.0542,
+     "profit_factor": 0.922,
+     "total_r": -174.38,
+     "max_drawdown_r": 385.861,
+     "sufficient": true
+    },
+    "REVERSAL": {
+     "trades": 2943,
+     "win_rate": 0.3176,
+     "expectancy_r": -0.1255,
+     "profit_factor": 0.826,
+     "total_r": -369.46,
+     "max_drawdown_r": 410.427,
+     "sufficient": true
+    },
+    "LOW_VOLATILITY": {
+     "trades": 2113,
+     "win_rate": 0.3401,
+     "expectancy_r": -0.0408,
+     "profit_factor": 0.941,
+     "total_r": -86.27,
+     "max_drawdown_r": 157.1,
+     "sufficient": true
+    }
+   },
+   "quality_A": {
+    "BREAKOUT": {
+     "trades": 928,
+     "win_rate": 0.3502,
+     "expectancy_r": 0.0009,
+     "profit_factor": 1.001,
+     "total_r": 0.79,
+     "max_drawdown_r": 58.686,
+     "sufficient": true
+    },
+    "RANGING": {
+     "trades": 758,
+     "win_rate": 0.3699,
+     "expectancy_r": -0.0187,
+     "profit_factor": 0.97,
+     "total_r": -14.16,
+     "max_drawdown_r": 58.255,
+     "sufficient": true
+    },
+    "LOW_VOLATILITY": {
+     "trades": 287,
+     "win_rate": 0.4146,
+     "expectancy_r": 0.0951,
+     "profit_factor": 1.168,
+     "total_r": 27.29,
+     "max_drawdown_r": 22.255,
+     "sufficient": true
+    },
+    "TRENDING": {
+     "trades": 181,
+     "win_rate": 0.3757,
+     "expectancy_r": 0.0377,
+     "profit_factor": 1.064,
+     "total_r": 6.83,
+     "max_drawdown_r": 17.129,
+     "sufficient": true
+    },
+    "REVERSAL": {
+     "trades": 180,
+     "win_rate": 0.3056,
+     "expectancy_r": -0.2379,
+     "profit_factor": 0.665,
+     "total_r": -42.82,
+     "max_drawdown_r": 52.819,
+     "sufficient": true
+    },
+    "HIGH_VOLATILITY": {
+     "trades": 169,
+     "win_rate": 0.3905,
+     "expectancy_r": 0.1193,
+     "profit_factor": 1.205,
+     "total_r": 20.16,
+     "max_drawdown_r": 16.212,
+     "sufficient": true
+    }
+   }
+  },
+  "month": {
+   "baseline": {
+    "2025-10": {
+     "trades": 2817,
+     "win_rate": 0.3349,
+     "expectancy_r": -0.0567,
+     "profit_factor": 0.921,
+     "total_r": -159.77,
+     "max_drawdown_r": 193.089,
+     "sufficient": true
+    },
+    "2026-07": {
+     "trades": 2759,
+     "win_rate": 0.3017,
+     "expectancy_r": -0.1644,
+     "profit_factor": 0.78,
+     "total_r": -453.56,
+     "max_drawdown_r": 551.099,
+     "sufficient": true
+    },
+    "2025-07": {
+     "trades": 2742,
+     "win_rate": 0.3353,
+     "expectancy_r": -0.0566,
+     "profit_factor": 0.92,
+     "total_r": -155.14,
+     "max_drawdown_r": 287.459,
+     "sufficient": true
+    },
+    "2025-05": {
+     "trades": 2738,
+     "win_rate": 0.3216,
+     "expectancy_r": -0.0895,
+     "profit_factor": 0.874,
+     "total_r": -244.95,
+     "max_drawdown_r": 297.699,
+     "sufficient": true
+    },
+    "2026-01": {
+     "trades": 2682,
+     "win_rate": 0.3428,
+     "expectancy_r": -0.0355,
+     "profit_factor": 0.949,
+     "total_r": -95.27,
+     "max_drawdown_r": 227.645,
+     "sufficient": true
+    },
+    "2026-03": {
+     "trades": 2675,
+     "win_rate": 0.323,
+     "expectancy_r": -0.0724,
+     "profit_factor": 0.897,
+     "total_r": -193.75,
+     "max_drawdown_r": 219.084,
+     "sufficient": true
+    },
+    "2026-06": {
+     "trades": 2671,
+     "win_rate": 0.3262,
+     "expectancy_r": -0.0977,
+     "profit_factor": 0.863,
+     "total_r": -261.05,
+     "max_drawdown_r": 276.036,
+     "sufficient": true
+    },
+    "2025-09": {
+     "trades": 2645,
+     "win_rate": 0.3379,
+     "expectancy_r": -0.0642,
+     "profit_factor": 0.909,
+     "total_r": -169.79,
+     "max_drawdown_r": 266.536,
+     "sufficient": true
+    },
+    "2026-09": {
+     "trades": 2643,
+     "win_rate": 0.3413,
+     "expectancy_r": -0.0471,
+     "profit_factor": 0.932,
+     "total_r": -124.43,
+     "max_drawdown_r": 230.371,
+     "sufficient": true
+    },
+    "2025-12": {
+     "trades": 2586,
+     "win_rate": 0.2981,
+     "expectancy_r": -0.1798,
+     "profit_factor": 0.76,
+     "total_r": -464.85,
+     "max_drawdown_r": 485.52,
+     "sufficient": true
+    },
+    "2026-04": {
+     "trades": 2547,
+     "win_rate": 0.3181,
+     "expectancy_r": -0.1306,
+     "profit_factor": 0.823,
+     "total_r": -332.61,
+     "max_drawdown_r": 396.462,
+     "sufficient": true
+    },
+    "2025-06": {
+     "trades": 2526,
+     "win_rate": 0.3336,
+     "expectancy_r": -0.0643,
+     "profit_factor": 0.909,
+     "total_r": -162.37,
+     "max_drawdown_r": 260.718,
+     "sufficient": true
+    },
+    "2025-08": {
+     "trades": 2509,
+     "win_rate": 0.2945,
+     "expectancy_r": -0.1875,
+     "profit_factor": 0.749,
+     "total_r": -470.33,
+     "max_drawdown_r": 493.988,
+     "sufficient": true
+    },
+    "2025-04": {
+     "trades": 2506,
+     "win_rate": 0.3355,
+     "expectancy_r": -0.0319,
+     "profit_factor": 0.953,
+     "total_r": -79.93,
+     "max_drawdown_r": 208.853,
+     "sufficient": true
+    },
+    "2025-11": {
+     "trades": 2495,
+     "win_rate": 0.347,
+     "expectancy_r": -0.0113,
+     "profit_factor": 0.983,
+     "total_r": -28.15,
+     "max_drawdown_r": 146.49,
+     "sufficient": true
+    },
+    "2026-05": {
+     "trades": 2473,
+     "win_rate": 0.3228,
+     "expectancy_r": -0.124,
+     "profit_factor": 0.83,
+     "total_r": -306.75,
+     "max_drawdown_r": 315.524,
+     "sufficient": true
+    },
+    "2026-08": {
+     "trades": 2446,
+     "win_rate": 0.3051,
+     "expectancy_r": -0.1709,
+     "profit_factor": 0.77,
+     "total_r": -418.02,
+     "max_drawdown_r": 418.947,
+     "sufficient": true
+    },
+    "2026-02": {
+     "trades": 2309,
+     "win_rate": 0.3284,
+     "expectancy_r": -0.0825,
+     "profit_factor": 0.883,
+     "total_r": -190.44,
+     "max_drawdown_r": 252.406,
+     "sufficient": true
+    },
+    "2026-10": {
+     "trades": 800,
+     "win_rate": 0.2675,
+     "expectancy_r": -0.2877,
+     "profit_factor": 0.626,
+     "total_r": -230.19,
+     "max_drawdown_r": 236.18,
+     "sufficient": true
+    }
+   },
+   "quality_A": {
+    "2025-05": {
+     "trades": 288,
+     "win_rate": 0.3229,
+     "expectancy_r": -0.0802,
+     "profit_factor": 0.882,
+     "total_r": -23.09,
+     "max_drawdown_r": 47.953,
+     "sufficient": true
+    },
+    "2025-06": {
+     "trades": 252,
+     "win_rate": 0.3413,
+     "expectancy_r": -0.0806,
+     "profit_factor": 0.878,
+     "total_r": -20.31,
+     "max_drawdown_r": 45.007,
+     "sufficient": true
+    },
+    "2025-04": {
+     "trades": 240,
+     "win_rate": 0.3667,
+     "expectancy_r": -0.02,
+     "profit_factor": 0.968,
+     "total_r": -4.81,
+     "max_drawdown_r": 41.108,
+     "sufficient": true
+    },
+    "2025-09": {
+     "trades": 186,
+     "win_rate": 0.427,
+     "expectancy_r": 0.1837,
+     "profit_factor": 1.335,
+     "total_r": 34.18,
+     "max_drawdown_r": 18.049,
+     "sufficient": true
+    },
+    "2025-08": {
+     "trades": 178,
+     "win_rate": 0.2809,
+     "expectancy_r": -0.274,
+     "profit_factor": 0.628,
+     "total_r": -48.77,
+     "max_drawdown_r": 64.793,
+     "sufficient": true
+    },
+    "2025-10": {
+     "trades": 146,
+     "win_rate": 0.3836,
+     "expectancy_r": 0.1681,
+     "profit_factor": 1.296,
+     "total_r": 24.54,
+     "max_drawdown_r": 15.519,
+     "sufficient": true
+    },
+    "2025-07": {
+     "trades": 143,
+     "win_rate": 0.4476,
+     "expectancy_r": 0.1812,
+     "profit_factor": 1.305,
+     "total_r": 25.91,
+     "max_drawdown_r": 12.933,
+     "sufficient": true
+    },
+    "2025-12": {
+     "trades": 128,
+     "win_rate": 0.4453,
+     "expectancy_r": 0.2166,
+     "profit_factor": 1.406,
+     "total_r": 27.73,
+     "max_drawdown_r": 15.931,
+     "sufficient": true
+    },
+    "2026-06": {
+     "trades": 114,
+     "win_rate": 0.4123,
+     "expectancy_r": 0.1829,
+     "profit_factor": 1.311,
+     "total_r": 20.85,
+     "max_drawdown_r": 18.147,
+     "sufficient": true
+    },
+    "2025-11": {
+     "trades": 108,
+     "win_rate": 0.3704,
+     "expectancy_r": 0.0137,
+     "profit_factor": 1.023,
+     "total_r": 1.48,
+     "max_drawdown_r": 12.876,
+     "sufficient": true
+    },
+    "2026-01": {
+     "trades": 107,
+     "win_rate": 0.4206,
+     "expectancy_r": 0.1348,
+     "profit_factor": 1.237,
+     "total_r": 14.43,
+     "max_drawdown_r": 16.145,
+     "sufficient": true
+    },
+    "2026-03": {
+     "trades": 105,
+     "win_rate": 0.4,
+     "expectancy_r": 0.0896,
+     "profit_factor": 1.15,
+     "total_r": 9.41,
+     "max_drawdown_r": 12.964,
+     "sufficient": true
+    },
+    "2026-02": {
+     "trades": 103,
+     "win_rate": 0.3495,
+     "expectancy_r": -0.0516,
+     "profit_factor": 0.92,
+     "total_r": -5.31,
+     "max_drawdown_r": 26.161,
+     "sufficient": true
+    },
+    "2026-05": {
+     "trades": 101,
+     "win_rate": 0.3366,
+     "expectancy_r": -0.1662,
+     "profit_factor": 0.754,
+     "total_r": -16.78,
+     "max_drawdown_r": 25.831,
+     "sufficient": true
+    },
+    "2026-07": {
+     "trades": 76,
+     "win_rate": 0.2895,
+     "expectancy_r": -0.1221,
+     "profit_factor": 0.821,
+     "total_r": -9.28,
+     "max_drawdown_r": 18.227,
+     "sufficient": true
+    },
+    "2026-04": {
+     "trades": 74,
+     "win_rate": 0.2432,
+     "expectancy_r": -0.3887,
+     "profit_factor": 0.517,
+     "total_r": -28.77,
+     "max_drawdown_r": 32.451,
+     "sufficient": true
+    },
+    "2026-08": {
+     "trades": 70,
+     "win_rate": 0.3857,
+     "expectancy_r": 0.0456,
+     "profit_factor": 1.072,
+     "total_r": 3.19,
+     "max_drawdown_r": 16.869,
+     "sufficient": true
+    },
+    "2026-09": {
+     "trades": 53,
+     "win_rate": 0.3208,
+     "expectancy_r": -0.1087,
+     "profit_factor": 0.839,
+     "total_r": -5.76,
+     "max_drawdown_r": 14.801,
+     "sufficient": true
+    },
+    "2026-10": {
+     "trades": 31,
+     "win_rate": 0.3871,
+     "expectancy_r": -0.0239,
+     "profit_factor": 0.961,
+     "total_r": -0.74,
+     "max_drawdown_r": 8.682,
+     "sufficient": true
+    }
+   }
+  },
+  "target_symbol": {
+   "baseline": {
+    "BTCUSD": {
+     "trades": 3649,
+     "win_rate": 0.336,
+     "expectancy_r": -0.0078,
+     "profit_factor": 0.988,
+     "total_r": -28.6,
+     "max_drawdown_r": 96.137,
+     "sufficient": true
+    },
+    "ETHUSD": {
+     "trades": 3476,
+     "win_rate": 0.2917,
+     "expectancy_r": -0.1711,
+     "profit_factor": 0.773,
+     "total_r": -594.65,
+     "max_drawdown_r": 627.564,
+     "sufficient": true
+    },
+    "GER40": {
+     "trades": 3180,
+     "win_rate": 0.3439,
+     "expectancy_r": -0.0502,
+     "profit_factor": 0.925,
+     "total_r": -159.66,
+     "max_drawdown_r": 205.673,
+     "sufficient": true
+    },
+    "US500": {
+     "trades": 2938,
+     "win_rate": 0.3271,
+     "expectancy_r": -0.0971,
+     "profit_factor": 0.86,
+     "total_r": -285.17,
+     "max_drawdown_r": 313.468,
+     "sufficient": true
+    },
+    "NAS100": {
+     "trades": 2937,
+     "win_rate": 0.3305,
+     "expectancy_r": -0.0838,
+     "profit_factor": 0.878,
+     "total_r": -246.07,
+     "max_drawdown_r": 279.577,
+     "sufficient": true
+    },
+    "XAUUSD": {
+     "trades": 2796,
+     "win_rate": 0.353,
+     "expectancy_r": 0.0569,
+     "profit_factor": 1.087,
+     "total_r": 159.17,
+     "max_drawdown_r": 65.034,
+     "sufficient": true
+    }
+   },
+   "quality_A": {
+    "XAUUSD": {
+     "trades": 770,
+     "win_rate": 0.3844,
+     "expectancy_r": 0.0911,
+     "profit_factor": 1.149,
+     "total_r": 70.15,
+     "max_drawdown_r": 43.816,
+     "sufficient": true
+    },
+    "BTCUSD": {
+     "trades": 407,
+     "win_rate": 0.3415,
+     "expectancy_r": -0.0002,
+     "profit_factor": 1.0,
+     "total_r": -0.09,
+     "max_drawdown_r": 33.832,
+     "sufficient": true
+    },
+    "GER40": {
+     "trades": 258,
+     "win_rate": 0.3682,
+     "expectancy_r": -0.0611,
+     "profit_factor": 0.903,
+     "total_r": -15.77,
+     "max_drawdown_r": 20.936,
+     "sufficient": true
+    },
+    "US500": {
+     "trades": 80,
+     "win_rate": 0.3375,
+     "expectancy_r": -0.124,
+     "profit_factor": 0.793,
+     "total_r": -9.92,
+     "max_drawdown_r": 12.624,
+     "sufficient": true
+    },
+    "NAS100": {
+     "trades": 68,
+     "win_rate": 0.3529,
+     "expectancy_r": -0.2065,
+     "profit_factor": 0.644,
+     "total_r": -14.04,
+     "max_drawdown_r": 22.353,
+     "sufficient": true
+    },
+    "ETHUSD": {
+     "trades": 63,
+     "win_rate": 0.1587,
+     "expectancy_r": -0.5876,
+     "profit_factor": 0.336,
+     "total_r": -37.02,
+     "max_drawdown_r": 41.695,
+     "sufficient": true
+    }
+   }
+  },
+  "target_strategy": {
+   "baseline": {
+    "trendline_bounce": {
+     "trades": 2595,
+     "win_rate": 0.2385,
+     "expectancy_r": -0.1816,
+     "profit_factor": 0.779,
+     "total_r": -471.26,
+     "max_drawdown_r": 497.302,
+     "sufficient": true
+    },
+    "donchian": {
+     "trades": 2054,
+     "win_rate": 0.3393,
+     "expectancy_r": -0.0241,
+     "profit_factor": 0.965,
+     "total_r": -49.52,
+     "max_drawdown_r": 90.602,
+     "sufficient": true
+    },
+    "atr_breakout": {
+     "trades": 1841,
+     "win_rate": 0.3303,
+     "expectancy_r": -0.0411,
+     "profit_factor": 0.941,
+     "total_r": -75.65,
+     "max_drawdown_r": 109.43,
+     "sufficient": true
+    },
+    "inside_bar_breakout": {
+     "trades": 1740,
+     "win_rate": 0.3489,
+     "expectancy_r": 0.0012,
+     "profit_factor": 1.002,
+     "total_r": 2.15,
+     "max_drawdown_r": 49.798,
+     "sufficient": true
+    },
+    "ema_pullback": {
+     "trades": 1628,
+     "win_rate": 0.3188,
+     "expectancy_r": -0.0931,
+     "profit_factor": 0.869,
+     "total_r": -151.54,
+     "max_drawdown_r": 151.541,
+     "sufficient": true
+    },
+    "ichimoku": {
+     "trades": 1509,
+     "win_rate": 0.3373,
+     "expectancy_r": -0.0349,
+     "profit_factor": 0.949,
+     "total_r": -52.65,
+     "max_drawdown_r": 82.744,
+     "sufficient": true
+    },
+    "macd_momentum": {
+     "trades": 1356,
+     "win_rate": 0.3481,
+     "expectancy_r": 0.0104,
+     "profit_factor": 1.015,
+     "total_r": 14.13,
+     "max_drawdown_r": 43.909,
+     "sufficient": true
+    },
+    "opening_range_breakout": {
+     "trades": 1036,
+     "win_rate": 0.4546,
+     "expectancy_r": -0.0266,
+     "profit_factor": 0.938,
+     "total_r": -27.6,
+     "max_drawdown_r": 55.455,
+     "sufficient": true
+    },
+    "liquidity_sweep": {
+     "trades": 930,
+     "win_rate": 0.3057,
+     "expectancy_r": -0.1111,
+     "profit_factor": 0.846,
+     "total_r": -103.34,
+     "max_drawdown_r": 114.031,
+     "sufficient": true
+    },
+    "ema_crossover": {
+     "trades": 717,
+     "win_rate": 0.3445,
+     "expectancy_r": -0.0023,
+     "profit_factor": 0.997,
+     "total_r": -1.64,
+     "max_drawdown_r": 43.128,
+     "sufficient": true
+    },
+    "trendline_break_retest": {
+     "trades": 689,
+     "win_rate": 0.2224,
+     "expectancy_r": -0.2308,
+     "profit_factor": 0.719,
+     "total_r": -159.0,
+     "max_drawdown_r": 162.902,
+     "sufficient": true
+    },
+    "breakout": {
+     "trades": 613,
+     "win_rate": 0.3393,
+     "expectancy_r": -0.048,
+     "profit_factor": 0.929,
+     "total_r": -29.44,
+     "max_drawdown_r": 51.422,
+     "sufficient": true
+    },
+    "london_breakout": {
+     "trades": 554,
+     "win_rate": 0.435,
+     "expectancy_r": 0.0559,
+     "profit_factor": 1.108,
+     "total_r": 30.97,
+     "max_drawdown_r": 24.17,
+     "sufficient": true
+    },
+    "market_structure_break": {
+     "trades": 418,
+     "win_rate": 0.3589,
+     "expectancy_r": 0.021,
+     "profit_factor": 1.032,
+     "total_r": 8.77,
+     "max_drawdown_r": 47.498,
+     "sufficient": true
+    },
+    "rsi_divergence": {
+     "trades": 292,
+     "win_rate": 0.3185,
+     "expectancy_r": -0.0956,
+     "profit_factor": 0.863,
+     "total_r": -27.9,
+     "max_drawdown_r": 37.378,
+     "sufficient": true
+    },
+    "fair_value_gap": {
+     "trades": 258,
+     "win_rate": 0.3372,
+     "expectancy_r": -0.0567,
+     "profit_factor": 0.919,
+     "total_r": -14.63,
+     "max_drawdown_r": 38.131,
+     "sufficient": true
+    },
+    "bollinger_reversion": {
+     "trades": 244,
+     "win_rate": 0.5372,
+     "expectancy_r": -0.0334,
+     "profit_factor": 0.932,
+     "total_r": -8.14,
+     "max_drawdown_r": 22.388,
+     "sufficient": true
+    },
+    "support_resistance": {
+     "trades": 213,
+     "win_rate": 0.3255,
+     "expectancy_r": -0.0008,
+     "profit_factor": 0.999,
+     "total_r": -0.16,
+     "max_drawdown_r": 30.43,
+     "sufficient": true
+    },
+    "order_block_retest": {
+     "trades": 207,
+     "win_rate": 0.314,
+     "expectancy_r": -0.1007,
+     "profit_factor": 0.859,
+     "total_r": -20.84,
+     "max_drawdown_r": 39.023,
+     "sufficient": true
+    },
+    "smc": {
+     "trades": 57,
+     "win_rate": 0.2807,
+     "expectancy_r": -0.129,
+     "profit_factor": 0.829,
+     "total_r": -7.35,
+     "max_drawdown_r": 20.718,
+     "sufficient": true
+    },
+    "trend_momentum": {
+     "trades": 25,
+     "win_rate": 0.2,
+     "expectancy_r": -0.4124,
+     "profit_factor": 0.489,
+     "total_r": -10.31,
+     "max_drawdown_r": 11.575,
+     "sufficient": false
+    }
+   },
+   "quality_A": {
+    "donchian": {
+     "trades": 297,
+     "win_rate": 0.3535,
+     "expectancy_r": 0.0348,
+     "profit_factor": 1.052,
+     "total_r": 10.33,
+     "max_drawdown_r": 30.999,
+     "sufficient": true
+    },
+    "atr_breakout": {
+     "trades": 245,
+     "win_rate": 0.3102,
+     "expectancy_r": -0.0956,
+     "profit_factor": 0.866,
+     "total_r": -23.43,
+     "max_drawdown_r": 41.445,
+     "sufficient": true
+    },
+    "inside_bar_breakout": {
+     "trades": 198,
+     "win_rate": 0.3283,
+     "expectancy_r": -0.0271,
+     "profit_factor": 0.96,
+     "total_r": -5.37,
+     "max_drawdown_r": 33.592,
+     "sufficient": true
+    },
+    "london_breakout": {
+     "trades": 175,
+     "win_rate": 0.4571,
+     "expectancy_r": 0.1375,
+     "profit_factor": 1.292,
+     "total_r": 24.06,
+     "max_drawdown_r": 13.134,
+     "sufficient": true
+    },
+    "opening_range_breakout": {
+     "trades": 134,
+     "win_rate": 0.3881,
+     "expectancy_r": -0.1662,
+     "profit_factor": 0.668,
+     "total_r": -22.27,
+     "max_drawdown_r": 23.708,
+     "sufficient": true
+    },
+    "breakout": {
+     "trades": 116,
+     "win_rate": 0.3707,
+     "expectancy_r": 0.0911,
+     "profit_factor": 1.143,
+     "total_r": 10.56,
+     "max_drawdown_r": 20.433,
+     "sufficient": true
+    },
+    "ichimoku": {
+     "trades": 102,
+     "win_rate": 0.3431,
+     "expectancy_r": 0.0046,
+     "profit_factor": 1.007,
+     "total_r": 0.47,
+     "max_drawdown_r": 11.962,
+     "sufficient": true
+    },
+    "liquidity_sweep": {
+     "trades": 70,
+     "win_rate": 0.3429,
+     "expectancy_r": -0.0127,
+     "profit_factor": 0.982,
+     "total_r": -0.89,
+     "max_drawdown_r": 9.895,
+     "sufficient": true
+    },
+    "macd_momentum": {
+     "trades": 65,
+     "win_rate": 0.3846,
+     "expectancy_r": 0.1361,
+     "profit_factor": 1.216,
+     "total_r": 8.84,
+     "max_drawdown_r": 12.47,
+     "sufficient": true
+    },
+    "ema_pullback": {
+     "trades": 59,
+     "win_rate": 0.3559,
+     "expectancy_r": 0.046,
+     "profit_factor": 1.07,
+     "total_r": 2.71,
+     "max_drawdown_r": 13.416,
+     "sufficient": true
+    },
+    "trendline_break_retest": {
+     "trades": 46,
+     "win_rate": 0.3043,
+     "expectancy_r": -0.1087,
+     "profit_factor": 0.852,
+     "total_r": -5.0,
+     "max_drawdown_r": 15.341,
+     "sufficient": true
+    },
+    "market_structure_break": {
+     "trades": 45,
+     "win_rate": 0.3778,
+     "expectancy_r": 0.125,
+     "profit_factor": 1.2,
+     "total_r": 5.62,
+     "max_drawdown_r": 5.198,
+     "sufficient": true
+    },
+    "bollinger_reversion": {
+     "trades": 32,
+     "win_rate": 0.5625,
+     "expectancy_r": 0.0371,
+     "profit_factor": 1.084,
+     "total_r": 1.19,
+     "max_drawdown_r": 3.159,
+     "sufficient": true
+    },
+    "ema_crossover": {
+     "trades": 20,
+     "win_rate": 0.4,
+     "expectancy_r": 0.1682,
+     "profit_factor": 1.268,
+     "total_r": 3.36,
+     "max_drawdown_r": 4.021,
+     "sufficient": false
+    },
+    "fair_value_gap": {
+     "trades": 17,
+     "win_rate": 0.2353,
+     "expectancy_r": -0.389,
+     "profit_factor": 0.491,
+     "total_r": -6.61,
+     "max_drawdown_r": 8.842,
+     "sufficient": false
+    },
+    "rsi_divergence": {
+     "trades": 9,
+     "win_rate": 0.0,
+     "expectancy_r": -0.9436,
+     "profit_factor": 0.0,
+     "total_r": -8.49,
+     "max_drawdown_r": 8.492,
+     "sufficient": false
+    },
+    "order_block_retest": {
+     "trades": 7,
+     "win_rate": 0.1429,
+     "expectancy_r": -0.572,
+     "profit_factor": 0.337,
+     "total_r": -4.0,
+     "max_drawdown_r": 6.039,
+     "sufficient": false
+    },
+    "support_resistance": {
+     "trades": 5,
+     "win_rate": 0.4,
+     "expectancy_r": 0.4058,
+     "profit_factor": 1.675,
+     "total_r": 2.03,
+     "max_drawdown_r": 2.005,
+     "sufficient": false
+    },
+    "trendline_bounce": {
+     "trades": 4,
+     "win_rate": 0.25,
+     "expectancy_r": 0.0482,
+     "profit_factor": 1.064,
+     "total_r": 0.19,
+     "max_drawdown_r": 3.017,
+     "sufficient": false
+    }
+   }
+  }
+ },
+ "strategy_status": {
+  "atr_breakout": {
+   "baseline": {
+    "trades": 4507,
+    "win_rate": 0.3198,
+    "avg_win_r": 1.97,
+    "avg_loss_r": -1.053,
+    "expectancy_r": -0.0862,
+    "expectancy_ci95": [
+     -0.1271,
+     -0.0447
+    ],
+    "profit_factor": 0.88,
+    "max_drawdown_r": 413.634
+   },
+   "quality_gated": {
+    "trades": 377,
+    "win_rate": 0.321,
+    "expectancy_r": -0.0684,
+    "expectancy_ci95": [
+     -0.2107,
+     0.0784
+    ],
+    "profit_factor": 0.903,
+    "max_drawdown_r": 50.984
+   },
+   "target_instruments": {
+    "trades": 1841,
+    "win_rate": 0.3303,
+    "expectancy_r": -0.0411,
+    "profit_factor": 0.941
+   },
+   "by_symbol": {
+    "BTCUSD": {
+     "trades": 369,
+     "expectancy_r": 0.0277
+    },
+    "ETHUSD": {
+     "trades": 318,
+     "expectancy_r": -0.0704
+    },
+    "NAS100": {
+     "trades": 300,
+     "expectancy_r": -0.1271
+    },
+    "XAUUSD": {
+     "trades": 291,
+     "expectancy_r": 0.0448
+    },
+    "US500": {
+     "trades": 289,
+     "expectancy_r": -0.1805
+    },
+    "GBPUSD": {
+     "trades": 286,
+     "expectancy_r": -0.1514
+    },
+    "USDJPY": {
+     "trades": 286,
+     "expectancy_r": -0.0444
+    },
+    "EURUSD": {
+     "trades": 279,
+     "expectancy_r": -0.1023
+    },
+    "XAGUSD": {
+     "trades": 277,
+     "expectancy_r": -0.1019
+    },
+    "GER40": {
+     "trades": 274,
+     "expectancy_r": 0.0501
+    },
+    "USDCAD": {
+     "trades": 264,
+     "expectancy_r": -0.0397
+    },
+    "AUDUSD": {
+     "trades": 263,
+     "expectancy_r": -0.192
+    },
+    "GBPJPY": {
+     "trades": 256,
+     "expectancy_r": -0.1686
+    },
+    "EURJPY": {
+     "trades": 254,
+     "expectancy_r": -0.1787
+    },
+    "NZDUSD": {
+     "trades": 253,
+     "expectancy_r": -0.041
+    },
+    "USDCHF": {
+     "trades": 248,
+     "expectancy_r": -0.1612
+    }
+   },
+   "verdict": "RESTRICT TO INSTRUMENTS",
+   "reason": "positive only on GER40 (not significant)"
+  },
+  "bollinger_reversion": {
+   "baseline": {
+    "trades": 595,
+    "win_rate": 0.57,
+    "avg_win_r": 0.892,
+    "avg_loss_r": -1.049,
+    "expectancy_r": 0.0535,
+    "expectancy_ci95": [
+     -0.0266,
+     0.134
+    ],
+    "profit_factor": 1.118,
+    "max_drawdown_r": 23.662
+   },
+   "quality_gated": {
+    "trades": 51,
+    "win_rate": 0.5686,
+    "expectancy_r": 0.0626,
+    "expectancy_ci95": [
+     -0.195,
+     0.3314
+    ],
+    "profit_factor": 1.143,
+    "max_drawdown_r": 5.893
+   },
+   "target_instruments": {
+    "trades": 244,
+    "win_rate": 0.5372,
+    "expectancy_r": -0.0334,
+    "profit_factor": 0.932
+   },
+   "by_symbol": {
+    "ETHUSD": {
+     "trades": 49,
+     "expectancy_r": -0.3861
+    },
+    "BTCUSD": {
+     "trades": 49,
+     "expectancy_r": 0.1873
+    },
+    "GBPJPY": {
+     "trades": 46,
+     "expectancy_r": 0.1425
+    },
+    "USDJPY": {
+     "trades": 43,
+     "expectancy_r": 0.057
+    },
+    "US500": {
+     "trades": 41,
+     "expectancy_r": 0.0156
+    },
+    "EURJPY": {
+     "trades": 40,
+     "expectancy_r": 0.0966
+    },
+    "GBPUSD": {
+     "trades": 39,
+     "expectancy_r": -0.1121
+    },
+    "NZDUSD": {
+     "trades": 38,
+     "expectancy_r": 0.0789
+    },
+    "XAUUSD": {
+     "trades": 37,
+     "expectancy_r": 0.125
+    },
+    "GER40": {
+     "trades": 35,
+     "expectancy_r": 0.0596
+    },
+    "NAS100": {
+     "trades": 33,
+     "expectancy_r": -0.1743
+    },
+    "EURUSD": {
+     "trades": 33,
+     "expectancy_r": 0.0934
+    },
+    "AUDUSD": {
+     "trades": 31,
+     "expectancy_r": 0.1461
+    },
+    "USDCHF": {
+     "trades": 29,
+     "expectancy_r": 0.2122
+    },
+    "USDCAD": {
+     "trades": 28,
+     "expectancy_r": 0.4199
+    },
+    "XAGUSD": {
+     "trades": 24,
+     "expectancy_r": 0.124
+    }
+   },
+   "verdict": "IMPROVE (quality-gated, unproven)",
+   "reason": "positive only on A/A+ setups and not yet significant"
+  },
+  "breakout": {
+   "baseline": {
+    "trades": 1471,
+    "win_rate": 0.3385,
+    "avg_win_r": 1.844,
+    "avg_loss_r": -1.048,
+    "expectancy_r": -0.069,
+    "expectancy_ci95": [
+     -0.1381,
+     0.0008
+    ],
+    "profit_factor": 0.9,
+    "max_drawdown_r": 120.792
+   },
+   "quality_gated": {
+    "trades": 165,
+    "win_rate": 0.3879,
+    "expectancy_r": 0.1405,
+    "expectancy_ci95": [
+     -0.0738,
+     0.3595
+    ],
+    "profit_factor": 1.227,
+    "max_drawdown_r": 22.421
+   },
+   "target_instruments": {
+    "trades": 613,
+    "win_rate": 0.3393,
+    "expectancy_r": -0.048,
+    "profit_factor": 0.929
+   },
+   "by_symbol": {
+    "BTCUSD": {
+     "trades": 147,
+     "expectancy_r": 0.0797
+    },
+    "ETHUSD": {
+     "trades": 136,
+     "expectancy_r": 0.0327
+    },
+    "USDCAD": {
+     "trades": 97,
+     "expectancy_r": 0.1077
+    },
+    "USDJPY": {
+     "trades": 96,
+     "expectancy_r": 0.0422
+    },
+    "GBPJPY": {
+     "trades": 94,
+     "expectancy_r": -0.2185
+    },
+    "GBPUSD": {
+     "trades": 94,
+     "expectancy_r": 0.0729
+    },
+    "US500": {
+     "trades": 90,
+     "expectancy_r": -0.1158
+    },
+    "XAUUSD": {
+     "trades": 89,
+     "expectancy_r": -0.0237
+    },
+    "XAGUSD": {
+     "trades": 86,
+     "expectancy_r": -0.2722
+    },
+    "NAS100": {
+     "trades": 83,
+     "expectancy_r": -0.3995
+    },
+    "EURUSD": {
+     "trades": 81,
+     "expectancy_r": 0.0981
+    },
+    "AUDUSD": {
+     "trades": 81,
+     "expectancy_r": -0.3371
+    },
+    "EURJPY": {
+     "trades": 79,
+     "expectancy_r": -0.0675
+    },
+    "NZDUSD": {
+     "trades": 77,
+     "expectancy_r": -0.1099
+    },
+    "USDCHF": {
+     "trades": 73,
+     "expectancy_r": -0.2238
+    },
+    "GER40": {
+     "trades": 68,
+     "expectancy_r": 0.0014
+    }
+   },
+   "verdict": "IMPROVE (quality-gated, unproven)",
+   "reason": "positive only on A/A+ setups and not yet significant"
+  },
+  "donchian": {
+   "baseline": {
+    "trades": 5194,
+    "win_rate": 0.3319,
+    "avg_win_r": 1.949,
+    "avg_loss_r": -1.047,
+    "expectancy_r": -0.0532,
+    "expectancy_ci95": [
+     -0.0928,
+     -0.0157
+    ],
+    "profit_factor": 0.924,
+    "max_drawdown_r": 324.049
+   },
+   "quality_gated": {
+    "trades": 443,
+    "win_rate": 0.3567,
+    "expectancy_r": 0.043,
+    "expectancy_ci95": [
+     -0.0901,
+     0.178
+    ],
+    "profit_factor": 1.065,
+    "max_drawdown_r": 26.693
+   },
+   "target_instruments": {
+    "trades": 2054,
+    "win_rate": 0.3393,
+    "expectancy_r": -0.0241,
+    "profit_factor": 0.965
+   },
+   "by_symbol": {
+    "BTCUSD": {
+     "trades": 402,
+     "expectancy_r": 0.0424
+    },
+    "ETHUSD": {
+     "trades": 390,
+     "expectancy_r": 0.0395
+    },
+    "USDJPY": {
+     "trades": 333,
+     "expectancy_r": 0.0147
+    },
+    "NZDUSD": {
+     "trades": 330,
+     "expectancy_r": -0.2223
+    },
+    "EURUSD": {
+     "trades": 329,
+     "expectancy_r": -0.0952
+    },
+    "XAUUSD": {
+     "trades": 328,
+     "expectancy_r": 0.0188
+    },
+    "US500": {
+     "trades": 328,
+     "expectancy_r": -0.1604
+    },
+    "GBPUSD": {
+     "trades": 318,
+     "expectancy_r": -0.035
+    },
+    "USDCHF": {
+     "trades": 315,
+     "expectancy_r": -0.1701
+    },
+    "XAGUSD": {
+     "trades": 311,
+     "expectancy_r": -0.036
+    },
+    "NAS100": {
+     "trades": 309,
+     "expectancy_r": -0.0928
+    },
+    "GBPJPY": {
+     "trades": 305,
+     "expectancy_r": -0.0682
+    },
+    "EURJPY": {
+     "trades": 303,
+     "expectancy_r": -0.0468
+    },
+    "AUDUSD": {
+     "trades": 303,
+     "expectancy_r": -0.2302
+    },
+    "GER40": {
+     "trades": 297,
+     "expectancy_r": -0.0231
+    },
+    "USDCAD": {
+     "trades": 293,
+     "expectancy_r": 0.1838
+    }
+   },
+   "verdict": "IMPROVE (quality-gated, unproven)",
+   "reason": "positive only on A/A+ setups and not yet significant"
+  },
+  "ema_crossover": {
+   "baseline": {
+    "trades": 1808,
+    "win_rate": 0.3153,
+    "avg_win_r": 1.968,
+    "avg_loss_r": -1.068,
+    "expectancy_r": -0.1107,
+    "expectancy_ci95": [
+     -0.1741,
+     -0.0439
+    ],
+    "profit_factor": 0.849,
+    "max_drawdown_r": 207.07
+   },
+   "quality_gated": {
+    "trades": 31,
+    "win_rate": 0.3871,
+    "expectancy_r": 0.1296,
+    "expectancy_ci95": [
+     -0.3622,
+     0.6244
+    ],
+    "profit_factor": 1.203,
+    "max_drawdown_r": 5.152
+   },
+   "target_instruments": {
+    "trades": 717,
+    "win_rate": 0.3445,
+    "expectancy_r": -0.0023,
+    "profit_factor": 0.997
+   },
+   "by_symbol": {
+    "ETHUSD": {
+     "trades": 169,
+     "expectancy_r": -0.1293
+    },
+    "BTCUSD": {
+     "trades": 149,
+     "expectancy_r": 0.0883
+    },
+    "GBPJPY": {
+     "trades": 135,
+     "expectancy_r": -0.23
+    },
+    "USDCHF": {
+     "trades": 124,
+     "expectancy_r": -0.3688
+    },
+    "AUDUSD": {
+     "trades": 116,
+     "expectancy_r": -0.213
+    },
+    "EURJPY": {
+     "trades": 115,
+     "expectancy_r": -0.2005
+    },
+    "GBPUSD": {
+     "trades": 111,
+     "expectancy_r": -0.1543
+    },
+    "XAUUSD": {
+     "trades": 109,
+     "expectancy_r": 0.0015
+    },
+    "EURUSD": {
+     "trades": 106,
+     "expectancy_r": -0.3195
+    },
+    "USDJPY": {
+     "trades": 103,
+     "expectancy_r": -0.0793
+    },
+    "GER40": {
+     "trades": 102,
+     "expectancy_r": -0.0219
+    },
+    "NZDUSD": {
+     "trades": 100,
+     "expectancy_r": -0.1485
+    },
+    "NAS100": {
+     "trades": 98,
+     "expectancy_r": -0.0374
+    },
+    "XAGUSD": {
+     "trades": 97,
+     "expectancy_r": -0.0738
+    },
+    "US500": {
+     "trades": 90,
+     "expectancy_r": 0.1422
+    },
+    "USDCAD": {
+     "trades": 84,
+     "expectancy_r": 0.0866
+    }
+   },
+   "verdict": "IMPROVE (quality-gated, unproven)",
+   "reason": "positive only on A/A+ setups and not yet significant"
+  },
+  "ema_pullback": {
+   "baseline": {
+    "trades": 4077,
+    "win_rate": 0.315,
+    "avg_win_r": 1.929,
+    "avg_loss_r": -1.061,
+    "expectancy_r": -0.1196,
+    "expectancy_ci95": [
+     -0.1611,
+     -0.0761
+    ],
+    "profit_factor": 0.835,
+    "max_drawdown_r": 497.262
+   },
+   "quality_gated": {
+    "trades": 78,
+    "win_rate": 0.3846,
+    "expectancy_r": 0.124,
+    "expectancy_ci95": [
+     -0.1823,
+     0.4354
+    ],
+    "profit_factor": 1.198,
+    "max_drawdown_r": 8.248
+   },
+   "target_instruments": {
+    "trades": 1628,
+    "win_rate": 0.3188,
+    "expectancy_r": -0.0931,
+    "profit_factor": 0.869
+   },
+   "by_symbol": {
+    "BTCUSD": {
+     "trades": 355,
+     "expectancy_r": -0.0105
+    },
+    "ETHUSD": {
+     "trades": 349,
+     "expectancy_r": -0.2343
+    },
+    "USDCHF": {
+     "trades": 269,
+     "expectancy_r": -0.2989
+    },
+    "AUDUSD": {
+     "trades": 269,
+     "expectancy_r": -0.2693
+    },
+    "EURUSD": {
+     "trades": 266,
+     "expectancy_r": -0.1165
+    },
+    "GER40": {
+     "trades": 260,
+     "expectancy_r": -0.1217
+    },
+    "NZDUSD": {
+     "trades": 241,
+     "expectancy_r": -0.1129
+    },
+    "GBPJPY": {
+     "trades": 241,
+     "expectancy_r": -0.1111
+    },
+    "EURJPY": {
+     "trades": 238,
+     "expectancy_r": -0.1212
+    },
+    "XAUUSD": {
+     "trades": 237,
+     "expectancy_r": -0.007
+    },
+    "GBPUSD": {
+     "trades": 234,
+     "expectancy_r": -0.1476
+    },
+    "XAGUSD": {
+     "trades": 234,
+     "expectancy_r": 0.0244
+    },
+    "USDJPY": {
+     "trades": 230,
+     "expectancy_r": -0.2195
+    },
+    "USDCAD": {
+     "trades": 227,
+     "expectancy_r": 0.0429
+    },
+    "NAS100": {
+     "trades": 214,
+     "expectancy_r": -0.1153
+    },
+    "US500": {
+     "trades": 213,
+     "expectancy_r": -0.0379
+    }
+   },
+   "verdict": "IMPROVE (quality-gated, unproven)",
+   "reason": "positive only on A/A+ setups and not yet significant"
+  },
+  "fair_value_gap": {
+   "baseline": {
+    "trades": 682,
+    "win_rate": 0.3475,
+    "avg_win_r": 1.933,
+    "avg_loss_r": -1.047,
+    "expectancy_r": -0.0114,
+    "expectancy_ci95": [
+     -0.1206,
+     0.0974
+    ],
+    "profit_factor": 0.983,
+    "max_drawdown_r": 61.838
+   },
+   "quality_gated": {
+    "trades": 24,
+    "win_rate": 0.375,
+    "expectancy_r": 0.0071,
+    "expectancy_ci95": [
+     -0.4997,
+     0.5553
+    ],
+    "profit_factor": 1.011,
+    "max_drawdown_r": 6.864
+   },
+   "target_instruments": {
+    "trades": 258,
+    "win_rate": 0.3372,
+    "expectancy_r": -0.0567,
+    "profit_factor": 0.919
+   },
+   "by_symbol": {
+    "BTCUSD": {
+     "trades": 52,
+     "expectancy_r": -0.0996
+    },
+    "AUDUSD": {
+     "trades": 48,
+     "expectancy_r": -0.3531
+    },
+    "EURUSD": {
+     "trades": 48,
+     "expectancy_r": -0.169
+    },
+    "XAUUSD": {
+     "trades": 47,
+     "expectancy_r": -0.0091
+    },
+    "GBPUSD": {
+     "trades": 45,
+     "expectancy_r": 0.224
+    },
+    "USDCHF": {
+     "trades": 45,
+     "expectancy_r": 0.1192
+    },
+    "NZDUSD": {
+     "trades": 44,
+     "expectancy_r": -0.0446
+    },
+    "NAS100": {
+     "trades": 44,
+     "expectancy_r": 0.2222
+    },
+    "US500": {
+     "trades": 44,
+     "expectancy_r": -0.1362
+    },
+    "XAGUSD": {
+     "trades": 42,
+     "expectancy_r": 0.1999
+    },
+    "USDJPY": {
+     "trades": 41,
+     "expectancy_r": 0.033
+    },
+    "GBPJPY": {
+     "trades": 41,
+     "expectancy_r": 0.0576
+    },
+    "GER40": {
+     "trades": 40,
+     "expectancy_r": -0.3877
+    },
+    "EURJPY": {
+     "trades": 39,
+     "expectancy_r": 0.1541
+    },
+    "ETHUSD": {
+     "trades": 31,
+     "expectancy_r": 0.0873
+    },
+    "USDCAD": {
+     "trades": 31,
+     "expectancy_r": 0.0101
+    }
+   },
+   "verdict": "DISABLE (keep records)",
+   "reason": "no positive out-of-sample subset after costs"
+  },
+  "ichimoku": {
+   "baseline": {
+    "trades": 3931,
+    "win_rate": 0.3266,
+    "avg_win_r": 1.938,
+    "avg_loss_r": -1.061,
+    "expectancy_r": -0.0826,
+    "expectancy_ci95": [
+     -0.1261,
+     -0.0372
+    ],
+    "profit_factor": 0.884,
+    "max_drawdown_r": 333.74
+   },
+   "quality_gated": {
+    "trades": 145,
+    "win_rate": 0.3655,
+    "expectancy_r": 0.0675,
+    "expectancy_ci95": [
+     -0.169,
+     0.3126
+    ],
+    "profit_factor": 1.101,
+    "max_drawdown_r": 13.281
+   },
+   "target_instruments": {
+    "trades": 1509,
+    "win_rate": 0.3373,
+    "expectancy_r": -0.0349,
+    "profit_factor": 0.949
+   },
+   "by_symbol": {
+    "BTCUSD": {
+     "trades": 326,
+     "expectancy_r": -0.0158
+    },
+    "ETHUSD": {
+     "trades": 313,
+     "expectancy_r": -0.1266
+    },
+    "NZDUSD": {
+     "trades": 262,
+     "expectancy_r": -0.1948
+    },
+    "USDCHF": {
+     "trades": 262,
+     "expectancy_r": -0.3392
+    },
+    "GBPJPY": {
+     "trades": 252,
+     "expectancy_r": -0.2214
+    },
+    "AUDUSD": {
+     "trades": 248,
+     "expectancy_r": -0.2253
+    },
+    "XAGUSD": {
+     "trades": 242,
+     "expectancy_r": 0.016
+    },
+    "EURJPY": {
+     "trades": 235,
+     "expectancy_r": -0.0876
+    },
+    "EURUSD": {
+     "trades": 235,
+     "expectancy_r": -0.083
+    },
+    "GBPUSD": {
+     "trades": 233,
+     "expectancy_r": -0.1501
+    },
+    "USDJPY": {
+     "trades": 229,
+     "expectancy_r": 0.2356
+    },
+    "NAS100": {
+     "trades": 228,
+     "expectancy_r": -0.0692
+    },
+    "USDCAD": {
+     "trades": 224,
+     "expectancy_r": -0.0145
+    },
+    "US500": {
+     "trades": 218,
+     "expectancy_r": -0.0866
+    },
+    "XAUUSD": {
+     "trades": 214,
+     "expectancy_r": 0.1163
+    },
+    "GER40": {
+     "trades": 210,
+     "expectancy_r": 0.009
+    }
+   },
+   "verdict": "IMPROVE (quality-gated, unproven)",
+   "reason": "positive only on A/A+ setups and not yet significant"
+  },
+  "inside_bar_breakout": {
+   "baseline": {
+    "trades": 4406,
+    "win_rate": 0.3214,
+    "avg_win_r": 1.927,
+    "avg_loss_r": -1.058,
+    "expectancy_r": -0.0992,
+    "expectancy_ci95": [
+     -0.1401,
+     -0.059
+    ],
+    "profit_factor": 0.862,
+    "max_drawdown_r": 484.446
+   },
+   "quality_gated": {
+    "trades": 273,
+    "win_rate": 0.326,
+    "expectancy_r": -0.0405,
+    "expectancy_ci95": [
+     -0.2032,
+     0.1279
+    ],
+    "profit_factor": 0.941,
+    "max_drawdown_r": 44.343
+   },
+   "target_instruments": {
+    "trades": 1740,
+    "win_rate": 0.3489,
+    "expectancy_r": 0.0012,
+    "profit_factor": 1.002
+   },
+   "by_symbol": {
+    "ETHUSD": {
+     "trades": 388,
+     "expectancy_r": -0.0706
+    },
+    "BTCUSD": {
+     "trades": 373,
+     "expectancy_r": -0.0266
+    },
+    "NZDUSD": {
+     "trades": 279,
+     "expectancy_r": -0.1791
+    },
+    "USDCHF": {
+     "trades": 275,
+     "expectancy_r": -0.444
+    },
+    "GBPJPY": {
+     "trades": 273,
+     "expectancy_r": -0.1744
+    },
+    "GBPUSD": {
+     "trades": 270,
+     "expectancy_r": -0.1414
+    },
+    "USDCAD": {
+     "trades": 266,
+     "expectancy_r": -0.1395
+    },
+    "USDJPY": {
+     "trades": 265,
+     "expectancy_r": -0.1378
+    },
+    "EURUSD": {
+     "trades": 264,
+     "expectancy_r": -0.1455
+    },
+    "EURJPY": {
+     "trades": 264,
+     "expectancy_r": -0.1006
+    },
+    "AUDUSD": {
+     "trades": 263,
+     "expectancy_r": -0.1566
+    },
+    "NAS100": {
+     "trades": 254,
+     "expectancy_r": 0.0158
+    },
+    "US500": {
+     "trades": 250,
+     "expectancy_r": 0.0585
+    },
+    "XAUUSD": {
+     "trades": 250,
+     "expectancy_r": 0.0196
+    },
+    "XAGUSD": {
+     "trades": 247,
+     "expectancy_r": -0.0071
+    },
+    "GER40": {
+     "trades": 225,
+     "expectancy_r": 0.0707
+    }
+   },
+   "verdict": "RESTRICT TO INSTRUMENTS",
+   "reason": "positive only on GER40, US500 (not significant)"
+  },
+  "liquidity_sweep": {
+   "baseline": {
+    "trades": 2253,
+    "win_rate": 0.3206,
+    "avg_win_r": 1.975,
+    "avg_loss_r": -1.058,
+    "expectancy_r": -0.0859,
+    "expectancy_ci95": [
+     -0.1438,
+     -0.0276
+    ],
+    "profit_factor": 0.88,
+    "max_drawdown_r": 218.152
+   },
+   "quality_gated": {
+    "trades": 96,
+    "win_rate": 0.2917,
+    "expectancy_r": -0.164,
+    "expectancy_ci95": [
+     -0.4218,
+     0.1183
+    ],
+    "profit_factor": 0.778,
+    "max_drawdown_r": 24.657
+   },
+   "target_instruments": {
+    "trades": 930,
+    "win_rate": 0.3057,
+    "expectancy_r": -0.1111,
+    "profit_factor": 0.846
+   },
+   "by_symbol": {
+    "ETHUSD": {
+     "trades": 217,
+     "expectancy_r": -0.2958
+    },
+    "BTCUSD": {
+     "trades": 204,
+     "expectancy_r": -0.0048
+    },
+    "USDCAD": {
+     "trades": 151,
+     "expectancy_r": -0.1991
+    },
+    "NZDUSD": {
+     "trades": 141,
+     "expectancy_r": 0.0703
+    },
+    "AUDUSD": {
+     "trades": 141,
+     "expectancy_r": -0.136
+    },
+    "EURUSD": {
+     "trades": 138,
+     "expectancy_r": -0.1191
+    },
+    "USDCHF": {
+     "trades": 135,
+     "expectancy_r": -0.0527
+    },
+    "US500": {
+     "trades": 133,
+     "expectancy_r": 0.0943
+    },
+    "GBPUSD": {
+     "trades": 132,
+     "expectancy_r": -0.3334
+    },
+    "NAS100": {
+     "trades": 130,
+     "expectancy_r": -0.2596
+    },
+    "EURJPY": {
+     "trades": 129,
+     "expectancy_r": 0.2538
+    },
+    "XAUUSD": {
+     "trades": 126,
+     "expectancy_r": -0.1109
+    },
+    "XAGUSD": {
+     "trades": 121,
+     "expectancy_r": -0.1298
+    },
+    "GER40": {
+     "trades": 120,
+     "expectancy_r": -0.025
+    },
+    "GBPJPY": {
+     "trades": 120,
+     "expectancy_r": -0.1139
+    },
+    "USDJPY": {
+     "trades": 115,
+     "expectancy_r": 0.1153
+    }
+   },
+   "verdict": "RESTRICT TO INSTRUMENTS",
+   "reason": "positive only on EURJPY, NZDUSD, US500, USDJPY (not significant)"
+  },
+  "london_breakout": {
+   "baseline": {
+    "trades": 3201,
+    "win_rate": 0.4164,
+    "avg_win_r": 1.255,
+    "avg_loss_r": -0.911,
+    "expectancy_r": -0.0095,
+    "expectancy_ci95": [
+     -0.0495,
+     0.0335
+    ],
+    "profit_factor": 0.982,
+    "max_drawdown_r": 217.139
+   },
+   "quality_gated": {
+    "trades": 427,
+    "win_rate": 0.4296,
+    "expectancy_r": 0.0249,
+    "expectancy_ci95": [
+     -0.0833,
+     0.1366
+    ],
+    "profit_factor": 1.05,
+    "max_drawdown_r": 23.608
+   },
+   "target_instruments": {
+    "trades": 554,
+    "win_rate": 0.435,
+    "expectancy_r": 0.0559,
+    "profit_factor": 1.108
+   },
+   "by_symbol": {
+    "GER40": {
+     "trades": 374,
+     "expectancy_r": 0.0109
+    },
+    "GBPUSD": {
+     "trades": 326,
+     "expectancy_r": -0.0579
+    },
+    "USDCHF": {
+     "trades": 308,
+     "expectancy_r": -0.0373
+    },
+    "EURUSD": {
+     "trades": 298,
+     "expectancy_r": -0.0576
+    },
+    "GBPJPY": {
+     "trades": 294,
+     "expectancy_r": -0.0037
+    },
+    "USDCAD": {
+     "trades": 285,
+     "expectancy_r": -0.0884
+    },
+    "EURJPY": {
+     "trades": 252,
+     "expectancy_r": 0.0562
+    },
+    "NZDUSD": {
+     "trades": 246,
+     "expectancy_r": 0.0218
+    },
+    "USDJPY": {
+     "trades": 228,
+     "expectancy_r": 0.0038
+    },
+    "AUDUSD": {
+     "trades": 218,
+     "expectancy_r": -0.0508
+    },
+    "XAGUSD": {
+     "trades": 192,
+     "expectancy_r": 0.0155
+    },
+    "XAUUSD": {
+     "trades": 180,
+     "expectancy_r": 0.1494
+    }
+   },
+   "verdict": "IMPROVE (quality-gated, unproven)",
+   "reason": "positive only on A/A+ setups and not yet significant"
+  },
+  "macd_momentum": {
+   "baseline": {
+    "trades": 3352,
+    "win_rate": 0.3389,
+    "avg_win_r": 1.975,
+    "avg_loss_r": -1.058,
+    "expectancy_r": -0.03,
+    "expectancy_ci95": [
+     -0.0782,
+     0.019
+    ],
+    "profit_factor": 0.957,
+    "max_drawdown_r": 135.838
+   },
+   "quality_gated": {
+    "trades": 97,
+    "win_rate": 0.3711,
+    "expectancy_r": 0.0915,
+    "expectancy_ci95": [
+     -0.1895,
+     0.3942
+    ],
+    "profit_factor": 1.142,
+    "max_drawdown_r": 14.759
+   },
+   "target_instruments": {
+    "trades": 1356,
+    "win_rate": 0.3481,
+    "expectancy_r": 0.0104,
+    "profit_factor": 1.015
+   },
+   "by_symbol": {
+    "ETHUSD": {
+     "trades": 277,
+     "expectancy_r": -0.1778
+    },
+    "BTCUSD": {
+     "trades": 274,
+     "expectancy_r": 0.0953
+    },
+    "EURJPY": {
+     "trades": 213,
+     "expectancy_r": -0.0848
+    },
+    "NAS100": {
+     "trades": 212,
+     "expectancy_r": -0.0416
+    },
+    "GBPUSD": {
+     "trades": 211,
+     "expectancy_r": -0.1612
+    },
+    "USDCHF": {
+     "trades": 210,
+     "expectancy_r": -0.2283
+    },
+    "GBPJPY": {
+     "trades": 206,
+     "expectancy_r": -0.1736
+    },
+    "USDCAD": {
+     "trades": 205,
+     "expectancy_r": 0.1529
+    },
+    "US500": {
+     "trades": 202,
+     "expectancy_r": -0.1146
+    },
+    "NZDUSD": {
+     "trades": 198,
+     "expectancy_r": -0.1393
+    },
+    "XAUUSD": {
+     "trades": 196,
+     "expectancy_r": 0.2562
+    },
+    "GER40": {
+     "trades": 195,
+     "expectancy_r": 0.0975
+    },
+    "AUDUSD": {
+     "trades": 193,
+     "expectancy_r": -0.0945
+    },
+    "USDJPY": {
+     "trades": 190,
+     "expectancy_r": 0.1142
+    },
+    "EURUSD": {
+     "trades": 188,
+     "expectancy_r": 0.0268
+    },
+    "XAGUSD": {
+     "trades": 182,
+     "expectancy_r": 0.0488
+    }
+   },
+   "verdict": "IMPROVE (quality-gated, unproven)",
+   "reason": "positive only on A/A+ setups and not yet significant"
+  },
+  "market_structure_break": {
+   "baseline": {
+    "trades": 1126,
+    "win_rate": 0.3544,
+    "avg_win_r": 1.884,
+    "avg_loss_r": -1.033,
+    "expectancy_r": 0.001,
+    "expectancy_ci95": [
+     -0.0818,
+     0.0821
+    ],
+    "profit_factor": 1.001,
+    "max_drawdown_r": 54.514
+   },
+   "quality_gated": {
+    "trades": 64,
+    "win_rate": 0.3906,
+    "expectancy_r": 0.1477,
+    "expectancy_ci95": [
+     -0.2083,
+     0.5021
+    ],
+    "profit_factor": 1.241,
+    "max_drawdown_r": 8.351
+   },
+   "target_instruments": {
+    "trades": 418,
+    "win_rate": 0.3589,
+    "expectancy_r": 0.021,
+    "profit_factor": 1.032
+   },
+   "by_symbol": {
+    "BTCUSD": {
+     "trades": 93,
+     "expectancy_r": 0.0485
+    },
+    "USDCAD": {
+     "trades": 86,
+     "expectancy_r": -0.2046
+    },
+    "GBPJPY": {
+     "trades": 82,
+     "expectancy_r": -0.0013
+    },
+    "GBPUSD": {
+     "trades": 81,
+     "expectancy_r": 0.5477
+    },
+    "ETHUSD": {
+     "trades": 78,
+     "expectancy_r": -0.1241
+    },
+    "AUDUSD": {
+     "trades": 74,
+     "expectancy_r": -0.2383
+    },
+    "GER40": {
+     "trades": 71,
+     "expectancy_r": -0.0229
+    },
+    "EURJPY": {
+     "trades": 69,
+     "expectancy_r": -0.1675
+    },
+    "EURUSD": {
+     "trades": 69,
+     "expectancy_r": 0.2522
+    },
+    "USDCHF": {
+     "trades": 65,
+     "expectancy_r": 0.0048
+    },
+    "US500": {
+     "trades": 64,
+     "expectancy_r": -0.1826
+    },
+    "USDJPY": {
+     "trades": 63,
+     "expectancy_r": 0.1763
+    },
+    "XAGUSD": {
+     "trades": 61,
+     "expectancy_r": -0.1602
+    },
+    "NZDUSD": {
+     "trades": 58,
+     "expectancy_r": -0.4167
+    },
+    "NAS100": {
+     "trades": 57,
+     "expectancy_r": 0.3274
+    },
+    "XAUUSD": {
+     "trades": 55,
+     "expectancy_r": 0.1561
+    }
+   },
+   "verdict": "IMPROVE (quality-gated, unproven)",
+   "reason": "positive only on A/A+ setups and not yet significant"
+  },
+  "opening_range_breakout": {
+   "baseline": {
+    "trades": 1036,
+    "win_rate": 0.4546,
+    "avg_win_r": 0.891,
+    "avg_loss_r": -0.792,
+    "expectancy_r": -0.0266,
+    "expectancy_ci95": [
+     -0.0856,
+     0.031
+    ],
+    "profit_factor": 0.938,
+    "max_drawdown_r": 55.455
+   },
+   "quality_gated": {
+    "trades": 134,
+    "win_rate": 0.3881,
+    "expectancy_r": -0.1662,
+    "expectancy_ci95": [
+     -0.3279,
+     -0.0083
+    ],
+    "profit_factor": 0.668,
+    "max_drawdown_r": 23.708
+   },
+   "target_instruments": {
+    "trades": 1036,
+    "win_rate": 0.4546,
+    "expectancy_r": -0.0266,
+    "profit_factor": 0.938
+   },
+   "by_symbol": {
+    "US500": {
+     "trades": 369,
+     "expectancy_r": -0.0222
+    },
+    "GER40": {
+     "trades": 341,
+     "expectancy_r": -0.0244
+    },
+    "NAS100": {
+     "trades": 326,
+     "expectancy_r": -0.034
+    }
+   },
+   "verdict": "DISABLE (keep records)",
+   "reason": "no positive out-of-sample subset after costs"
+  },
+  "order_block_retest": {
+   "baseline": {
+    "trades": 536,
+    "win_rate": 0.3675,
+    "avg_win_r": 1.915,
+    "avg_loss_r": -1.05,
+    "expectancy_r": 0.0395,
+    "expectancy_ci95": [
+     -0.0838,
+     0.1617
+    ],
+    "profit_factor": 1.059,
+    "max_drawdown_r": 41.17
+   },
+   "quality_gated": {
+    "trades": 9,
+    "win_rate": 0.2222,
+    "expectancy_r": -0.3359,
+    "expectancy_ci95": [
+     -1.01,
+     0.6699
+    ],
+    "profit_factor": 0.572,
+    "max_drawdown_r": 6.039
+   },
+   "target_instruments": {
+    "trades": 207,
+    "win_rate": 0.314,
+    "expectancy_r": -0.1007,
+    "profit_factor": 0.859
+   },
+   "by_symbol": {
+    "BTCUSD": {
+     "trades": 45,
+     "expectancy_r": -0.4189
+    },
+    "EURUSD": {
+     "trades": 44,
+     "expectancy_r": -0.0256
+    },
+    "AUDUSD": {
+     "trades": 40,
+     "expectancy_r": -0.1459
+    },
+    "NAS100": {
+     "trades": 38,
+     "expectancy_r": 0.3085
+    },
+    "EURJPY": {
+     "trades": 36,
+     "expectancy_r": 0.2254
+    },
+    "GBPJPY": {
+     "trades": 35,
+     "expectancy_r": 0.336
+    },
+    "GER40": {
+     "trades": 34,
+     "expectancy_r": -0.2688
+    },
+    "USDCAD": {
+     "trades": 33,
+     "expectancy_r": 0.4875
+    },
+    "USDCHF": {
+     "trades": 32,
+     "expectancy_r": 0.0331
+    },
+    "USDJPY": {
+     "trades": 32,
+     "expectancy_r": 0.194
+    },
+    "NZDUSD": {
+     "trades": 31,
+     "expectancy_r": -0.1861
+    },
+    "US500": {
+     "trades": 30,
+     "expectancy_r": 0.0047
+    },
+    "ETHUSD": {
+     "trades": 30,
+     "expectancy_r": -0.1159
+    },
+    "XAUUSD": {
+     "trades": 30,
+     "expectancy_r": -0.0414
+    },
+    "GBPUSD": {
+     "trades": 26,
+     "expectancy_r": 0.5343
+    },
+    "XAGUSD": {
+     "trades": 20,
+     "expectancy_r": -0.1191
+    }
+   },
+   "verdict": "DISABLE (keep records)",
+   "reason": "no positive out-of-sample subset after costs"
+  },
+  "rsi_divergence": {
+   "baseline": {
+    "trades": 697,
+    "win_rate": 0.3286,
+    "avg_win_r": 1.924,
+    "avg_loss_r": -1.026,
+    "expectancy_r": -0.0568,
+    "expectancy_ci95": [
+     -0.1596,
+     0.0477
+    ],
+    "profit_factor": 0.918,
+    "max_drawdown_r": 52.633
+   },
+   "quality_gated": {
+    "trades": 13,
+    "win_rate": 0.1538,
+    "expectancy_r": -0.5038,
+    "expectancy_ci95": [
+     -1.0053,
+     0.1437
+    ],
+    "profit_factor": 0.377,
+    "max_drawdown_r": 6.55
+   },
+   "target_instruments": {
+    "trades": 292,
+    "win_rate": 0.3185,
+    "expectancy_r": -0.0956,
+    "profit_factor": 0.863
+   },
+   "by_symbol": {
+    "BTCUSD": {
+     "trades": 60,
+     "expectancy_r": 0.0736
+    },
+    "ETHUSD": {
+     "trades": 55,
+     "expectancy_r": -0.4689
+    },
+    "EURJPY": {
+     "trades": 51,
+     "expectancy_r": 0.1275
+    },
+    "GER40": {
+     "trades": 49,
+     "expectancy_r": -0.2224
+    },
+    "NAS100": {
+     "trades": 49,
+     "expectancy_r": -0.1674
+    },
+    "USDJPY": {
+     "trades": 48,
+     "expectancy_r": 0.173
+    },
+    "XAGUSD": {
+     "trades": 47,
+     "expectancy_r": 0.0435
+    },
+    "US500": {
+     "trades": 47,
+     "expectancy_r": 0.2621
+    },
+    "NZDUSD": {
+     "trades": 46,
+     "expectancy_r": -0.0877
+    },
+    "USDCHF": {
+     "trades": 40,
+     "expectancy_r": -0.1791
+    },
+    "AUDUSD": {
+     "trades": 39,
+     "expectancy_r": -0.1232
+    },
+    "USDCAD": {
+     "trades": 37,
+     "expectancy_r": -0.4717
+    },
+    "GBPUSD": {
+     "trades": 34,
+     "expectancy_r": -0.1424
+    },
+    "EURUSD": {
+     "trades": 33,
+     "expectancy_r": 0.0568
+    },
+    "XAUUSD": {
+     "trades": 32,
+     "expectancy_r": 0.0078
+    },
+    "GBPJPY": {
+     "trades": 30,
+     "expectancy_r": 0.2634
+    }
+   },
+   "verdict": "RESTRICT TO INSTRUMENTS",
+   "reason": "positive only on BTCUSD, EURJPY (not significant)"
+  },
+  "smc": {
+   "baseline": {
+    "trades": 149,
+    "win_rate": 0.3557,
+    "avg_win_r": 2.119,
+    "avg_loss_r": -1.083,
+    "expectancy_r": 0.0562,
+    "expectancy_ci95": [
+     -0.1954,
+     0.3201
+    ],
+    "profit_factor": 1.081,
+    "max_drawdown_r": 25.978
+   },
+   "quality_gated": {
+    "trades": 0,
+    "win_rate": null,
+    "expectancy_r": null,
+    "expectancy_ci95": [
+     null,
+     null
+    ],
+    "profit_factor": null,
+    "max_drawdown_r": 0.0
+   },
+   "target_instruments": {
+    "trades": 57,
+    "win_rate": 0.2807,
+    "expectancy_r": -0.129,
+    "profit_factor": 0.829
+   },
+   "by_symbol": {
+    "EURUSD": {
+     "trades": 14,
+     "expectancy_r": 0.7279
+    },
+    "US500": {
+     "trades": 14,
+     "expectancy_r": -0.5112
+    },
+    "USDCAD": {
+     "trades": 14,
+     "expectancy_r": 0.1051
+    },
+    "GBPUSD": {
+     "trades": 12,
+     "expectancy_r": -0.1336
+    },
+    "ETHUSD": {
+     "trades": 12,
+     "expectancy_r": 0.0505
+    },
+    "USDJPY": {
+     "trades": 11,
+     "expectancy_r": 0.295
+    },
+    "USDCHF": {
+     "trades": 10,
+     "expectancy_r": 0.5222
+    },
+    "GER40": {
+     "trades": 9,
+     "expectancy_r": 0.9501
+    },
+    "BTCUSD": {
+     "trades": 9,
+     "expectancy_r": -0.703
+    },
+    "EURJPY": {
+     "trades": 8,
+     "expectancy_r": -0.3881
+    },
+    "XAGUSD": {
+     "trades": 7,
+     "expectancy_r": 1.4557
+    },
+    "NZDUSD": {
+     "trades": 7,
+     "expectancy_r": -0.7782
+    },
+    "NAS100": {
+     "trades": 7,
+     "expectancy_r": -1.0111
+    },
+    "XAUUSD": {
+     "trades": 6,
+     "expectancy_r": 0.6758
+    },
+    "AUDUSD": {
+     "trades": 6,
+     "expectancy_r": -0.6582
+    },
+    "GBPJPY": {
+     "trades": 3,
+     "expectancy_r": -0.164
+    }
+   },
+   "verdict": "DISABLE (keep records)",
+   "reason": "no positive out-of-sample subset after costs"
+  },
+  "support_resistance": {
+   "baseline": {
+    "trades": 519,
+    "win_rate": 0.3012,
+    "avg_win_r": 2.071,
+    "avg_loss_r": -1.07,
+    "expectancy_r": -0.1261,
+    "expectancy_ci95": [
+     -0.2523,
+     0.0129
+    ],
+    "profit_factor": 0.832,
+    "max_drawdown_r": 79.563
+   },
+   "quality_gated": {
+    "trades": 7,
+    "win_rate": 0.2857,
+    "expectancy_r": -0.009,
+    "expectancy_ci95": [
+     -1.0241,
+     1.3778
+    ],
+    "profit_factor": 0.988,
+    "max_drawdown_r": 3.027
+   },
+   "target_instruments": {
+    "trades": 213,
+    "win_rate": 0.3255,
+    "expectancy_r": -0.0008,
+    "profit_factor": 0.999
+   },
+   "by_symbol": {
+    "XAUUSD": {
+     "trades": 45,
+     "expectancy_r": 0.0551
+    },
+    "NAS100": {
+     "trades": 40,
+     "expectancy_r": 0.0693
+    },
+    "USDCHF": {
+     "trades": 39,
+     "expectancy_r": -0.2656
+    },
+    "XAGUSD": {
+     "trades": 38,
+     "expectancy_r": -0.3969
+    },
+    "BTCUSD": {
+     "trades": 38,
+     "expectancy_r": -0.1854
+    },
+    "US500": {
+     "trades": 37,
+     "expectancy_r": 0.1673
+    },
+    "USDCAD": {
+     "trades": 37,
+     "expectancy_r": -0.1804
+    },
+    "USDJPY": {
+     "trades": 31,
+     "expectancy_r": -0.1152
+    },
+    "EURUSD": {
+     "trades": 29,
+     "expectancy_r": -0.5804
+    },
+    "GBPJPY": {
+     "trades": 29,
+     "expectancy_r": -0.0777
+    },
+    "ETHUSD": {
+     "trades": 29,
+     "expectancy_r": -0.2431
+    },
+    "AUDUSD": {
+     "trades": 28,
+     "expectancy_r": -0.1319
+    },
+    "NZDUSD": {
+     "trades": 26,
+     "expectancy_r": 0.2006
+    },
+    "EURJPY": {
+     "trades": 25,
+     "expectancy_r": -0.2581
+    },
+    "GER40": {
+     "trades": 24,
+     "expectancy_r": 0.1037
+    },
+    "GBPUSD": {
+     "trades": 24,
+     "expectancy_r": -0.2322
+    }
+   },
+   "verdict": "DISABLE (keep records)",
+   "reason": "clearly negative out of sample and no profitable gated subset"
+  },
+  "trend_momentum": {
+   "baseline": {
+    "trades": 76,
+    "win_rate": 0.2763,
+    "avg_win_r": 1.901,
+    "avg_loss_r": -1.04,
+    "expectancy_r": -0.2276,
+    "expectancy_ci95": [
+     -0.5234,
+     0.0758
+    ],
+    "profit_factor": 0.698,
+    "max_drawdown_r": 18.183
+   },
+   "quality_gated": {
+    "trades": 0,
+    "win_rate": null,
+    "expectancy_r": null,
+    "expectancy_ci95": [
+     null,
+     null
+    ],
+    "profit_factor": null,
+    "max_drawdown_r": 0.0
+   },
+   "target_instruments": {
+    "trades": 25,
+    "win_rate": 0.2,
+    "expectancy_r": -0.4124,
+    "profit_factor": 0.489
+   },
+   "by_symbol": {
+    "BTCUSD": {
+     "trades": 10,
+     "expectancy_r": -0.1165
+    },
+    "EURUSD": {
+     "trades": 9,
+     "expectancy_r": -0.1137
+    },
+    "NZDUSD": {
+     "trades": 8,
+     "expectancy_r": -0.4108
+    },
+    "GBPUSD": {
+     "trades": 6,
+     "expectancy_r": -0.562
+    },
+    "GBPJPY": {
+     "trades": 6,
+     "expectancy_r": -0.1633
+    },
+    "USDCAD": {
+     "trades": 6,
+     "expectancy_r": 0.1813
+    },
+    "EURJPY": {
+     "trades": 5,
+     "expectancy_r": -0.4814
+    },
+    "USDJPY": {
+     "trades": 4,
+     "expectancy_r": 1.3348
+    },
+    "NAS100": {
+     "trades": 4,
+     "expectancy_r": -1.0091
+    },
+    "XAUUSD": {
+     "trades": 4,
+     "expectancy_r": -0.1837
+    },
+    "AUDUSD": {
+     "trades": 3,
+     "expectancy_r": -1.077
+    },
+    "USDCHF": {
+     "trades": 3,
+     "expectancy_r": 0.6426
+    },
+    "GER40": {
+     "trades": 3,
+     "expectancy_r": -0.1057
+    },
+    "US500": {
+     "trades": 2,
+     "expectancy_r": -1.0115
+    },
+    "ETHUSD": {
+     "trades": 2,
+     "expectancy_r": -1.0171
+    },
+    "XAGUSD": {
+     "trades": 1,
+     "expectancy_r": -1.0406
+    }
+   },
+   "verdict": "INSUFFICIENT EVIDENCE",
+   "reason": "76 out-of-sample trades"
+  },
+  "trendline_bounce": {
+   "baseline": {
+    "trades": 6292,
+    "win_rate": 0.2391,
+    "avg_win_r": 2.66,
+    "avg_loss_r": -1.142,
+    "expectancy_r": -0.2357,
+    "expectancy_ci95": [
+     -0.2823,
+     -0.1896
+    ],
+    "profit_factor": 0.729,
+    "max_drawdown_r": 1514.547
+   },
+   "quality_gated": {
+    "trades": 6,
+    "win_rate": 0.3333,
+    "expectancy_r": 0.2592,
+    "expectancy_ci95": [
+     -1.0287,
+     1.6759
+    ],
+    "profit_factor": 1.38,
+    "max_drawdown_r": 2.081
+   },
+   "target_instruments": {
+    "trades": 2595,
+    "win_rate": 0.2385,
+    "expectancy_r": -0.1816,
+    "profit_factor": 0.779
+   },
+   "by_symbol": {
+    "BTCUSD": {
+     "trades": 549,
+     "expectancy_r": -0.0685
+    },
+    "ETHUSD": {
+     "trades": 519,
+     "expectancy_r": -0.3842
+    },
+    "EURUSD": {
+     "trades": 440,
+     "expectancy_r": -0.2334
+    },
+    "XAUUSD": {
+     "trades": 416,
+     "expectancy_r": 0.0774
+    },
+    "EURJPY": {
+     "trades": 413,
+     "expectancy_r": -0.2253
+    },
+    "USDJPY": {
+     "trades": 408,
+     "expectancy_r": -0.2117
+    },
+    "USDCHF": {
+     "trades": 400,
+     "expectancy_r": -0.544
+    },
+    "NAS100": {
+     "trades": 393,
+     "expectancy_r": -0.0552
+    },
+    "GBPJPY": {
+     "trades": 384,
+     "expectancy_r": -0.4222
+    },
+    "US500": {
+     "trades": 370,
+     "expectancy_r": -0.3186
+    },
+    "XAGUSD": {
+     "trades": 370,
+     "expectancy_r": -0.1849
+    },
+    "GBPUSD": {
+     "trades": 354,
+     "expectancy_r": -0.2256
+    },
+    "GER40": {
+     "trades": 348,
+     "expectancy_r": -0.3645
+    },
+    "NZDUSD": {
+     "trades": 344,
+     "expectancy_r": -0.2324
+    },
+    "AUDUSD": {
+     "trades": 328,
+     "expectancy_r": -0.2005
+    },
+    "USDCAD": {
+     "trades": 256,
+     "expectancy_r": -0.2181
+    }
+   },
+   "verdict": "RESTRICT TO INSTRUMENTS",
+   "reason": "positive only on XAUUSD (not significant)"
+  },
+  "trendline_break_retest": {
+   "baseline": {
+    "trades": 1661,
+    "win_rate": 0.238,
+    "avg_win_r": 2.585,
+    "avg_loss_r": -1.141,
+    "expectancy_r": -0.2547,
+    "expectancy_ci95": [
+     -0.3489,
+     -0.1618
+    ],
+    "profit_factor": 0.707,
+    "max_drawdown_r": 439.949
+   },
+   "quality_gated": {
+    "trades": 63,
+    "win_rate": 0.254,
+    "expectancy_r": -0.2699,
+    "expectancy_ci95": [
+     -0.5884,
+     0.0841
+    ],
+    "profit_factor": 0.657,
+    "max_drawdown_r": 25.479
+   },
+   "target_instruments": {
+    "trades": 689,
+    "win_rate": 0.2224,
+    "expectancy_r": -0.2308,
+    "profit_factor": 0.719
+   },
+   "by_symbol": {
+    "BTCUSD": {
+     "trades": 145,
+     "expectancy_r": -0.2
+    },
+    "NAS100": {
+     "trades": 118,
+     "expectancy_r": -0.4112
+    },
+    "ETHUSD": {
+     "trades": 114,
+     "expectancy_r": -0.395
+    },
+    "NZDUSD": {
+     "trades": 112,
+     "expectancy_r": -0.2934
+    },
+    "US500": {
+     "trades": 107,
+     "expectancy_r": -0.2448
+    },
+    "GBPUSD": {
+     "trades": 106,
+     "expectancy_r": -0.3502
+    },
+    "EURUSD": {
+     "trades": 105,
+     "expectancy_r": 0.0497
+    },
+    "XAUUSD": {
+     "trades": 104,
+     "expectancy_r": 0.0084
+    },
+    "GBPJPY": {
+     "trades": 102,
+     "expectancy_r": -0.1089
+    },
+    "GER40": {
+     "trades": 101,
+     "expectancy_r": -0.1103
+    },
+    "EURJPY": {
+     "trades": 98,
+     "expectancy_r": -0.5396
+    },
+    "USDCHF": {
+     "trades": 97,
+     "expectancy_r": -0.4366
+    },
+    "XAGUSD": {
+     "trades": 93,
+     "expectancy_r": -0.5013
+    },
+    "USDJPY": {
+     "trades": 91,
+     "expectancy_r": -0.4294
+    },
+    "AUDUSD": {
+     "trades": 87,
+     "expectancy_r": -0.0137
+    },
+    "USDCAD": {
+     "trades": 81,
+     "expectancy_r": -0.0739
+    }
+   },
+   "verdict": "DISABLE (keep records)",
+   "reason": "clearly negative out of sample and no profitable gated subset"
+  }
+ },
+ "diagnostics": {
+  "signals": 95659,
+  "stops": 63861,
+  "stopped_after_reaching_1R": 0.2424,
+  "stopped_after_reaching_0.5R": 0.4766,
+  "stopped_within_1h_of_entry": 0.1967,
+  "stops_that_reach_target_with_1.5x_stop": 0.1297,
+  "expectancy_by_planned_rr": {
+   "1.2-1.8": {
+    "n": 3026,
+    "expectancy_r": -0.1939
+   },
+   "1.8-2.5": {
+    "n": 84513,
+    "expectancy_r": -0.0689
+   },
+   ">=3.5": {
+    "n": 4428,
+    "expectancy_r": -0.2512
+   },
+   "2.5-3.5": {
+    "n": 3069,
+    "expectancy_r": -0.2125
+   },
+   "<1.2": {
+    "n": 620,
+    "expectancy_r": 0.0389
+   },
+   "null": {
+    "n": 3,
+    "expectancy_r": 0.5641
+   }
+  },
+  "univariate_expectancy": {
+   "family_regime": {
+    "trend:RANGING": {
+     "n": 18792,
+     "expectancy_r": -0.0771
+    },
+    "breakout:BREAKOUT": {
+     "n": 13412,
+     "expectancy_r": -0.0543
+    },
+    "breakout:RANGING": {
+     "n": 12235,
+     "expectancy_r": -0.0566
+    },
+    "breakout:TRENDING": {
+     "n": 10647,
+     "expectancy_r": -0.1013
+    },
+    "reversion:RANGING": {
+     "n": 6753,
+     "expectancy_r": -0.1718
+    },
+    "reversion:TRENDING": {
+     "n": 6727,
+     "expectancy_r": -0.2061
+    },
+    "trend:TRENDING": {
+     "n": 5865,
+     "expectancy_r": -0.104
+    },
+    "trend:BREAKOUT": {
+     "n": 3026,
+     "expectancy_r": -0.0398
+    },
+    "breakout:HIGH_VOLATILITY": {
+     "n": 2764,
+     "expectancy_r": -0.0569
+    },
+    "trend:LOW_VOLATILITY": {
+     "n": 2612,
+     "expectancy_r": 0.0553
+    },
+    "breakout:REVERSAL": {
+     "n": 2193,
+     "expectancy_r": -0.1091
+    },
+    "trend:REVERSAL": {
+     "n": 1938,
+     "expectancy_r": -0.0689
+    },
+    "trend:HIGH_VOLATILITY": {
+     "n": 1730,
+     "expectancy_r": -0.0384
+    },
+    "reversion:HIGH_VOLATILITY": {
+     "n": 1307,
+     "expectancy_r": -0.0302
+    },
+    "breakout:LOW_VOLATILITY": {
+     "n": 1226,
+     "expectancy_r": -0.02
+    },
+    "reversion:REVERSAL": {
+     "n": 1182,
+     "expectancy_r": -0.1735
+    },
+    "reversal:RANGING": {
+     "n": 1004,
+     "expectancy_r": 0.0221
+    },
+    "reversion:LOW_VOLATILITY": {
+     "n": 961,
+     "expectancy_r": -0.1267
+    },
+    "reversal:TRENDING": {
+     "n": 505,
+     "expectancy_r": -0.04
+    },
+    "reversion:BREAKOUT": {
+     "n": 265,
+     "expectancy_r": -0.1519
+    }
+   },
+   "regime_trend": {
+    "with": {
+     "n": 42678,
+     "expectancy_r": -0.0725
+    },
+    "flat": {
+     "n": 38787,
+     "expectancy_r": -0.0845
+    },
+    "against": {
+     "n": 14194,
+     "expectancy_r": -0.125
+    }
+   },
+   "session": {
+    "ASIA": {
+     "n": 24214,
+     "expectancy_r": -0.0387
+    },
+    "LONDON": {
+     "n": 23715,
+     "expectancy_r": -0.0505
+    },
+    "LONDON_NY_OVERLAP": {
+     "n": 20279,
+     "expectancy_r": -0.0551
+    },
+    "NEW_YORK": {
+     "n": 19402,
+     "expectancy_r": -0.1926
+    },
+    "LATE_US": {
+     "n": 8049,
+     "expectancy_r": -0.1437
+    }
+   },
+   "htf_h4": {
+    "with": {
+     "n": 41072,
+     "expectancy_r": -0.0639
+    },
+    "mixed": {
+     "n": 31289,
+     "expectancy_r": -0.102
+    },
+    "against": {
+     "n": 23075,
+     "expectancy_r": -0.0993
+    },
+    "unknown": {
+     "n": 220,
+     "expectancy_r": -0.175
+    }
+   },
+   "htf_d1": {
+    "with": {
+     "n": 53257,
+     "expectancy_r": -0.0658
+    },
+    "against": {
+     "n": 41900,
+     "expectancy_r": -0.1093
+    },
+    "unknown": {
+     "n": 499,
+     "expectancy_r": -0.1339
+    }
+   },
+   "structure": {
+    "mixed": {
+     "n": 39173,
+     "expectancy_r": -0.0798
+    },
+    "with": {
+     "n": 31345,
+     "expectancy_r": -0.0941
+    },
+    "against": {
+     "n": 25138,
+     "expectancy_r": -0.0823
+    }
+   },
+   "adx": {
+    "18-25": {
+     "n": 27876,
+     "expectancy_r": -0.0693
+    },
+    "<18": {
+     "n": 27303,
+     "expectancy_r": -0.0801
+    },
+    "25-35": {
+     "n": 24528,
+     "expectancy_r": -0.0861
+    },
+    ">=35": {
+     "n": 15949,
+     "expectancy_r": -0.1201
+    }
+   },
+   "di": {
+    "with": {
+     "n": 68172,
+     "expectancy_r": -0.0787
+    },
+    "against": {
+     "n": 27484,
+     "expectancy_r": -0.1012
+    }
+   },
+   "rsi": {
+    "50-65": {
+     "n": 48277,
+     "expectancy_r": -0.0767
+    },
+    "65-75": {
+     "n": 23436,
+     "expectancy_r": -0.0768
+    },
+    "35-50": {
+     "n": 15642,
+     "expectancy_r": -0.1254
+    },
+    "<35": {
+     "n": 4185,
+     "expectancy_r": -0.1558
+    },
+    ">=75": {
+     "n": 4116,
+     "expectancy_r": -0.0073
+    }
+   },
+   "macd": {
+    "with_rising": {
+     "n": 51453,
+     "expectancy_r": -0.0613
+    },
+    "against": {
+     "n": 33430,
+     "expectancy_r": -0.1087
+    },
+    "with": {
+     "n": 10773,
+     "expectancy_r": -0.126
+    }
+   },
+   "atr_ratio": {
+    "0.75-1": {
+     "n": 39306,
+     "expectancy_r": -0.0828
+    },
+    "1-1.35": {
+     "n": 36418,
+     "expectancy_r": -0.1083
+    },
+    ">=1.35": {
+     "n": 10295,
+     "expectancy_r": -0.069
+    },
+    "<0.75": {
+     "n": 9637,
+     "expectancy_r": -0.0249
+    }
+   },
+   "bb_width": {
+    "20-50%": {
+     "n": 29196,
+     "expectancy_r": -0.0964
+    },
+    "50-80%": {
+     "n": 26825,
+     "expectancy_r": -0.0866
+    },
+    "<20%": {
+     "n": 22578,
+     "expectancy_r": -0.052
+    },
+    ">=80%": {
+     "n": 17057,
+     "expectancy_r": -0.1076
+    }
+   },
+   "extension": {
+    "0.5-1.5": {
+     "n": 27126,
+     "expectancy_r": -0.0715
+    },
+    "1.5-2.5": {
+     "n": 24191,
+     "expectancy_r": -0.0784
+    },
+    "at_mean": {
+     "n": 22365,
+     "expectancy_r": -0.0909
+    },
+    "pullback": {
+     "n": 13126,
+     "expectancy_r": -0.1476
+    },
+    ">=2.5": {
+     "n": 8848,
+     "expectancy_r": -0.0385
+    }
+   },
+   "stop_atr": {
+    "1-2": {
+     "n": 56277,
+     "expectancy_r": -0.0646
+    },
+    ">=2": {
+     "n": 20164,
+     "expectancy_r": -0.0385
+    },
+    "0.5-1": {
+     "n": 11670,
+     "expectancy_r": -0.1526
+    },
+    "<0.5": {
+     "n": 7545,
+     "expectancy_r": -0.2592
+    }
+   },
+   "room": {
+    "<0.5R": {
+     "n": 43613,
+     "expectancy_r": -0.0623
+    },
+    ">=2R": {
+     "n": 14713,
+     "expectancy_r": -0.1997
+    },
+    "0.5-1R": {
+     "n": 13324,
+     "expectancy_r": -0.0489
+    },
+    "clear": {
+     "n": 13285,
+     "expectancy_r": -0.0535
+    },
+    "1-2R": {
+     "n": 10721,
+     "expectancy_r": -0.1054
+    }
+   },
+   "planned_rr": {
+    "1.8-2.5": {
+     "n": 84513,
+     "expectancy_r": -0.0689
+    },
+    ">=3.5": {
+     "n": 4428,
+     "expectancy_r": -0.2512
+    },
+    "2.5-3.5": {
+     "n": 3069,
+     "expectancy_r": -0.2125
+    },
+    "1.2-1.8": {
+     "n": 3026,
+     "expectancy_r": -0.1939
+    },
+    "<1.2": {
+     "n": 620,
+     "expectancy_r": 0.0389
+    }
+   },
+   "target_vs_level": {
+    "beyond_level": {
+     "n": 65121,
+     "expectancy_r": -0.0635
+    },
+    "before_level": {
+     "n": 17250,
+     "expectancy_r": -0.1913
+    },
+    "clear": {
+     "n": 13285,
+     "expectancy_r": -0.0535
+    }
+   },
+   "tick_activity": {
+    "normal": {
+     "n": 35371,
+     "expectancy_r": -0.0612
+    },
+    "high": {
+     "n": 33655,
+     "expectancy_r": -0.0672
+    },
+    "low": {
+     "n": 26630,
+     "expectancy_r": -0.1398
+    }
+   },
+   "strategy_form": {
+    "<-0.2": {
+     "n": 37734,
+     "expectancy_r": -0.0764
+    },
+    ">=0.2": {
+     "n": 20271,
+     "expectancy_r": -0.1038
+    },
+    "-0.2-0": {
+     "n": 19472,
+     "expectancy_r": -0.0822
+    },
+    "0-0.2": {
+     "n": 17674,
+     "expectancy_r": -0.0829
+    },
+    "insufficient": {
+     "n": 508,
+     "expectancy_r": -0.1828
+    }
+   }
+  },
+  "clustered_signals_share": 0.5723,
+  "clustered_expectancy_r": 0.0146,
+  "isolated_expectancy_r": -0.2186
+ },
+ "final_model": {
+  "path": "C:\\Users\\katjo\\OneDrive\\Documents\\GitHub\\trading-hub\\backend\\signal_quality\\model.json",
+  "exits": {
+   "ema_crossover": "t3",
+   "fair_value_gap": "t3",
+   "ichimoku": "wide",
+   "inside_bar_breakout": "wide",
+   "liquidity_sweep": "atr",
+   "market_structure_break": "t1.5",
+   "opening_range_breakout": "atr",
+   "rsi_divergence": "t1",
+   "support_resistance": "wide",
+   "trendline_bounce": "atr",
+   "trendline_break_retest": "atr"
+  },
+  "top_effects": {
+   "strategy": {
+    "trendline_bounce": -0.0900548662012814,
+    "trend_momentum": -0.0673283736382818,
+    "fair_value_gap": 0.06333667539348396,
+    "order_block_retest": 0.08880240021058143
+   },
+   "symbol": {
+    "USDCHF": -0.11222412508479991,
+    "AUDUSD": -0.10184085581883998,
+    "BTCUSD": 0.0896587913815216,
+    "XAUUSD": 0.15964838733761055
+   },
+   "family_regime": {
+    "reversal:BREAKOUT": -0.059411236750679094,
+    "reversal:REVERSAL": -0.04271828332355029,
+    "reversion:HIGH_VOLATILITY": 0.07684348515418589,
+    "trend:LOW_VOLATILITY": 0.08097775825270344
+   },
+   "regime_trend": {
+    "against": -0.00619876968388955,
+    "flat": 0.0017418087066606554,
+    "with": 0.0029243279534796308
+   },
+   "session": {
+    "NEW_YORK": -0.09714971334546259,
+    "LATE_US": -0.006598625246582407,
+    "LONDON": 0.015410248918298402,
+    "ASIA": 0.06143875299586931
+   },
+   "htf_h4": {
+    "unknown": -0.04994940808753037,
+    "mixed": -0.0072504815482084106,
+    "with": -0.0029771482626843393,
+    "against": 0.01671008485569205
+   },
+   "htf_d1": {
+    "unknown": -0.07086496036910629,
+    "against": -0.027835478159194144,
+    "with": 0.022716491637138205
+   },
+   "structure": {
+    "with": -0.015013801495706075,
+    "mixed": 0.0001885738294402733,
+    "unknown": 0.008056071571473634,
+    "against": 0.015910891033207364
+   },
+   "adx": {
+    ">=35": -0.017825799881397698,
+    "<18": -0.01124578898231971,
+    "unknown": 0.008055510071122839,
+    "25-35": 0.019364490066009727
+   },
+   "di": {
+    "with": -0.00836830682128605,
+    "unknown": 0.008054960495006315,
+    "against": 0.020345467895354376
+   },
+   "rsi": {
+    "<35": -0.008838502237891175,
+    "50-65": -0.007688273708886292,
+    "unknown": 0.008054425282905274,
+    ">=75": 0.08350944613155985
+   },
+   "macd": {
+    "against": -0.014261315926926546,
+    "with": -0.0012759027674898442,
+    "unknown": 0.008053906337741982,
+    "with_rising": 0.010603989201978034
+   },
+   "atr_ratio": {
+    "1-1.35": -0.006201896097930815,
+    "0.75-1": -0.001118171384068519,
+    ">=1.35": 0.008908467862812077,
+    "<0.75": 0.016561369851572836
+   },
+   "bb_width": {
+    ">=80%": -0.011371668729345556,
+    "20-50%": -0.010975007279988935,
+    "unknown": 0.008052922345082482,
+    "<20%": 0.014451364016702587
+   },
+   "extension": {
+    "1.5-2.5": -0.007610929495049713,
+    "pullback": -0.00460318703550792,
+    "at_mean": 0.006432054597491542,
+    "unknown": 0.008052458669826366
+   },
+   "stop_atr": {
+    "<0.5": -0.10196717197054529,
+    "0.5-1": -0.027713973485620855,
+    "1-2": 0.010118065099239381,
+    ">=2": 0.02855429792518322
+   },
+   "room": {
+    ">=2R": -0.020123406322895245,
+    "1-2R": -0.0037452568470884226,
+    "unknown": 0.00805158813433117,
+    "0.5-1R": 0.02033828940252267
+   },
+   "planned_rr": {
+    ">=3.5": -0.04927387084583694,
+    "1.8-2.5": 0.0003811891740054872,
+    "2.5-3.5": 0.03294472740104264,
+    "<1.2": 0.03610948613913115
+   },
+   "target_vs_level": {
+    "beyond_level": -0.007893275042493196,
+    "clear": -0.0004890708837549574,
+    "unknown": 0.008050788970736637,
+    "before_level": 0.0315554913481614
+   },
+   "tick_activity": {
+    "low": -0.043828402099401746,
+    "unknown": 0.008050413166435667,
+    "high": 0.013464259647274638,
+    "normal": 0.02075187177512803
+   },
+   "strategy_form": {
+    "insufficient": -0.08678009505363017,
+    ">=0.2": -0.026535918787295543,
+    "-0.2-0": 0.0003317690761792989,
+    "<-0.2": 0.022278543811417553
+   }
+  }
+ }
+}

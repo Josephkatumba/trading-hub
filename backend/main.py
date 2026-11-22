@@ -1217,7 +1217,7 @@ def strategy_bank():
 _BANK_SIGNAL_FIELDS = ("signal_id", "strategy_key", "strategy_name", "strategy_number", "status", "symbol", "direction",
                        "timeframe", "confirmed_at", "entry", "stop_loss", "take_profit", "rr", "executable", "execution_basis",
                        "time_exit_at", "explanation", "contradictions", "opportunity_id", "alert", "outcome_status",
-                       "r_multiple", "outcome_at", "outcome_method", "outcome_reason", "r_basis")
+                       "r_multiple", "outcome_at", "outcome_method", "outcome_reason", "r_basis", "quality")
 
 
 @app.get("/api/strategy-bank/signals")
@@ -1234,6 +1234,60 @@ def strategy_bank_signals(limit: int = Query(default=200, ge=1, le=1000)):
                                     "direction": opp.get("direction"), "first_confirmed_at": opp.get("first_confirmed_at")}
                               for oid, opp in store.opportunities.items() if oid in wanted},
             "basis": "Recorded bank signals. R multiples are hypothetical signal outcomes, not executed trades.",
+            "timestamp": utc_iso(datetime.now(timezone.utc))}
+
+
+_QUALITY_CACHE: dict[str, Any] = {"at": 0.0, "audit": None}
+_QUALITY_SECTIONS = ("generated_at", "label", "method", "data", "folds", "exit_choices", "all_instruments", "target_instruments",
+                     "grade_calibration", "random_control", "breakdowns", "strategy_status", "diagnostics", "final_model")
+
+
+@app.get("/api/signal-quality")
+def signal_quality_report():
+    """Signal quality dashboard, read-only: (1) the audit of every RECORDED live signal (hypothetical R),
+    (2) the HISTORICAL walk-forward comparison of the old engine with the quality-gated engine (simulated,
+    out-of-sample, net of costs) and (3) how live bank signals are being graded. Nothing is scanned or changed."""
+    import time as time_
+    from research import signal_audit
+    from signal_quality import lifecycle as quality_lifecycle, live as quality_live
+    from strategy_bank import engine as bank_engine
+    if _QUALITY_CACHE["audit"] is None or time_.time() - _QUALITY_CACHE["at"] > 300:
+        try:
+            _QUALITY_CACHE["audit"] = signal_audit.audit()
+        except Exception:
+            LOGGER.exception("Signal quality: live audit unavailable")
+            _QUALITY_CACHE["audit"] = None
+        _QUALITY_CACHE["at"] = time_.time()
+    from storage_config import data_directory
+    research_path = data_directory() / "research" / "quality" / "walk_forward.json"
+    research = None
+    if research_path.exists():
+        try:
+            full = json.loads(research_path.read_text(encoding="utf-8"))
+            research = {k: full.get(k) for k in _QUALITY_SECTIONS}
+        except (OSError, json.JSONDecodeError):
+            LOGGER.exception("Signal quality: walk-forward results unreadable")
+    store = bank_engine.BankStore()
+    graded: dict[str, dict[str, Any]] = {}
+    stages: dict[str, int] = {}
+    for row in store.signals.values():
+        q = row.get("quality") or {}
+        grade = q.get("grade") or "UNGRADED"
+        cell = graded.setdefault(grade, {"signals": 0, "resolved": 0, "wins": 0, "total_r": 0.0})
+        cell["signals"] += 1
+        if row.get("outcome_status") in ("TARGET_HIT", "STOP_HIT", "TIME_EXIT") and row.get("r_multiple") is not None:
+            cell["resolved"] += 1
+            cell["wins"] += float(row["r_multiple"]) > 0
+            cell["total_r"] = round(cell["total_r"] + float(row["r_multiple"]), 3)
+        stage = quality_lifecycle.stage_of(row)
+        stages[stage] = stages.get(stage, 0) + 1
+    model_ = quality_live.model()
+    return {"live_audit": _QUALITY_CACHE["audit"], "research": research,
+            "live_grading": {"mode": quality_live.mode(), "model": (model_.meta if model_ else None),
+                             "by_grade": graded, "by_stage": stages},
+            "notes": ["Live figures are recorded signal outcomes (hypothetical R), not executed trades.",
+                      "Research figures are simulated on MT5 history, out of sample, net of spread, commission, slippage and financing; they are not live results.",
+                      "The quality gate runs in shadow mode unless TRADEDEN_QUALITY_GATE=enforce; it never places trades."],
             "timestamp": utc_iso(datetime.now(timezone.utc))}
 
 

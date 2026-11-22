@@ -168,6 +168,8 @@ class BankStore:
 
     def open_signal(self, key: str, symbol: str) -> dict[str, Any] | None:
         for s in self.signals.values():
+            if s.get("alert") == "no trade (quality gate)":       # a NO TRADE record never blocks a later signal
+                continue
             if s["strategy_key"] == key and s["symbol"] == symbol and s.get("outcome_status") not in FINAL:
                 return s
         return None
@@ -212,6 +214,17 @@ class Bank:
             if self.store.open_signal(spec["key"], ctx.symbol):
                 self.store.rejections[spec["key"]]["duplicate: previous signal still open"] += 1
                 continue
+            from signal_quality import live as quality_live
+            quality = quality_live.assess(ctx, signal, self.store.signals.values())
+            if quality is not None:
+                signal["quality"] = quality
+                if quality["mode"] == "enforce" and not quality["confirmable"]:
+                    # NO TRADE: recorded and outcome-tracked for research, never alerted or merged
+                    signal["alert"] = "no trade (quality gate)"
+                    self.store.rejections[spec["key"]][f"quality gate: grade {quality['grade']}"] += 1
+                    self.store.put_signal(signal)
+                    new.append(signal)
+                    continue
             self._attach(signal, now)
             self.store.put_signal(signal)
             new.append(signal)

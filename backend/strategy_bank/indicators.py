@@ -73,6 +73,45 @@ def macd(c: np.ndarray, fast: int = 12, slow: int = 26, signal: int = 9) -> tupl
     return line, ema(line, signal)
 
 
+def adx(h: np.ndarray, l: np.ndarray, c: np.ndarray, period: int = 14) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Wilder ADX, +DI and -DI (causal: element i uses bars 0..i); NaN until enough bars exist."""
+    n = len(c)
+    adx_, plus, minus = np.full(n, np.nan), np.full(n, np.nan), np.full(n, np.nan)
+    if n <= 2 * period:
+        return adx_, plus, minus
+    up, down = np.diff(h), -np.diff(l)
+    pdm = np.where((up > down) & (up > 0), up, 0.0)
+    mdm = np.where((down > up) & (down > 0), down, 0.0)
+    tr = true_range(h, l, c)[1:]
+    s_tr, s_p, s_m = tr[:period].sum(), pdm[:period].sum(), mdm[:period].sum()
+    dx = []
+    for k in range(period, len(tr) + 1):
+        if k > period:
+            s_tr = s_tr - s_tr / period + tr[k - 1]
+            s_p = s_p - s_p / period + pdm[k - 1]
+            s_m = s_m - s_m / period + mdm[k - 1]
+        i = k                                     # bar index (diff arrays are offset by one)
+        p, m = (100 * s_p / s_tr, 100 * s_m / s_tr) if s_tr > 0 else (0.0, 0.0)
+        plus[i], minus[i] = p, m
+        dx.append(100 * abs(p - m) / (p + m) if p + m > 0 else 0.0)
+        if len(dx) == period:
+            adx_[i] = sum(dx) / period
+        elif len(dx) > period:
+            adx_[i] = (adx_[i - 1] * (period - 1) + dx[-1]) / period
+    return adx_, plus, minus
+
+
+def rolling_percentile(x: np.ndarray, period: int) -> np.ndarray:
+    """Share (0..1) of the previous `period` values (excluding i) that are below x[i]; NaN while warming up."""
+    out = np.full_like(x, np.nan, dtype=float)
+    for i in range(period, len(x)):
+        window = x[i - period:i]
+        window = window[window == window]
+        if len(window) and x[i] == x[i]:
+            out[i] = float((window < x[i]).mean())
+    return out
+
+
 def rolling_std(x: np.ndarray, period: int) -> np.ndarray:
     out = np.full_like(x, np.nan)
     for i in range(period - 1, len(x)):
