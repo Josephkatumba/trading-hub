@@ -1,0 +1,4834 @@
+{
+ "protocol_sha256": "394c507ed08d8a53d2e70e9078ffbe05a6df71fdb132797d939c5c80f65a24e9",
+ "generated": "2026-11-23T18:53:38+00:00",
+ "results": {
+  "diagnostics": {
+   "A_event_study_H1": {
+    "horizon_after_window": "4 H1 bars",
+    "by_kind": {
+     "CPI": {
+      "events": 57,
+      "corr_gold_vs_usd_reaction": -0.656,
+      "corr_next_gold_vs_usd_reaction": 0.196,
+      "corr_next_gold_vs_data_surprise": 0.189,
+      "mean_abs_gold_reaction_bp": 25.5
+     },
+     "FOMC": {
+      "events": 34,
+      "corr_gold_vs_usd_reaction": -0.739,
+      "corr_next_gold_vs_usd_reaction": -0.42,
+      "corr_next_gold_vs_data_surprise": null,
+      "mean_abs_gold_reaction_bp": 52.1
+     },
+     "NFP": {
+      "events": 59,
+      "corr_gold_vs_usd_reaction": -0.853,
+      "corr_next_gold_vs_usd_reaction": 0.029,
+      "corr_next_gold_vs_data_surprise": 0.026,
+      "mean_abs_gold_reaction_bp": 43.7
+     },
+     "PCE": {
+      "events": 59,
+      "corr_gold_vs_usd_reaction": -0.515,
+      "corr_next_gold_vs_usd_reaction": 0.071,
+      "corr_next_gold_vs_data_surprise": 0.126,
+      "mean_abs_gold_reaction_bp": 16.9
+     }
+    }
+   },
+   "A_event_study_D1": {
+    "horizon_after_window": "5 days",
+    "by_kind": {
+     "CPI": {
+      "events": 177,
+      "corr_gold_vs_usd_reaction": -0.433,
+      "corr_next_gold_vs_usd_reaction": 0.073,
+      "corr_next_gold_vs_data_surprise": -0.077,
+      "mean_abs_gold_reaction_bp": 84.1
+     },
+     "FOMC": {
+      "events": 73,
+      "corr_gold_vs_usd_reaction": -0.745,
+      "corr_next_gold_vs_usd_reaction": -0.35,
+      "corr_next_gold_vs_data_surprise": null,
+      "mean_abs_gold_reaction_bp": 93.4
+     },
+     "NFP": {
+      "events": 178,
+      "corr_gold_vs_usd_reaction": -0.592,
+      "corr_next_gold_vs_usd_reaction": 0.019,
+      "corr_next_gold_vs_data_surprise": -0.064,
+      "mean_abs_gold_reaction_bp": 86.9
+     },
+     "PCE": {
+      "events": 178,
+      "corr_gold_vs_usd_reaction": -0.382,
+      "corr_next_gold_vs_usd_reaction": -0.02,
+      "corr_next_gold_vs_data_surprise": 0.0,
+      "mean_abs_gold_reaction_bp": 80.4
+     }
+    }
+   },
+   "B5_cot_descriptive_vs_predictive": {
+    "weeks": 741,
+    "corr_mm_change_vs_same_week_gold": 0.5,
+    "corr_mm_change_vs_next_1w_after_release": -0.018,
+    "corr_mm_change_vs_next_4w_after_release": -0.04,
+    "corr_cot_index_vs_next_4w": -0.005
+   },
+   "C2_regime_persistence": {
+    "D1": {
+     "er_t_vs_er_t+20_spearman": -0.111,
+     "volpct_t_vs_t+20_spearman": 0.427
+    },
+    "H4": {
+     "er_t_vs_er_t+20_spearman": 0.013,
+     "volpct_t_vs_t+20_spearman": 0.251
+    },
+    "H1": {
+     "er_t_vs_er_t+20_spearman": -0.027,
+     "volpct_t_vs_t+20_spearman": 0.115
+    }
+   }
+  },
+  "A1_usd_reaction_underreaction": {
+   "project": "A",
+   "mechanism": "Gold under-reacts to the dollar's response to US macro releases; it keeps moving opposite the USD surprise after the release window.",
+   "configs": 8,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "H4"
+     },
+     "trades": 34,
+     "mean_r": -0.5668,
+     "mean_net_bp": -14.88,
+     "t": -2.25,
+     "p_one_sided": 0.9843
+    },
+    {
+     "config": 1,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "H1"
+     },
+     "trades": 34,
+     "mean_r": -0.3834,
+     "mean_net_bp": -5.38,
+     "t": -1.11,
+     "p_one_sided": 0.8628
+    },
+    {
+     "config": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "D1"
+     },
+     "trades": 151,
+     "mean_r": 0.0273,
+     "mean_net_bp": 3.62,
+     "t": 0.3,
+     "p_one_sided": 0.3831
+    },
+    {
+     "config": 3,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "5D"
+     },
+     "trades": 134,
+     "mean_r": -0.0321,
+     "mean_net_bp": -17.5,
+     "t": -0.32,
+     "p_one_sided": 0.6246
+    },
+    {
+     "config": 4,
+     "params": {
+      "min_abs_z": 0.5,
+      "horizon": "H4"
+     },
+     "trades": 88,
+     "mean_r": -0.6266,
+     "mean_net_bp": -17.39,
+     "t": -3.92,
+     "p_one_sided": 0.9999
+    },
+    {
+     "config": 5,
+     "params": {
+      "min_abs_z": 0.5,
+      "horizon": "H1"
+     },
+     "trades": 88,
+     "mean_r": -0.6618,
+     "mean_net_bp": -8.61,
+     "t": -3.32,
+     "p_one_sided": 0.9993
+    },
+    {
+     "config": 6,
+     "params": {
+      "min_abs_z": 0.5,
+      "horizon": "D1"
+     },
+     "trades": 315,
+     "mean_r": -0.0081,
+     "mean_net_bp": -1.23,
+     "t": -0.14,
+     "p_one_sided": 0.5551
+    },
+    {
+     "config": 7,
+     "params": {
+      "min_abs_z": 0.5,
+      "horizon": "5D"
+     },
+     "trades": 249,
+     "mean_r": -0.0301,
+     "mean_net_bp": -12.27,
+     "t": -0.45,
+     "p_one_sided": 0.6721
+    }
+   ],
+   "share_configs_positive": 0.125,
+   "folds": [
+    {
+     "test_year": 2010,
+     "selected": 6,
+     "params": {
+      "min_abs_z": 0.5,
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 28,
+      "mean_r": -0.124,
+      "mean_net_bp": -12.97,
+      "win_rate": 42.9,
+      "profit_factor": 0.693,
+      "max_dd_r": 6.26,
+      "trades_per_year": 30.2,
+      "t": -0.81,
+      "p_one_sided": 0.7889,
+      "ci95_r": [
+       -0.4046,
+       0.1678
+      ]
+     }
+    },
+    {
+     "test_year": 2011,
+     "selected": 6,
+     "params": {
+      "min_abs_z": 0.5,
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 19,
+      "mean_r": 0.1946,
+      "mean_net_bp": 23.04,
+      "win_rate": 68.4,
+      "profit_factor": 1.6,
+      "max_dd_r": 2.84,
+      "trades_per_year": 21.1,
+      "t": 0.74,
+      "p_one_sided": 0.2334,
+      "ci95_r": [
+       -0.3048,
+       0.6881
+      ]
+     }
+    },
+    {
+     "test_year": 2012,
+     "selected": 6,
+     "params": {
+      "min_abs_z": 0.5,
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 21,
+      "mean_r": -0.0029,
+      "mean_net_bp": 1.96,
+      "win_rate": 52.4,
+      "profit_factor": 0.979,
+      "max_dd_r": 1.7,
+      "trades_per_year": 21.9,
+      "t": -0.04,
+      "p_one_sided": 0.5157,
+      "ci95_r": [
+       -0.1389,
+       0.1372
+      ]
+     }
+    },
+    {
+     "test_year": 2013,
+     "selected": 6,
+     "params": {
+      "min_abs_z": 0.5,
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 24,
+      "mean_r": 0.0625,
+      "mean_net_bp": 7.23,
+      "win_rate": 45.8,
+      "profit_factor": 1.2,
+      "max_dd_r": 3.59,
+      "trades_per_year": 27.2,
+      "t": 0.31,
+      "p_one_sided": 0.3798,
+      "ci95_r": [
+       -0.3036,
+       0.4945
+      ]
+     }
+    },
+    {
+     "test_year": 2014,
+     "selected": 6,
+     "params": {
+      "min_abs_z": 0.5,
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 22,
+      "mean_r": -0.0332,
+      "mean_net_bp": -8.13,
+      "win_rate": 50.0,
+      "profit_factor": 0.933,
+      "max_dd_r": 5.42,
+      "trades_per_year": 23.3,
+      "t": -0.11,
+      "p_one_sided": 0.5438,
+      "ci95_r": [
+       -0.5774,
+       0.5587
+      ]
+     }
+    },
+    {
+     "test_year": 2015,
+     "selected": 6,
+     "params": {
+      "min_abs_z": 0.5,
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 29,
+      "mean_r": 0.0694,
+      "mean_net_bp": 4.84,
+      "win_rate": 48.3,
+      "profit_factor": 1.211,
+      "max_dd_r": 4.38,
+      "trades_per_year": 30.6,
+      "t": 0.4,
+      "p_one_sided": 0.3445,
+      "ci95_r": [
+       -0.2552,
+       0.4078
+      ]
+     }
+    },
+    {
+     "test_year": 2016,
+     "selected": 6,
+     "params": {
+      "min_abs_z": 0.5,
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 22,
+      "mean_r": -0.1435,
+      "mean_net_bp": -16.29,
+      "win_rate": 45.5,
+      "profit_factor": 0.568,
+      "max_dd_r": 6.02,
+      "trades_per_year": 25.3,
+      "t": -0.92,
+      "p_one_sided": 0.8159,
+      "ci95_r": [
+       -0.446,
+       0.1496
+      ]
+     }
+    },
+    {
+     "test_year": 2017,
+     "selected": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 11,
+      "mean_r": 0.0862,
+      "mean_net_bp": 5.84,
+      "win_rate": 45.5,
+      "profit_factor": 1.32,
+      "max_dd_r": 1.24,
+      "trades_per_year": 11.9,
+      "t": 0.36,
+      "p_one_sided": 0.3639,
+      "ci95_r": [
+       -0.3513,
+       0.5556
+      ]
+     }
+    },
+    {
+     "test_year": 2018,
+     "selected": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 7,
+      "mean_r": 0.0634,
+      "mean_net_bp": 1.76,
+      "win_rate": 57.1,
+      "profit_factor": 1.131,
+      "max_dd_r": 1.81,
+      "trades_per_year": 7.5,
+      "t": 0.12,
+      "p_one_sided": 0.4531,
+      "ci95_r": [
+       -0.812,
+       1.0334
+      ]
+     }
+    },
+    {
+     "test_year": 2019,
+     "selected": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 2,
+      "mean_r": 1.3048,
+      "mean_net_bp": 74.69,
+      "win_rate": 100.0,
+      "profit_factor": null,
+      "max_dd_r": 0.0,
+      "trades_per_year": 8.0,
+      "t": NaN,
+      "p_one_sided": NaN,
+      "ci95_r": [
+       NaN,
+       NaN
+      ]
+     }
+    },
+    {
+     "test_year": 2020,
+     "selected": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 10,
+      "mean_r": -0.4936,
+      "mean_net_bp": -45.59,
+      "win_rate": 50.0,
+      "profit_factor": 0.166,
+      "max_dd_r": 5.41,
+      "trades_per_year": 13.2,
+      "t": -1.67,
+      "p_one_sided": 0.9344,
+      "ci95_r": [
+       -1.0733,
+       0.0031
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 195,
+    "mean_r": -0.0059,
+    "mean_net_bp": -1.73,
+    "win_rate": 50.3,
+    "profit_factor": 0.983,
+    "max_dd_r": 9.2,
+    "trades_per_year": 18.0,
+    "t": -0.09,
+    "p_one_sided": 0.534,
+    "ci95_r": [
+     -0.1352,
+     0.1295
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 195,
+    "mean_r": -0.0682,
+    "mean_net_bp": -7.6,
+    "win_rate": 46.2,
+    "profit_factor": 0.82,
+    "max_dd_r": 14.62,
+    "trades_per_year": 18.0,
+    "t": -1.0,
+    "p_one_sided": 0.8401,
+    "ci95_r": [
+     -0.1978,
+     0.068
+    ]
+   },
+   "oos_by_year": {
+    "2010": {
+     "trades": 28,
+     "mean_r": -0.124
+    },
+    "2011": {
+     "trades": 19,
+     "mean_r": 0.195
+    },
+    "2012": {
+     "trades": 21,
+     "mean_r": -0.003
+    },
+    "2013": {
+     "trades": 24,
+     "mean_r": 0.063
+    },
+    "2014": {
+     "trades": 22,
+     "mean_r": -0.033
+    },
+    "2015": {
+     "trades": 29,
+     "mean_r": 0.069
+    },
+    "2016": {
+     "trades": 22,
+     "mean_r": -0.143
+    },
+    "2017": {
+     "trades": 11,
+     "mean_r": 0.086
+    },
+    "2018": {
+     "trades": 7,
+     "mean_r": 0.063
+    },
+    "2019": {
+     "trades": 2,
+     "mean_r": 1.305
+    },
+    "2020": {
+     "trades": 10,
+     "mean_r": -0.494
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "mean": -0.0626,
+    "p90": 0.0187
+   },
+   "benchmark": {
+    "mean_r": -0.0278,
+    "kind": "always_long_same_timing"
+   },
+   "gate1_checks": {
+    "min_trades": true,
+    "mean_positive": false,
+    "profit_factor": false,
+    "p_value": false,
+    "beats_direction_control": false,
+    "beats_benchmark": true,
+    "parameter_robustness": false
+   },
+   "gate1_pass": false,
+   "final_config": 2,
+   "final_params": {
+    "min_abs_z": 1.0,
+    "horizon": "D1"
+   }
+  },
+  "A2_gold_reaction_persistence": {
+   "project": "A",
+   "mechanism": "Gold's own release-window move either continues (slow diffusion) or reverts (overshoot). Direction is a selected parameter, so the stability of its sign is what is tested.",
+   "configs": 8,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "direction": "continue",
+      "horizon": "H4"
+     },
+     "trades": 45,
+     "mean_r": -0.3136,
+     "mean_net_bp": -13.06,
+     "t": -1.45,
+     "p_one_sided": 0.923
+    },
+    {
+     "config": 1,
+     "params": {
+      "direction": "continue",
+      "horizon": "H1"
+     },
+     "trades": 45,
+     "mean_r": -0.2932,
+     "mean_net_bp": -4.82,
+     "t": -1.09,
+     "p_one_sided": 0.859
+    },
+    {
+     "config": 2,
+     "params": {
+      "direction": "continue",
+      "horizon": "D1"
+     },
+     "trades": 135,
+     "mean_r": -0.0277,
+     "mean_net_bp": -0.13,
+     "t": -0.33,
+     "p_one_sided": 0.6302
+    },
+    {
+     "config": 3,
+     "params": {
+      "direction": "continue",
+      "horizon": "5D"
+     },
+     "trades": 122,
+     "mean_r": -0.2129,
+     "mean_net_bp": -42.6,
+     "t": -1.95,
+     "p_one_sided": 0.973
+    },
+    {
+     "config": 4,
+     "params": {
+      "direction": "revert",
+      "horizon": "H4"
+     },
+     "trades": 45,
+     "mean_r": -0.0643,
+     "mean_net_bp": 0.78,
+     "t": -0.29,
+     "p_one_sided": 0.615
+    },
+    {
+     "config": 5,
+     "params": {
+      "direction": "revert",
+      "horizon": "H1"
+     },
+     "trades": 45,
+     "mean_r": -0.4592,
+     "mean_net_bp": -7.4,
+     "t": -1.72,
+     "p_one_sided": 0.9537
+    },
+    {
+     "config": 6,
+     "params": {
+      "direction": "revert",
+      "horizon": "D1"
+     },
+     "trades": 135,
+     "mean_r": -0.0874,
+     "mean_net_bp": -11.67,
+     "t": -1.05,
+     "p_one_sided": 0.8521
+    },
+    {
+     "config": 7,
+     "params": {
+      "direction": "revert",
+      "horizon": "5D"
+     },
+     "trades": 122,
+     "mean_r": 0.1508,
+     "mean_net_bp": 28.28,
+     "t": 1.38,
+     "p_one_sided": 0.0851
+    }
+   ],
+   "share_configs_positive": 0.125,
+   "folds": [
+    {
+     "test_year": 2010,
+     "selected": 2,
+     "params": {
+      "direction": "continue",
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 3,
+      "mean_r": 0.7079,
+      "mean_net_bp": 75.58,
+      "win_rate": 100.0,
+      "profit_factor": null,
+      "max_dd_r": 0.0,
+      "trades_per_year": 3.6,
+      "t": 15.14,
+      "p_one_sided": 0.0414,
+      "ci95_r": [
+       NaN,
+       NaN
+      ]
+     }
+    },
+    {
+     "test_year": 2011,
+     "selected": 2,
+     "params": {
+      "direction": "continue",
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 9,
+      "mean_r": -0.1529,
+      "mean_net_bp": -23.06,
+      "win_rate": 44.4,
+      "profit_factor": 0.764,
+      "max_dd_r": 2.86,
+      "trades_per_year": 14.2,
+      "t": -0.3,
+      "p_one_sided": 0.6147,
+      "ci95_r": [
+       -1.0679,
+       0.7692
+      ]
+     }
+    },
+    {
+     "test_year": 2012,
+     "selected": 7,
+     "params": {
+      "direction": "revert",
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 6,
+      "mean_r": 0.3242,
+      "mean_net_bp": 68.44,
+      "win_rate": 66.7,
+      "profit_factor": 2.81,
+      "max_dd_r": 0.99,
+      "trades_per_year": 8.0,
+      "t": 0.89,
+      "p_one_sided": 0.2071,
+      "ci95_r": [
+       -0.3127,
+       1.0109
+      ]
+     }
+    },
+    {
+     "test_year": 2013,
+     "selected": 7,
+     "params": {
+      "direction": "revert",
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 12,
+      "mean_r": 0.3719,
+      "mean_net_bp": 74.39,
+      "win_rate": 50.0,
+      "profit_factor": 2.135,
+      "max_dd_r": 3.33,
+      "trades_per_year": 19.3,
+      "t": 0.85,
+      "p_one_sided": 0.2059,
+      "ci95_r": [
+       -0.4114,
+       1.236
+      ]
+     }
+    },
+    {
+     "test_year": 2014,
+     "selected": 7,
+     "params": {
+      "direction": "revert",
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 8,
+      "mean_r": 0.0369,
+      "mean_net_bp": -8.35,
+      "win_rate": 50.0,
+      "profit_factor": 1.132,
+      "max_dd_r": 2.08,
+      "trades_per_year": 9.9,
+      "t": 0.13,
+      "p_one_sided": 0.45,
+      "ci95_r": [
+       -0.4463,
+       0.5875
+      ]
+     }
+    },
+    {
+     "test_year": 2015,
+     "selected": 7,
+     "params": {
+      "direction": "revert",
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 13,
+      "mean_r": -0.0835,
+      "mean_net_bp": -27.82,
+      "win_rate": 46.2,
+      "profit_factor": 0.746,
+      "max_dd_r": 3.57,
+      "trades_per_year": 14.4,
+      "t": -0.37,
+      "p_one_sided": 0.642,
+      "ci95_r": [
+       -0.5171,
+       0.3089
+      ]
+     }
+    },
+    {
+     "test_year": 2016,
+     "selected": 7,
+     "params": {
+      "direction": "revert",
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 11,
+      "mean_r": -0.3237,
+      "mean_net_bp": -59.75,
+      "win_rate": 54.5,
+      "profit_factor": 0.435,
+      "max_dd_r": 3.98,
+      "trades_per_year": 12.2,
+      "t": -0.96,
+      "p_one_sided": 0.8196,
+      "ci95_r": [
+       -0.9902,
+       0.2696
+      ]
+     }
+    },
+    {
+     "test_year": 2017,
+     "selected": 7,
+     "params": {
+      "direction": "revert",
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 4,
+      "mean_r": -1.1895,
+      "mean_net_bp": -180.85,
+      "win_rate": 0.0,
+      "profit_factor": 0.0,
+      "max_dd_r": 4.76,
+      "trades_per_year": 6.5,
+      "t": -3.44,
+      "p_one_sided": 0.9663,
+      "ci95_r": [
+       NaN,
+       NaN
+      ]
+     }
+    },
+    {
+     "test_year": 2018,
+     "selected": 7,
+     "params": {
+      "direction": "revert",
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 5,
+      "mean_r": 0.1407,
+      "mean_net_bp": 19.44,
+      "win_rate": 60.0,
+      "profit_factor": 1.641,
+      "max_dd_r": 0.99,
+      "trades_per_year": 6.8,
+      "t": 0.36,
+      "p_one_sided": 0.3673,
+      "ci95_r": [
+       -0.5167,
+       0.8592
+      ]
+     }
+    },
+    {
+     "test_year": 2019,
+     "selected": 7,
+     "params": {
+      "direction": "revert",
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 6,
+      "mean_r": 0.783,
+      "mean_net_bp": 150.22,
+      "win_rate": 83.3,
+      "profit_factor": 3.53,
+      "max_dd_r": 1.86,
+      "trades_per_year": 7.8,
+      "t": 1.07,
+      "p_one_sided": 0.1685,
+      "ci95_r": [
+       -0.5675,
+       2.1441
+      ]
+     }
+    },
+    {
+     "test_year": 2020,
+     "selected": 7,
+     "params": {
+      "direction": "revert",
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 9,
+      "mean_r": 0.8476,
+      "mean_net_bp": 171.82,
+      "win_rate": 88.9,
+      "profit_factor": 8.036,
+      "max_dd_r": 1.08,
+      "trades_per_year": 11.9,
+      "t": 1.95,
+      "p_one_sided": 0.045,
+      "ci95_r": [
+       0.1312,
+       1.7261
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 86,
+    "mean_r": 0.1288,
+    "mean_net_bp": 23.93,
+    "win_rate": 57.0,
+    "profit_factor": 1.341,
+    "max_dd_r": 10.46,
+    "trades_per_year": 8.0,
+    "t": 0.98,
+    "p_one_sided": 0.165,
+    "ci95_r": [
+     -0.1262,
+     0.3888
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 86,
+    "mean_r": 0.0909,
+    "mean_net_bp": 16.93,
+    "win_rate": 53.5,
+    "profit_factor": 1.231,
+    "max_dd_r": 12.18,
+    "trades_per_year": 8.0,
+    "t": 0.69,
+    "p_one_sided": 0.2455,
+    "ci95_r": [
+     -0.1635,
+     0.349
+    ]
+   },
+   "oos_by_year": {
+    "2010": {
+     "trades": 3,
+     "mean_r": 0.708
+    },
+    "2011": {
+     "trades": 9,
+     "mean_r": -0.153
+    },
+    "2012": {
+     "trades": 6,
+     "mean_r": 0.324
+    },
+    "2013": {
+     "trades": 12,
+     "mean_r": 0.372
+    },
+    "2014": {
+     "trades": 8,
+     "mean_r": 0.037
+    },
+    "2015": {
+     "trades": 13,
+     "mean_r": -0.084
+    },
+    "2016": {
+     "trades": 11,
+     "mean_r": -0.324
+    },
+    "2017": {
+     "trades": 4,
+     "mean_r": -1.19
+    },
+    "2018": {
+     "trades": 5,
+     "mean_r": 0.141
+    },
+    "2019": {
+     "trades": 6,
+     "mean_r": 0.783
+    },
+    "2020": {
+     "trades": 9,
+     "mean_r": 0.848
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "mean": -0.0315,
+    "p90": 0.1412
+   },
+   "benchmark": {
+    "mean_r": 0.1586,
+    "kind": "always_long_same_timing"
+   },
+   "gate1_checks": {
+    "min_trades": true,
+    "mean_positive": true,
+    "profit_factor": true,
+    "p_value": false,
+    "beats_direction_control": false,
+    "beats_benchmark": false,
+    "parameter_robustness": false
+   },
+   "gate1_pass": false,
+   "final_config": 7,
+   "final_params": {
+    "direction": "revert",
+    "horizon": "5D"
+   }
+  },
+  "A3_data_surprise_drift": {
+   "project": "A",
+   "mechanism": "First-print surprises vs naive expectations (CPI/PCE core MoM vs prior, payrolls vs prior 2-month average, unemployment) are not fully priced on the day; hawkish surprises push gold down for days.",
+   "configs": 6,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "D1"
+     },
+     "trades": 160,
+     "mean_r": 0.0367,
+     "mean_net_bp": 5.51,
+     "t": 0.43,
+     "p_one_sided": 0.3341
+    },
+    {
+     "config": 1,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "H4"
+     },
+     "trades": 65,
+     "mean_r": -0.4809,
+     "mean_net_bp": -18.36,
+     "t": -2.07,
+     "p_one_sided": 0.9788
+    },
+    {
+     "config": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "5D"
+     },
+     "trades": 146,
+     "mean_r": 0.1323,
+     "mean_net_bp": 44.15,
+     "t": 1.4,
+     "p_one_sided": 0.0821
+    },
+    {
+     "config": 3,
+     "params": {
+      "min_abs_z": 0.5,
+      "horizon": "D1"
+     },
+     "trades": 286,
+     "mean_r": -0.0173,
+     "mean_net_bp": -1.06,
+     "t": -0.29,
+     "p_one_sided": 0.6135
+    },
+    {
+     "config": 4,
+     "params": {
+      "min_abs_z": 0.5,
+      "horizon": "H4"
+     },
+     "trades": 107,
+     "mean_r": -0.3318,
+     "mean_net_bp": -12.56,
+     "t": -2.03,
+     "p_one_sided": 0.9774
+    },
+    {
+     "config": 5,
+     "params": {
+      "min_abs_z": 0.5,
+      "horizon": "5D"
+     },
+     "trades": 235,
+     "mean_r": 0.0726,
+     "mean_net_bp": 24.87,
+     "t": 0.99,
+     "p_one_sided": 0.1611
+    }
+   ],
+   "share_configs_positive": 0.5,
+   "folds": [
+    {
+     "test_year": 2010,
+     "selected": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 9,
+      "mean_r": -0.0666,
+      "mean_net_bp": -24.94,
+      "win_rate": 33.3,
+      "profit_factor": 0.811,
+      "max_dd_r": 1.84,
+      "trades_per_year": 10.6,
+      "t": -0.25,
+      "p_one_sided": 0.5948,
+      "ci95_r": [
+       -0.5457,
+       0.437
+      ]
+     }
+    },
+    {
+     "test_year": 2011,
+     "selected": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 9,
+      "mean_r": 0.5859,
+      "mean_net_bp": 142.25,
+      "win_rate": 66.7,
+      "profit_factor": 3.94,
+      "max_dd_r": 1.79,
+      "trades_per_year": 10.0,
+      "t": 1.45,
+      "p_one_sided": 0.0932,
+      "ci95_r": [
+       -0.1079,
+       1.3426
+      ]
+     }
+    },
+    {
+     "test_year": 2012,
+     "selected": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 10,
+      "mean_r": 0.3938,
+      "mean_net_bp": 71.17,
+      "win_rate": 80.0,
+      "profit_factor": 4.844,
+      "max_dd_r": 0.93,
+      "trades_per_year": 10.4,
+      "t": 1.74,
+      "p_one_sided": 0.0587,
+      "ci95_r": [
+       -0.0152,
+       0.8333
+      ]
+     }
+    },
+    {
+     "test_year": 2013,
+     "selected": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 8,
+      "mean_r": -0.0664,
+      "mean_net_bp": -3.71,
+      "win_rate": 12.5,
+      "profit_factor": 0.789,
+      "max_dd_r": 1.52,
+      "trades_per_year": 10.1,
+      "t": -0.21,
+      "p_one_sided": 0.5783,
+      "ci95_r": [
+       -0.5591,
+       0.6161
+      ]
+     }
+    },
+    {
+     "test_year": 2014,
+     "selected": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 6,
+      "mean_r": 0.0652,
+      "mean_net_bp": 7.42,
+      "win_rate": 33.3,
+      "profit_factor": 1.245,
+      "max_dd_r": 0.96,
+      "trades_per_year": 8.9,
+      "t": 0.21,
+      "p_one_sided": 0.4223,
+      "ci95_r": [
+       -0.4324,
+       0.6736
+      ]
+     }
+    },
+    {
+     "test_year": 2015,
+     "selected": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 7,
+      "mean_r": -0.2708,
+      "mean_net_bp": -50.45,
+      "win_rate": 28.6,
+      "profit_factor": 0.364,
+      "max_dd_r": 1.97,
+      "trades_per_year": 8.8,
+      "t": -1.02,
+      "p_one_sided": 0.8268,
+      "ci95_r": [
+       -0.758,
+       0.2267
+      ]
+     }
+    },
+    {
+     "test_year": 2016,
+     "selected": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 14,
+      "mean_r": 0.3085,
+      "mean_net_bp": 56.18,
+      "win_rate": 57.1,
+      "profit_factor": 2.222,
+      "max_dd_r": 3.04,
+      "trades_per_year": 15.7,
+      "t": 1.08,
+      "p_one_sided": 0.149,
+      "ci95_r": [
+       -0.2047,
+       0.8719
+      ]
+     }
+    },
+    {
+     "test_year": 2017,
+     "selected": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 14,
+      "mean_r": -0.0974,
+      "mean_net_bp": -13.32,
+      "win_rate": 42.9,
+      "profit_factor": 0.86,
+      "max_dd_r": 5.66,
+      "trades_per_year": 15.5,
+      "t": -0.24,
+      "p_one_sided": 0.5923,
+      "ci95_r": [
+       -0.8269,
+       0.7227
+      ]
+     }
+    },
+    {
+     "test_year": 2018,
+     "selected": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 9,
+      "mean_r": 0.017,
+      "mean_net_bp": 2.4,
+      "win_rate": 55.6,
+      "profit_factor": 1.069,
+      "max_dd_r": 2.13,
+      "trades_per_year": 11.4,
+      "t": 0.07,
+      "p_one_sided": 0.4728,
+      "ci95_r": [
+       -0.4043,
+       0.4937
+      ]
+     }
+    },
+    {
+     "test_year": 2019,
+     "selected": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 7,
+      "mean_r": -0.8893,
+      "mean_net_bp": -130.98,
+      "win_rate": 14.3,
+      "profit_factor": 0.026,
+      "max_dd_r": 6.39,
+      "trades_per_year": 12.1,
+      "t": -2.47,
+      "p_one_sided": 0.973,
+      "ci95_r": [
+       -1.6011,
+       -0.2609
+      ]
+     }
+    },
+    {
+     "test_year": 2020,
+     "selected": 2,
+     "params": {
+      "min_abs_z": 1.0,
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 19,
+      "mean_r": 0.3707,
+      "mean_net_bp": 81.13,
+      "win_rate": 63.2,
+      "profit_factor": 2.575,
+      "max_dd_r": 1.95,
+      "trades_per_year": 21.2,
+      "t": 1.31,
+      "p_one_sided": 0.1039,
+      "ci95_r": [
+       -0.139,
+       0.9344
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 112,
+    "mean_r": 0.0938,
+    "mean_net_bp": 23.89,
+    "win_rate": 48.2,
+    "profit_factor": 1.266,
+    "max_dd_r": 9.5,
+    "trades_per_year": 10.3,
+    "t": 0.92,
+    "p_one_sided": 0.1801,
+    "ci95_r": [
+     -0.0943,
+     0.2941
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 112,
+    "mean_r": 0.0568,
+    "mean_net_bp": 16.69,
+    "win_rate": 45.5,
+    "profit_factor": 1.153,
+    "max_dd_r": 10.94,
+    "trades_per_year": 10.3,
+    "t": 0.56,
+    "p_one_sided": 0.2896,
+    "ci95_r": [
+     -0.1316,
+     0.2562
+    ]
+   },
+   "oos_by_year": {
+    "2010": {
+     "trades": 9,
+     "mean_r": -0.067
+    },
+    "2011": {
+     "trades": 9,
+     "mean_r": 0.586
+    },
+    "2012": {
+     "trades": 10,
+     "mean_r": 0.394
+    },
+    "2013": {
+     "trades": 8,
+     "mean_r": -0.066
+    },
+    "2014": {
+     "trades": 6,
+     "mean_r": 0.065
+    },
+    "2015": {
+     "trades": 7,
+     "mean_r": -0.271
+    },
+    "2016": {
+     "trades": 14,
+     "mean_r": 0.308
+    },
+    "2017": {
+     "trades": 14,
+     "mean_r": -0.097
+    },
+    "2018": {
+     "trades": 9,
+     "mean_r": 0.017
+    },
+    "2019": {
+     "trades": 7,
+     "mean_r": -0.889
+    },
+    "2020": {
+     "trades": 19,
+     "mean_r": 0.371
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "mean": -0.035,
+    "p90": 0.08
+   },
+   "benchmark": {
+    "mean_r": 0.1651,
+    "kind": "always_long_same_timing"
+   },
+   "gate1_checks": {
+    "min_trades": true,
+    "mean_positive": true,
+    "profit_factor": true,
+    "p_value": false,
+    "beats_direction_control": true,
+    "beats_benchmark": false,
+    "parameter_robustness": true
+   },
+   "gate1_pass": false,
+   "final_config": 2,
+   "final_params": {
+    "min_abs_z": 1.0,
+    "horizon": "5D"
+   }
+  },
+  "A4_gold_usd_divergence": {
+   "project": "A",
+   "mechanism": "When gold fails to move opposite a USD release reaction, the macro-consistent move follows later.",
+   "configs": 6,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "events": "all",
+      "horizon": "D1"
+     },
+     "trades": 73,
+     "mean_r": -0.1297,
+     "mean_net_bp": -14.02,
+     "t": -1.08,
+     "p_one_sided": 0.8586
+    },
+    {
+     "config": 1,
+     "params": {
+      "events": "all",
+      "horizon": "H4"
+     },
+     "trades": 12,
+     "mean_r": -0.235,
+     "mean_net_bp": -13.65,
+     "t": -0.52,
+     "p_one_sided": 0.6938
+    },
+    {
+     "config": 2,
+     "params": {
+      "events": "all",
+      "horizon": "5D"
+     },
+     "trades": 69,
+     "mean_r": -0.0534,
+     "mean_net_bp": -8.73,
+     "t": -0.41,
+     "p_one_sided": 0.6589
+    },
+    {
+     "config": 3,
+     "params": {
+      "events": "inflation",
+      "horizon": "D1"
+     },
+     "trades": 49,
+     "mean_r": -0.0951,
+     "mean_net_bp": -5.88,
+     "t": -0.7,
+     "p_one_sided": 0.7552
+    },
+    {
+     "config": 4,
+     "params": {
+      "events": "inflation",
+      "horizon": "H4"
+     },
+     "trades": 11,
+     "mean_r": -0.1938,
+     "mean_net_bp": -13.37,
+     "t": -0.39,
+     "p_one_sided": 0.6492
+    },
+    {
+     "config": 5,
+     "params": {
+      "events": "inflation",
+      "horizon": "5D"
+     },
+     "trades": 48,
+     "mean_r": -0.0474,
+     "mean_net_bp": -10.11,
+     "t": -0.3,
+     "p_one_sided": 0.6186
+    }
+   ],
+   "share_configs_positive": 0.0,
+   "folds": [
+    {
+     "test_year": 2010,
+     "selected": null
+    },
+    {
+     "test_year": 2011,
+     "selected": null
+    },
+    {
+     "test_year": 2012,
+     "selected": 2,
+     "params": {
+      "events": "all",
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 4,
+      "mean_r": 0.5496,
+      "mean_net_bp": 198.22,
+      "win_rate": 75.0,
+      "profit_factor": 2.409,
+      "max_dd_r": 1.56,
+      "trades_per_year": 4.4,
+      "t": 0.78,
+      "p_one_sided": 0.249,
+      "ci95_r": [
+       NaN,
+       NaN
+      ]
+     }
+    },
+    {
+     "test_year": 2013,
+     "selected": 3,
+     "params": {
+      "events": "inflation",
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 1,
+      "mean_r": -0.4158,
+      "mean_net_bp": -29.62,
+      "win_rate": 0.0,
+      "profit_factor": 0.0,
+      "max_dd_r": 0.42,
+      "trades_per_year": 12.0,
+      "t": NaN,
+      "p_one_sided": NaN,
+      "ci95_r": [
+       NaN,
+       NaN
+      ]
+     }
+    },
+    {
+     "test_year": 2014,
+     "selected": 3,
+     "params": {
+      "events": "inflation",
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 3,
+      "mean_r": -0.2083,
+      "mean_net_bp": -25.19,
+      "win_rate": 33.3,
+      "profit_factor": 0.627,
+      "max_dd_r": 1.04,
+      "trades_per_year": 3.7,
+      "t": -0.33,
+      "p_one_sided": 0.6106,
+      "ci95_r": [
+       NaN,
+       NaN
+      ]
+     }
+    },
+    {
+     "test_year": 2015,
+     "selected": 3,
+     "params": {
+      "events": "inflation",
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 7,
+      "mean_r": -0.7309,
+      "mean_net_bp": -67.73,
+      "win_rate": 0.0,
+      "profit_factor": 0.0,
+      "max_dd_r": 5.12,
+      "trades_per_year": 8.1,
+      "t": -4.75,
+      "p_one_sided": 0.9963,
+      "ci95_r": [
+       -1.0368,
+       -0.4539
+      ]
+     }
+    },
+    {
+     "test_year": 2016,
+     "selected": 2,
+     "params": {
+      "events": "all",
+      "horizon": "5D"
+     },
+     "test": {
+      "trades": 5,
+      "mean_r": -0.6238,
+      "mean_net_bp": -124.83,
+      "win_rate": 20.0,
+      "profit_factor": 0.079,
+      "max_dd_r": 3.22,
+      "trades_per_year": 8.7,
+      "t": -1.17,
+      "p_one_sided": 0.8455,
+      "ci95_r": [
+       -1.6918,
+       0.0507
+      ]
+     }
+    },
+    {
+     "test_year": 2017,
+     "selected": 3,
+     "params": {
+      "events": "inflation",
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 3,
+      "mean_r": 0.7555,
+      "mean_net_bp": 52.9,
+      "win_rate": 66.7,
+      "profit_factor": 22.589,
+      "max_dd_r": 0.1,
+      "trades_per_year": 4.0,
+      "t": 1.54,
+      "p_one_sided": 0.1427,
+      "ci95_r": [
+       NaN,
+       NaN
+      ]
+     }
+    },
+    {
+     "test_year": 2018,
+     "selected": 3,
+     "params": {
+      "events": "inflation",
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 5,
+      "mean_r": 0.0178,
+      "mean_net_bp": 0.74,
+      "win_rate": 60.0,
+      "profit_factor": 1.044,
+      "max_dd_r": 1.2,
+      "trades_per_year": 8.6,
+      "t": 0.04,
+      "p_one_sided": 0.4847,
+      "ci95_r": [
+       -0.7505,
+       0.7643
+      ]
+     }
+    },
+    {
+     "test_year": 2019,
+     "selected": 3,
+     "params": {
+      "events": "inflation",
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 3,
+      "mean_r": -0.4657,
+      "mean_net_bp": -33.18,
+      "win_rate": 33.3,
+      "profit_factor": 0.195,
+      "max_dd_r": 1.74,
+      "trades_per_year": 6.7,
+      "t": -1.05,
+      "p_one_sided": 0.7923,
+      "ci95_r": [
+       NaN,
+       NaN
+      ]
+     }
+    },
+    {
+     "test_year": 2020,
+     "selected": 3,
+     "params": {
+      "events": "inflation",
+      "horizon": "D1"
+     },
+     "test": {
+      "trades": 4,
+      "mean_r": -0.033,
+      "mean_net_bp": 0.56,
+      "win_rate": 50.0,
+      "profit_factor": 0.788,
+      "max_dd_r": 0.62,
+      "trades_per_year": 9.5,
+      "t": -0.18,
+      "p_one_sided": 0.5659,
+      "ci95_r": [
+       NaN,
+       NaN
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 35,
+    "mean_r": -0.1786,
+    "mean_net_bp": -9.87,
+    "win_rate": 37.1,
+    "profit_factor": 0.625,
+    "max_dd_r": 10.93,
+    "trades_per_year": 4.1,
+    "t": -1.12,
+    "p_one_sided": 0.8641,
+    "ci95_r": [
+     -0.4924,
+     0.1302
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 35,
+    "mean_r": -0.2439,
+    "mean_net_bp": -16.14,
+    "win_rate": 34.3,
+    "profit_factor": 0.529,
+    "max_dd_r": 12.61,
+    "trades_per_year": 4.1,
+    "t": -1.52,
+    "p_one_sided": 0.9316,
+    "ci95_r": [
+     -0.5572,
+     0.0665
+    ]
+   },
+   "oos_by_year": {
+    "2012": {
+     "trades": 4,
+     "mean_r": 0.55
+    },
+    "2013": {
+     "trades": 1,
+     "mean_r": -0.416
+    },
+    "2014": {
+     "trades": 3,
+     "mean_r": -0.208
+    },
+    "2015": {
+     "trades": 7,
+     "mean_r": -0.731
+    },
+    "2016": {
+     "trades": 5,
+     "mean_r": -0.624
+    },
+    "2017": {
+     "trades": 3,
+     "mean_r": 0.755
+    },
+    "2018": {
+     "trades": 5,
+     "mean_r": 0.018
+    },
+    "2019": {
+     "trades": 3,
+     "mean_r": -0.466
+    },
+    "2020": {
+     "trades": 4,
+     "mean_r": -0.033
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "mean": -0.0667,
+    "p90": 0.1533
+   },
+   "benchmark": {
+    "mean_r": -0.2069,
+    "kind": "always_long_same_timing"
+   },
+   "gate1_checks": {
+    "min_trades": true,
+    "mean_positive": false,
+    "profit_factor": false,
+    "p_value": false,
+    "beats_direction_control": false,
+    "beats_benchmark": true,
+    "parameter_robustness": false
+   },
+   "gate1_pass": false,
+   "final_config": 5,
+   "final_params": {
+    "events": "inflation",
+    "horizon": "5D"
+   }
+  },
+  "A5_pre_fomc_drift": {
+   "project": "A",
+   "mechanism": "Gold drifts up into scheduled FOMC statements (analogue of the equity pre-FOMC drift); long only, exit one hour before the statement.",
+   "configs": 2,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "window_h": 24
+     },
+     "trades": 34,
+     "mean_r": 0.229,
+     "mean_net_bp": 19.37,
+     "t": 1.59,
+     "p_one_sided": 0.0605
+    },
+    {
+     "config": 1,
+     "params": {
+      "window_h": 48
+     },
+     "trades": 34,
+     "mean_r": 0.2139,
+     "mean_net_bp": 26.62,
+     "t": 1.7,
+     "p_one_sided": 0.0498
+    }
+   ],
+   "share_configs_positive": 1.0,
+   "folds": [
+    {
+     "test_year": 2018,
+     "selected": null
+    },
+    {
+     "test_year": 2019,
+     "selected": 0,
+     "params": {
+      "window_h": 24
+     },
+     "test": {
+      "trades": 7,
+      "mean_r": -0.0433,
+      "mean_net_bp": -0.77,
+      "win_rate": 57.1,
+      "profit_factor": 0.851,
+      "max_dd_r": 2.03,
+      "trades_per_year": 8.1,
+      "t": -0.16,
+      "p_one_sided": 0.5606,
+      "ci95_r": [
+       -0.544,
+       0.4521
+      ]
+     }
+    },
+    {
+     "test_year": 2020,
+     "selected": 0,
+     "params": {
+      "window_h": 24
+     },
+     "test": {
+      "trades": 7,
+      "mean_r": 0.4248,
+      "mean_net_bp": 41.24,
+      "win_rate": 71.4,
+      "profit_factor": 6.063,
+      "max_dd_r": 0.59,
+      "trades_per_year": 7.9,
+      "t": 1.08,
+      "p_one_sided": 0.1611,
+      "ci95_r": [
+       -0.119,
+       1.264
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 14,
+    "mean_r": 0.1907,
+    "mean_net_bp": 20.24,
+    "win_rate": 64.3,
+    "profit_factor": 2.019,
+    "max_dd_r": 2.03,
+    "trades_per_year": 7.5,
+    "t": 0.8,
+    "p_one_sided": 0.2191,
+    "ci95_r": [
+     -0.2078,
+     0.673
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 14,
+    "mean_r": 0.1328,
+    "mean_net_bp": 15.92,
+    "win_rate": 50.0,
+    "profit_factor": 1.619,
+    "max_dd_r": 2.33,
+    "trades_per_year": 7.5,
+    "t": 0.55,
+    "p_one_sided": 0.2944,
+    "ci95_r": [
+     -0.2706,
+     0.6169
+    ]
+   },
+   "oos_by_year": {
+    "2019": {
+     "trades": 7,
+     "mean_r": -0.043
+    },
+    "2020": {
+     "trades": 7,
+     "mean_r": 0.425
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "mean": -0.0408,
+    "p90": 0.2418
+   },
+   "benchmark": {
+    "mean_r": 0.0436,
+    "kind": "random_time_long"
+   },
+   "gate1_checks": {
+    "min_trades": false,
+    "mean_positive": true,
+    "profit_factor": true,
+    "p_value": false,
+    "beats_direction_control": false,
+    "beats_benchmark": "True",
+    "parameter_robustness": true
+   },
+   "gate1_pass": false,
+   "final_config": 1,
+   "final_params": {
+    "window_h": 48
+   }
+  },
+  "A6_rates_dollar_leadlag": {
+   "project": "A",
+   "mechanism": "Daily moves in real yields (FRED DFII10, used with a 1-business-day publication lag) or the dollar proxy lead gold by a day.",
+   "configs": 4,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "driver": "usd_proxy",
+      "hold": "1D"
+     },
+     "trades": 960,
+     "mean_r": -0.1294,
+     "mean_net_bp": -10.71,
+     "t": -3.63,
+     "p_one_sided": 0.9999
+    },
+    {
+     "config": 1,
+     "params": {
+      "driver": "usd_proxy",
+      "hold": "5D"
+     },
+     "trades": 471,
+     "mean_r": -0.1013,
+     "mean_net_bp": -19.34,
+     "t": -1.92,
+     "p_one_sided": 0.9722
+    },
+    {
+     "config": 2,
+     "params": {
+      "driver": "real_yield",
+      "hold": "1D"
+     },
+     "trades": 1006,
+     "mean_r": -0.0284,
+     "mean_net_bp": -4.65,
+     "t": -0.82,
+     "p_one_sided": 0.7924
+    },
+    {
+     "config": 3,
+     "params": {
+      "driver": "real_yield",
+      "hold": "5D"
+     },
+     "trades": 488,
+     "mean_r": 0.0706,
+     "mean_net_bp": 10.18,
+     "t": 1.52,
+     "p_one_sided": 0.064
+    }
+   ],
+   "share_configs_positive": 0.25,
+   "folds": [
+    {
+     "test_year": 2010,
+     "selected": 1,
+     "params": {
+      "driver": "usd_proxy",
+      "hold": "5D"
+     },
+     "test": {
+      "trades": 34,
+      "mean_r": -0.0271,
+      "mean_net_bp": -5.17,
+      "win_rate": 47.1,
+      "profit_factor": 0.919,
+      "max_dd_r": 4.96,
+      "trades_per_year": 34.9,
+      "t": -0.2,
+      "p_one_sided": 0.5781,
+      "ci95_r": [
+       -0.2902,
+       0.2276
+      ]
+     }
+    },
+    {
+     "test_year": 2011,
+     "selected": 3,
+     "params": {
+      "driver": "real_yield",
+      "hold": "5D"
+     },
+     "test": {
+      "trades": 34,
+      "mean_r": 0.2499,
+      "mean_net_bp": 58.54,
+      "win_rate": 55.9,
+      "profit_factor": 1.957,
+      "max_dd_r": 1.4,
+      "trades_per_year": 34.5,
+      "t": 1.46,
+      "p_one_sided": 0.0775,
+      "ci95_r": [
+       -0.0702,
+       0.5758
+      ]
+     }
+    },
+    {
+     "test_year": 2012,
+     "selected": 3,
+     "params": {
+      "driver": "real_yield",
+      "hold": "5D"
+     },
+     "test": {
+      "trades": 30,
+      "mean_r": -0.0506,
+      "mean_net_bp": -22.18,
+      "win_rate": 46.7,
+      "profit_factor": 0.841,
+      "max_dd_r": 4.08,
+      "trades_per_year": 31.6,
+      "t": -0.37,
+      "p_one_sided": 0.6424,
+      "ci95_r": [
+       -0.3054,
+       0.2115
+      ]
+     }
+    },
+    {
+     "test_year": 2013,
+     "selected": 3,
+     "params": {
+      "driver": "real_yield",
+      "hold": "5D"
+     },
+     "test": {
+      "trades": 35,
+      "mean_r": 0.0614,
+      "mean_net_bp": 48.3,
+      "win_rate": 54.3,
+      "profit_factor": 1.138,
+      "max_dd_r": 7.76,
+      "trades_per_year": 36.4,
+      "t": 0.29,
+      "p_one_sided": 0.3862,
+      "ci95_r": [
+       -0.3589,
+       0.4641
+      ]
+     }
+    },
+    {
+     "test_year": 2014,
+     "selected": 3,
+     "params": {
+      "driver": "real_yield",
+      "hold": "5D"
+     },
+     "test": {
+      "trades": 29,
+      "mean_r": -0.0828,
+      "mean_net_bp": -22.18,
+      "win_rate": 41.4,
+      "profit_factor": 0.755,
+      "max_dd_r": 7.11,
+      "trades_per_year": 30.5,
+      "t": -0.58,
+      "p_one_sided": 0.7173,
+      "ci95_r": [
+       -0.3503,
+       0.1911
+      ]
+     }
+    },
+    {
+     "test_year": 2015,
+     "selected": 3,
+     "params": {
+      "driver": "real_yield",
+      "hold": "5D"
+     },
+     "test": {
+      "trades": 34,
+      "mean_r": 0.1794,
+      "mean_net_bp": 44.99,
+      "win_rate": 61.8,
+      "profit_factor": 1.589,
+      "max_dd_r": 3.54,
+      "trades_per_year": 34.5,
+      "t": 1.11,
+      "p_one_sided": 0.1383,
+      "ci95_r": [
+       -0.1325,
+       0.4922
+      ]
+     }
+    },
+    {
+     "test_year": 2016,
+     "selected": 3,
+     "params": {
+      "driver": "real_yield",
+      "hold": "5D"
+     },
+     "test": {
+      "trades": 28,
+      "mean_r": 0.2602,
+      "mean_net_bp": 51.48,
+      "win_rate": 57.1,
+      "profit_factor": 1.981,
+      "max_dd_r": 1.8,
+      "trades_per_year": 29.8,
+      "t": 1.4,
+      "p_one_sided": 0.0867,
+      "ci95_r": [
+       -0.1098,
+       0.6269
+      ]
+     }
+    },
+    {
+     "test_year": 2017,
+     "selected": 3,
+     "params": {
+      "driver": "real_yield",
+      "hold": "5D"
+     },
+     "test": {
+      "trades": 32,
+      "mean_r": -0.0465,
+      "mean_net_bp": -9.7,
+      "win_rate": 50.0,
+      "profit_factor": 0.87,
+      "max_dd_r": 5.79,
+      "trades_per_year": 32.6,
+      "t": -0.29,
+      "p_one_sided": 0.6129,
+      "ci95_r": [
+       -0.3599,
+       0.2567
+      ]
+     }
+    },
+    {
+     "test_year": 2018,
+     "selected": 3,
+     "params": {
+      "driver": "real_yield",
+      "hold": "5D"
+     },
+     "test": {
+      "trades": 37,
+      "mean_r": 0.0158,
+      "mean_net_bp": 2.49,
+      "win_rate": 48.6,
+      "profit_factor": 1.043,
+      "max_dd_r": 5.49,
+      "trades_per_year": 37.1,
+      "t": 0.1,
+      "p_one_sided": 0.4592,
+      "ci95_r": [
+       -0.2928,
+       0.3133
+      ]
+     }
+    },
+    {
+     "test_year": 2019,
+     "selected": 3,
+     "params": {
+      "driver": "real_yield",
+      "hold": "5D"
+     },
+     "test": {
+      "trades": 33,
+      "mean_r": 0.2274,
+      "mean_net_bp": 32.95,
+      "win_rate": 60.6,
+      "profit_factor": 1.731,
+      "max_dd_r": 3.79,
+      "trades_per_year": 34.1,
+      "t": 1.12,
+      "p_one_sided": 0.1357,
+      "ci95_r": [
+       -0.1718,
+       0.6263
+      ]
+     }
+    },
+    {
+     "test_year": 2020,
+     "selected": 3,
+     "params": {
+      "driver": "real_yield",
+      "hold": "5D"
+     },
+     "test": {
+      "trades": 31,
+      "mean_r": 0.3362,
+      "mean_net_bp": 68.3,
+      "win_rate": 58.1,
+      "profit_factor": 1.944,
+      "max_dd_r": 4.34,
+      "trades_per_year": 33.4,
+      "t": 1.24,
+      "p_one_sided": 0.1117,
+      "ci95_r": [
+       -0.1952,
+       0.8802
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 357,
+    "mean_r": 0.1014,
+    "mean_net_bp": 22.84,
+    "win_rate": 52.9,
+    "profit_factor": 1.304,
+    "max_dd_r": 9.57,
+    "trades_per_year": 32.7,
+    "t": 1.88,
+    "p_one_sided": 0.0306,
+    "ci95_r": [
+     -0.0073,
+     0.2099
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 357,
+    "mean_r": 0.0643,
+    "mean_net_bp": 15.66,
+    "win_rate": 50.4,
+    "profit_factor": 1.182,
+    "max_dd_r": 11.12,
+    "trades_per_year": 32.7,
+    "t": 1.19,
+    "p_one_sided": 0.1176,
+    "ci95_r": [
+     -0.0444,
+     0.1731
+    ]
+   },
+   "oos_by_year": {
+    "2010": {
+     "trades": 34,
+     "mean_r": -0.027
+    },
+    "2011": {
+     "trades": 34,
+     "mean_r": 0.25
+    },
+    "2012": {
+     "trades": 30,
+     "mean_r": -0.051
+    },
+    "2013": {
+     "trades": 35,
+     "mean_r": 0.061
+    },
+    "2014": {
+     "trades": 29,
+     "mean_r": -0.083
+    },
+    "2015": {
+     "trades": 34,
+     "mean_r": 0.179
+    },
+    "2016": {
+     "trades": 28,
+     "mean_r": 0.26
+    },
+    "2017": {
+     "trades": 32,
+     "mean_r": -0.046
+    },
+    "2018": {
+     "trades": 36,
+     "mean_r": 0.014
+    },
+    "2019": {
+     "trades": 34,
+     "mean_r": 0.223
+    },
+    "2020": {
+     "trades": 31,
+     "mean_r": 0.336
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "mean": -0.0348,
+    "p90": 0.0366
+   },
+   "benchmark": {
+    "mean_r": 0.049,
+    "kind": "always_long_same_timing"
+   },
+   "gate1_checks": {
+    "min_trades": true,
+    "mean_positive": true,
+    "profit_factor": true,
+    "p_value": true,
+    "beats_direction_control": true,
+    "beats_benchmark": true,
+    "parameter_robustness": false
+   },
+   "gate1_pass": false,
+   "final_config": 3,
+   "final_params": {
+    "driver": "real_yield",
+    "hold": "5D"
+   }
+  },
+  "B1_cot_extremes_contrarian": {
+   "project": "B",
+   "mechanism": "Crowded managed-money positioning (3-year COT index) mean-reverts.",
+   "configs": 4,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "band": "90_10",
+      "hold": "4W"
+     },
+     "trades": 52,
+     "mean_r": -0.1176,
+     "mean_net_bp": -21.14,
+     "t": -0.76,
+     "p_one_sided": 0.7755
+    },
+    {
+     "config": 1,
+     "params": {
+      "band": "90_10",
+      "hold": "1W"
+     },
+     "trades": 107,
+     "mean_r": -0.0857,
+     "mean_net_bp": -8.08,
+     "t": -0.83,
+     "p_one_sided": 0.7947
+    },
+    {
+     "config": 2,
+     "params": {
+      "band": "80_20",
+      "hold": "4W"
+     },
+     "trades": 86,
+     "mean_r": 0.0516,
+     "mean_net_bp": 29.75,
+     "t": 0.42,
+     "p_one_sided": 0.339
+    },
+    {
+     "config": 3,
+     "params": {
+      "band": "80_20",
+      "hold": "1W"
+     },
+     "trades": 175,
+     "mean_r": -0.0063,
+     "mean_net_bp": 3.85,
+     "t": -0.08,
+     "p_one_sided": 0.5327
+    }
+   ],
+   "share_configs_positive": 0.25,
+   "folds": [
+    {
+     "test_year": 2010,
+     "selected": 3,
+     "params": {
+      "band": "80_20",
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 8,
+      "mean_r": -0.2326,
+      "mean_net_bp": -57.75,
+      "win_rate": 37.5,
+      "profit_factor": 0.568,
+      "max_dd_r": 2.49,
+      "trades_per_year": 8.2,
+      "t": -0.61,
+      "p_one_sided": 0.7181,
+      "ci95_r": [
+       -0.899,
+       0.5158
+      ]
+     }
+    },
+    {
+     "test_year": 2011,
+     "selected": 3,
+     "params": {
+      "band": "80_20",
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 16,
+      "mean_r": -0.1304,
+      "mean_net_bp": -6.35,
+      "win_rate": 50.0,
+      "profit_factor": 0.727,
+      "max_dd_r": 4.13,
+      "trades_per_year": 16.4,
+      "t": -0.44,
+      "p_one_sided": 0.6675,
+      "ci95_r": [
+       -0.6766,
+       0.4217
+      ]
+     }
+    },
+    {
+     "test_year": 2012,
+     "selected": 3,
+     "params": {
+      "band": "80_20",
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 16,
+      "mean_r": -0.1528,
+      "mean_net_bp": -26.16,
+      "win_rate": 43.8,
+      "profit_factor": 0.606,
+      "max_dd_r": 5.62,
+      "trades_per_year": 16.7,
+      "t": -0.79,
+      "p_one_sided": 0.7798,
+      "ci95_r": [
+       -0.5231,
+       0.204
+      ]
+     }
+    },
+    {
+     "test_year": 2013,
+     "selected": 3,
+     "params": {
+      "band": "80_20",
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 22,
+      "mean_r": -0.3797,
+      "mean_net_bp": -77.41,
+      "win_rate": 45.5,
+      "profit_factor": 0.321,
+      "max_dd_r": 9.15,
+      "trades_per_year": 22.5,
+      "t": -1.87,
+      "p_one_sided": 0.9618,
+      "ci95_r": [
+       -0.7628,
+       0.0014
+      ]
+     }
+    },
+    {
+     "test_year": 2014,
+     "selected": 1,
+     "params": {
+      "band": "90_10",
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 5,
+      "mean_r": 0.1015,
+      "mean_net_bp": 38.0,
+      "win_rate": 80.0,
+      "profit_factor": 1.342,
+      "max_dd_r": 1.48,
+      "trades_per_year": 5.8,
+      "t": 0.25,
+      "p_one_sided": 0.4072,
+      "ci95_r": [
+       -0.7138,
+       0.6106
+      ]
+     }
+    },
+    {
+     "test_year": 2015,
+     "selected": 2,
+     "params": {
+      "band": "80_20",
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 9,
+      "mean_r": 0.2048,
+      "mean_net_bp": 95.18,
+      "win_rate": 44.4,
+      "profit_factor": 1.851,
+      "max_dd_r": 1.93,
+      "trades_per_year": 10.4,
+      "t": 0.67,
+      "p_one_sided": 0.2625,
+      "ci95_r": [
+       -0.3047,
+       0.8301
+      ]
+     }
+    },
+    {
+     "test_year": 2016,
+     "selected": 2,
+     "params": {
+      "band": "80_20",
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 9,
+      "mean_r": 0.3589,
+      "mean_net_bp": 123.66,
+      "win_rate": 55.6,
+      "profit_factor": 2.127,
+      "max_dd_r": 2.2,
+      "trades_per_year": 10.9,
+      "t": 0.88,
+      "p_one_sided": 0.2022,
+      "ci95_r": [
+       -0.3983,
+       1.0927
+      ]
+     }
+    },
+    {
+     "test_year": 2017,
+     "selected": 2,
+     "params": {
+      "band": "80_20",
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 6,
+      "mean_r": 0.2719,
+      "mean_net_bp": 83.09,
+      "win_rate": 66.7,
+      "profit_factor": 1.728,
+      "max_dd_r": 1.76,
+      "trades_per_year": 9.8,
+      "t": 0.55,
+      "p_one_sided": 0.3018,
+      "ci95_r": [
+       -0.6458,
+       1.1496
+      ]
+     }
+    },
+    {
+     "test_year": 2018,
+     "selected": 2,
+     "params": {
+      "band": "80_20",
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 8,
+      "mean_r": 0.1284,
+      "mean_net_bp": 36.32,
+      "win_rate": 50.0,
+      "profit_factor": 1.363,
+      "max_dd_r": 2.83,
+      "trades_per_year": 8.7,
+      "t": 0.38,
+      "p_one_sided": 0.3566,
+      "ci95_r": [
+       -0.4794,
+       0.7453
+      ]
+     }
+    },
+    {
+     "test_year": 2019,
+     "selected": 2,
+     "params": {
+      "band": "80_20",
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 5,
+      "mean_r": -0.4011,
+      "mean_net_bp": -120.95,
+      "win_rate": 20.0,
+      "profit_factor": 0.188,
+      "max_dd_r": 2.47,
+      "trades_per_year": 8.7,
+      "t": -1.01,
+      "p_one_sided": 0.8147,
+      "ci95_r": [
+       -1.154,
+       0.1741
+      ]
+     }
+    },
+    {
+     "test_year": 2020,
+     "selected": 2,
+     "params": {
+      "band": "80_20",
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 1,
+      "mean_r": 3.3513,
+      "mean_net_bp": 913.17,
+      "win_rate": 100.0,
+      "profit_factor": null,
+      "max_dd_r": 0.0,
+      "trades_per_year": 12.0,
+      "t": NaN,
+      "p_one_sided": NaN,
+      "ci95_r": [
+       NaN,
+       NaN
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 105,
+    "mean_r": -0.0492,
+    "mean_net_bp": 5.45,
+    "win_rate": 48.6,
+    "profit_factor": 0.884,
+    "max_dd_r": 15.9,
+    "trades_per_year": 10.4,
+    "t": -0.48,
+    "p_one_sided": 0.6842,
+    "ci95_r": [
+     -0.2444,
+     0.1483
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 105,
+    "mean_r": -0.0817,
+    "mean_net_bp": -3.41,
+    "win_rate": 48.6,
+    "profit_factor": 0.815,
+    "max_dd_r": 17.87,
+    "trades_per_year": 10.4,
+    "t": -0.8,
+    "p_one_sided": 0.787,
+    "ci95_r": [
+     -0.2771,
+     0.1149
+    ]
+   },
+   "oos_by_year": {
+    "2010": {
+     "trades": 7,
+     "mean_r": -0.006
+    },
+    "2011": {
+     "trades": 16,
+     "mean_r": -0.292
+    },
+    "2012": {
+     "trades": 17,
+     "mean_r": -0.099
+    },
+    "2013": {
+     "trades": 22,
+     "mean_r": -0.38
+    },
+    "2014": {
+     "trades": 5,
+     "mean_r": 0.101
+    },
+    "2015": {
+     "trades": 9,
+     "mean_r": 0.205
+    },
+    "2016": {
+     "trades": 9,
+     "mean_r": 0.359
+    },
+    "2017": {
+     "trades": 6,
+     "mean_r": 0.272
+    },
+    "2018": {
+     "trades": 8,
+     "mean_r": 0.128
+    },
+    "2019": {
+     "trades": 5,
+     "mean_r": -0.401
+    },
+    "2020": {
+     "trades": 1,
+     "mean_r": 3.351
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "mean": -0.0314,
+    "p90": 0.1214
+   },
+   "benchmark": {
+    "mean_r": -0.1276,
+    "kind": "always_long_same_timing"
+   },
+   "gate1_checks": {
+    "min_trades": true,
+    "mean_positive": false,
+    "profit_factor": false,
+    "p_value": false,
+    "beats_direction_control": false,
+    "beats_benchmark": true,
+    "parameter_robustness": false
+   },
+   "gate1_pass": false,
+   "final_config": 2,
+   "final_params": {
+    "band": "80_20",
+    "hold": "4W"
+   }
+  },
+  "B2_cot_mm_flow_momentum": {
+   "project": "B",
+   "mechanism": "Speculative flow persists: the direction of managed-money net change predicts the next weeks.",
+   "configs": 4,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "change_w": 1,
+      "hold": "1W"
+     },
+     "trades": 371,
+     "mean_r": -0.0355,
+     "mean_net_bp": -9.3,
+     "t": -0.64,
+     "p_one_sided": 0.7402
+    },
+    {
+     "config": 1,
+     "params": {
+      "change_w": 1,
+      "hold": "4W"
+     },
+     "trades": 148,
+     "mean_r": -0.0763,
+     "mean_net_bp": -36.59,
+     "t": -0.85,
+     "p_one_sided": 0.8011
+    },
+    {
+     "config": 2,
+     "params": {
+      "change_w": 4,
+      "hold": "1W"
+     },
+     "trades": 370,
+     "mean_r": 0.0436,
+     "mean_net_bp": 10.25,
+     "t": 0.79,
+     "p_one_sided": 0.2155
+    },
+    {
+     "config": 3,
+     "params": {
+      "change_w": 4,
+      "hold": "4W"
+     },
+     "trades": 148,
+     "mean_r": -0.1096,
+     "mean_net_bp": -61.14,
+     "t": -1.21,
+     "p_one_sided": 0.8855
+    }
+   ],
+   "share_configs_positive": 0.25,
+   "folds": [
+    {
+     "test_year": 2010,
+     "selected": 2,
+     "params": {
+      "change_w": 4,
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 26,
+      "mean_r": -0.2358,
+      "mean_net_bp": -49.8,
+      "win_rate": 50.0,
+      "profit_factor": 0.541,
+      "max_dd_r": 7.25,
+      "trades_per_year": 27.1,
+      "t": -1.27,
+      "p_one_sided": 0.8916,
+      "ci95_r": [
+       -0.5941,
+       0.1184
+      ]
+     }
+    },
+    {
+     "test_year": 2011,
+     "selected": 2,
+     "params": {
+      "change_w": 4,
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 26,
+      "mean_r": 0.2817,
+      "mean_net_bp": 62.55,
+      "win_rate": 61.5,
+      "profit_factor": 1.958,
+      "max_dd_r": 3.02,
+      "trades_per_year": 27.1,
+      "t": 1.22,
+      "p_one_sided": 0.1161,
+      "ci95_r": [
+       -0.1342,
+       0.7177
+      ]
+     }
+    },
+    {
+     "test_year": 2012,
+     "selected": 2,
+     "params": {
+      "change_w": 4,
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 26,
+      "mean_r": -0.0619,
+      "mean_net_bp": -20.62,
+      "win_rate": 50.0,
+      "profit_factor": 0.828,
+      "max_dd_r": 4.62,
+      "trades_per_year": 27.1,
+      "t": -0.38,
+      "p_one_sided": 0.6471,
+      "ci95_r": [
+       -0.373,
+       0.2508
+      ]
+     }
+    },
+    {
+     "test_year": 2013,
+     "selected": 2,
+     "params": {
+      "change_w": 4,
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 23,
+      "mean_r": -0.1738,
+      "mean_net_bp": -51.28,
+      "win_rate": 34.8,
+      "profit_factor": 0.543,
+      "max_dd_r": 6.06,
+      "trades_per_year": 24.0,
+      "t": -0.93,
+      "p_one_sided": 0.8175,
+      "ci95_r": [
+       -0.5356,
+       0.1785
+      ]
+     }
+    },
+    {
+     "test_year": 2014,
+     "selected": 2,
+     "params": {
+      "change_w": 4,
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 26,
+      "mean_r": 0.1134,
+      "mean_net_bp": 28.27,
+      "win_rate": 65.4,
+      "profit_factor": 1.323,
+      "max_dd_r": 3.87,
+      "trades_per_year": 27.1,
+      "t": 0.54,
+      "p_one_sided": 0.2986,
+      "ci95_r": [
+       -0.3223,
+       0.4944
+      ]
+     }
+    },
+    {
+     "test_year": 2015,
+     "selected": 2,
+     "params": {
+      "change_w": 4,
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 27,
+      "mean_r": -0.0515,
+      "mean_net_bp": -16.37,
+      "win_rate": 48.1,
+      "profit_factor": 0.886,
+      "max_dd_r": 4.5,
+      "trades_per_year": 27.1,
+      "t": -0.25,
+      "p_one_sided": 0.5973,
+      "ci95_r": [
+       -0.4652,
+       0.3259
+      ]
+     }
+    },
+    {
+     "test_year": 2016,
+     "selected": 2,
+     "params": {
+      "change_w": 4,
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 26,
+      "mean_r": -0.319,
+      "mean_net_bp": -70.66,
+      "win_rate": 26.9,
+      "profit_factor": 0.422,
+      "max_dd_r": 11.1,
+      "trades_per_year": 27.1,
+      "t": -1.68,
+      "p_one_sided": 0.9474,
+      "ci95_r": [
+       -0.6854,
+       0.0633
+      ]
+     }
+    },
+    {
+     "test_year": 2017,
+     "selected": 2,
+     "params": {
+      "change_w": 4,
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 26,
+      "mean_r": -0.4499,
+      "mean_net_bp": -66.01,
+      "win_rate": 38.5,
+      "profit_factor": 0.37,
+      "max_dd_r": 12.56,
+      "trades_per_year": 27.1,
+      "t": -2.14,
+      "p_one_sided": 0.9785,
+      "ci95_r": [
+       -0.8675,
+       -0.0367
+      ]
+     }
+    },
+    {
+     "test_year": 2018,
+     "selected": 2,
+     "params": {
+      "change_w": 4,
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 25,
+      "mean_r": 0.0504,
+      "mean_net_bp": 8.08,
+      "win_rate": 60.0,
+      "profit_factor": 1.154,
+      "max_dd_r": 2.67,
+      "trades_per_year": 27.2,
+      "t": 0.29,
+      "p_one_sided": 0.3874,
+      "ci95_r": [
+       -0.2934,
+       0.3779
+      ]
+     }
+    },
+    {
+     "test_year": 2019,
+     "selected": 2,
+     "params": {
+      "change_w": 4,
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 21,
+      "mean_r": 0.2541,
+      "mean_net_bp": 37.54,
+      "win_rate": 52.4,
+      "profit_factor": 2.312,
+      "max_dd_r": 1.64,
+      "trades_per_year": 27.4,
+      "t": 1.45,
+      "p_one_sided": 0.0814,
+      "ci95_r": [
+       -0.0691,
+       0.6
+      ]
+     }
+    },
+    {
+     "test_year": 2020,
+     "selected": 2,
+     "params": {
+      "change_w": 4,
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 26,
+      "mean_r": 0.1135,
+      "mean_net_bp": 1.94,
+      "win_rate": 46.2,
+      "profit_factor": 1.287,
+      "max_dd_r": 4.36,
+      "trades_per_year": 27.1,
+      "t": 0.44,
+      "p_one_sided": 0.3306,
+      "ci95_r": [
+       -0.361,
+       0.6478
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 278,
+    "mean_r": -0.0478,
+    "mean_net_bp": -12.96,
+    "win_rate": 48.6,
+    "profit_factor": 0.885,
+    "max_dd_r": 25.65,
+    "trades_per_year": 25.4,
+    "t": -0.78,
+    "p_one_sided": 0.7816,
+    "ci95_r": [
+     -0.1676,
+     0.0745
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 278,
+    "mean_r": -0.0847,
+    "mean_net_bp": -20.13,
+    "win_rate": 47.5,
+    "profit_factor": 0.806,
+    "max_dd_r": 31.83,
+    "trades_per_year": 25.4,
+    "t": -1.38,
+    "p_one_sided": 0.9154,
+    "ci95_r": [
+     -0.2048,
+     0.0377
+    ]
+   },
+   "oos_by_year": {
+    "2010": {
+     "trades": 26,
+     "mean_r": -0.236
+    },
+    "2011": {
+     "trades": 26,
+     "mean_r": 0.282
+    },
+    "2012": {
+     "trades": 26,
+     "mean_r": -0.062
+    },
+    "2013": {
+     "trades": 23,
+     "mean_r": -0.174
+    },
+    "2014": {
+     "trades": 26,
+     "mean_r": 0.113
+    },
+    "2015": {
+     "trades": 26,
+     "mean_r": 0.027
+    },
+    "2016": {
+     "trades": 27,
+     "mean_r": -0.385
+    },
+    "2017": {
+     "trades": 26,
+     "mean_r": -0.45
+    },
+    "2018": {
+     "trades": 25,
+     "mean_r": 0.05
+    },
+    "2019": {
+     "trades": 21,
+     "mean_r": 0.254
+    },
+    "2020": {
+     "trades": 26,
+     "mean_r": 0.113
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "mean": -0.0428,
+    "p90": 0.0427
+   },
+   "benchmark": {
+    "mean_r": 0.0026,
+    "kind": "always_long_same_timing"
+   },
+   "gate1_checks": {
+    "min_trades": true,
+    "mean_positive": false,
+    "profit_factor": false,
+    "p_value": false,
+    "beats_direction_control": false,
+    "beats_benchmark": false,
+    "parameter_robustness": false
+   },
+   "gate1_pass": false,
+   "final_config": 2,
+   "final_params": {
+    "change_w": 4,
+    "hold": "1W"
+   }
+  },
+  "B3_cot_hedger_flow": {
+   "project": "B",
+   "mechanism": "Producers/merchants are informed hedgers: rising net hedger position (short covering) is bullish.",
+   "configs": 4,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "change_w": 1,
+      "hold": "1W"
+     },
+     "trades": 371,
+     "mean_r": -0.0746,
+     "mean_net_bp": -9.22,
+     "t": -1.36,
+     "p_one_sided": 0.9119
+    },
+    {
+     "config": 1,
+     "params": {
+      "change_w": 1,
+      "hold": "4W"
+     },
+     "trades": 148,
+     "mean_r": 0.0418,
+     "mean_net_bp": 11.8,
+     "t": 0.47,
+     "p_one_sided": 0.3212
+    },
+    {
+     "config": 2,
+     "params": {
+      "change_w": 4,
+      "hold": "1W"
+     },
+     "trades": 370,
+     "mean_r": -0.0762,
+     "mean_net_bp": -12.28,
+     "t": -1.38,
+     "p_one_sided": 0.9152
+    },
+    {
+     "config": 3,
+     "params": {
+      "change_w": 4,
+      "hold": "4W"
+     },
+     "trades": 148,
+     "mean_r": 0.0104,
+     "mean_net_bp": 27.84,
+     "t": 0.11,
+     "p_one_sided": 0.4548
+    }
+   ],
+   "share_configs_positive": 0.5,
+   "folds": [
+    {
+     "test_year": 2010,
+     "selected": 1,
+     "params": {
+      "change_w": 1,
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 11,
+      "mean_r": -0.0525,
+      "mean_net_bp": -28.42,
+      "win_rate": 45.5,
+      "profit_factor": 0.853,
+      "max_dd_r": 1.92,
+      "trades_per_year": 11.5,
+      "t": -0.2,
+      "p_one_sided": 0.5762,
+      "ci95_r": [
+       -0.5252,
+       0.4651
+      ]
+     }
+    },
+    {
+     "test_year": 2011,
+     "selected": 3,
+     "params": {
+      "change_w": 4,
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 11,
+      "mean_r": -0.2506,
+      "mean_net_bp": -79.88,
+      "win_rate": 27.3,
+      "profit_factor": 0.657,
+      "max_dd_r": 4.34,
+      "trades_per_year": 11.5,
+      "t": -0.53,
+      "p_one_sided": 0.6955,
+      "ci95_r": [
+       -1.1483,
+       0.6487
+      ]
+     }
+    },
+    {
+     "test_year": 2012,
+     "selected": 1,
+     "params": {
+      "change_w": 1,
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 11,
+      "mean_r": 0.0431,
+      "mean_net_bp": 42.85,
+      "win_rate": 63.6,
+      "profit_factor": 1.203,
+      "max_dd_r": 2.23,
+      "trades_per_year": 11.5,
+      "t": 0.23,
+      "p_one_sided": 0.411,
+      "ci95_r": [
+       -0.3279,
+       0.3658
+      ]
+     }
+    },
+    {
+     "test_year": 2013,
+     "selected": 1,
+     "params": {
+      "change_w": 1,
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 10,
+      "mean_r": 0.3415,
+      "mean_net_bp": 245.47,
+      "win_rate": 70.0,
+      "profit_factor": 2.136,
+      "max_dd_r": 2.89,
+      "trades_per_year": 10.6,
+      "t": 0.94,
+      "p_one_sided": 0.186,
+      "ci95_r": [
+       -0.4104,
+       0.9388
+      ]
+     }
+    },
+    {
+     "test_year": 2014,
+     "selected": 1,
+     "params": {
+      "change_w": 1,
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 11,
+      "mean_r": -0.4098,
+      "mean_net_bp": -144.77,
+      "win_rate": 36.4,
+      "profit_factor": 0.328,
+      "max_dd_r": 5.56,
+      "trades_per_year": 11.5,
+      "t": -1.34,
+      "p_one_sided": 0.8946,
+      "ci95_r": [
+       -0.9843,
+       0.1492
+      ]
+     }
+    },
+    {
+     "test_year": 2015,
+     "selected": 1,
+     "params": {
+      "change_w": 1,
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 11,
+      "mean_r": 0.1154,
+      "mean_net_bp": 20.32,
+      "win_rate": 54.5,
+      "profit_factor": 1.304,
+      "max_dd_r": 2.79,
+      "trades_per_year": 11.5,
+      "t": 0.35,
+      "p_one_sided": 0.3683,
+      "ci95_r": [
+       -0.4966,
+       0.7424
+      ]
+     }
+    },
+    {
+     "test_year": 2016,
+     "selected": 1,
+     "params": {
+      "change_w": 1,
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 11,
+      "mean_r": 0.3105,
+      "mean_net_bp": 130.69,
+      "win_rate": 54.5,
+      "profit_factor": 2.033,
+      "max_dd_r": 2.28,
+      "trades_per_year": 11.4,
+      "t": 0.88,
+      "p_one_sided": 0.2001,
+      "ci95_r": [
+       -0.3466,
+       0.9582
+      ]
+     }
+    },
+    {
+     "test_year": 2017,
+     "selected": 1,
+     "params": {
+      "change_w": 1,
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 11,
+      "mean_r": 0.1013,
+      "mean_net_bp": 38.33,
+      "win_rate": 63.6,
+      "profit_factor": 1.206,
+      "max_dd_r": 4.73,
+      "trades_per_year": 11.4,
+      "t": 0.26,
+      "p_one_sided": 0.4001,
+      "ci95_r": [
+       -0.6465,
+       0.776
+      ]
+     }
+    },
+    {
+     "test_year": 2018,
+     "selected": 1,
+     "params": {
+      "change_w": 1,
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 10,
+      "mean_r": 0.2433,
+      "mean_net_bp": 65.95,
+      "win_rate": 70.0,
+      "profit_factor": 2.615,
+      "max_dd_r": 0.88,
+      "trades_per_year": 11.6,
+      "t": 1.24,
+      "p_one_sided": 0.1241,
+      "ci95_r": [
+       -0.1313,
+       0.5966
+      ]
+     }
+    },
+    {
+     "test_year": 2019,
+     "selected": 1,
+     "params": {
+      "change_w": 1,
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 9,
+      "mean_r": -0.0516,
+      "mean_net_bp": -42.62,
+      "win_rate": 33.3,
+      "profit_factor": 0.899,
+      "max_dd_r": 3.53,
+      "trades_per_year": 11.7,
+      "t": -0.1,
+      "p_one_sided": 0.5381,
+      "ci95_r": [
+       -0.8855,
+       1.0361
+      ]
+     }
+    },
+    {
+     "test_year": 2020,
+     "selected": 1,
+     "params": {
+      "change_w": 1,
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 10,
+      "mean_r": 0.019,
+      "mean_net_bp": 75.07,
+      "win_rate": 50.0,
+      "profit_factor": 1.045,
+      "max_dd_r": 3.29,
+      "trades_per_year": 11.6,
+      "t": 0.05,
+      "p_one_sided": 0.4816,
+      "ci95_r": [
+       -0.7327,
+       0.7235
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 116,
+    "mean_r": 0.0345,
+    "mean_net_bp": 28.03,
+    "win_rate": 51.7,
+    "profit_factor": 1.085,
+    "max_dd_r": 8.36,
+    "trades_per_year": 10.7,
+    "t": 0.33,
+    "p_one_sided": 0.3702,
+    "ci95_r": [
+     -0.1695,
+     0.2375
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 116,
+    "mean_r": 0.004,
+    "mean_net_bp": 16.14,
+    "win_rate": 51.7,
+    "profit_factor": 1.01,
+    "max_dd_r": 8.69,
+    "trades_per_year": 10.7,
+    "t": 0.04,
+    "p_one_sided": 0.4846,
+    "ci95_r": [
+     -0.2002,
+     0.2072
+    ]
+   },
+   "oos_by_year": {
+    "2010": {
+     "trades": 11,
+     "mean_r": -0.052
+    },
+    "2011": {
+     "trades": 11,
+     "mean_r": -0.251
+    },
+    "2012": {
+     "trades": 11,
+     "mean_r": 0.043
+    },
+    "2013": {
+     "trades": 10,
+     "mean_r": 0.342
+    },
+    "2014": {
+     "trades": 11,
+     "mean_r": -0.41
+    },
+    "2015": {
+     "trades": 11,
+     "mean_r": 0.115
+    },
+    "2016": {
+     "trades": 11,
+     "mean_r": 0.311
+    },
+    "2017": {
+     "trades": 11,
+     "mean_r": 0.101
+    },
+    "2018": {
+     "trades": 10,
+     "mean_r": 0.243
+    },
+    "2019": {
+     "trades": 9,
+     "mean_r": -0.052
+    },
+    "2020": {
+     "trades": 10,
+     "mean_r": 0.019
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "mean": -0.0338,
+    "p90": 0.0968
+   },
+   "benchmark": {
+    "mean_r": 0.1,
+    "kind": "always_long_same_timing"
+   },
+   "gate1_checks": {
+    "min_trades": true,
+    "mean_positive": true,
+    "profit_factor": false,
+    "p_value": false,
+    "beats_direction_control": false,
+    "beats_benchmark": false,
+    "parameter_robustness": true
+   },
+   "gate1_pass": false,
+   "final_config": 1,
+   "final_params": {
+    "change_w": 1,
+    "hold": "4W"
+   }
+  },
+  "B4_oi_price_confirmation": {
+   "project": "B",
+   "mechanism": "Price trends confirmed by rising open interest (new money) continue.",
+   "configs": 2,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "hold": "4W"
+     },
+     "trades": 105,
+     "mean_r": -0.137,
+     "mean_net_bp": -79.13,
+     "t": -1.53,
+     "p_one_sided": 0.9349
+    },
+    {
+     "config": 1,
+     "params": {
+      "hold": "1W"
+     },
+     "trades": 213,
+     "mean_r": -0.1893,
+     "mean_net_bp": -45.49,
+     "t": -2.64,
+     "p_one_sided": 0.9955
+    }
+   ],
+   "share_configs_positive": 0.0,
+   "folds": [
+    {
+     "test_year": 2010,
+     "selected": 0,
+     "params": {
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 8,
+      "mean_r": 0.0138,
+      "mean_net_bp": -10.15,
+      "win_rate": 50.0,
+      "profit_factor": 1.039,
+      "max_dd_r": 2.31,
+      "trades_per_year": 9.5,
+      "t": 0.04,
+      "p_one_sided": 0.484,
+      "ci95_r": [
+       -0.6149,
+       0.6138
+      ]
+     }
+    },
+    {
+     "test_year": 2011,
+     "selected": 0,
+     "params": {
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 7,
+      "mean_r": 0.0402,
+      "mean_net_bp": -62.57,
+      "win_rate": 42.9,
+      "profit_factor": 1.092,
+      "max_dd_r": 2.13,
+      "trades_per_year": 8.9,
+      "t": 0.07,
+      "p_one_sided": 0.4716,
+      "ci95_r": [
+       -0.9376,
+       1.0803
+      ]
+     }
+    },
+    {
+     "test_year": 2012,
+     "selected": 0,
+     "params": {
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 9,
+      "mean_r": -0.4518,
+      "mean_net_bp": -211.1,
+      "win_rate": 22.2,
+      "profit_factor": 0.224,
+      "max_dd_r": 4.07,
+      "trades_per_year": 10.2,
+      "t": -1.6,
+      "p_one_sided": 0.9244,
+      "ci95_r": [
+       -0.9457,
+       0.0779
+      ]
+     }
+    },
+    {
+     "test_year": 2013,
+     "selected": 1,
+     "params": {
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 10,
+      "mean_r": -0.4481,
+      "mean_net_bp": -122.47,
+      "win_rate": 20.0,
+      "profit_factor": 0.096,
+      "max_dd_r": 4.48,
+      "trades_per_year": 11.6,
+      "t": -2.68,
+      "p_one_sided": 0.9861,
+      "ci95_r": [
+       -0.7685,
+       -0.1432
+      ]
+     }
+    },
+    {
+     "test_year": 2014,
+     "selected": 1,
+     "params": {
+      "hold": "1W"
+     },
+     "test": {
+      "trades": 16,
+      "mean_r": -0.2534,
+      "mean_net_bp": -56.1,
+      "win_rate": 25.0,
+      "profit_factor": 0.424,
+      "max_dd_r": 4.05,
+      "trades_per_year": 19.0,
+      "t": -1.19,
+      "p_one_sided": 0.8736,
+      "ci95_r": [
+       -0.6311,
+       0.165
+      ]
+     }
+    },
+    {
+     "test_year": 2015,
+     "selected": 0,
+     "params": {
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 9,
+      "mean_r": -0.2267,
+      "mean_net_bp": -134.0,
+      "win_rate": 55.6,
+      "profit_factor": 0.457,
+      "max_dd_r": 3.76,
+      "trades_per_year": 9.2,
+      "t": -0.85,
+      "p_one_sided": 0.7896,
+      "ci95_r": [
+       -0.7535,
+       0.2249
+      ]
+     }
+    },
+    {
+     "test_year": 2016,
+     "selected": 0,
+     "params": {
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 7,
+      "mean_r": 0.4072,
+      "mean_net_bp": 137.64,
+      "win_rate": 57.1,
+      "profit_factor": 2.672,
+      "max_dd_r": 1.71,
+      "trades_per_year": 8.3,
+      "t": 1.0,
+      "p_one_sided": 0.1783,
+      "ci95_r": [
+       -0.3555,
+       1.1336
+      ]
+     }
+    },
+    {
+     "test_year": 2017,
+     "selected": 0,
+     "params": {
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 8,
+      "mean_r": -0.715,
+      "mean_net_bp": -217.13,
+      "win_rate": 37.5,
+      "profit_factor": 0.094,
+      "max_dd_r": 5.8,
+      "trades_per_year": 9.7,
+      "t": -2.23,
+      "p_one_sided": 0.9676,
+      "ci95_r": [
+       -1.3052,
+       -0.1299
+      ]
+     }
+    },
+    {
+     "test_year": 2018,
+     "selected": 0,
+     "params": {
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 7,
+      "mean_r": 0.0309,
+      "mean_net_bp": 5.45,
+      "win_rate": 57.1,
+      "profit_factor": 1.102,
+      "max_dd_r": 1.2,
+      "trades_per_year": 7.9,
+      "t": 0.1,
+      "p_one_sided": 0.4613,
+      "ci95_r": [
+       -0.5142,
+       0.5876
+      ]
+     }
+    },
+    {
+     "test_year": 2019,
+     "selected": 0,
+     "params": {
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 8,
+      "mean_r": 0.2326,
+      "mean_net_bp": 70.25,
+      "win_rate": 50.0,
+      "profit_factor": 1.636,
+      "max_dd_r": 1.51,
+      "trades_per_year": 10.2,
+      "t": 0.52,
+      "p_one_sided": 0.3082,
+      "ci95_r": [
+       -0.5133,
+       1.0566
+      ]
+     }
+    },
+    {
+     "test_year": 2020,
+     "selected": 0,
+     "params": {
+      "hold": "4W"
+     },
+     "test": {
+      "trades": 6,
+      "mean_r": 0.2297,
+      "mean_net_bp": 140.63,
+      "win_rate": 66.7,
+      "profit_factor": 2.611,
+      "max_dd_r": 0.71,
+      "trades_per_year": 8.7,
+      "t": 0.87,
+      "p_one_sided": 0.2116,
+      "ci95_r": [
+       -0.2522,
+       0.7122
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 95,
+    "mean_r": -0.1438,
+    "mean_net_bp": -53.44,
+    "win_rate": 41.1,
+    "profit_factor": 0.665,
+    "max_dd_r": 20.57,
+    "trades_per_year": 8.9,
+    "t": -1.5,
+    "p_one_sided": 0.9319,
+    "ci95_r": [
+     -0.32,
+     0.0545
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 95,
+    "mean_r": -0.1761,
+    "mean_net_bp": -64.02,
+    "win_rate": 40.0,
+    "profit_factor": 0.607,
+    "max_dd_r": 22.91,
+    "trades_per_year": 8.9,
+    "t": -1.84,
+    "p_one_sided": 0.9656,
+    "ci95_r": [
+     -0.3533,
+     0.0225
+    ]
+   },
+   "oos_by_year": {
+    "2010": {
+     "trades": 8,
+     "mean_r": 0.014
+    },
+    "2011": {
+     "trades": 7,
+     "mean_r": 0.04
+    },
+    "2012": {
+     "trades": 9,
+     "mean_r": -0.452
+    },
+    "2013": {
+     "trades": 10,
+     "mean_r": -0.448
+    },
+    "2014": {
+     "trades": 16,
+     "mean_r": -0.253
+    },
+    "2015": {
+     "trades": 9,
+     "mean_r": -0.227
+    },
+    "2016": {
+     "trades": 7,
+     "mean_r": 0.407
+    },
+    "2017": {
+     "trades": 8,
+     "mean_r": -0.715
+    },
+    "2018": {
+     "trades": 7,
+     "mean_r": 0.031
+    },
+    "2019": {
+     "trades": 8,
+     "mean_r": 0.233
+    },
+    "2020": {
+     "trades": 6,
+     "mean_r": 0.23
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "mean": -0.0272,
+    "p90": 0.0889
+   },
+   "benchmark": {
+    "mean_r": 0.0403,
+    "kind": "always_long_same_timing"
+   },
+   "gate1_checks": {
+    "min_trades": true,
+    "mean_positive": false,
+    "profit_factor": false,
+    "p_value": false,
+    "beats_direction_control": false,
+    "beats_benchmark": false,
+    "parameter_robustness": false
+   },
+   "gate1_pass": false,
+   "final_config": 0,
+   "final_params": {
+    "hold": "4W"
+   }
+  },
+  "B6_tick_volume_imbalance_proxy": {
+   "project": "B",
+   "mechanism": "PROXY ONLY: signed CFD tick-volume imbalance over 24 H1 bars (not exchange volume delta). Direction (follow/fade) is a selected parameter.",
+   "configs": 4,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "direction": "follow",
+      "hold": "H4"
+     },
+     "trades": 1588,
+     "mean_r": -0.126,
+     "mean_net_bp": -3.54,
+     "t": -4.42,
+     "p_one_sided": 1.0
+    },
+    {
+     "config": 1,
+     "params": {
+      "direction": "follow",
+      "hold": "D1"
+     },
+     "trades": 576,
+     "mean_r": -0.0759,
+     "mean_net_bp": -3.15,
+     "t": -1.57,
+     "p_one_sided": 0.9419
+    },
+    {
+     "config": 2,
+     "params": {
+      "direction": "fade",
+      "hold": "H4"
+     },
+     "trades": 1588,
+     "mean_r": -0.1649,
+     "mean_net_bp": -4.78,
+     "t": -5.77,
+     "p_one_sided": 1.0
+    },
+    {
+     "config": 3,
+     "params": {
+      "direction": "fade",
+      "hold": "D1"
+     },
+     "trades": 576,
+     "mean_r": -0.052,
+     "mean_net_bp": -5.71,
+     "t": -1.08,
+     "p_one_sided": 0.8596
+    }
+   ],
+   "share_configs_positive": 0.0,
+   "folds": [
+    {
+     "test_year": 2018,
+     "selected": 3,
+     "params": {
+      "direction": "fade",
+      "hold": "D1"
+     },
+     "test": {
+      "trades": 117,
+      "mean_r": -0.0176,
+      "mean_net_bp": -2.29,
+      "win_rate": 46.2,
+      "profit_factor": 0.959,
+      "max_dd_r": 10.28,
+      "trades_per_year": 117.7,
+      "t": -0.17,
+      "p_one_sided": 0.5667,
+      "ci95_r": [
+       -0.2187,
+       0.1843
+      ]
+     }
+    },
+    {
+     "test_year": 2019,
+     "selected": 3,
+     "params": {
+      "direction": "fade",
+      "hold": "D1"
+     },
+     "test": {
+      "trades": 112,
+      "mean_r": -0.1755,
+      "mean_net_bp": -9.9,
+      "win_rate": 42.0,
+      "profit_factor": 0.673,
+      "max_dd_r": 23.95,
+      "trades_per_year": 113.9,
+      "t": -1.51,
+      "p_one_sided": 0.9325,
+      "ci95_r": [
+       -0.4052,
+       0.0481
+      ]
+     }
+    },
+    {
+     "test_year": 2020,
+     "selected": 3,
+     "params": {
+      "direction": "fade",
+      "hold": "D1"
+     },
+     "test": {
+      "trades": 120,
+      "mean_r": -0.228,
+      "mean_net_bp": -24.92,
+      "win_rate": 43.3,
+      "profit_factor": 0.568,
+      "max_dd_r": 28.52,
+      "trades_per_year": 121.1,
+      "t": -2.09,
+      "p_one_sided": 0.9808,
+      "ci95_r": [
+       -0.441,
+       -0.0135
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 349,
+    "mean_r": -0.1406,
+    "mean_net_bp": -12.51,
+    "win_rate": 43.8,
+    "profit_factor": 0.718,
+    "max_dd_r": 54.46,
+    "trades_per_year": 116.6,
+    "t": -2.22,
+    "p_one_sided": 0.9863,
+    "ci95_r": [
+     -0.264,
+     -0.0165
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 349,
+    "mean_r": -0.2042,
+    "mean_net_bp": -16.94,
+    "win_rate": 42.4,
+    "profit_factor": 0.618,
+    "max_dd_r": 72.01,
+    "trades_per_year": 116.6,
+    "t": -3.22,
+    "p_one_sided": 0.9993,
+    "ci95_r": [
+     -0.3275,
+     -0.08
+    ]
+   },
+   "oos_by_year": {
+    "2018": {
+     "trades": 117,
+     "mean_r": -0.018
+    },
+    "2019": {
+     "trades": 112,
+     "mean_r": -0.176
+    },
+    "2020": {
+     "trades": 120,
+     "mean_r": -0.228
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "mean": -0.0674,
+    "p90": 0.0154
+   },
+   "benchmark": {
+    "mean_r": -0.0225,
+    "kind": "always_long_same_timing"
+   },
+   "gate1_checks": {
+    "min_trades": true,
+    "mean_positive": false,
+    "profit_factor": false,
+    "p_value": false,
+    "beats_direction_control": false,
+    "beats_benchmark": false,
+    "parameter_robustness": false
+   },
+   "gate1_pass": false,
+   "final_config": 3,
+   "final_params": {
+    "direction": "fade",
+    "hold": "D1"
+   }
+  },
+  "C1_regime_conditional": {
+   "project": "C",
+   "mechanism": "Standard strategies work only in their natural regime: momentum in trending and in high volatility, mean reversion in ranging, breakouts after low volatility. Regime thresholds are fitted on train folds only; strategy parameters are fixed textbook values.",
+   "configs": 12,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "pair": "MOM|TREND",
+      "tf": "D1"
+     },
+     "trades": 455,
+     "mean_r": 0.0114,
+     "mean_net_bp": -5.67,
+     "t": 0.2,
+     "p_one_sided": 0.4201
+    },
+    {
+     "config": 1,
+     "params": {
+      "pair": "MOM|TREND",
+      "tf": "H4"
+     },
+     "trades": 487,
+     "mean_r": 0.0105,
+     "mean_net_bp": -1.27,
+     "t": 0.2,
+     "p_one_sided": 0.419
+    },
+    {
+     "config": 2,
+     "params": {
+      "pair": "MOM|TREND",
+      "tf": "H1"
+     },
+     "trades": 2293,
+     "mean_r": -0.1041,
+     "mean_net_bp": -3.43,
+     "t": -4.3,
+     "p_one_sided": 1.0
+    },
+    {
+     "config": 3,
+     "params": {
+      "pair": "MR|RANGE",
+      "tf": "D1"
+     },
+     "trades": 165,
+     "mean_r": -0.0669,
+     "mean_net_bp": -19.83,
+     "t": -0.8,
+     "p_one_sided": 0.7877
+    },
+    {
+     "config": 4,
+     "params": {
+      "pair": "MR|RANGE",
+      "tf": "H4"
+     },
+     "trades": 178,
+     "mean_r": -0.2218,
+     "mean_net_bp": -16.79,
+     "t": -2.57,
+     "p_one_sided": 0.9945
+    },
+    {
+     "config": 5,
+     "params": {
+      "pair": "MR|RANGE",
+      "tf": "H1"
+     },
+     "trades": 766,
+     "mean_r": -0.2562,
+     "mean_net_bp": -7.83,
+     "t": -5.67,
+     "p_one_sided": 1.0
+    },
+    {
+     "config": 6,
+     "params": {
+      "pair": "BRK|LOWVOL",
+      "tf": "D1"
+     },
+     "trades": 117,
+     "mean_r": 0.0477,
+     "mean_net_bp": 13.75,
+     "t": 0.46,
+     "p_one_sided": 0.3242
+    },
+    {
+     "config": 7,
+     "params": {
+      "pair": "BRK|LOWVOL",
+      "tf": "H4"
+     },
+     "trades": 113,
+     "mean_r": 0.0771,
+     "mean_net_bp": 5.33,
+     "t": 0.74,
+     "p_one_sided": 0.2291
+    },
+    {
+     "config": 8,
+     "params": {
+      "pair": "BRK|LOWVOL",
+      "tf": "H1"
+     },
+     "trades": 500,
+     "mean_r": -0.0472,
+     "mean_net_bp": -2.23,
+     "t": -0.9,
+     "p_one_sided": 0.8148
+    },
+    {
+     "config": 9,
+     "params": {
+      "pair": "MOM|HIGHVOL",
+      "tf": "D1"
+     },
+     "trades": 380,
+     "mean_r": -0.0697,
+     "mean_net_bp": -20.46,
+     "t": -1.13,
+     "p_one_sided": 0.8701
+    },
+    {
+     "config": 10,
+     "params": {
+      "pair": "MOM|HIGHVOL",
+      "tf": "H4"
+     },
+     "trades": 377,
+     "mean_r": -0.0346,
+     "mean_net_bp": -1.2,
+     "t": -0.61,
+     "p_one_sided": 0.7287
+    },
+    {
+     "config": 11,
+     "params": {
+      "pair": "MOM|HIGHVOL",
+      "tf": "H1"
+     },
+     "trades": 1890,
+     "mean_r": -0.0991,
+     "mean_net_bp": -3.2,
+     "t": -3.95,
+     "p_one_sided": 1.0
+    }
+   ],
+   "share_configs_positive": 0.333,
+   "folds": [
+    {
+     "test_year": 2005,
+     "selected": 3,
+     "params": {
+      "pair": "MR|RANGE",
+      "tf": "D1"
+     },
+     "test": {
+      "trades": 9,
+      "mean_r": 0.0378,
+      "mean_net_bp": 9.48,
+      "win_rate": 55.6,
+      "profit_factor": 1.091,
+      "max_dd_r": 1.7,
+      "trades_per_year": 12.1,
+      "t": 0.1,
+      "p_one_sided": 0.4628,
+      "ci95_r": [
+       -0.6535,
+       0.7556
+      ]
+     }
+    },
+    {
+     "test_year": 2006,
+     "selected": 3,
+     "params": {
+      "pair": "MR|RANGE",
+      "tf": "D1"
+     },
+     "test": {
+      "trades": 9,
+      "mean_r": -0.0878,
+      "mean_net_bp": -32.91,
+      "win_rate": 55.6,
+      "profit_factor": 0.805,
+      "max_dd_r": 2.28,
+      "trades_per_year": 9.6,
+      "t": -0.27,
+      "p_one_sided": 0.6015,
+      "ci95_r": [
+       -0.6943,
+       0.5278
+      ]
+     }
+    },
+    {
+     "test_year": 2007,
+     "selected": 3,
+     "params": {
+      "pair": "MR|RANGE",
+      "tf": "D1"
+     },
+     "test": {
+      "trades": 6,
+      "mean_r": -0.526,
+      "mean_net_bp": -107.55,
+      "win_rate": 33.3,
+      "profit_factor": 0.368,
+      "max_dd_r": 4.99,
+      "trades_per_year": 6.1,
+      "t": -0.92,
+      "p_one_sided": 0.8002,
+      "ci95_r": [
+       -1.5496,
+       0.5345
+      ]
+     }
+    },
+    {
+     "test_year": 2008,
+     "selected": 3,
+     "params": {
+      "pair": "MR|RANGE",
+      "tf": "D1"
+     },
+     "test": {
+      "trades": 5,
+      "mean_r": -0.4563,
+      "mean_net_bp": -227.64,
+      "win_rate": 40.0,
+      "profit_factor": 0.204,
+      "max_dd_r": 2.85,
+      "trades_per_year": 8.9,
+      "t": -0.99,
+      "p_one_sided": 0.8094,
+      "ci95_r": [
+       -1.3436,
+       0.2307
+      ]
+     }
+    },
+    {
+     "test_year": 2009,
+     "selected": 3,
+     "params": {
+      "pair": "MR|RANGE",
+      "tf": "D1"
+     },
+     "test": {
+      "trades": 8,
+      "mean_r": 0.0162,
+      "mean_net_bp": 30.33,
+      "win_rate": 50.0,
+      "profit_factor": 1.117,
+      "max_dd_r": 0.82,
+      "trades_per_year": 8.7,
+      "t": 0.13,
+      "p_one_sided": 0.4515,
+      "ci95_r": [
+       -0.2273,
+       0.2359
+      ]
+     }
+    },
+    {
+     "test_year": 2010,
+     "selected": 3,
+     "params": {
+      "pair": "MR|RANGE",
+      "tf": "D1"
+     },
+     "test": {
+      "trades": 11,
+      "mean_r": 0.5298,
+      "mean_net_bp": 117.6,
+      "win_rate": 63.6,
+      "profit_factor": 4.601,
+      "max_dd_r": 1.59,
+      "trades_per_year": 11.1,
+      "t": 1.85,
+      "p_one_sided": 0.0475,
+      "ci95_r": [
+       0.0058,
+       1.1021
+      ]
+     }
+    },
+    {
+     "test_year": 2011,
+     "selected": 3,
+     "params": {
+      "pair": "MR|RANGE",
+      "tf": "D1"
+     },
+     "test": {
+      "trades": 7,
+      "mean_r": -0.4326,
+      "mean_net_bp": -107.64,
+      "win_rate": 28.6,
+      "profit_factor": 0.382,
+      "max_dd_r": 4.9,
+      "trades_per_year": 7.9,
+      "t": -0.98,
+      "p_one_sided": 0.8161,
+      "ci95_r": [
+       -1.2599,
+       0.3531
+      ]
+     }
+    },
+    {
+     "test_year": 2012,
+     "selected": 3,
+     "params": {
+      "pair": "MR|RANGE",
+      "tf": "D1"
+     },
+     "test": {
+      "trades": 6,
+      "mean_r": 0.2391,
+      "mean_net_bp": 50.45,
+      "win_rate": 66.7,
+      "profit_factor": 2.076,
+      "max_dd_r": 0.96,
+      "trades_per_year": 6.7,
+      "t": 0.73,
+      "p_one_sided": 0.2501,
+      "ci95_r": [
+       -0.3785,
+       0.7832
+      ]
+     }
+    },
+    {
+     "test_year": 2013,
+     "selected": 0,
+     "params": {
+      "pair": "MOM|TREND",
+      "tf": "D1"
+     },
+     "test": {
+      "trades": 21,
+      "mean_r": -0.0161,
+      "mean_net_bp": -29.34,
+      "win_rate": 42.9,
+      "profit_factor": 0.96,
+      "max_dd_r": 4.62,
+      "trades_per_year": 23.2,
+      "t": -0.07,
+      "p_one_sided": 0.5264,
+      "ci95_r": [
+       -0.4399,
+       0.4426
+      ]
+     }
+    },
+    {
+     "test_year": 2014,
+     "selected": 6,
+     "params": {
+      "pair": "BRK|LOWVOL",
+      "tf": "D1"
+     },
+     "test": {
+      "trades": 9,
+      "mean_r": 0.131,
+      "mean_net_bp": 46.79,
+      "win_rate": 66.7,
+      "profit_factor": 1.459,
+      "max_dd_r": 1.8,
+      "trades_per_year": 12.9,
+      "t": 0.42,
+      "p_one_sided": 0.3441,
+      "ci95_r": [
+       -0.4642,
+       0.6794
+      ]
+     }
+    },
+    {
+     "test_year": 2015,
+     "selected": 6,
+     "params": {
+      "pair": "BRK|LOWVOL",
+      "tf": "D1"
+     },
+     "test": {
+      "trades": 6,
+      "mean_r": 0.1863,
+      "mean_net_bp": 20.25,
+      "win_rate": 33.3,
+      "profit_factor": 1.473,
+      "max_dd_r": 1.71,
+      "trades_per_year": 8.3,
+      "t": 0.37,
+      "p_one_sided": 0.3648,
+      "ci95_r": [
+       -0.6791,
+       1.1131
+      ]
+     }
+    },
+    {
+     "test_year": 2016,
+     "selected": 6,
+     "params": {
+      "pair": "BRK|LOWVOL",
+      "tf": "D1"
+     },
+     "test": {
+      "trades": 4,
+      "mean_r": -1.1327,
+      "mean_net_bp": -340.02,
+      "win_rate": 0.0,
+      "profit_factor": 0.0,
+      "max_dd_r": 4.53,
+      "trades_per_year": 7.3,
+      "t": -3.02,
+      "p_one_sided": 0.9593,
+      "ci95_r": [
+       NaN,
+       NaN
+      ]
+     }
+    },
+    {
+     "test_year": 2017,
+     "selected": 0,
+     "params": {
+      "pair": "MOM|TREND",
+      "tf": "D1"
+     },
+     "test": {
+      "trades": 19,
+      "mean_r": -0.0629,
+      "mean_net_bp": -8.62,
+      "win_rate": 47.4,
+      "profit_factor": 0.859,
+      "max_dd_r": 2.81,
+      "trades_per_year": 20.7,
+      "t": -0.27,
+      "p_one_sided": 0.6065,
+      "ci95_r": [
+       -0.5168,
+       0.3714
+      ]
+     }
+    },
+    {
+     "test_year": 2018,
+     "selected": 10,
+     "params": {
+      "pair": "MOM|HIGHVOL",
+      "tf": "H4"
+     },
+     "test": {
+      "trades": 93,
+      "mean_r": -0.1528,
+      "mean_net_bp": -9.97,
+      "win_rate": 40.9,
+      "profit_factor": 0.661,
+      "max_dd_r": 20.79,
+      "trades_per_year": 95.4,
+      "t": -1.54,
+      "p_one_sided": 0.9367,
+      "ci95_r": [
+       -0.3423,
+       0.0402
+      ]
+     }
+    },
+    {
+     "test_year": 2019,
+     "selected": 0,
+     "params": {
+      "pair": "MOM|TREND",
+      "tf": "D1"
+     },
+     "test": {
+      "trades": 18,
+      "mean_r": 0.2508,
+      "mean_net_bp": 30.95,
+      "win_rate": 61.1,
+      "profit_factor": 2.031,
+      "max_dd_r": 2.64,
+      "trades_per_year": 18.5,
+      "t": 1.28,
+      "p_one_sided": 0.1097,
+      "ci95_r": [
+       -0.1169,
+       0.629
+      ]
+     }
+    },
+    {
+     "test_year": 2020,
+     "selected": 0,
+     "params": {
+      "pair": "MOM|TREND",
+      "tf": "D1"
+     },
+     "test": {
+      "trades": 19,
+      "mean_r": -0.422,
+      "mean_net_bp": -100.34,
+      "win_rate": 42.1,
+      "profit_factor": 0.484,
+      "max_dd_r": 11.27,
+      "trades_per_year": 20.8,
+      "t": -1.06,
+      "p_one_sided": 0.8474,
+      "ci95_r": [
+       -1.2222,
+       0.2805
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 250,
+    "mean_r": -0.092,
+    "mean_net_bp": -19.13,
+    "win_rate": 45.6,
+    "profit_factor": 0.796,
+    "max_dd_r": 28.25,
+    "trades_per_year": 15.8,
+    "t": -1.37,
+    "p_one_sided": 0.9139,
+    "ci95_r": [
+     -0.2241,
+     0.0409
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 250,
+    "mean_r": -0.1408,
+    "mean_net_bp": -25.41,
+    "win_rate": 44.0,
+    "profit_factor": 0.706,
+    "max_dd_r": 36.46,
+    "trades_per_year": 15.8,
+    "t": -2.1,
+    "p_one_sided": 0.9815,
+    "ci95_r": [
+     -0.2732,
+     -0.008
+    ]
+   },
+   "oos_by_year": {
+    "2005": {
+     "trades": 9,
+     "mean_r": 0.038
+    },
+    "2006": {
+     "trades": 9,
+     "mean_r": -0.088
+    },
+    "2007": {
+     "trades": 6,
+     "mean_r": -0.526
+    },
+    "2008": {
+     "trades": 5,
+     "mean_r": -0.456
+    },
+    "2009": {
+     "trades": 8,
+     "mean_r": 0.016
+    },
+    "2010": {
+     "trades": 10,
+     "mean_r": 0.408
+    },
+    "2011": {
+     "trades": 8,
+     "mean_r": -0.16
+    },
+    "2012": {
+     "trades": 6,
+     "mean_r": 0.239
+    },
+    "2013": {
+     "trades": 21,
+     "mean_r": -0.016
+    },
+    "2014": {
+     "trades": 9,
+     "mean_r": 0.131
+    },
+    "2015": {
+     "trades": 6,
+     "mean_r": 0.186
+    },
+    "2016": {
+     "trades": 4,
+     "mean_r": -1.133
+    },
+    "2017": {
+     "trades": 19,
+     "mean_r": -0.063
+    },
+    "2018": {
+     "trades": 93,
+     "mean_r": -0.153
+    },
+    "2019": {
+     "trades": 18,
+     "mean_r": 0.251
+    },
+    "2020": {
+     "trades": 19,
+     "mean_r": -0.422
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "mean": -0.0382,
+    "p90": 0.0383
+   },
+   "benchmark": {
+    "mean_r": -0.0872,
+    "kind": "unconditional_strategy"
+   },
+   "gate1_checks": {
+    "min_trades": true,
+    "mean_positive": false,
+    "profit_factor": false,
+    "p_value": false,
+    "beats_direction_control": false,
+    "beats_benchmark": "False",
+    "parameter_robustness": false
+   },
+   "gate1_pass": false,
+   "final_config": 7,
+   "final_params": {
+    "pair": "BRK|LOWVOL",
+    "tf": "H4"
+   }
+  }
+ }
+}

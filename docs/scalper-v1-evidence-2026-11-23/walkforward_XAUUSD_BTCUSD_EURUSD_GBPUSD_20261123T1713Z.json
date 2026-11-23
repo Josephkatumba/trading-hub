@@ -1,0 +1,1919 @@
+{
+ "strategy_version": "tds-1.0",
+ "generated_utc": "20261123T1713Z",
+ "risk": {
+  "start_equity": 10000.0,
+  "risk_pct": 0.5,
+  "max_positions": 2,
+  "max_daily_loss_pct": 3.0,
+  "max_consecutive_losses": 3,
+  "cooldown_min": 15
+ },
+ "constants": {
+  "ema_fast": 9,
+  "ema_mid": 21,
+  "ema_slow": 50,
+  "rsi_period": 14,
+  "atr_period": 14,
+  "m15_slope_bars": 3,
+  "breakout_lookback": 24,
+  "breakout_margin_atr": 0.1,
+  "retest_window": 6,
+  "retest_tolerance_atr": 0.25,
+  "breakout_fail_atr": 0.3,
+  "pullback_zone_atr": 0.15,
+  "max_spread_atr": 0.15,
+  "m1_spike_mult": 3.0,
+  "atr_rank_window": 288
+ },
+ "grid": {
+  "rr": [
+   1.0,
+   1.5,
+   2.0,
+   2.5
+  ],
+  "sl_buffer_atr": [
+   0.2,
+   0.5
+  ],
+  "min_score": [
+   70,
+   80,
+   90
+  ],
+  "setups": [
+   [
+    "BRT"
+   ],
+   [
+    "PB"
+   ],
+   [
+    "BRT",
+    "PB"
+   ]
+  ],
+  "breakeven_r": [
+   0.0,
+   1.0
+  ],
+  "max_hold_min": [
+   60,
+   180
+  ]
+ },
+ "walk_forward": {
+  "train_weeks": 6,
+  "test_weeks": 2,
+  "min_train_trades": 15
+ },
+ "symbols": [
+  {
+   "symbol": "XAUUSD",
+   "data": {
+    "first_bar_utc": "2026-08-12 23:24:00",
+    "last_bar_utc": "2026-11-23 17:07:00",
+    "m1_bars": 99999,
+    "candidates": 1500
+   },
+   "configs_tested": 288,
+   "configs_profitable_in_sample": 43,
+   "best_in_sample": {
+    "params": {
+     "rr": 2.5,
+     "sl_buffer_atr": 0.5,
+     "min_score": 90,
+     "setups": [
+      "BRT",
+      "PB"
+     ],
+     "breakeven_r": 1.0,
+     "max_hold_min": 180,
+     "min_sl_atr": 0.5,
+     "max_sl_atr": 3.0,
+     "max_cost_to_risk": 0.25
+    },
+    "trades": 156,
+    "net_pnl": 871.01,
+    "expectancy_r": 0.117,
+    "profit_factor": 1.26,
+    "t_stat": 1.12
+   },
+   "default_params_full_period": {
+    "trades": 366,
+    "net_pnl": -1085.9,
+    "return_pct": -10.86,
+    "win_rate": 40.2,
+    "profit_factor": 0.89,
+    "avg_win": 59.48,
+    "avg_loss": -44.88,
+    "max_drawdown_pct": 14.07,
+    "trades_per_day": 5.04,
+    "commission": 655.27,
+    "expectancy_r": -0.065,
+    "t_stat": -1.06
+   },
+   "folds": [
+    {
+     "train": [
+      "2026-08-10",
+      "2026-09-21"
+     ],
+     "test": [
+      "2026-09-21",
+      "2026-10-05"
+     ],
+     "selected": {
+      "rr": 1.5,
+      "sl_buffer_atr": 0.5,
+      "min_score": 90,
+      "setups": [
+       "BRT",
+       "PB"
+      ],
+      "breakeven_r": 1.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": 2.36,
+     "train_summary": {
+      "trades": 57,
+      "net_pnl": 963.96,
+      "return_pct": 9.64,
+      "win_rate": 64.9,
+      "profit_factor": 2.003,
+      "avg_win": 52.03,
+      "avg_loss": -48.06,
+      "max_drawdown_pct": 2.26,
+      "trades_per_day": 2.28,
+      "commission": 82.31,
+      "expectancy_r": 0.356,
+      "t_stat": 2.36
+     },
+     "test_summary": {
+      "trades": 24,
+      "net_pnl": -435.25,
+      "return_pct": -4.35,
+      "win_rate": 25.0,
+      "profit_factor": 0.416,
+      "avg_win": 51.78,
+      "avg_loss": -41.44,
+      "max_drawdown_pct": 4.35,
+      "trades_per_day": 3.08,
+      "commission": 31.31,
+      "expectancy_r": -0.398,
+      "t_stat": -1.9
+     }
+    },
+    {
+     "train": [
+      "2026-08-24",
+      "2026-10-05"
+     ],
+     "test": [
+      "2026-10-05",
+      "2026-10-19"
+     ],
+     "selected": {
+      "rr": 2.5,
+      "sl_buffer_atr": 0.5,
+      "min_score": 90,
+      "setups": [
+       "PB"
+      ],
+      "breakeven_r": 0.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": 1.42,
+     "train_summary": {
+      "trades": 40,
+      "net_pnl": 611.96,
+      "return_pct": 6.12,
+      "win_rate": 45.0,
+      "profit_factor": 1.641,
+      "avg_win": 87.0,
+      "avg_loss": -43.37,
+      "max_drawdown_pct": 3.51,
+      "trades_per_day": 1.44,
+      "commission": 53.21,
+      "expectancy_r": 0.335,
+      "t_stat": 1.42
+     },
+     "test_summary": {
+      "trades": 15,
+      "net_pnl": -329.35,
+      "return_pct": -3.29,
+      "win_rate": 26.7,
+      "profit_factor": 0.354,
+      "avg_win": 45.03,
+      "avg_loss": -46.31,
+      "max_drawdown_pct": 4.03,
+      "trades_per_day": 1.88,
+      "commission": 24.19,
+      "expectancy_r": -0.476,
+      "t_stat": -1.79
+     }
+    },
+    {
+     "train": [
+      "2026-09-07",
+      "2026-10-19"
+     ],
+     "test": [
+      "2026-10-19",
+      "2026-11-02"
+     ],
+     "selected": {
+      "rr": 1.5,
+      "sl_buffer_atr": 0.5,
+      "min_score": 80,
+      "setups": [
+       "BRT"
+      ],
+      "breakeven_r": 0.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": 1.76,
+     "train_summary": {
+      "trades": 86,
+      "net_pnl": 989.95,
+      "return_pct": 9.9,
+      "win_rate": 51.2,
+      "profit_factor": 1.466,
+      "avg_win": 70.82,
+      "avg_loss": -50.63,
+      "max_drawdown_pct": 2.22,
+      "trades_per_day": 3.05,
+      "commission": 182.12,
+      "expectancy_r": 0.239,
+      "t_stat": 1.76
+     },
+     "test_summary": {
+      "trades": 30,
+      "net_pnl": -166.87,
+      "return_pct": -1.67,
+      "win_rate": 36.7,
+      "profit_factor": 0.817,
+      "avg_win": 67.95,
+      "avg_loss": -48.12,
+      "max_drawdown_pct": 4.37,
+      "trades_per_day": 3.71,
+      "commission": 64.4,
+      "expectancy_r": -0.133,
+      "t_stat": -0.59
+     }
+    },
+    {
+     "train": [
+      "2026-09-21",
+      "2026-11-02"
+     ],
+     "test": [
+      "2026-11-02",
+      "2026-11-16"
+     ],
+     "selected": {
+      "rr": 1.0,
+      "sl_buffer_atr": 0.5,
+      "min_score": 70,
+      "setups": [
+       "BRT"
+      ],
+      "breakeven_r": 0.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": 1.66,
+     "train_summary": {
+      "trades": 141,
+      "net_pnl": 973.03,
+      "return_pct": 9.73,
+      "win_rate": 59.6,
+      "profit_factor": 1.324,
+      "avg_win": 47.3,
+      "avg_loss": -52.64,
+      "max_drawdown_pct": 2.9,
+      "trades_per_day": 4.96,
+      "commission": 366.01,
+      "expectancy_r": 0.138,
+      "t_stat": 1.66
+     },
+     "test_summary": {
+      "trades": 39,
+      "net_pnl": -226.33,
+      "return_pct": -2.26,
+      "win_rate": 46.2,
+      "profit_factor": 0.779,
+      "avg_win": 44.32,
+      "avg_loss": -48.76,
+      "max_drawdown_pct": 4.55,
+      "trades_per_day": 4.86,
+      "commission": 79.84,
+      "expectancy_r": -0.111,
+      "t_stat": -0.69
+     }
+    },
+    {
+     "train": [
+      "2026-10-05",
+      "2026-11-16"
+     ],
+     "test": [
+      "2026-11-16",
+      "2026-11-23"
+     ],
+     "selected": {
+      "rr": 1.5,
+      "sl_buffer_atr": 0.5,
+      "min_score": 70,
+      "setups": [
+       "BRT",
+       "PB"
+      ],
+      "breakeven_r": 0.0,
+      "max_hold_min": 60,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": 1.43,
+     "train_summary": {
+      "trades": 215,
+      "net_pnl": 1093.92,
+      "return_pct": 10.94,
+      "win_rate": 51.2,
+      "profit_factor": 1.233,
+      "avg_win": 52.63,
+      "avg_loss": -44.72,
+      "max_drawdown_pct": 4.15,
+      "trades_per_day": 7.7,
+      "commission": 456.35,
+      "expectancy_r": 0.103,
+      "t_stat": 1.43
+     },
+     "test_summary": {
+      "trades": 38,
+      "net_pnl": -590.51,
+      "return_pct": -5.91,
+      "win_rate": 31.6,
+      "profit_factor": 0.425,
+      "avg_win": 36.44,
+      "avg_loss": -39.53,
+      "max_drawdown_pct": 6.31,
+      "trades_per_day": 6.96,
+      "commission": 43.11,
+      "expectancy_r": -0.339,
+      "t_stat": -2.29
+     }
+    }
+   ],
+   "out_of_sample": {
+    "trades": 146,
+    "net_pnl": -1748.32,
+    "return_pct": -17.48,
+    "win_rate": 34.9,
+    "profit_factor": 0.586,
+    "avg_win": 48.5,
+    "avg_loss": -44.44,
+    "max_drawdown_pct": 17.89,
+    "trades_per_day": 3.24,
+    "commission": 242.84,
+    "expectancy_r": -0.26,
+    "t_stat": -3.04
+   },
+   "oos_by_setup": {
+    "BRT": {
+     "trades": 92,
+     "net_pnl": -851.07,
+     "return_pct": -8.51,
+     "win_rate": 38.0,
+     "profit_factor": 0.684,
+     "avg_win": 52.74,
+     "avg_loss": -47.32,
+     "max_drawdown_pct": 9.67,
+     "trades_per_day": 2.1,
+     "commission": 175.36,
+     "expectancy_r": -0.194,
+     "t_stat": -1.71
+    },
+    "PB": {
+     "trades": 54,
+     "net_pnl": -897.25,
+     "return_pct": -8.97,
+     "win_rate": 29.6,
+     "profit_factor": 0.411,
+     "avg_win": 39.2,
+     "avg_loss": -40.12,
+     "max_drawdown_pct": 8.97,
+     "trades_per_day": 1.2,
+     "commission": 67.48,
+     "expectancy_r": -0.371,
+     "t_stat": -2.93
+    }
+   },
+   "oos_by_session": {
+    "asia": {
+     "trades": 40,
+     "net_pnl": -523.93,
+     "return_pct": -5.24,
+     "win_rate": 37.5,
+     "profit_factor": 0.548,
+     "avg_win": 42.34,
+     "avg_loss": -46.36,
+     "max_drawdown_pct": 5.68,
+     "trades_per_day": 1.02,
+     "commission": 63.08,
+     "expectancy_r": -0.274,
+     "t_stat": -1.73
+    },
+    "london": {
+     "trades": 47,
+     "net_pnl": -838.42,
+     "return_pct": -8.38,
+     "win_rate": 29.8,
+     "profit_factor": 0.451,
+     "avg_win": 49.19,
+     "avg_loss": -46.28,
+     "max_drawdown_pct": 9.27,
+     "trades_per_day": 1.06,
+     "commission": 87.8,
+     "expectancy_r": -0.388,
+     "t_stat": -2.65
+    },
+    "newyork": {
+     "trades": 25,
+     "net_pnl": -117.97,
+     "return_pct": -1.18,
+     "win_rate": 32.0,
+     "profit_factor": 0.817,
+     "avg_win": 65.81,
+     "avg_loss": -37.91,
+     "max_drawdown_pct": 2.04,
+     "trades_per_day": 0.56,
+     "commission": 43.92,
+     "expectancy_r": -0.135,
+     "t_stat": -0.59
+    },
+    "overlap": {
+     "trades": 34,
+     "net_pnl": -267.99,
+     "return_pct": -2.68,
+     "win_rate": 41.2,
+     "profit_factor": 0.699,
+     "avg_win": 44.49,
+     "avg_loss": -44.54,
+     "max_drawdown_pct": 3.26,
+     "trades_per_day": 0.75,
+     "commission": 48.04,
+     "expectancy_r": -0.157,
+     "t_stat": -0.87
+    }
+   },
+   "oos_by_reason": {
+    "breakeven": {
+     "trades": 1,
+     "net_pnl": 0.35,
+     "return_pct": 0.0,
+     "win_rate": 100.0,
+     "profit_factor": null,
+     "avg_win": 0.35,
+     "avg_loss": null,
+     "max_drawdown_pct": 0.0,
+     "trades_per_day": 1.0,
+     "commission": 1.79,
+     "expectancy_r": 0.008,
+     "t_stat": null
+    },
+    "data_end": {
+     "trades": 1,
+     "net_pnl": -18.0,
+     "return_pct": -0.18,
+     "win_rate": 0.0,
+     "profit_factor": 0.0,
+     "avg_win": null,
+     "avg_loss": -18.0,
+     "max_drawdown_pct": 0.18,
+     "trades_per_day": 1.0,
+     "commission": 0.44,
+     "expectancy_r": -0.474,
+     "t_stat": null
+    },
+    "stop": {
+     "trades": 86,
+     "net_pnl": -4099.91,
+     "return_pct": -41.0,
+     "win_rate": 0.0,
+     "profit_factor": 0.0,
+     "avg_win": null,
+     "avg_loss": -47.67,
+     "max_drawdown_pct": 41.0,
+     "trades_per_day": 1.91,
+     "commission": 143.3,
+     "expectancy_r": -1.04,
+     "t_stat": -603.25
+    },
+    "target": {
+     "trades": 40,
+     "net_pnl": 2291.77,
+     "return_pct": 22.92,
+     "win_rate": 100.0,
+     "profit_factor": null,
+     "avg_win": 57.29,
+     "avg_loss": null,
+     "max_drawdown_pct": 0.0,
+     "trades_per_day": 0.91,
+     "commission": 79.41,
+     "expectancy_r": 1.257,
+     "t_stat": 25.05
+    },
+    "time": {
+     "trades": 18,
+     "net_pnl": 77.47,
+     "return_pct": 0.77,
+     "win_rate": 55.6,
+     "profit_factor": 1.747,
+     "avg_win": 18.11,
+     "avg_loss": -12.96,
+     "max_drawdown_pct": 0.33,
+     "trades_per_day": 0.43,
+     "commission": 17.91,
+     "expectancy_r": 0.098,
+     "t_stat": 0.91
+    }
+   },
+   "verdict": "NO_EDGE"
+  },
+  {
+   "symbol": "BTCUSD",
+   "data": {
+    "first_bar_utc": "2026-09-14 14:25:00",
+    "last_bar_utc": "2026-11-23 17:07:00",
+    "m1_bars": 99939,
+    "candidates": 1466
+   },
+   "configs_tested": 288,
+   "configs_profitable_in_sample": 25,
+   "best_in_sample": {
+    "params": {
+     "rr": 1.5,
+     "sl_buffer_atr": 0.5,
+     "min_score": 80,
+     "setups": [
+      "BRT"
+     ],
+     "breakeven_r": 0.0,
+     "max_hold_min": 180,
+     "min_sl_atr": 0.5,
+     "max_sl_atr": 3.0,
+     "max_cost_to_risk": 0.25
+    },
+    "trades": 85,
+    "net_pnl": 379.17,
+    "expectancy_r": 0.093,
+    "profit_factor": 1.17,
+    "t_stat": 0.7
+   },
+   "default_params_full_period": {
+    "trades": 257,
+    "net_pnl": -1962.88,
+    "return_pct": -19.63,
+    "win_rate": 36.2,
+    "profit_factor": 0.717,
+    "avg_win": 53.6,
+    "avg_loss": -42.37,
+    "max_drawdown_pct": 21.41,
+    "trades_per_day": 5.24,
+    "commission": 271.51,
+    "expectancy_r": -0.172,
+    "t_stat": -2.52
+   },
+   "folds": [
+    {
+     "train": [
+      "2026-09-14",
+      "2026-10-26"
+     ],
+     "test": [
+      "2026-10-26",
+      "2026-11-09"
+     ],
+     "selected": {
+      "rr": 1.5,
+      "sl_buffer_atr": 0.2,
+      "min_score": 70,
+      "setups": [
+       "PB"
+      ],
+      "breakeven_r": 0.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": 0.17,
+     "train_summary": {
+      "trades": 167,
+      "net_pnl": 111.3,
+      "return_pct": 1.11,
+      "win_rate": 43.1,
+      "profit_factor": 1.023,
+      "avg_win": 68.85,
+      "avg_loss": -51.01,
+      "max_drawdown_pct": 9.26,
+      "trades_per_day": 5.83,
+      "commission": 236.11,
+      "expectancy_r": 0.016,
+      "t_stat": 0.17
+     },
+     "test_summary": {
+      "trades": 42,
+      "net_pnl": -425.8,
+      "return_pct": -4.26,
+      "win_rate": 35.7,
+      "profit_factor": 0.677,
+      "avg_win": 59.53,
+      "avg_loss": -48.85,
+      "max_drawdown_pct": 4.95,
+      "trades_per_day": 4.31,
+      "commission": 51.27,
+      "expectancy_r": -0.211,
+      "t_stat": -1.22
+     }
+    },
+    {
+     "train": [
+      "2026-09-28",
+      "2026-11-09"
+     ],
+     "test": [
+      "2026-11-09",
+      "2026-11-23"
+     ],
+     "selected": {
+      "rr": 1.5,
+      "sl_buffer_atr": 0.5,
+      "min_score": 80,
+      "setups": [
+       "BRT"
+      ],
+      "breakeven_r": 0.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": 0.81,
+     "train_summary": {
+      "trades": 52,
+      "net_pnl": 352.4,
+      "return_pct": 3.52,
+      "win_rate": 46.2,
+      "profit_factor": 1.266,
+      "avg_win": 69.91,
+      "avg_loss": -47.34,
+      "max_drawdown_pct": 3.38,
+      "trades_per_day": 1.89,
+      "commission": 67.82,
+      "expectancy_r": 0.139,
+      "t_stat": 0.81
+     },
+     "test_summary": {
+      "trades": 17,
+      "net_pnl": 124.99,
+      "return_pct": 1.25,
+      "win_rate": 47.1,
+      "profit_factor": 1.276,
+      "avg_win": 72.22,
+      "avg_loss": -50.3,
+      "max_drawdown_pct": 2.01,
+      "trades_per_day": 2.11,
+      "commission": 15.07,
+      "expectancy_r": 0.151,
+      "t_stat": 0.48
+     }
+    },
+    {
+     "train": [
+      "2026-10-12",
+      "2026-11-23"
+     ],
+     "test": [
+      "2026-11-23",
+      "2026-11-23"
+     ],
+     "selected": {
+      "rr": 1.5,
+      "sl_buffer_atr": 0.5,
+      "min_score": 80,
+      "setups": [
+       "BRT"
+      ],
+      "breakeven_r": 1.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": 1.4,
+     "train_summary": {
+      "trades": 49,
+      "net_pnl": 584.96,
+      "return_pct": 5.85,
+      "win_rate": 57.1,
+      "profit_factor": 1.559,
+      "avg_win": 58.29,
+      "avg_loss": -49.86,
+      "max_drawdown_pct": 2.37,
+      "trades_per_day": 1.73,
+      "commission": 55.59,
+      "expectancy_r": 0.238,
+      "t_stat": 1.4
+     },
+     "test_summary": {
+      "trades": 1,
+      "net_pnl": -50.41,
+      "return_pct": -0.5,
+      "win_rate": 0.0,
+      "profit_factor": 0.0,
+      "avg_win": null,
+      "avg_loss": -50.41,
+      "max_drawdown_pct": 0.5,
+      "trades_per_day": 1.0,
+      "commission": 0.65,
+      "expectancy_r": -1.024,
+      "t_stat": null
+     }
+    }
+   ],
+   "out_of_sample": {
+    "trades": 60,
+    "net_pnl": -351.21,
+    "return_pct": -3.51,
+    "win_rate": 38.3,
+    "profit_factor": 0.807,
+    "avg_win": 63.95,
+    "avg_loss": -49.24,
+    "max_drawdown_pct": 6.24,
+    "trades_per_day": 2.99,
+    "commission": 66.99,
+    "expectancy_r": -0.122,
+    "t_stat": -0.81
+   },
+   "oos_by_setup": {
+    "BRT": {
+     "trades": 18,
+     "net_pnl": 74.58,
+     "return_pct": 0.75,
+     "win_rate": 44.4,
+     "profit_factor": 1.148,
+     "avg_win": 72.22,
+     "avg_loss": -50.31,
+     "max_drawdown_pct": 2.01,
+     "trades_per_day": 1.87,
+     "commission": 15.72,
+     "expectancy_r": 0.086,
+     "t_stat": 0.28
+    },
+    "PB": {
+     "trades": 42,
+     "net_pnl": -425.8,
+     "return_pct": -4.26,
+     "win_rate": 35.7,
+     "profit_factor": 0.677,
+     "avg_win": 59.53,
+     "avg_loss": -48.85,
+     "max_drawdown_pct": 4.95,
+     "trades_per_day": 4.31,
+     "commission": 51.27,
+     "expectancy_r": -0.211,
+     "t_stat": -1.22
+    }
+   },
+   "oos_by_session": {
+    "asia": {
+     "trades": 20,
+     "net_pnl": -143.09,
+     "return_pct": -1.43,
+     "win_rate": 35.0,
+     "profit_factor": 0.764,
+     "avg_win": 66.34,
+     "avg_loss": -46.73,
+     "max_drawdown_pct": 2.76,
+     "trades_per_day": 1.0,
+     "commission": 23.51,
+     "expectancy_r": -0.152,
+     "t_stat": -0.58
+    },
+    "london": {
+     "trades": 13,
+     "net_pnl": -540.74,
+     "return_pct": -5.41,
+     "win_rate": 7.7,
+     "profit_factor": 0.115,
+     "avg_win": 70.08,
+     "avg_loss": -50.9,
+     "max_drawdown_pct": 5.41,
+     "trades_per_day": 0.76,
+     "commission": 15.27,
+     "expectancy_r": -0.847,
+     "t_stat": -4.36
+    },
+    "newyork": {
+     "trades": 12,
+     "net_pnl": 27.47,
+     "return_pct": 0.27,
+     "win_rate": 50.0,
+     "profit_factor": 1.091,
+     "avg_win": 54.63,
+     "avg_loss": -50.05,
+     "max_drawdown_pct": 1.81,
+     "trades_per_day": 0.7,
+     "commission": 12.8,
+     "expectancy_r": 0.034,
+     "t_stat": 0.1
+    },
+    "overlap": {
+     "trades": 15,
+     "net_pnl": 305.15,
+     "return_pct": 3.05,
+     "win_rate": 60.0,
+     "profit_factor": 2.006,
+     "avg_win": 67.61,
+     "avg_loss": -50.56,
+     "max_drawdown_pct": 1.5,
+     "trades_per_day": 0.87,
+     "commission": 15.41,
+     "expectancy_r": 0.421,
+     "t_stat": 1.3
+    }
+   },
+   "oos_by_reason": {
+    "stop": {
+     "trades": 36,
+     "net_pnl": -1819.25,
+     "return_pct": -18.19,
+     "win_rate": 0.0,
+     "profit_factor": 0.0,
+     "avg_win": null,
+     "avg_loss": -50.53,
+     "max_drawdown_pct": 18.19,
+     "trades_per_day": 1.8,
+     "commission": 42.24,
+     "expectancy_r": -1.04,
+     "t_stat": -369.37
+    },
+    "target": {
+     "trades": 19,
+     "net_pnl": 1368.27,
+     "return_pct": 13.68,
+     "win_rate": 100.0,
+     "profit_factor": null,
+     "avg_win": 72.01,
+     "avg_loss": null,
+     "max_drawdown_pct": 0.0,
+     "trades_per_day": 1.04,
+     "commission": 19.4,
+     "expectancy_r": 1.479,
+     "t_stat": 736.9
+    },
+    "time": {
+     "trades": 5,
+     "net_pnl": 99.77,
+     "return_pct": 1.0,
+     "win_rate": 80.0,
+     "profit_factor": 37.794,
+     "avg_win": 25.62,
+     "avg_loss": -2.71,
+     "max_drawdown_pct": 0.03,
+     "trades_per_day": 1.12,
+     "commission": 5.36,
+     "expectancy_r": 0.406,
+     "t_stat": 3.01
+    }
+   },
+   "verdict": "NO_EDGE"
+  },
+  {
+   "symbol": "EURUSD",
+   "data": {
+    "first_bar_utc": "2026-08-18 02:59:00",
+    "last_bar_utc": "2026-11-23 17:07:00",
+    "m1_bars": 99999,
+    "candidates": 1363
+   },
+   "configs_tested": 288,
+   "configs_profitable_in_sample": 0,
+   "best_in_sample": {
+    "params": {
+     "rr": 1.5,
+     "sl_buffer_atr": 0.5,
+     "min_score": 90,
+     "setups": [
+      "BRT"
+     ],
+     "breakeven_r": 1.0,
+     "max_hold_min": 60,
+     "min_sl_atr": 0.5,
+     "max_sl_atr": 3.0,
+     "max_cost_to_risk": 0.25
+    },
+    "trades": 17,
+    "net_pnl": -6.28,
+    "expectancy_r": -0.005,
+    "profit_factor": 0.984,
+    "t_stat": -0.02
+   },
+   "default_params_full_period": {
+    "trades": 152,
+    "net_pnl": -1430.24,
+    "return_pct": -14.3,
+    "win_rate": 40.8,
+    "profit_factor": 0.673,
+    "avg_win": 47.43,
+    "avg_loss": -48.57,
+    "max_drawdown_pct": 16.44,
+    "trades_per_day": 2.21,
+    "commission": 654.49,
+    "expectancy_r": -0.202,
+    "t_stat": -2.26
+   },
+   "folds": [
+    {
+     "train": [
+      "2026-08-17",
+      "2026-09-28"
+     ],
+     "test": [
+      "2026-09-28",
+      "2026-10-12"
+     ],
+     "selected": {
+      "rr": 2.0,
+      "sl_buffer_atr": 0.5,
+      "min_score": 80,
+      "setups": [
+       "BRT"
+      ],
+      "breakeven_r": 1.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": -0.06,
+     "train_summary": {
+      "trades": 15,
+      "net_pnl": -17.33,
+      "return_pct": -0.17,
+      "win_rate": 40.0,
+      "profit_factor": 0.956,
+      "avg_win": 63.32,
+      "avg_loss": -44.14,
+      "max_drawdown_pct": 2.75,
+      "trades_per_day": 0.59,
+      "commission": 76.77,
+      "expectancy_r": -0.02,
+      "t_stat": -0.06
+     },
+     "test_summary": {
+      "trades": 9,
+      "net_pnl": -386.26,
+      "return_pct": -3.86,
+      "win_rate": 11.1,
+      "profit_factor": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": -48.28,
+      "max_drawdown_pct": 3.86,
+      "trades_per_day": 1.14,
+      "commission": 44.06,
+      "expectancy_r": -0.881,
+      "t_stat": -5.29
+     }
+    },
+    {
+     "train": [
+      "2026-08-31",
+      "2026-10-12"
+     ],
+     "test": [
+      "2026-10-12",
+      "2026-10-26"
+     ],
+     "selected": {
+      "rr": 1.5,
+      "sl_buffer_atr": 0.5,
+      "min_score": 80,
+      "setups": [
+       "PB"
+      ],
+      "breakeven_r": 1.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": -0.1,
+     "train_summary": {
+      "trades": 60,
+      "net_pnl": -52.16,
+      "return_pct": -0.52,
+      "win_rate": 41.7,
+      "profit_factor": 0.966,
+      "avg_win": 59.49,
+      "avg_loss": -43.98,
+      "max_drawdown_pct": 3.76,
+      "trades_per_day": 2.14,
+      "commission": 263.42,
+      "expectancy_r": -0.014,
+      "t_stat": -0.1
+     },
+     "test_summary": {
+      "trades": 18,
+      "net_pnl": -333.8,
+      "return_pct": -3.34,
+      "win_rate": 33.3,
+      "profit_factor": 0.405,
+      "avg_win": 37.8,
+      "avg_loss": -46.71,
+      "max_drawdown_pct": 4.7,
+      "trades_per_day": 2.19,
+      "commission": 81.48,
+      "expectancy_r": -0.377,
+      "t_stat": -1.65
+     }
+    },
+    {
+     "train": [
+      "2026-09-14",
+      "2026-10-26"
+     ],
+     "test": [
+      "2026-10-26",
+      "2026-11-09"
+     ],
+     "selected": {
+      "rr": 2.5,
+      "sl_buffer_atr": 0.5,
+      "min_score": 80,
+      "setups": [
+       "PB"
+      ],
+      "breakeven_r": 1.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": -0.29,
+     "train_summary": {
+      "trades": 64,
+      "net_pnl": -164.07,
+      "return_pct": -1.64,
+      "win_rate": 37.5,
+      "profit_factor": 0.907,
+      "avg_win": 66.59,
+      "avg_loss": -44.05,
+      "max_drawdown_pct": 4.69,
+      "trades_per_day": 2.27,
+      "commission": 278.03,
+      "expectancy_r": -0.048,
+      "t_stat": -0.29
+     },
+     "test_summary": {
+      "trades": 24,
+      "net_pnl": -207.42,
+      "return_pct": -2.07,
+      "win_rate": 37.5,
+      "profit_factor": 0.661,
+      "avg_win": 44.87,
+      "avg_loss": -40.75,
+      "max_drawdown_pct": 3.43,
+      "trades_per_day": 2.95,
+      "commission": 92.38,
+      "expectancy_r": -0.173,
+      "t_stat": -0.74
+     }
+    },
+    {
+     "train": [
+      "2026-09-28",
+      "2026-11-09"
+     ],
+     "test": [
+      "2026-11-09",
+      "2026-11-23"
+     ],
+     "selected": {
+      "rr": 2.5,
+      "sl_buffer_atr": 0.5,
+      "min_score": 80,
+      "setups": [
+       "BRT"
+      ],
+      "breakeven_r": 0.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": -0.09,
+     "train_summary": {
+      "trades": 16,
+      "net_pnl": -30.96,
+      "return_pct": -0.31,
+      "win_rate": 37.5,
+      "profit_factor": 0.943,
+      "avg_win": 86.0,
+      "avg_loss": -54.7,
+      "max_drawdown_pct": 4.38,
+      "trades_per_day": 0.6,
+      "commission": 74.47,
+      "expectancy_r": -0.035,
+      "t_stat": -0.09
+     },
+     "test_summary": {
+      "trades": 5,
+      "net_pnl": -107.15,
+      "return_pct": -1.07,
+      "win_rate": 20.0,
+      "profit_factor": 0.522,
+      "avg_win": 117.08,
+      "avg_loss": -56.06,
+      "max_drawdown_pct": 1.68,
+      "trades_per_day": 0.75,
+      "commission": 25.42,
+      "expectancy_r": -0.429,
+      "t_stat": -0.61
+     }
+    },
+    {
+     "train": [
+      "2026-10-12",
+      "2026-11-23"
+     ],
+     "test": [
+      "2026-11-23",
+      "2026-11-23"
+     ],
+     "selected": {
+      "rr": 2.5,
+      "sl_buffer_atr": 0.5,
+      "min_score": 70,
+      "setups": [
+       "BRT"
+      ],
+      "breakeven_r": 0.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": 0.62,
+     "train_summary": {
+      "trades": 36,
+      "net_pnl": 273.32,
+      "return_pct": 2.73,
+      "win_rate": 44.4,
+      "profit_factor": 1.25,
+      "avg_win": 85.52,
+      "avg_loss": -54.75,
+      "max_drawdown_pct": 2.24,
+      "trades_per_day": 1.3,
+      "commission": 171.78,
+      "expectancy_r": 0.159,
+      "t_stat": 0.62
+     },
+     "test_summary": {
+      "trades": 2,
+      "net_pnl": 126.86,
+      "return_pct": 1.27,
+      "win_rate": 100.0,
+      "profit_factor": null,
+      "avg_win": 63.43,
+      "avg_loss": null,
+      "max_drawdown_pct": 0.0,
+      "trades_per_day": 2.0,
+      "commission": 6.56,
+      "expectancy_r": 1.284,
+      "t_stat": 1.13
+     }
+    }
+   ],
+   "out_of_sample": {
+    "trades": 58,
+    "net_pnl": -907.78,
+    "return_pct": -9.08,
+    "win_rate": 32.8,
+    "profit_factor": 0.491,
+    "avg_win": 46.03,
+    "avg_loss": -45.7,
+    "max_drawdown_pct": 10.96,
+    "trades_per_day": 1.44,
+    "commission": 249.91,
+    "expectancy_r": -0.318,
+    "t_stat": -2.19
+   },
+   "oos_by_setup": {
+    "BRT": {
+     "trades": 16,
+     "net_pnl": -366.56,
+     "return_pct": -3.67,
+     "win_rate": 25.0,
+     "profit_factor": 0.4,
+     "avg_win": 60.98,
+     "avg_loss": -50.88,
+     "max_drawdown_pct": 5.55,
+     "trades_per_day": 0.4,
+     "commission": 76.05,
+     "expectancy_r": -0.469,
+     "t_stat": -1.54
+    },
+    "PB": {
+     "trades": 42,
+     "net_pnl": -541.22,
+     "return_pct": -5.41,
+     "win_rate": 35.7,
+     "profit_factor": 0.538,
+     "avg_win": 42.04,
+     "avg_loss": -43.4,
+     "max_drawdown_pct": 7.51,
+     "trades_per_day": 2.31,
+     "commission": 173.86,
+     "expectancy_r": -0.261,
+     "t_stat": -1.58
+    }
+   },
+   "oos_by_session": {
+    "asia": {
+     "trades": 4,
+     "net_pnl": -180.15,
+     "return_pct": -1.8,
+     "win_rate": 0.0,
+     "profit_factor": 0.0,
+     "avg_win": null,
+     "avg_loss": -45.04,
+     "max_drawdown_pct": 1.8,
+     "trades_per_day": 0.69,
+     "commission": 16.72,
+     "expectancy_r": -0.932,
+     "t_stat": -5.34
+    },
+    "london": {
+     "trades": 21,
+     "net_pnl": 37.68,
+     "return_pct": 0.38,
+     "win_rate": 42.9,
+     "profit_factor": 1.062,
+     "avg_win": 71.61,
+     "avg_loss": -50.57,
+     "max_drawdown_pct": 3.06,
+     "trades_per_day": 0.52,
+     "commission": 93.68,
+     "expectancy_r": 0.041,
+     "t_stat": 0.13
+    },
+    "newyork": {
+     "trades": 11,
+     "net_pnl": -192.83,
+     "return_pct": -1.93,
+     "win_rate": 27.3,
+     "profit_factor": 0.428,
+     "avg_win": 48.1,
+     "avg_loss": -42.14,
+     "max_drawdown_pct": 2.2,
+     "trades_per_day": 0.38,
+     "commission": 43.22,
+     "expectancy_r": -0.355,
+     "t_stat": -1.07
+    },
+    "overlap": {
+     "trades": 22,
+     "net_pnl": -572.48,
+     "return_pct": -5.72,
+     "win_rate": 31.8,
+     "profit_factor": 0.13,
+     "avg_win": 12.26,
+     "avg_loss": -43.88,
+     "max_drawdown_pct": 5.72,
+     "trades_per_day": 0.68,
+     "commission": 96.29,
+     "expectancy_r": -0.531,
+     "t_stat": -3.47
+    }
+   },
+   "oos_by_reason": {
+    "breakeven": {
+     "trades": 11,
+     "net_pnl": 0.0,
+     "return_pct": 0.0,
+     "win_rate": 54.5,
+     "profit_factor": 1.355,
+     "avg_win": 0.0,
+     "avg_loss": -0.0,
+     "max_drawdown_pct": 0.0,
+     "trades_per_day": 0.55,
+     "commission": 49.18,
+     "expectancy_r": 0.0,
+     "t_stat": 0.48
+    },
+    "data_end": {
+     "trades": 1,
+     "net_pnl": 7.57,
+     "return_pct": 0.08,
+     "win_rate": 100.0,
+     "profit_factor": null,
+     "avg_win": 7.57,
+     "avg_loss": null,
+     "max_drawdown_pct": 0.0,
+     "trades_per_day": 1.0,
+     "commission": 2.42,
+     "expectancy_r": 0.152,
+     "t_stat": null
+    },
+    "stop": {
+     "trades": 32,
+     "net_pnl": -1751.92,
+     "return_pct": -17.52,
+     "win_rate": 0.0,
+     "profit_factor": 0.0,
+     "avg_win": null,
+     "avg_loss": -54.75,
+     "max_drawdown_pct": 17.52,
+     "trades_per_day": 0.86,
+     "commission": 141.24,
+     "expectancy_r": -1.117,
+     "t_stat": -200.22
+    },
+    "target": {
+     "trades": 8,
+     "net_pnl": 793.4,
+     "return_pct": 7.93,
+     "win_rate": 100.0,
+     "profit_factor": null,
+     "avg_win": 99.17,
+     "avg_loss": null,
+     "max_drawdown_pct": 0.0,
+     "trades_per_day": 0.27,
+     "commission": 37.15,
+     "expectancy_r": 2.03,
+     "t_stat": 10.93
+    },
+    "time": {
+     "trades": 6,
+     "net_pnl": 43.17,
+     "return_pct": 0.43,
+     "win_rate": 66.7,
+     "profit_factor": 2.419,
+     "avg_win": 18.4,
+     "avg_loss": -15.21,
+     "max_drawdown_pct": 0.3,
+     "trades_per_day": 0.35,
+     "commission": 19.92,
+     "expectancy_r": 0.148,
+     "t_stat": 1.0
+    }
+   },
+   "verdict": "NO_EDGE"
+  },
+  {
+   "symbol": "GBPUSD",
+   "data": {
+    "first_bar_utc": "2026-08-18 03:01:00",
+    "last_bar_utc": "2026-11-23 17:07:00",
+    "m1_bars": 99999,
+    "candidates": 1013
+   },
+   "configs_tested": 288,
+   "configs_profitable_in_sample": 17,
+   "best_in_sample": {
+    "params": {
+     "rr": 1.0,
+     "sl_buffer_atr": 0.2,
+     "min_score": 80,
+     "setups": [
+      "BRT"
+     ],
+     "breakeven_r": 0.0,
+     "max_hold_min": 180,
+     "min_sl_atr": 0.5,
+     "max_sl_atr": 3.0,
+     "max_cost_to_risk": 0.25
+    },
+    "trades": 17,
+    "net_pnl": 255.01,
+    "expectancy_r": 0.301,
+    "profit_factor": 1.878,
+    "t_stat": 1.3
+   },
+   "default_params_full_period": {
+    "trades": 122,
+    "net_pnl": -2070.96,
+    "return_pct": -20.71,
+    "win_rate": 30.3,
+    "profit_factor": 0.465,
+    "avg_win": 48.58,
+    "avg_loss": -45.51,
+    "max_drawdown_pct": 21.38,
+    "trades_per_day": 1.78,
+    "commission": 478.23,
+    "expectancy_r": -0.382,
+    "t_stat": -4.06
+   },
+   "folds": [
+    {
+     "train": [
+      "2026-08-17",
+      "2026-09-28"
+     ],
+     "test": [
+      "2026-09-28",
+      "2026-10-12"
+     ],
+     "selected": {
+      "rr": 2.5,
+      "sl_buffer_atr": 0.2,
+      "min_score": 70,
+      "setups": [
+       "BRT"
+      ],
+      "breakeven_r": 0.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": 0.23,
+     "train_summary": {
+      "trades": 17,
+      "net_pnl": 65.01,
+      "return_pct": 0.65,
+      "win_rate": 41.2,
+      "profit_factor": 1.132,
+      "avg_win": 79.85,
+      "avg_loss": -49.4,
+      "max_drawdown_pct": 2.37,
+      "trades_per_day": 0.68,
+      "commission": 81.95,
+      "expectancy_r": 0.08,
+      "t_stat": 0.23
+     },
+     "test_summary": {
+      "trades": 8,
+      "net_pnl": -239.25,
+      "return_pct": -2.39,
+      "win_rate": 12.5,
+      "profit_factor": 0.328,
+      "avg_win": 116.99,
+      "avg_loss": -50.89,
+      "max_drawdown_pct": 2.39,
+      "trades_per_day": 1.22,
+      "commission": 40.9,
+      "expectancy_r": -0.608,
+      "t_stat": -1.39
+     }
+    },
+    {
+     "train": [
+      "2026-08-31",
+      "2026-10-12"
+     ],
+     "test": [
+      "2026-10-12",
+      "2026-10-26"
+     ],
+     "selected": {
+      "rr": 2.0,
+      "sl_buffer_atr": 0.5,
+      "min_score": 80,
+      "setups": [
+       "BRT"
+      ],
+      "breakeven_r": 0.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": 1.15,
+     "train_summary": {
+      "trades": 17,
+      "net_pnl": 336.62,
+      "return_pct": 3.37,
+      "win_rate": 52.9,
+      "profit_factor": 1.847,
+      "avg_win": 81.54,
+      "avg_loss": -49.66,
+      "max_drawdown_pct": 2.15,
+      "trades_per_day": 0.68,
+      "commission": 82.9,
+      "expectancy_r": 0.398,
+      "t_stat": 1.15
+     },
+     "test_summary": {
+      "trades": 4,
+      "net_pnl": 32.69,
+      "return_pct": 0.33,
+      "win_rate": 50.0,
+      "profit_factor": 1.293,
+      "avg_win": 72.23,
+      "avg_loss": -55.89,
+      "max_drawdown_pct": 0.57,
+      "trades_per_day": 0.97,
+      "commission": 19.43,
+      "expectancy_r": 0.168,
+      "t_stat": 0.22
+     }
+    },
+    {
+     "train": [
+      "2026-09-14",
+      "2026-10-26"
+     ],
+     "test": [
+      "2026-10-26",
+      "2026-11-09"
+     ],
+     "selected": {
+      "rr": 2.0,
+      "sl_buffer_atr": 0.5,
+      "min_score": 70,
+      "setups": [
+       "BRT"
+      ],
+      "breakeven_r": 0.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": 1.29,
+     "train_summary": {
+      "trades": 36,
+      "net_pnl": 548.5,
+      "return_pct": 5.48,
+      "win_rate": 50.0,
+      "profit_factor": 1.591,
+      "avg_win": 82.06,
+      "avg_loss": -51.58,
+      "max_drawdown_pct": 2.67,
+      "trades_per_day": 1.32,
+      "commission": 173.26,
+      "expectancy_r": 0.305,
+      "t_stat": 1.29
+     },
+     "test_summary": {
+      "trades": 20,
+      "net_pnl": -330.8,
+      "return_pct": -3.31,
+      "win_rate": 30.0,
+      "profit_factor": 0.574,
+      "avg_win": 74.25,
+      "avg_loss": -55.45,
+      "max_drawdown_pct": 4.21,
+      "trades_per_day": 2.49,
+      "commission": 97.97,
+      "expectancy_r": -0.333,
+      "t_stat": -1.15
+     }
+    },
+    {
+     "train": [
+      "2026-09-28",
+      "2026-11-09"
+     ],
+     "test": [
+      "2026-11-09",
+      "2026-11-23"
+     ],
+     "selected": {
+      "rr": 2.0,
+      "sl_buffer_atr": 0.5,
+      "min_score": 70,
+      "setups": [
+       "BRT"
+      ],
+      "breakeven_r": 0.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": 0.45,
+     "train_summary": {
+      "trades": 46,
+      "net_pnl": 202.03,
+      "return_pct": 2.02,
+      "win_rate": 43.5,
+      "profit_factor": 1.138,
+      "avg_win": 83.49,
+      "avg_loss": -56.45,
+      "max_drawdown_pct": 4.2,
+      "trades_per_day": 1.64,
+      "commission": 232.32,
+      "expectancy_r": 0.095,
+      "t_stat": 0.45
+     },
+     "test_summary": {
+      "trades": 10,
+      "net_pnl": 69.38,
+      "return_pct": 0.69,
+      "win_rate": 40.0,
+      "profit_factor": 1.246,
+      "avg_win": 87.85,
+      "avg_loss": -47.0,
+      "max_drawdown_pct": 2.1,
+      "trades_per_day": 1.28,
+      "commission": 48.21,
+      "expectancy_r": 0.142,
+      "t_stat": 0.32
+     }
+    },
+    {
+     "train": [
+      "2026-10-12",
+      "2026-11-23"
+     ],
+     "test": [
+      "2026-11-23",
+      "2026-11-23"
+     ],
+     "selected": {
+      "rr": 2.5,
+      "sl_buffer_atr": 0.2,
+      "min_score": 70,
+      "setups": [
+       "BRT"
+      ],
+      "breakeven_r": 1.0,
+      "max_hold_min": 180,
+      "min_sl_atr": 0.5,
+      "max_sl_atr": 3.0,
+      "max_cost_to_risk": 0.25
+     },
+     "train_obj": 0.8,
+     "train_summary": {
+      "trades": 22,
+      "net_pnl": 255.81,
+      "return_pct": 2.56,
+      "win_rate": 63.6,
+      "profit_factor": 1.549,
+      "avg_win": 51.58,
+      "avg_loss": -58.29,
+      "max_drawdown_pct": 1.11,
+      "trades_per_day": 0.88,
+      "commission": 112.61,
+      "expectancy_r": 0.239,
+      "t_stat": 0.8
+     },
+     "test_summary": {
+      "trades": 2,
+      "net_pnl": -54.41,
+      "return_pct": -0.54,
+      "win_rate": 0.0,
+      "profit_factor": 0.0,
+      "avg_win": null,
+      "avg_loss": -27.2,
+      "max_drawdown_pct": 0.54,
+      "trades_per_day": 2.0,
+      "commission": 6.49,
+      "expectancy_r": -0.556,
+      "t_stat": -1.07
+     }
+    }
+   ],
+   "out_of_sample": {
+    "trades": 44,
+    "net_pnl": -522.39,
+    "return_pct": -5.22,
+    "win_rate": 29.5,
+    "profit_factor": 0.67,
+    "avg_win": 81.41,
+    "avg_loss": -50.99,
+    "max_drawdown_pct": 5.37,
+    "trades_per_day": 1.09,
+    "commission": 213.0,
+    "expectancy_r": -0.24,
+    "t_stat": -1.23
+   },
+   "oos_by_setup": {
+    "BRT": {
+     "trades": 44,
+     "net_pnl": -522.39,
+     "return_pct": -5.22,
+     "win_rate": 29.5,
+     "profit_factor": 0.67,
+     "avg_win": 81.41,
+     "avg_loss": -50.99,
+     "max_drawdown_pct": 5.37,
+     "trades_per_day": 1.09,
+     "commission": 213.0,
+     "expectancy_r": -0.24,
+     "t_stat": -1.23
+    }
+   },
+   "oos_by_session": {
+    "asia": {
+     "trades": 2,
+     "net_pnl": 61.27,
+     "return_pct": 0.61,
+     "win_rate": 50.0,
+     "profit_factor": 2.997,
+     "avg_win": 91.96,
+     "avg_loss": -30.69,
+     "max_drawdown_pct": 0.3,
+     "trades_per_day": 0.21,
+     "commission": 10.94,
+     "expectancy_r": 0.645,
+     "t_stat": 0.51
+    },
+    "london": {
+     "trades": 16,
+     "net_pnl": -498.22,
+     "return_pct": -4.98,
+     "win_rate": 18.8,
+     "profit_factor": 0.28,
+     "avg_win": 64.54,
+     "avg_loss": -53.22,
+     "max_drawdown_pct": 4.98,
+     "trades_per_day": 0.44,
+     "commission": 79.44,
+     "expectancy_r": -0.628,
+     "t_stat": -2.4
+    },
+    "newyork": {
+     "trades": 8,
+     "net_pnl": 15.25,
+     "return_pct": 0.15,
+     "win_rate": 37.5,
+     "profit_factor": 1.078,
+     "avg_win": 69.87,
+     "avg_loss": -38.87,
+     "max_drawdown_pct": 1.11,
+     "trades_per_day": 0.29,
+     "commission": 36.56,
+     "expectancy_r": 0.047,
+     "t_stat": 0.11
+    },
+    "overlap": {
+     "trades": 18,
+     "net_pnl": -100.69,
+     "return_pct": -1.01,
+     "win_rate": 33.3,
+     "profit_factor": 0.848,
+     "avg_win": 93.86,
+     "avg_loss": -55.32,
+     "max_drawdown_pct": 3.06,
+     "trades_per_day": 0.48,
+     "commission": 86.06,
+     "expectancy_r": -0.12,
+     "t_stat": -0.34
+    }
+   },
+   "oos_by_reason": {
+    "data_end": {
+     "trades": 1,
+     "net_pnl": -1.68,
+     "return_pct": -0.02,
+     "win_rate": 0.0,
+     "profit_factor": 0.0,
+     "avg_win": null,
+     "avg_loss": -1.68,
+     "max_drawdown_pct": 0.02,
+     "trades_per_day": 1.0,
+     "commission": 3.44,
+     "expectancy_r": -0.034,
+     "t_stat": null
+    },
+    "stop": {
+     "trades": 27,
+     "net_pnl": -1501.53,
+     "return_pct": -15.02,
+     "win_rate": 0.0,
+     "profit_factor": 0.0,
+     "avg_win": null,
+     "avg_loss": -55.61,
+     "max_drawdown_pct": 15.02,
+     "trades_per_day": 0.67,
+     "commission": 133.66,
+     "expectancy_r": -1.125,
+     "t_stat": -303.5
+    },
+    "target": {
+     "trades": 9,
+     "net_pnl": 870.2,
+     "return_pct": 8.7,
+     "win_rate": 100.0,
+     "profit_factor": null,
+     "avg_win": 96.69,
+     "avg_loss": null,
+     "max_drawdown_pct": 0.0,
+     "trades_per_day": 0.31,
+     "commission": 44.17,
+     "expectancy_r": 1.956,
+     "t_stat": 36.41
+    },
+    "time": {
+     "trades": 7,
+     "net_pnl": 110.63,
+     "return_pct": 1.11,
+     "win_rate": 57.1,
+     "profit_factor": 2.427,
+     "avg_win": 47.04,
+     "avg_loss": -25.84,
+     "max_drawdown_pct": 0.3,
+     "trades_per_day": 0.2,
+     "commission": 31.72,
+     "expectancy_r": 0.324,
+     "t_stat": 0.97
+    }
+   },
+   "verdict": "NO_EDGE"
+  }
+ ],
+ "portfolio_oos": {
+  "summary": {
+   "trades": 227,
+   "net_pnl": -2801.1,
+   "return_pct": -28.01,
+   "win_rate": 32.6,
+   "profit_factor": 0.535,
+   "avg_win": 43.49,
+   "avg_loss": -39.34,
+   "max_drawdown_pct": 28.01,
+   "trades_per_day": 5.06,
+   "commission": 469.76,
+   "expectancy_r": -0.304,
+   "t_stat": -4.23
+  },
+  "by_symbol": {
+   "BTCUSD": {
+    "trades": 43,
+    "net_pnl": -358.71,
+    "return_pct": -3.59,
+    "win_rate": 34.9,
+    "profit_factor": 0.682,
+    "avg_win": 51.29,
+    "avg_loss": -40.29,
+    "max_drawdown_pct": 4.63,
+    "trades_per_day": 2.14,
+    "commission": 41.71,
+    "expectancy_r": -0.209,
+    "t_stat": -1.17
+   },
+   "EURUSD": {
+    "trades": 41,
+    "net_pnl": -626.46,
+    "return_pct": -6.26,
+    "win_rate": 31.7,
+    "profit_factor": 0.437,
+    "avg_win": 37.45,
+    "avg_loss": -39.76,
+    "max_drawdown_pct": 7.24,
+    "trades_per_day": 1.1,
+    "commission": 155.67,
+    "expectancy_r": -0.347,
+    "t_stat": -2.03
+   },
+   "GBPUSD": {
+    "trades": 27,
+    "net_pnl": -363.79,
+    "return_pct": -3.64,
+    "win_rate": 29.6,
+    "profit_factor": 0.572,
+    "avg_win": 60.85,
+    "avg_loss": -44.77,
+    "max_drawdown_pct": 4.89,
+    "trades_per_day": 0.75,
+    "commission": 113.51,
+    "expectancy_r": -0.296,
+    "t_stat": -1.22
+   },
+   "XAUUSD": {
+    "trades": 116,
+    "net_pnl": -1452.13,
+    "return_pct": -14.52,
+    "win_rate": 32.8,
+    "profit_factor": 0.504,
+    "avg_win": 38.83,
+    "avg_loss": -37.53,
+    "max_drawdown_pct": 14.52,
+    "trades_per_day": 2.59,
+    "commission": 158.87,
+    "expectancy_r": -0.326,
+    "t_stat": -3.47
+   }
+  },
+  "verdict": "NO_EDGE"
+ }
+}

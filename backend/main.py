@@ -207,6 +207,10 @@ commercial.install(app)
 from intelligence_chart import router as chart_router
 app.include_router(chart_router)
 app.include_router(quant_live_router)
+from scalper_journal import router as scalper_router
+app.include_router(scalper_router)
+from research_overview import router as research_router
+app.include_router(research_router)
 
 app.add_middleware(
     CORSMiddleware,

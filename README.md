@@ -36,6 +36,12 @@ Tests: `npm test` (frontend), `cd backend && python -m unittest discover -s test
 Private online deployment and recovery: [deployment runbook](deploy/README.md).
 The server store can be moved outside OneDrive with `TRADING_HUB_DATA_DIR`.
 
+## TradeDen Scalper (cTrader demo cBot)
+
+A demo-only cTrader cBot, with a Python simulator, walk-forward evidence and a live dashboard
+(`/trading-hub/scalper.html`). Install guide, safety contract and current results (no edge
+out-of-sample as of 2026-11-23): [ctrader_scalper/README.md](ctrader_scalper/README.md).
+
 ## The TRADeden Garden
 
 The Garden is the product and the landing page: a living market constellation

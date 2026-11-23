@@ -1,0 +1,3729 @@
+{
+ "protocol_sha256": "8ef8fb68b26df16679675ef3d57bb1fc5de319953b26bdcdd843fce0cb14c94b",
+ "generated": "2026-11-23T17:37:29+00:00",
+ "folds": [
+  [
+   "2024-09-01",
+   "2025-03-02",
+   "2025-03-02",
+   "2025-06-01"
+  ],
+  [
+   "2024-12-01",
+   "2025-06-01",
+   "2025-06-01",
+   "2025-08-31"
+  ],
+  [
+   "2025-03-02",
+   "2025-08-31",
+   "2025-08-31",
+   "2025-11-30"
+  ],
+  [
+   "2025-06-01",
+   "2025-11-30",
+   "2025-11-30",
+   "2026-03-01"
+  ],
+  [
+   "2025-08-31",
+   "2026-03-01",
+   "2026-03-01",
+   "2026-05-31"
+  ],
+  [
+   "2025-11-30",
+   "2026-05-31",
+   "2026-05-31",
+   "2026-07-01"
+  ]
+ ],
+ "results": {
+  "H1_msb_displacement": {
+   "mechanism": "A decisive structure break with a large-body candle signals informed order flow; continuation follows.",
+   "configs": 8,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "disp_atr": 1.5,
+      "target_r": 2.0,
+      "htf_filter": false
+     },
+     "trades": 468,
+     "expectancy_r": -0.0653,
+     "profit_factor": 0.894,
+     "t": -1.1,
+     "p_one_sided": 0.864
+    },
+    {
+     "config": 1,
+     "params": {
+      "disp_atr": 1.5,
+      "target_r": 2.0,
+      "htf_filter": true
+     },
+     "trades": 249,
+     "expectancy_r": 0.0315,
+     "profit_factor": 1.054,
+     "t": 0.38,
+     "p_one_sided": 0.3522
+    },
+    {
+     "config": 2,
+     "params": {
+      "disp_atr": 1.5,
+      "target_r": 3.0,
+      "htf_filter": false
+     },
+     "trades": 457,
+     "expectancy_r": -0.0481,
+     "profit_factor": 0.926,
+     "t": -0.7,
+     "p_one_sided": 0.7564
+    },
+    {
+     "config": 3,
+     "params": {
+      "disp_atr": 1.5,
+      "target_r": 3.0,
+      "htf_filter": true
+     },
+     "trades": 246,
+     "expectancy_r": 0.0408,
+     "profit_factor": 1.065,
+     "t": 0.42,
+     "p_one_sided": 0.3378
+    },
+    {
+     "config": 4,
+     "params": {
+      "disp_atr": 2.0,
+      "target_r": 2.0,
+      "htf_filter": false
+     },
+     "trades": 242,
+     "expectancy_r": -0.0257,
+     "profit_factor": 0.954,
+     "t": -0.33,
+     "p_one_sided": 0.6277
+    },
+    {
+     "config": 5,
+     "params": {
+      "disp_atr": 2.0,
+      "target_r": 2.0,
+      "htf_filter": true
+     },
+     "trades": 112,
+     "expectancy_r": 0.0982,
+     "profit_factor": 1.194,
+     "t": 0.84,
+     "p_one_sided": 0.2021
+    },
+    {
+     "config": 6,
+     "params": {
+      "disp_atr": 2.0,
+      "target_r": 3.0,
+      "htf_filter": false
+     },
+     "trades": 241,
+     "expectancy_r": -0.0146,
+     "profit_factor": 0.975,
+     "t": -0.16,
+     "p_one_sided": 0.5654
+    },
+    {
+     "config": 7,
+     "params": {
+      "disp_atr": 2.0,
+      "target_r": 3.0,
+      "htf_filter": true
+     },
+     "trades": 112,
+     "expectancy_r": 0.119,
+     "profit_factor": 1.221,
+     "t": 0.88,
+     "p_one_sided": 0.1906
+    }
+   ],
+   "share_configs_positive": 0.5,
+   "folds": [
+    {
+     "train": [
+      "2024-09-01",
+      "2025-03-02"
+     ],
+     "test": [
+      "2025-03-02",
+      "2025-06-01"
+     ],
+     "selected": 7,
+     "params": {
+      "disp_atr": 2.0,
+      "target_r": 3.0,
+      "htf_filter": true
+     },
+     "train_t": 0.18,
+     "test_summary": {
+      "trades": 17,
+      "expectancy_r": 0.1361,
+      "median_r": -0.172,
+      "win_rate": 41.2,
+      "profit_factor": 1.274,
+      "total_r": 2.31,
+      "max_dd_r": 5.12,
+      "max_dd_pct_at_0p5": 2.56,
+      "trades_per_month": 6.81,
+      "t": 0.41,
+      "p_one_sided": 0.3429,
+      "ci95": [
+       -0.4873,
+       0.7797
+      ]
+     }
+    },
+    {
+     "train": [
+      "2024-12-01",
+      "2025-06-01"
+     ],
+     "test": [
+      "2025-06-01",
+      "2025-08-31"
+     ],
+     "selected": 5,
+     "params": {
+      "disp_atr": 2.0,
+      "target_r": 2.0,
+      "htf_filter": true
+     },
+     "train_t": 1.45,
+     "test_summary": {
+      "trades": 17,
+      "expectancy_r": 0.0872,
+      "median_r": -1.015,
+      "win_rate": 47.1,
+      "profit_factor": 1.161,
+      "total_r": 1.48,
+      "max_dd_r": 2.1,
+      "max_dd_pct_at_0p5": 1.05,
+      "trades_per_month": 6.02,
+      "t": 0.28,
+      "p_one_sided": 0.393,
+      "ci95": [
+       -0.517,
+       0.6974
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-03-02",
+      "2025-08-31"
+     ],
+     "test": [
+      "2025-08-31",
+      "2025-11-30"
+     ],
+     "selected": 5,
+     "params": {
+      "disp_atr": 2.0,
+      "target_r": 2.0,
+      "htf_filter": true
+     },
+     "train_t": 1.19,
+     "test_summary": {
+      "trades": 17,
+      "expectancy_r": 0.1724,
+      "median_r": 0.194,
+      "win_rate": 58.8,
+      "profit_factor": 1.548,
+      "total_r": 2.93,
+      "max_dd_r": 1.99,
+      "max_dd_pct_at_0p5": 0.99,
+      "trades_per_month": 6.55,
+      "t": 0.72,
+      "p_one_sided": 0.2421,
+      "ci95": [
+       -0.2791,
+       0.6423
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-06-01",
+      "2025-11-30"
+     ],
+     "test": [
+      "2025-11-30",
+      "2026-03-01"
+     ],
+     "selected": 2,
+     "params": {
+      "disp_atr": 1.5,
+      "target_r": 3.0,
+      "htf_filter": false
+     },
+     "train_t": 1.34,
+     "test_summary": {
+      "trades": 69,
+      "expectancy_r": -0.2149,
+      "median_r": -1.013,
+      "win_rate": 26.1,
+      "profit_factor": 0.679,
+      "total_r": -14.83,
+      "max_dd_r": 20.44,
+      "max_dd_pct_at_0p5": 10.22,
+      "trades_per_month": 24.14,
+      "t": -1.33,
+      "p_one_sided": 0.9055,
+      "ci95": [
+       -0.5172,
+       0.1265
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-08-31",
+      "2026-03-01"
+     ],
+     "test": [
+      "2026-03-01",
+      "2026-05-31"
+     ],
+     "selected": 5,
+     "params": {
+      "disp_atr": 2.0,
+      "target_r": 2.0,
+      "htf_filter": true
+     },
+     "train_t": 1.14,
+     "test_summary": {
+      "trades": 10,
+      "expectancy_r": -0.6194,
+      "median_r": -1.009,
+      "win_rate": 10.0,
+      "profit_factor": 0.243,
+      "total_r": -6.19,
+      "max_dd_r": 8.19,
+      "max_dd_pct_at_0p5": 4.09,
+      "trades_per_month": 4.29,
+      "t": -2.07,
+      "p_one_sided": 0.9645,
+      "ci95": [
+       -1.0101,
+       -0.0178
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-11-30",
+      "2026-05-31"
+     ],
+     "test": [
+      "2026-05-31",
+      "2026-07-01"
+     ],
+     "selected": 7,
+     "params": {
+      "disp_atr": 2.0,
+      "target_r": 3.0,
+      "htf_filter": true
+     },
+     "train_t": 0.19,
+     "test_summary": {
+      "trades": 4,
+      "expectancy_r": 0.6534,
+      "median_r": 0.323,
+      "win_rate": 50.0,
+      "profit_factor": 2.287,
+      "total_r": 2.61,
+      "max_dd_r": 2.03,
+      "max_dd_pct_at_0p5": 1.02,
+      "trades_per_month": 4.0,
+      "t": 0.65,
+      "p_one_sided": 0.2816,
+      "ci95": [
+       NaN,
+       NaN
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 134,
+    "expectancy_r": -0.0872,
+    "median_r": -1.01,
+    "win_rate": 34.3,
+    "profit_factor": 0.853,
+    "total_r": -11.68,
+    "max_dd_r": 24.07,
+    "max_dd_pct_at_0p5": 12.03,
+    "trades_per_month": 8.81,
+    "t": -0.78,
+    "p_one_sided": 0.7807,
+    "ci95": [
+     -0.2975,
+     0.1403
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 134,
+    "expectancy_r": -0.1066,
+    "median_r": -1.019,
+    "win_rate": 33.6,
+    "profit_factor": 0.824,
+    "total_r": -14.28,
+    "max_dd_r": 25.47,
+    "max_dd_pct_at_0p5": 12.73,
+    "trades_per_month": 8.81,
+    "t": -0.95,
+    "p_one_sided": 0.8285,
+    "ci95": [
+     -0.3162,
+     0.1212
+    ]
+   },
+   "oos_default_config": {
+    "trades": 342,
+    "expectancy_r": 0.0236,
+    "median_r": -1.01,
+    "win_rate": 37.4,
+    "profit_factor": 1.041,
+    "total_r": 8.06,
+    "max_dd_r": 23.92,
+    "max_dd_pct_at_0p5": 11.96,
+    "trades_per_month": 21.55,
+    "t": 0.33,
+    "p_one_sided": 0.3702,
+    "ci95": [
+     -0.1197,
+     0.1612
+    ]
+   },
+   "oos_by_session": {
+    "asia": {
+     "trades": 1,
+     "expectancy_r": 1.9916,
+     "win_rate": 100.0,
+     "profit_factor": null,
+     "p_one_sided": NaN
+    },
+    "london": {
+     "trades": 41,
+     "expectancy_r": -0.0082,
+     "win_rate": 39.0,
+     "profit_factor": 0.986,
+     "p_one_sided": 0.5154
+    },
+    "newyork": {
+     "trades": 23,
+     "expectancy_r": -0.1181,
+     "win_rate": 30.4,
+     "profit_factor": 0.797,
+     "p_one_sided": 0.6676
+    },
+    "overlap": {
+     "trades": 69,
+     "expectancy_r": -0.1539,
+     "win_rate": 31.9,
+     "profit_factor": 0.743,
+     "p_one_sided": 0.8413
+    }
+   },
+   "oos_by_side": {
+    "-1": {
+     "trades": 74,
+     "expectancy_r": -0.2317,
+     "win_rate": 27.0,
+     "profit_factor": 0.639,
+     "p_one_sided": 0.9418
+    },
+    "1": {
+     "trades": 60,
+     "expectancy_r": 0.0911,
+     "win_rate": 43.3,
+     "profit_factor": 1.171,
+     "p_one_sided": 0.3003
+    }
+   },
+   "oos_by_reason": {
+    "stop": {
+     "trades": 70,
+     "expectancy_r": -1.0203,
+     "win_rate": 0.0,
+     "profit_factor": 0.0,
+     "p_one_sided": 1.0
+    },
+    "target": {
+     "trades": 15,
+     "expectancy_r": 2.5798,
+     "win_rate": 100.0,
+     "profit_factor": null,
+     "p_one_sided": 0.0
+    },
+    "time": {
+     "trades": 49,
+     "expectancy_r": 0.4295,
+     "win_rate": 63.3,
+     "profit_factor": 3.633,
+     "p_one_sided": 0.0009
+    }
+   },
+   "oos_by_year": {
+    "2025": {
+     "trades": 74,
+     "expectancy_r": 0.0022,
+     "win_rate": 41.9,
+     "profit_factor": 1.004,
+     "p_one_sided": 0.4939
+    },
+    "2026": {
+     "trades": 60,
+     "expectancy_r": -0.1973,
+     "win_rate": 25.0,
+     "profit_factor": 0.719,
+     "p_one_sided": 0.8597
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "control_mean": -0.0272,
+    "control_p90": 0.0821,
+    "strategy_percentile": 0.26
+   },
+   "gate1_checks": {
+    "min_oos_trades": true,
+    "expectancy_positive": false,
+    "profit_factor": false,
+    "p_value": false,
+    "beats_direction_control": false,
+    "parameter_robustness": true
+   },
+   "gate1_pass": false,
+   "final_config": 3,
+   "final_params": {
+    "disp_atr": 1.5,
+    "target_r": 3.0,
+    "htf_filter": true
+   }
+  },
+  "H2_sweep_reversal": {
+   "mechanism": "Stops cluster beyond obvious highs/lows; a sweep that closes back inside and breaks the sweep bar shows exhaustion.",
+   "configs": 8,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "level": "prev_day",
+      "confirm_bars": 2,
+      "target_r": 2.0
+     },
+     "trades": 58,
+     "expectancy_r": -0.0623,
+     "profit_factor": 0.891,
+     "t": -0.39,
+     "p_one_sided": 0.6509
+    },
+    {
+     "config": 1,
+     "params": {
+      "level": "prev_day",
+      "confirm_bars": 2,
+      "target_r": 3.0
+     },
+     "trades": 57,
+     "expectancy_r": -0.0786,
+     "profit_factor": 0.87,
+     "t": -0.44,
+     "p_one_sided": 0.6677
+    },
+    {
+     "config": 2,
+     "params": {
+      "level": "prev_day",
+      "confirm_bars": 4,
+      "target_r": 2.0
+     },
+     "trades": 94,
+     "expectancy_r": -0.0115,
+     "profit_factor": 0.978,
+     "t": -0.09,
+     "p_one_sided": 0.5374
+    },
+    {
+     "config": 3,
+     "params": {
+      "level": "prev_day",
+      "confirm_bars": 4,
+      "target_r": 3.0
+     },
+     "trades": 93,
+     "expectancy_r": -0.0302,
+     "profit_factor": 0.944,
+     "t": -0.23,
+     "p_one_sided": 0.5888
+    },
+    {
+     "config": 4,
+     "params": {
+      "level": "asian",
+      "confirm_bars": 2,
+      "target_r": 2.0
+     },
+     "trades": 135,
+     "expectancy_r": -0.1297,
+     "profit_factor": 0.798,
+     "t": -1.2,
+     "p_one_sided": 0.8833
+    },
+    {
+     "config": 5,
+     "params": {
+      "level": "asian",
+      "confirm_bars": 2,
+      "target_r": 3.0
+     },
+     "trades": 135,
+     "expectancy_r": -0.1462,
+     "profit_factor": 0.786,
+     "t": -1.2,
+     "p_one_sided": 0.8847
+    },
+    {
+     "config": 6,
+     "params": {
+      "level": "asian",
+      "confirm_bars": 4,
+      "target_r": 2.0
+     },
+     "trades": 194,
+     "expectancy_r": -0.0423,
+     "profit_factor": 0.928,
+     "t": -0.47,
+     "p_one_sided": 0.6799
+    },
+    {
+     "config": 7,
+     "params": {
+      "level": "asian",
+      "confirm_bars": 4,
+      "target_r": 3.0
+     },
+     "trades": 193,
+     "expectancy_r": -0.0748,
+     "profit_factor": 0.882,
+     "t": -0.73,
+     "p_one_sided": 0.7683
+    }
+   ],
+   "share_configs_positive": 0.0,
+   "folds": [
+    {
+     "train": [
+      "2024-09-01",
+      "2025-03-02"
+     ],
+     "test": [
+      "2025-03-02",
+      "2025-06-01"
+     ],
+     "selected": 2,
+     "params": {
+      "level": "prev_day",
+      "confirm_bars": 4,
+      "target_r": 2.0
+     },
+     "train_t": 1.51,
+     "test_summary": {
+      "trades": 11,
+      "expectancy_r": 0.0048,
+      "median_r": -0.105,
+      "win_rate": 45.5,
+      "profit_factor": 1.01,
+      "total_r": 0.05,
+      "max_dd_r": 4.07,
+      "max_dd_pct_at_0p5": 2.03,
+      "trades_per_month": 3.99,
+      "t": 0.01,
+      "p_one_sided": 0.4947,
+      "ci95": [
+       -0.6101,
+       0.7121
+      ]
+     }
+    },
+    {
+     "train": [
+      "2024-12-01",
+      "2025-06-01"
+     ],
+     "test": [
+      "2025-06-01",
+      "2025-08-31"
+     ],
+     "selected": 2,
+     "params": {
+      "level": "prev_day",
+      "confirm_bars": 4,
+      "target_r": 2.0
+     },
+     "train_t": 1.33,
+     "test_summary": {
+      "trades": 17,
+      "expectancy_r": 0.0141,
+      "median_r": -0.355,
+      "win_rate": 35.3,
+      "profit_factor": 1.031,
+      "total_r": 0.24,
+      "max_dd_r": 4.02,
+      "max_dd_pct_at_0p5": 2.01,
+      "trades_per_month": 7.09,
+      "t": 0.05,
+      "p_one_sided": 0.4798,
+      "ci95": [
+       -0.4745,
+       0.5456
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-03-02",
+      "2025-08-31"
+     ],
+     "test": [
+      "2025-08-31",
+      "2025-11-30"
+     ],
+     "selected": 3,
+     "params": {
+      "level": "prev_day",
+      "confirm_bars": 4,
+      "target_r": 3.0
+     },
+     "train_t": 0.28,
+     "test_summary": {
+      "trades": 12,
+      "expectancy_r": -0.4,
+      "median_r": -0.794,
+      "win_rate": 33.3,
+      "profit_factor": 0.309,
+      "total_r": -4.8,
+      "max_dd_r": 5.01,
+      "max_dd_pct_at_0p5": 2.5,
+      "trades_per_month": 4.57,
+      "t": -1.76,
+      "p_one_sided": 0.9464,
+      "ci95": [
+       -0.8065,
+       0.056
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-06-01",
+      "2025-11-30"
+     ],
+     "test": [
+      "2025-11-30",
+      "2026-03-01"
+     ],
+     "selected": 2,
+     "params": {
+      "level": "prev_day",
+      "confirm_bars": 4,
+      "target_r": 2.0
+     },
+     "train_t": -0.56,
+     "test_summary": {
+      "trades": 11,
+      "expectancy_r": -0.2502,
+      "median_r": -1.011,
+      "win_rate": 27.3,
+      "profit_factor": 0.622,
+      "total_r": -2.75,
+      "max_dd_r": 3.32,
+      "max_dd_pct_at_0p5": 1.66,
+      "trades_per_month": 4.13,
+      "t": -0.68,
+      "p_one_sided": 0.7447,
+      "ci95": [
+       -0.8724,
+       0.5016
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-08-31",
+      "2026-03-01"
+     ],
+     "test": [
+      "2026-03-01",
+      "2026-05-31"
+     ],
+     "selected": 6,
+     "params": {
+      "level": "asian",
+      "confirm_bars": 4,
+      "target_r": 2.0
+     },
+     "train_t": 0.93,
+     "test_summary": {
+      "trades": 25,
+      "expectancy_r": -0.3249,
+      "median_r": -1.011,
+      "win_rate": 28.0,
+      "profit_factor": 0.507,
+      "total_r": -8.12,
+      "max_dd_r": 10.17,
+      "max_dd_pct_at_0p5": 5.09,
+      "trades_per_month": 9.17,
+      "t": -1.5,
+      "p_one_sided": 0.9268,
+      "ci95": [
+       -0.7042,
+       0.1072
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-11-30",
+      "2026-05-31"
+     ],
+     "test": [
+      "2026-05-31",
+      "2026-07-01"
+     ],
+     "selected": 6,
+     "params": {
+      "level": "asian",
+      "confirm_bars": 4,
+      "target_r": 2.0
+     },
+     "train_t": 0.16,
+     "test_summary": {
+      "trades": 4,
+      "expectancy_r": 1.5239,
+      "median_r": 1.707,
+      "win_rate": 100.0,
+      "profit_factor": null,
+      "total_r": 6.1,
+      "max_dd_r": 0.0,
+      "max_dd_pct_at_0p5": 0.0,
+      "trades_per_month": 4.0,
+      "t": 4.96,
+      "p_one_sided": 0.022,
+      "ci95": [
+       NaN,
+       NaN
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 80,
+    "expectancy_r": -0.1161,
+    "median_r": -0.798,
+    "win_rate": 36.2,
+    "profit_factor": 0.787,
+    "total_r": -9.29,
+    "max_dd_r": 18.6,
+    "max_dd_pct_at_0p5": 9.3,
+    "trades_per_month": 5.2,
+    "t": -0.93,
+    "p_one_sided": 0.8227,
+    "ci95": [
+     -0.3503,
+     0.1305
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 80,
+    "expectancy_r": -0.1354,
+    "median_r": -0.812,
+    "win_rate": 36.2,
+    "profit_factor": 0.757,
+    "total_r": -10.83,
+    "max_dd_r": 19.63,
+    "max_dd_pct_at_0p5": 9.82,
+    "trades_per_month": 5.2,
+    "t": -1.09,
+    "p_one_sided": 0.8595,
+    "ci95": [
+     -0.37,
+     0.1104
+    ]
+   },
+   "oos_default_config": {
+    "trades": 37,
+    "expectancy_r": -0.0747,
+    "median_r": -1.009,
+    "win_rate": 37.8,
+    "profit_factor": 0.868,
+    "total_r": -2.76,
+    "max_dd_r": 7.92,
+    "max_dd_pct_at_0p5": 3.96,
+    "trades_per_month": 2.45,
+    "t": -0.38,
+    "p_one_sided": 0.6464,
+    "ci95": [
+     -0.4544,
+     0.3159
+    ]
+   },
+   "oos_by_session": {
+    "london": {
+     "trades": 51,
+     "expectancy_r": -0.2291,
+     "win_rate": 29.4,
+     "profit_factor": 0.658,
+     "p_one_sided": 0.9121
+    },
+    "newyork": {
+     "trades": 9,
+     "expectancy_r": -0.1423,
+     "win_rate": 33.3,
+     "profit_factor": 0.229,
+     "p_one_sided": 0.8642
+    },
+    "overlap": {
+     "trades": 20,
+     "expectancy_r": 0.1839,
+     "win_rate": 55.0,
+     "profit_factor": 1.478,
+     "p_one_sided": 0.2358
+    }
+   },
+   "oos_by_side": {
+    "-1": {
+     "trades": 46,
+     "expectancy_r": -0.1903,
+     "win_rate": 32.6,
+     "profit_factor": 0.658,
+     "p_one_sided": 0.8841
+    },
+    "1": {
+     "trades": 34,
+     "expectancy_r": -0.0156,
+     "win_rate": 41.2,
+     "profit_factor": 0.97,
+     "p_one_sided": 0.5303
+    }
+   },
+   "oos_by_reason": {
+    "stop": {
+     "trades": 40,
+     "expectancy_r": -1.0198,
+     "win_rate": 0.0,
+     "profit_factor": 0.0,
+     "p_one_sided": 1.0
+    },
+    "target": {
+     "trades": 12,
+     "expectancy_r": 1.9816,
+     "win_rate": 100.0,
+     "profit_factor": null,
+     "p_one_sided": 0.0
+    },
+    "time": {
+     "trades": 28,
+     "expectancy_r": 0.2759,
+     "win_rate": 60.7,
+     "profit_factor": 3.828,
+     "p_one_sided": 0.0075
+    }
+   },
+   "oos_by_year": {
+    "2025": {
+     "trades": 44,
+     "expectancy_r": -0.1073,
+     "win_rate": 36.4,
+     "profit_factor": 0.785,
+     "p_one_sided": 0.7473
+    },
+    "2026": {
+     "trades": 36,
+     "expectancy_r": -0.1269,
+     "win_rate": 36.1,
+     "profit_factor": 0.788,
+     "p_one_sided": 0.7358
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "control_mean": 0.0268,
+    "control_p90": 0.1862,
+    "strategy_percentile": 0.13
+   },
+   "gate1_checks": {
+    "min_oos_trades": true,
+    "expectancy_positive": false,
+    "profit_factor": false,
+    "p_value": false,
+    "beats_direction_control": false,
+    "parameter_robustness": false
+   },
+   "gate1_pass": false,
+   "final_config": 6,
+   "final_params": {
+    "level": "asian",
+    "confirm_bars": 4,
+    "target_r": 2.0
+   }
+  },
+  "H3_opening_range": {
+   "mechanism": "Session opens concentrate institutional order flow; early direction persists through the session.",
+   "configs": 8,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "session": "london",
+      "range_min": 30,
+      "exit": "2r"
+     },
+     "trades": 443,
+     "expectancy_r": -0.0235,
+     "profit_factor": 0.963,
+     "t": -0.37,
+     "p_one_sided": 0.6446
+    },
+    {
+     "config": 1,
+     "params": {
+      "session": "london",
+      "range_min": 30,
+      "exit": "session_close"
+     },
+     "trades": 443,
+     "expectancy_r": 0.0165,
+     "profit_factor": 1.024,
+     "t": 0.18,
+     "p_one_sided": 0.427
+    },
+    {
+     "config": 2,
+     "params": {
+      "session": "london",
+      "range_min": 60,
+      "exit": "2r"
+     },
+     "trades": 403,
+     "expectancy_r": 0.0083,
+     "profit_factor": 1.015,
+     "t": 0.13,
+     "p_one_sided": 0.4475
+    },
+    {
+     "config": 3,
+     "params": {
+      "session": "london",
+      "range_min": 60,
+      "exit": "session_close"
+     },
+     "trades": 403,
+     "expectancy_r": -0.0629,
+     "profit_factor": 0.896,
+     "t": -0.89,
+     "p_one_sided": 0.812
+    },
+    {
+     "config": 4,
+     "params": {
+      "session": "newyork",
+      "range_min": 30,
+      "exit": "2r"
+     },
+     "trades": 435,
+     "expectancy_r": 0.0209,
+     "profit_factor": 1.059,
+     "t": 0.48,
+     "p_one_sided": 0.3174
+    },
+    {
+     "config": 5,
+     "params": {
+      "session": "newyork",
+      "range_min": 30,
+      "exit": "session_close"
+     },
+     "trades": 435,
+     "expectancy_r": -0.0047,
+     "profit_factor": 0.987,
+     "t": -0.11,
+     "p_one_sided": 0.5436
+    },
+    {
+     "config": 6,
+     "params": {
+      "session": "newyork",
+      "range_min": 60,
+      "exit": "2r"
+     },
+     "trades": 364,
+     "expectancy_r": -0.0061,
+     "profit_factor": 0.977,
+     "t": -0.17,
+     "p_one_sided": 0.5672
+    },
+    {
+     "config": 7,
+     "params": {
+      "session": "newyork",
+      "range_min": 60,
+      "exit": "session_close"
+     },
+     "trades": 364,
+     "expectancy_r": -0.017,
+     "profit_factor": 0.935,
+     "t": -0.49,
+     "p_one_sided": 0.6861
+    }
+   ],
+   "share_configs_positive": 0.375,
+   "folds": [
+    {
+     "train": [
+      "2024-09-01",
+      "2025-03-02"
+     ],
+     "test": [
+      "2025-03-02",
+      "2025-06-01"
+     ],
+     "selected": 0,
+     "params": {
+      "session": "london",
+      "range_min": 30,
+      "exit": "2r"
+     },
+     "train_t": -0.13,
+     "test_summary": {
+      "trades": 58,
+      "expectancy_r": -0.0731,
+      "median_r": -1.019,
+      "win_rate": 34.5,
+      "profit_factor": 0.879,
+      "total_r": -4.24,
+      "max_dd_r": 13.34,
+      "max_dd_pct_at_0p5": 6.67,
+      "trades_per_month": 20.53,
+      "t": -0.45,
+      "p_one_sided": 0.671,
+      "ci95": [
+       -0.3974,
+       0.2548
+      ]
+     }
+    },
+    {
+     "train": [
+      "2024-12-01",
+      "2025-06-01"
+     ],
+     "test": [
+      "2025-06-01",
+      "2025-08-31"
+     ],
+     "selected": 2,
+     "params": {
+      "session": "london",
+      "range_min": 60,
+      "exit": "2r"
+     },
+     "train_t": 1.43,
+     "test_summary": {
+      "trades": 54,
+      "expectancy_r": -0.0004,
+      "median_r": -0.448,
+      "win_rate": 38.9,
+      "profit_factor": 0.999,
+      "total_r": -0.02,
+      "max_dd_r": 7.98,
+      "max_dd_pct_at_0p5": 3.99,
+      "trades_per_month": 18.89,
+      "t": -0.0,
+      "p_one_sided": 0.5009,
+      "ci95": [
+       -0.3107,
+       0.3194
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-03-02",
+      "2025-08-31"
+     ],
+     "test": [
+      "2025-08-31",
+      "2025-11-30"
+     ],
+     "selected": 4,
+     "params": {
+      "session": "newyork",
+      "range_min": 30,
+      "exit": "2r"
+     },
+     "train_t": 0.93,
+     "test_summary": {
+      "trades": 62,
+      "expectancy_r": 0.1417,
+      "median_r": 0.003,
+      "win_rate": 51.6,
+      "profit_factor": 1.411,
+      "total_r": 8.79,
+      "max_dd_r": 3.46,
+      "max_dd_pct_at_0p5": 1.73,
+      "trades_per_month": 21.45,
+      "t": 1.08,
+      "p_one_sided": 0.1422,
+      "ci95": [
+       -0.1047,
+       0.4007
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-06-01",
+      "2025-11-30"
+     ],
+     "test": [
+      "2025-11-30",
+      "2026-03-01"
+     ],
+     "selected": 4,
+     "params": {
+      "session": "newyork",
+      "range_min": 30,
+      "exit": "2r"
+     },
+     "train_t": 1.77,
+     "test_summary": {
+      "trades": 60,
+      "expectancy_r": -0.0183,
+      "median_r": -0.061,
+      "win_rate": 46.7,
+      "profit_factor": 0.949,
+      "total_r": -1.1,
+      "max_dd_r": 5.52,
+      "max_dd_pct_at_0p5": 2.76,
+      "trades_per_month": 20.99,
+      "t": -0.16,
+      "p_one_sided": 0.5633,
+      "ci95": [
+       -0.2472,
+       0.2106
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-08-31",
+      "2026-03-01"
+     ],
+     "test": [
+      "2026-03-01",
+      "2026-05-31"
+     ],
+     "selected": 4,
+     "params": {
+      "session": "newyork",
+      "range_min": 30,
+      "exit": "2r"
+     },
+     "train_t": 0.72,
+     "test_summary": {
+      "trades": 57,
+      "expectancy_r": 0.0109,
+      "median_r": -0.164,
+      "win_rate": 42.1,
+      "profit_factor": 1.028,
+      "total_r": 0.62,
+      "max_dd_r": 12.42,
+      "max_dd_pct_at_0p5": 6.21,
+      "trades_per_month": 19.94,
+      "t": 0.08,
+      "p_one_sided": 0.4678,
+      "ci95": [
+       -0.2454,
+       0.2731
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-11-30",
+      "2026-05-31"
+     ],
+     "test": [
+      "2026-05-31",
+      "2026-07-01"
+     ],
+     "selected": 4,
+     "params": {
+      "session": "newyork",
+      "range_min": 30,
+      "exit": "2r"
+     },
+     "train_t": -0.05,
+     "test_summary": {
+      "trades": 21,
+      "expectancy_r": -0.0354,
+      "median_r": -0.206,
+      "win_rate": 42.9,
+      "profit_factor": 0.893,
+      "total_r": -0.74,
+      "max_dd_r": 4.29,
+      "max_dd_pct_at_0p5": 2.15,
+      "trades_per_month": 21.0,
+      "t": -0.21,
+      "p_one_sided": 0.5805,
+      "ci95": [
+       -0.3479,
+       0.2943
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 312,
+    "expectancy_r": 0.0106,
+    "median_r": -0.172,
+    "win_rate": 42.9,
+    "profit_factor": 1.024,
+    "total_r": 3.3,
+    "max_dd_r": 16.12,
+    "max_dd_pct_at_0p5": 8.06,
+    "trades_per_month": 19.62,
+    "t": 0.18,
+    "p_one_sided": 0.43,
+    "ci95": [
+     -0.1012,
+     0.1302
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 312,
+    "expectancy_r": -0.0085,
+    "median_r": -0.187,
+    "win_rate": 42.3,
+    "profit_factor": 0.981,
+    "total_r": -2.65,
+    "max_dd_r": 17.42,
+    "max_dd_pct_at_0p5": 8.71,
+    "trades_per_month": 19.62,
+    "t": -0.14,
+    "p_one_sided": 0.5563,
+    "ci95": [
+     -0.1207,
+     0.111
+    ]
+   },
+   "oos_default_config": {
+    "trades": 317,
+    "expectancy_r": -0.0267,
+    "median_r": -1.016,
+    "win_rate": 36.0,
+    "profit_factor": 0.958,
+    "total_r": -8.46,
+    "max_dd_r": 28.77,
+    "max_dd_pct_at_0p5": 14.39,
+    "trades_per_month": 19.94,
+    "t": -0.36,
+    "p_one_sided": 0.6395,
+    "ci95": [
+     -0.171,
+     0.1225
+    ]
+   },
+   "oos_by_session": {
+    "london": {
+     "trades": 112,
+     "expectancy_r": -0.038,
+     "win_rate": 36.6,
+     "profit_factor": 0.932,
+     "p_one_sided": 0.6284
+    },
+    "newyork": {
+     "trades": 28,
+     "expectancy_r": -0.0814,
+     "win_rate": 35.7,
+     "profit_factor": 0.77,
+     "p_one_sided": 0.6901
+    },
+    "overlap": {
+     "trades": 172,
+     "expectancy_r": 0.0572,
+     "win_rate": 48.3,
+     "profit_factor": 1.157,
+     "p_one_sided": 0.2207
+    }
+   },
+   "oos_by_side": {
+    "-1": {
+     "trades": 140,
+     "expectancy_r": 0.079,
+     "win_rate": 44.3,
+     "profit_factor": 1.19,
+     "p_one_sided": 0.197
+    },
+    "1": {
+     "trades": 172,
+     "expectancy_r": -0.0451,
+     "win_rate": 41.9,
+     "profit_factor": 0.9,
+     "p_one_sided": 0.7165
+    }
+   },
+   "oos_by_reason": {
+    "stop": {
+     "trades": 111,
+     "expectancy_r": -1.0206,
+     "win_rate": 0.0,
+     "profit_factor": 0.0,
+     "p_one_sided": 1.0
+    },
+    "target": {
+     "trades": 42,
+     "expectancy_r": 1.9812,
+     "win_rate": 100.0,
+     "profit_factor": null,
+     "p_one_sided": 0.0
+    },
+    "time": {
+     "trades": 159,
+     "expectancy_r": 0.2099,
+     "win_rate": 57.9,
+     "profit_factor": 2.506,
+     "p_one_sided": 0.0
+    }
+   },
+   "oos_by_year": {
+    "2025": {
+     "trades": 194,
+     "expectancy_r": 0.0182,
+     "win_rate": 41.8,
+     "profit_factor": 1.039,
+     "p_one_sided": 0.4112
+    },
+    "2026": {
+     "trades": 118,
+     "expectancy_r": -0.002,
+     "win_rate": 44.9,
+     "profit_factor": 0.995,
+     "p_one_sided": 0.5092
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "control_mean": -0.0024,
+    "control_p90": 0.0716,
+    "strategy_percentile": 0.57
+   },
+   "gate1_checks": {
+    "min_oos_trades": true,
+    "expectancy_positive": true,
+    "profit_factor": false,
+    "p_value": false,
+    "beats_direction_control": false,
+    "parameter_robustness": false
+   },
+   "gate1_pass": false,
+   "final_config": 6,
+   "final_params": {
+    "session": "newyork",
+    "range_min": 60,
+    "exit": "2r"
+   }
+  },
+  "H4_trend_day": {
+   "mechanism": "Days that move far early are often driven by persistent flows that continue into the close.",
+   "configs": 8,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "decision_ny": "10:00",
+      "move_adr": 0.5,
+      "exit": "close_16ny"
+     },
+     "trades": 0,
+     "expectancy_r": null,
+     "profit_factor": null,
+     "t": null,
+     "p_one_sided": null
+    },
+    {
+     "config": 1,
+     "params": {
+      "decision_ny": "10:00",
+      "move_adr": 0.5,
+      "exit": "2r"
+     },
+     "trades": 0,
+     "expectancy_r": null,
+     "profit_factor": null,
+     "t": null,
+     "p_one_sided": null
+    },
+    {
+     "config": 2,
+     "params": {
+      "decision_ny": "10:00",
+      "move_adr": 0.75,
+      "exit": "close_16ny"
+     },
+     "trades": 0,
+     "expectancy_r": null,
+     "profit_factor": null,
+     "t": null,
+     "p_one_sided": null
+    },
+    {
+     "config": 3,
+     "params": {
+      "decision_ny": "10:00",
+      "move_adr": 0.75,
+      "exit": "2r"
+     },
+     "trades": 0,
+     "expectancy_r": null,
+     "profit_factor": null,
+     "t": null,
+     "p_one_sided": null
+    },
+    {
+     "config": 4,
+     "params": {
+      "decision_ny": "12:00",
+      "move_adr": 0.5,
+      "exit": "close_16ny"
+     },
+     "trades": 148,
+     "expectancy_r": 0.0145,
+     "profit_factor": 1.085,
+     "t": 0.35,
+     "p_one_sided": 0.3628
+    },
+    {
+     "config": 5,
+     "params": {
+      "decision_ny": "12:00",
+      "move_adr": 0.5,
+      "exit": "2r"
+     },
+     "trades": 148,
+     "expectancy_r": 0.0131,
+     "profit_factor": 1.076,
+     "t": 0.32,
+     "p_one_sided": 0.3747
+    },
+    {
+     "config": 6,
+     "params": {
+      "decision_ny": "12:00",
+      "move_adr": 0.75,
+      "exit": "close_16ny"
+     },
+     "trades": 97,
+     "expectancy_r": 0.0539,
+     "profit_factor": 1.352,
+     "t": 1.01,
+     "p_one_sided": 0.1573
+    },
+    {
+     "config": 7,
+     "params": {
+      "decision_ny": "12:00",
+      "move_adr": 0.75,
+      "exit": "2r"
+     },
+     "trades": 97,
+     "expectancy_r": 0.0517,
+     "profit_factor": 1.338,
+     "t": 0.99,
+     "p_one_sided": 0.1634
+    }
+   ],
+   "share_configs_positive": 0.5,
+   "folds": [
+    {
+     "train": [
+      "2024-09-01",
+      "2025-03-02"
+     ],
+     "test": [
+      "2025-03-02",
+      "2025-06-01"
+     ],
+     "selected": 6,
+     "params": {
+      "decision_ny": "12:00",
+      "move_adr": 0.75,
+      "exit": "close_16ny"
+     },
+     "train_t": -0.99,
+     "test_summary": {
+      "trades": 18,
+      "expectancy_r": -0.1184,
+      "median_r": -0.048,
+      "win_rate": 44.4,
+      "profit_factor": 0.477,
+      "total_r": -2.13,
+      "max_dd_r": 2.86,
+      "max_dd_pct_at_0p5": 1.43,
+      "trades_per_month": 6.85,
+      "t": -1.22,
+      "p_one_sided": 0.88,
+      "ci95": [
+       -0.3151,
+       0.0545
+      ]
+     }
+    },
+    {
+     "train": [
+      "2024-12-01",
+      "2025-06-01"
+     ],
+     "test": [
+      "2025-06-01",
+      "2025-08-31"
+     ],
+     "selected": 6,
+     "params": {
+      "decision_ny": "12:00",
+      "move_adr": 0.75,
+      "exit": "close_16ny"
+     },
+     "train_t": -1.47,
+     "test_summary": {
+      "trades": 10,
+      "expectancy_r": 0.1112,
+      "median_r": 0.101,
+      "win_rate": 60.0,
+      "profit_factor": 1.959,
+      "total_r": 1.11,
+      "max_dd_r": 0.66,
+      "max_dd_pct_at_0p5": 0.33,
+      "trades_per_month": 3.46,
+      "t": 0.82,
+      "p_one_sided": 0.2179,
+      "ci95": [
+       -0.1336,
+       0.3791
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-03-02",
+      "2025-08-31"
+     ],
+     "test": [
+      "2025-08-31",
+      "2025-11-30"
+     ],
+     "selected": 4,
+     "params": {
+      "decision_ny": "12:00",
+      "move_adr": 0.5,
+      "exit": "close_16ny"
+     },
+     "train_t": -0.27,
+     "test_summary": {
+      "trades": 25,
+      "expectancy_r": 0.0664,
+      "median_r": 0.008,
+      "win_rate": 52.0,
+      "profit_factor": 1.396,
+      "total_r": 1.66,
+      "max_dd_r": 2.98,
+      "max_dd_pct_at_0p5": 1.49,
+      "trades_per_month": 8.75,
+      "t": 0.61,
+      "p_one_sided": 0.2727,
+      "ci95": [
+       -0.1497,
+       0.2707
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-06-01",
+      "2025-11-30"
+     ],
+     "test": [
+      "2025-11-30",
+      "2026-03-01"
+     ],
+     "selected": 6,
+     "params": {
+      "decision_ny": "12:00",
+      "move_adr": 0.75,
+      "exit": "close_16ny"
+     },
+     "train_t": 1.8,
+     "test_summary": {
+      "trades": 11,
+      "expectancy_r": 0.386,
+      "median_r": 0.063,
+      "win_rate": 63.6,
+      "profit_factor": 3.471,
+      "total_r": 4.25,
+      "max_dd_r": 1.5,
+      "max_dd_pct_at_0p5": 0.75,
+      "trades_per_month": 7.28,
+      "t": 1.25,
+      "p_one_sided": 0.1194,
+      "ci95": [
+       -0.141,
+       0.9651
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-08-31",
+      "2026-03-01"
+     ],
+     "test": [
+      "2026-03-01",
+      "2026-05-31"
+     ],
+     "selected": 6,
+     "params": {
+      "decision_ny": "12:00",
+      "move_adr": 0.75,
+      "exit": "close_16ny"
+     },
+     "train_t": 1.91,
+     "test_summary": {
+      "trades": 6,
+      "expectancy_r": 0.0064,
+      "median_r": -0.022,
+      "win_rate": 50.0,
+      "profit_factor": 1.096,
+      "total_r": 0.04,
+      "max_dd_r": 0.28,
+      "max_dd_pct_at_0p5": 0.14,
+      "trades_per_month": 3.15,
+      "t": 0.09,
+      "p_one_sided": 0.4658,
+      "ci95": [
+       -0.1063,
+       0.1446
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-11-30",
+      "2026-05-31"
+     ],
+     "test": [
+      "2026-05-31",
+      "2026-07-01"
+     ],
+     "selected": 4,
+     "params": {
+      "decision_ny": "12:00",
+      "move_adr": 0.5,
+      "exit": "close_16ny"
+     },
+     "train_t": 1.03,
+     "test_summary": {
+      "trades": 6,
+      "expectancy_r": 0.175,
+      "median_r": 0.252,
+      "win_rate": 66.7,
+      "profit_factor": 2.503,
+      "total_r": 1.05,
+      "max_dd_r": 0.66,
+      "max_dd_pct_at_0p5": 0.33,
+      "trades_per_month": 6.0,
+      "t": 0.84,
+      "p_one_sided": 0.2209,
+      "ci95": [
+       -0.2062,
+       0.5324
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 76,
+    "expectancy_r": 0.0786,
+    "median_r": 0.019,
+    "win_rate": 53.9,
+    "profit_factor": 1.488,
+    "total_r": 5.98,
+    "max_dd_r": 2.98,
+    "max_dd_pct_at_0p5": 1.49,
+    "trades_per_month": 4.85,
+    "t": 1.18,
+    "p_one_sided": 0.1208,
+    "ci95": [
+     -0.048,
+     0.2117
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 76,
+    "expectancy_r": 0.067,
+    "median_r": 0.009,
+    "win_rate": 51.3,
+    "profit_factor": 1.403,
+    "total_r": 5.09,
+    "max_dd_r": 3.21,
+    "max_dd_pct_at_0p5": 1.61,
+    "trades_per_month": 4.85,
+    "t": 1.01,
+    "p_one_sided": 0.1586,
+    "ci95": [
+     -0.0594,
+     0.2002
+    ]
+   },
+   "oos_default_config": {
+    "trades": 0
+   },
+   "oos_by_session": {
+    "newyork": {
+     "trades": 67,
+     "expectancy_r": 0.0809,
+     "win_rate": 53.7,
+     "profit_factor": 1.472,
+     "p_one_sided": 0.1416
+    },
+    "overlap": {
+     "trades": 9,
+     "expectancy_r": 0.0619,
+     "win_rate": 55.6,
+     "profit_factor": 1.725,
+     "p_one_sided": 0.2581
+    }
+   },
+   "oos_by_side": {
+    "-1": {
+     "trades": 28,
+     "expectancy_r": 0.0342,
+     "win_rate": 46.4,
+     "profit_factor": 1.161,
+     "p_one_sided": 0.3918
+    },
+    "1": {
+     "trades": 48,
+     "expectancy_r": 0.1046,
+     "win_rate": 58.3,
+     "profit_factor": 1.796,
+     "p_one_sided": 0.0933
+    }
+   },
+   "oos_by_reason": {
+    "stop": {
+     "trades": 5,
+     "expectancy_r": -1.0084,
+     "win_rate": 0.0,
+     "profit_factor": 0.0,
+     "p_one_sided": 0.996
+    },
+    "time": {
+     "trades": 71,
+     "expectancy_r": 0.1552,
+     "win_rate": 57.7,
+     "profit_factor": 2.53,
+     "p_one_sided": 0.0072
+    }
+   },
+   "oos_by_year": {
+    "2025": {
+     "trades": 55,
+     "expectancy_r": 0.0152,
+     "win_rate": 50.9,
+     "profit_factor": 1.089,
+     "p_one_sided": 0.4061
+    },
+    "2026": {
+     "trades": 21,
+     "expectancy_r": 0.2446,
+     "win_rate": 61.9,
+     "profit_factor": 2.835,
+     "p_one_sided": 0.085
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "control_mean": -0.0141,
+    "control_p90": 0.067,
+    "strategy_percentile": 0.925
+   },
+   "gate1_checks": {
+    "min_oos_trades": true,
+    "expectancy_positive": true,
+    "profit_factor": true,
+    "p_value": false,
+    "beats_direction_control": true,
+    "parameter_robustness": true
+   },
+   "gate1_pass": false,
+   "final_config": 4,
+   "final_params": {
+    "decision_ny": "12:00",
+    "move_adr": 0.5,
+    "exit": "close_16ny"
+   }
+  },
+  "H5_compression_expansion": {
+   "mechanism": "Volatility clusters; a breakout from an unusually tight range starts a high-volatility leg.",
+   "configs": 8,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "box_width_adr": 0.25,
+      "stop": "opposite",
+      "target_r": 2.0
+     },
+     "trades": 336,
+     "expectancy_r": -0.0652,
+     "profit_factor": 0.876,
+     "t": -1.06,
+     "p_one_sided": 0.8541
+    },
+    {
+     "config": 1,
+     "params": {
+      "box_width_adr": 0.25,
+      "stop": "opposite",
+      "target_r": 3.0
+     },
+     "trades": 333,
+     "expectancy_r": -0.0294,
+     "profit_factor": 0.944,
+     "t": -0.44,
+     "p_one_sided": 0.6688
+    },
+    {
+     "config": 2,
+     "params": {
+      "box_width_adr": 0.25,
+      "stop": "mid",
+      "target_r": 2.0
+     },
+     "trades": 399,
+     "expectancy_r": -0.1232,
+     "profit_factor": 0.817,
+     "t": -1.82,
+     "p_one_sided": 0.9655
+    },
+    {
+     "config": 3,
+     "params": {
+      "box_width_adr": 0.25,
+      "stop": "mid",
+      "target_r": 3.0
+     },
+     "trades": 390,
+     "expectancy_r": -0.0768,
+     "profit_factor": 0.89,
+     "t": -0.97,
+     "p_one_sided": 0.8332
+    },
+    {
+     "config": 4,
+     "params": {
+      "box_width_adr": 0.35,
+      "stop": "opposite",
+      "target_r": 2.0
+     },
+     "trades": 547,
+     "expectancy_r": -0.0241,
+     "profit_factor": 0.948,
+     "t": -0.53,
+     "p_one_sided": 0.7022
+    },
+    {
+     "config": 5,
+     "params": {
+      "box_width_adr": 0.35,
+      "stop": "opposite",
+      "target_r": 3.0
+     },
+     "trades": 542,
+     "expectancy_r": -0.0018,
+     "profit_factor": 0.996,
+     "t": -0.04,
+     "p_one_sided": 0.5146
+    },
+    {
+     "config": 6,
+     "params": {
+      "box_width_adr": 0.35,
+      "stop": "mid",
+      "target_r": 2.0
+     },
+     "trades": 699,
+     "expectancy_r": -0.0756,
+     "profit_factor": 0.88,
+     "t": -1.55,
+     "p_one_sided": 0.9386
+    },
+    {
+     "config": 7,
+     "params": {
+      "box_width_adr": 0.35,
+      "stop": "mid",
+      "target_r": 3.0
+     },
+     "trades": 674,
+     "expectancy_r": -0.0312,
+     "profit_factor": 0.952,
+     "t": -0.54,
+     "p_one_sided": 0.7052
+    }
+   ],
+   "share_configs_positive": 0.0,
+   "folds": [
+    {
+     "train": [
+      "2024-09-01",
+      "2025-03-02"
+     ],
+     "test": [
+      "2025-03-02",
+      "2025-06-01"
+     ],
+     "selected": 5,
+     "params": {
+      "box_width_adr": 0.35,
+      "stop": "opposite",
+      "target_r": 3.0
+     },
+     "train_t": 0.32,
+     "test_summary": {
+      "trades": 78,
+      "expectancy_r": 0.1298,
+      "median_r": -0.086,
+      "win_rate": 42.3,
+      "profit_factor": 1.31,
+      "total_r": 10.13,
+      "max_dd_r": 9.69,
+      "max_dd_pct_at_0p5": 4.85,
+      "trades_per_month": 26.98,
+      "t": 0.97,
+      "p_one_sided": 0.1675,
+      "ci95": [
+       -0.1154,
+       0.3932
+      ]
+     }
+    },
+    {
+     "train": [
+      "2024-12-01",
+      "2025-06-01"
+     ],
+     "test": [
+      "2025-06-01",
+      "2025-08-31"
+     ],
+     "selected": 5,
+     "params": {
+      "box_width_adr": 0.35,
+      "stop": "opposite",
+      "target_r": 3.0
+     },
+     "train_t": 1.21,
+     "test_summary": {
+      "trades": 86,
+      "expectancy_r": -0.0281,
+      "median_r": -0.29,
+      "win_rate": 40.7,
+      "profit_factor": 0.941,
+      "total_r": -2.41,
+      "max_dd_r": 15.67,
+      "max_dd_pct_at_0p5": 7.83,
+      "trades_per_month": 30.09,
+      "t": -0.23,
+      "p_one_sided": 0.5922,
+      "ci95": [
+       -0.2582,
+       0.2166
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-03-02",
+      "2025-08-31"
+     ],
+     "test": [
+      "2025-08-31",
+      "2025-11-30"
+     ],
+     "selected": 3,
+     "params": {
+      "box_width_adr": 0.25,
+      "stop": "mid",
+      "target_r": 3.0
+     },
+     "train_t": 1.31,
+     "test_summary": {
+      "trades": 44,
+      "expectancy_r": -0.1593,
+      "median_r": -1.018,
+      "win_rate": 25.0,
+      "profit_factor": 0.787,
+      "total_r": -7.01,
+      "max_dd_r": 11.36,
+      "max_dd_pct_at_0p5": 5.68,
+      "trades_per_month": 17.17,
+      "t": -0.69,
+      "p_one_sided": 0.7535,
+      "ci95": [
+       -0.6027,
+       0.3078
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-06-01",
+      "2025-11-30"
+     ],
+     "test": [
+      "2025-11-30",
+      "2026-03-01"
+     ],
+     "selected": 7,
+     "params": {
+      "box_width_adr": 0.35,
+      "stop": "mid",
+      "target_r": 3.0
+     },
+     "train_t": 0.28,
+     "test_summary": {
+      "trades": 89,
+      "expectancy_r": -0.1691,
+      "median_r": -1.013,
+      "win_rate": 24.7,
+      "profit_factor": 0.757,
+      "total_r": -15.05,
+      "max_dd_r": 25.27,
+      "max_dd_pct_at_0p5": 12.64,
+      "trades_per_month": 30.79,
+      "t": -1.13,
+      "p_one_sided": 0.8692,
+      "ci95": [
+       -0.449,
+       0.1312
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-08-31",
+      "2026-03-01"
+     ],
+     "test": [
+      "2026-03-01",
+      "2026-05-31"
+     ],
+     "selected": 7,
+     "params": {
+      "box_width_adr": 0.35,
+      "stop": "mid",
+      "target_r": 3.0
+     },
+     "train_t": -0.85,
+     "test_summary": {
+      "trades": 96,
+      "expectancy_r": -0.0404,
+      "median_r": -1.012,
+      "win_rate": 34.4,
+      "profit_factor": 0.936,
+      "total_r": -3.88,
+      "max_dd_r": 18.61,
+      "max_dd_pct_at_0p5": 9.31,
+      "trades_per_month": 33.59,
+      "t": -0.27,
+      "p_one_sided": 0.6056,
+      "ci95": [
+       -0.3311,
+       0.2483
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-11-30",
+      "2026-05-31"
+     ],
+     "test": [
+      "2026-05-31",
+      "2026-07-01"
+     ],
+     "selected": 4,
+     "params": {
+      "box_width_adr": 0.35,
+      "stop": "opposite",
+      "target_r": 2.0
+     },
+     "train_t": -0.67,
+     "test_summary": {
+      "trades": 27,
+      "expectancy_r": 0.0676,
+      "median_r": -0.155,
+      "win_rate": 44.4,
+      "profit_factor": 1.144,
+      "total_r": 1.82,
+      "max_dd_r": 8.46,
+      "max_dd_pct_at_0p5": 4.23,
+      "trades_per_month": 27.0,
+      "t": 0.3,
+      "p_one_sided": 0.3848,
+      "ci95": [
+       -0.3709,
+       0.5292
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 420,
+    "expectancy_r": -0.039,
+    "median_r": -1.008,
+    "win_rate": 34.8,
+    "profit_factor": 0.932,
+    "total_r": -16.4,
+    "max_dd_r": 39.58,
+    "max_dd_pct_at_0p5": 19.79,
+    "trades_per_month": 26.41,
+    "t": -0.6,
+    "p_one_sided": 0.7267,
+    "ci95": [
+     -0.1601,
+     0.0848
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 420,
+    "expectancy_r": -0.0665,
+    "median_r": -1.016,
+    "win_rate": 34.5,
+    "profit_factor": 0.887,
+    "total_r": -27.93,
+    "max_dd_r": 46.41,
+    "max_dd_pct_at_0p5": 23.2,
+    "trades_per_month": 26.41,
+    "t": -1.04,
+    "p_one_sided": 0.8499,
+    "ci95": [
+     -0.1866,
+     0.0564
+    ]
+   },
+   "oos_default_config": {
+    "trades": 258,
+    "expectancy_r": -0.0396,
+    "median_r": -0.507,
+    "win_rate": 39.1,
+    "profit_factor": 0.923,
+    "total_r": -10.22,
+    "max_dd_r": 33.41,
+    "max_dd_pct_at_0p5": 16.71,
+    "trades_per_month": 16.23,
+    "t": -0.56,
+    "p_one_sided": 0.7121,
+    "ci95": [
+     -0.1733,
+     0.1013
+    ]
+   },
+   "oos_by_session": {
+    "asia": {
+     "trades": 7,
+     "expectancy_r": -0.7503,
+     "win_rate": 14.3,
+     "profit_factor": 0.14,
+     "p_one_sided": 0.9818
+    },
+    "london": {
+     "trades": 205,
+     "expectancy_r": -0.069,
+     "win_rate": 34.1,
+     "profit_factor": 0.886,
+     "p_one_sided": 0.7683
+    },
+    "newyork": {
+     "trades": 94,
+     "expectancy_r": -0.0782,
+     "win_rate": 33.0,
+     "profit_factor": 0.853,
+     "p_one_sided": 0.733
+    },
+    "overlap": {
+     "trades": 114,
+     "expectancy_r": 0.0908,
+     "win_rate": 38.6,
+     "profit_factor": 1.168,
+     "p_one_sided": 0.2448
+    }
+   },
+   "oos_by_side": {
+    "-1": {
+     "trades": 199,
+     "expectancy_r": -0.1041,
+     "win_rate": 32.2,
+     "profit_factor": 0.819,
+     "p_one_sided": 0.8745
+    },
+    "1": {
+     "trades": 221,
+     "expectancy_r": 0.0195,
+     "win_rate": 37.1,
+     "profit_factor": 1.034,
+     "p_one_sided": 0.4164
+    }
+   },
+   "oos_by_reason": {
+    "stop": {
+     "trades": 217,
+     "expectancy_r": -1.0193,
+     "win_rate": 0.0,
+     "profit_factor": 0.0,
+     "p_one_sided": 1.0
+    },
+    "target": {
+     "trades": 40,
+     "expectancy_r": 2.8822,
+     "win_rate": 100.0,
+     "profit_factor": null,
+     "p_one_sided": 0.0
+    },
+    "time": {
+     "trades": 163,
+     "expectancy_r": 0.5491,
+     "win_rate": 65.0,
+     "profit_factor": 5.322,
+     "p_one_sided": 0.0
+    }
+   },
+   "oos_by_year": {
+    "2025": {
+     "trades": 234,
+     "expectancy_r": 0.0023,
+     "win_rate": 36.8,
+     "profit_factor": 1.004,
+     "p_one_sided": 0.489
+    },
+    "2026": {
+     "trades": 186,
+     "expectancy_r": -0.091,
+     "win_rate": 32.3,
+     "profit_factor": 0.858,
+     "p_one_sided": 0.8113
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "control_mean": -0.0047,
+    "control_p90": 0.0558,
+    "strategy_percentile": 0.265
+   },
+   "gate1_checks": {
+    "min_oos_trades": true,
+    "expectancy_positive": false,
+    "profit_factor": false,
+    "p_value": false,
+    "beats_direction_control": false,
+    "parameter_robustness": false
+   },
+   "gate1_pass": false,
+   "final_config": 5,
+   "final_params": {
+    "box_width_adr": 0.35,
+    "stop": "opposite",
+    "target_r": 3.0
+   }
+  },
+  "H6_session_gold": {
+   "mechanism": "6a: New York often reverses an extended London move in gold. 6b: Asian session is range-bound; stretches revert.",
+   "configs": 8,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "variant": "ny_reverses_london",
+      "stretch": 0.5,
+      "exit": "time"
+     },
+     "trades": 41,
+     "expectancy_r": -0.5793,
+     "profit_factor": 0.324,
+     "t": -3.36,
+     "p_one_sided": 0.9991
+    },
+    {
+     "config": 1,
+     "params": {
+      "variant": "ny_reverses_london",
+      "stretch": 0.5,
+      "exit": "2r"
+     },
+     "trades": 41,
+     "expectancy_r": -0.1876,
+     "profit_factor": 0.733,
+     "t": -0.93,
+     "p_one_sided": 0.82
+    },
+    {
+     "config": 2,
+     "params": {
+      "variant": "ny_reverses_london",
+      "stretch": 0.75,
+      "exit": "time"
+     },
+     "trades": 16,
+     "expectancy_r": -0.3179,
+     "profit_factor": 0.574,
+     "t": -0.96,
+     "p_one_sided": 0.8227
+    },
+    {
+     "config": 3,
+     "params": {
+      "variant": "ny_reverses_london",
+      "stretch": 0.75,
+      "exit": "2r"
+     },
+     "trades": 16,
+     "expectancy_r": 0.3465,
+     "profit_factor": 1.711,
+     "t": 0.98,
+     "p_one_sided": 0.1716
+    },
+    {
+     "config": 4,
+     "params": {
+      "variant": "asia_fade",
+      "stretch": 0.5,
+      "exit": "time"
+     },
+     "trades": 150,
+     "expectancy_r": -0.0238,
+     "profit_factor": 0.931,
+     "t": -0.38,
+     "p_one_sided": 0.6474
+    },
+    {
+     "config": 5,
+     "params": {
+      "variant": "asia_fade",
+      "stretch": 0.5,
+      "exit": "2r"
+     },
+     "trades": 150,
+     "expectancy_r": -0.013,
+     "profit_factor": 0.964,
+     "t": -0.18,
+     "p_one_sided": 0.5732
+    },
+    {
+     "config": 6,
+     "params": {
+      "variant": "asia_fade",
+      "stretch": 0.75,
+      "exit": "time"
+     },
+     "trades": 51,
+     "expectancy_r": 0.1086,
+     "profit_factor": 1.446,
+     "t": 1.1,
+     "p_one_sided": 0.138
+    },
+    {
+     "config": 7,
+     "params": {
+      "variant": "asia_fade",
+      "stretch": 0.75,
+      "exit": "2r"
+     },
+     "trades": 51,
+     "expectancy_r": 0.1774,
+     "profit_factor": 1.729,
+     "t": 1.52,
+     "p_one_sided": 0.0669
+    }
+   ],
+   "share_configs_positive": 0.25,
+   "folds": [
+    {
+     "train": [
+      "2024-09-01",
+      "2025-03-02"
+     ],
+     "test": [
+      "2025-03-02",
+      "2025-06-01"
+     ],
+     "selected": 4,
+     "params": {
+      "variant": "asia_fade",
+      "stretch": 0.5,
+      "exit": "time"
+     },
+     "train_t": 1.38,
+     "test_summary": {
+      "trades": 28,
+      "expectancy_r": -0.0558,
+      "median_r": 0.087,
+      "win_rate": 50.0,
+      "profit_factor": 0.874,
+      "total_r": -1.56,
+      "max_dd_r": 4.73,
+      "max_dd_pct_at_0p5": 2.36,
+      "trades_per_month": 15.22,
+      "t": -0.33,
+      "p_one_sided": 0.6275,
+      "ci95": [
+       -0.3785,
+       0.2739
+      ]
+     }
+    },
+    {
+     "train": [
+      "2024-12-01",
+      "2025-06-01"
+     ],
+     "test": [
+      "2025-06-01",
+      "2025-08-31"
+     ],
+     "selected": 5,
+     "params": {
+      "variant": "asia_fade",
+      "stretch": 0.5,
+      "exit": "2r"
+     },
+     "train_t": 0.45,
+     "test_summary": {
+      "trades": 11,
+      "expectancy_r": -0.2098,
+      "median_r": 0.041,
+      "win_rate": 54.5,
+      "profit_factor": 0.311,
+      "total_r": -2.31,
+      "max_dd_r": 2.48,
+      "max_dd_pct_at_0p5": 1.24,
+      "trades_per_month": 4.46,
+      "t": -1.3,
+      "p_one_sided": 0.8878,
+      "ci95": [
+       -0.5259,
+       0.0701
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-03-02",
+      "2025-08-31"
+     ],
+     "test": [
+      "2025-08-31",
+      "2025-11-30"
+     ],
+     "selected": 5,
+     "params": {
+      "variant": "asia_fade",
+      "stretch": 0.5,
+      "exit": "2r"
+     },
+     "train_t": -0.41,
+     "test_summary": {
+      "trades": 22,
+      "expectancy_r": -0.2546,
+      "median_r": -0.359,
+      "win_rate": 36.4,
+      "profit_factor": 0.461,
+      "total_r": -5.6,
+      "max_dd_r": 8.04,
+      "max_dd_pct_at_0p5": 4.02,
+      "trades_per_month": 8.37,
+      "t": -1.5,
+      "p_one_sided": 0.9252,
+      "ci95": [
+       -0.557,
+       0.0805
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-06-01",
+      "2025-11-30"
+     ],
+     "test": [
+      "2025-11-30",
+      "2026-03-01"
+     ],
+     "selected": 5,
+     "params": {
+      "variant": "asia_fade",
+      "stretch": 0.5,
+      "exit": "2r"
+     },
+     "train_t": -1.93,
+     "test_summary": {
+      "trades": 27,
+      "expectancy_r": -0.0984,
+      "median_r": -0.216,
+      "win_rate": 44.4,
+      "profit_factor": 0.772,
+      "total_r": -2.66,
+      "max_dd_r": 6.7,
+      "max_dd_pct_at_0p5": 3.35,
+      "trades_per_month": 10.54,
+      "t": -0.56,
+      "p_one_sided": 0.7102,
+      "ci95": [
+       -0.4245,
+       0.2649
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-08-31",
+      "2026-03-01"
+     ],
+     "test": [
+      "2026-03-01",
+      "2026-05-31"
+     ],
+     "selected": 7,
+     "params": {
+      "variant": "asia_fade",
+      "stretch": 0.75,
+      "exit": "2r"
+     },
+     "train_t": 0.53,
+     "test_summary": {
+      "trades": 6,
+      "expectancy_r": -0.0156,
+      "median_r": 0.108,
+      "win_rate": 50.0,
+      "profit_factor": 0.953,
+      "total_r": -0.09,
+      "max_dd_r": 1.2,
+      "max_dd_pct_at_0p5": 0.6,
+      "trades_per_month": 2.81,
+      "t": -0.04,
+      "p_one_sided": 0.517,
+      "ci95": [
+       -0.6334,
+       0.583
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-11-30",
+      "2026-05-31"
+     ],
+     "test": [
+      "2026-05-31",
+      "2026-07-01"
+     ],
+     "selected": 5,
+     "params": {
+      "variant": "asia_fade",
+      "stretch": 0.5,
+      "exit": "2r"
+     },
+     "train_t": -0.07,
+     "test_summary": {
+      "trades": 10,
+      "expectancy_r": 0.0267,
+      "median_r": 0.209,
+      "win_rate": 60.0,
+      "profit_factor": 1.116,
+      "total_r": 0.27,
+      "max_dd_r": 1.84,
+      "max_dd_pct_at_0p5": 0.92,
+      "trades_per_month": 10.0,
+      "t": 0.14,
+      "p_one_sided": 0.4467,
+      "ci95": [
+       -0.3461,
+       0.357
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 104,
+    "expectancy_r": -0.1149,
+    "median_r": -0.025,
+    "win_rate": 47.1,
+    "profit_factor": 0.716,
+    "total_r": -11.95,
+    "max_dd_r": 13.95,
+    "max_dd_pct_at_0p5": 6.97,
+    "trades_per_month": 6.78,
+    "t": -1.45,
+    "p_one_sided": 0.9246,
+    "ci95": [
+     -0.2714,
+     0.0396
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 104,
+    "expectancy_r": -0.1319,
+    "median_r": -0.043,
+    "win_rate": 47.1,
+    "profit_factor": 0.681,
+    "total_r": -13.71,
+    "max_dd_r": 15.5,
+    "max_dd_pct_at_0p5": 7.75,
+    "trades_per_month": 6.78,
+    "t": -1.66,
+    "p_one_sided": 0.9504,
+    "ci95": [
+     -0.2882,
+     0.0228
+    ]
+   },
+   "oos_default_config": {
+    "trades": 28,
+    "expectancy_r": -0.4727,
+    "median_r": -1.015,
+    "win_rate": 17.9,
+    "profit_factor": 0.41,
+    "total_r": -13.24,
+    "max_dd_r": 16.61,
+    "max_dd_pct_at_0p5": 8.3,
+    "trades_per_month": 1.91,
+    "t": -2.11,
+    "p_one_sided": 0.9776,
+    "ci95": [
+     -0.8445,
+     0.0069
+    ]
+   },
+   "oos_by_session": {
+    "asia": {
+     "trades": 104,
+     "expectancy_r": -0.1149,
+     "win_rate": 47.1,
+     "profit_factor": 0.716,
+     "p_one_sided": 0.9246
+    }
+   },
+   "oos_by_side": {
+    "-1": {
+     "trades": 57,
+     "expectancy_r": -0.1568,
+     "win_rate": 40.4,
+     "profit_factor": 0.635,
+     "p_one_sided": 0.9257
+    },
+    "1": {
+     "trades": 47,
+     "expectancy_r": -0.0642,
+     "win_rate": 55.3,
+     "profit_factor": 0.829,
+     "p_one_sided": 0.7035
+    }
+   },
+   "oos_by_reason": {
+    "stop": {
+     "trades": 36,
+     "expectancy_r": -1.0133,
+     "win_rate": 0.0,
+     "profit_factor": 0.0,
+     "p_one_sided": 1.0
+    },
+    "target": {
+     "trades": 10,
+     "expectancy_r": 1.1877,
+     "win_rate": 100.0,
+     "profit_factor": null,
+     "p_one_sided": 0.0001
+    },
+    "time": {
+     "trades": 58,
+     "expectancy_r": 0.2181,
+     "win_rate": 67.2,
+     "profit_factor": 3.247,
+     "p_one_sided": 0.0006
+    }
+   },
+   "oos_by_year": {
+    "2025": {
+     "trades": 72,
+     "expectancy_r": -0.0829,
+     "win_rate": 50.0,
+     "profit_factor": 0.79,
+     "p_one_sided": 0.802
+    },
+    "2026": {
+     "trades": 32,
+     "expectancy_r": -0.187,
+     "win_rate": 40.6,
+     "profit_factor": 0.562,
+     "p_one_sided": 0.9061
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "control_mean": -0.0237,
+    "control_p90": 0.0833,
+    "strategy_percentile": 0.135
+   },
+   "gate1_checks": {
+    "min_oos_trades": true,
+    "expectancy_positive": false,
+    "profit_factor": false,
+    "p_value": false,
+    "beats_direction_control": false,
+    "parameter_robustness": false
+   },
+   "gate1_pass": false,
+   "final_config": 4,
+   "final_params": {
+    "variant": "asia_fade",
+    "stretch": 0.5,
+    "exit": "time"
+   }
+  },
+  "H7_news_momentum": {
+   "mechanism": "Scheduled US data shocks are absorbed over more than one bar; after the first bar the move continues.",
+   "configs": 8,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "shock_atr": 2.0,
+      "confirm_bars": 1,
+      "exit": "time_4h"
+     },
+     "trades": 93,
+     "expectancy_r": 0.103,
+     "profit_factor": 1.172,
+     "t": 0.54,
+     "p_one_sided": 0.2961
+    },
+    {
+     "config": 1,
+     "params": {
+      "shock_atr": 2.0,
+      "confirm_bars": 1,
+      "exit": "2r"
+     },
+     "trades": 95,
+     "expectancy_r": 0.0503,
+     "profit_factor": 1.092,
+     "t": 0.38,
+     "p_one_sided": 0.3508
+    },
+    {
+     "config": 2,
+     "params": {
+      "shock_atr": 2.0,
+      "confirm_bars": 2,
+      "exit": "time_4h"
+     },
+     "trades": 80,
+     "expectancy_r": 0.0745,
+     "profit_factor": 1.15,
+     "t": 0.48,
+     "p_one_sided": 0.3161
+    },
+    {
+     "config": 3,
+     "params": {
+      "shock_atr": 2.0,
+      "confirm_bars": 2,
+      "exit": "2r"
+     },
+     "trades": 81,
+     "expectancy_r": 0.047,
+     "profit_factor": 1.101,
+     "t": 0.38,
+     "p_one_sided": 0.354
+    },
+    {
+     "config": 4,
+     "params": {
+      "shock_atr": 3.0,
+      "confirm_bars": 1,
+      "exit": "time_4h"
+     },
+     "trades": 32,
+     "expectancy_r": 0.085,
+     "profit_factor": 1.159,
+     "t": 0.35,
+     "p_one_sided": 0.3647
+    },
+    {
+     "config": 5,
+     "params": {
+      "shock_atr": 3.0,
+      "confirm_bars": 1,
+      "exit": "2r"
+     },
+     "trades": 32,
+     "expectancy_r": 0.1383,
+     "profit_factor": 1.275,
+     "t": 0.62,
+     "p_one_sided": 0.271
+    },
+    {
+     "config": 6,
+     "params": {
+      "shock_atr": 3.0,
+      "confirm_bars": 2,
+      "exit": "time_4h"
+     },
+     "trades": 28,
+     "expectancy_r": 0.2463,
+     "profit_factor": 1.87,
+     "t": 1.32,
+     "p_one_sided": 0.0992
+    },
+    {
+     "config": 7,
+     "params": {
+      "shock_atr": 3.0,
+      "confirm_bars": 2,
+      "exit": "2r"
+     },
+     "trades": 28,
+     "expectancy_r": 0.2168,
+     "profit_factor": 1.766,
+     "t": 1.25,
+     "p_one_sided": 0.1117
+    }
+   ],
+   "share_configs_positive": 1.0,
+   "folds": [
+    {
+     "train": [
+      "2024-09-01",
+      "2025-03-02"
+     ],
+     "test": [
+      "2025-03-02",
+      "2025-06-01"
+     ],
+     "selected": 3,
+     "params": {
+      "shock_atr": 2.0,
+      "confirm_bars": 2,
+      "exit": "2r"
+     },
+     "train_t": 0.37,
+     "test_summary": {
+      "trades": 9,
+      "expectancy_r": -0.4285,
+      "median_r": -1.015,
+      "win_rate": 33.3,
+      "profit_factor": 0.284,
+      "total_r": -3.86,
+      "max_dd_r": 3.86,
+      "max_dd_pct_at_0p5": 1.93,
+      "trades_per_month": 3.3,
+      "t": -1.65,
+      "p_one_sided": 0.9302,
+      "ci95": [
+       -0.8983,
+       0.0784
+      ]
+     }
+    },
+    {
+     "train": [
+      "2024-12-01",
+      "2025-06-01"
+     ],
+     "test": [
+      "2025-06-01",
+      "2025-08-31"
+     ],
+     "selected": 1,
+     "params": {
+      "shock_atr": 2.0,
+      "confirm_bars": 1,
+      "exit": "2r"
+     },
+     "train_t": -1.47,
+     "test_summary": {
+      "trades": 17,
+      "expectancy_r": 0.4859,
+      "median_r": 0.343,
+      "win_rate": 58.8,
+      "profit_factor": 2.303,
+      "total_r": 8.26,
+      "max_dd_r": 4.26,
+      "max_dd_pct_at_0p5": 2.13,
+      "trades_per_month": 6.02,
+      "t": 1.51,
+      "p_one_sided": 0.075,
+      "ci95": [
+       -0.124,
+       1.0758
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-03-02",
+      "2025-08-31"
+     ],
+     "test": [
+      "2025-08-31",
+      "2025-11-30"
+     ],
+     "selected": 1,
+     "params": {
+      "shock_atr": 2.0,
+      "confirm_bars": 1,
+      "exit": "2r"
+     },
+     "train_t": 1.78,
+     "test_summary": {
+      "trades": 8,
+      "expectancy_r": 0.2254,
+      "median_r": -0.514,
+      "win_rate": 37.5,
+      "profit_factor": 1.436,
+      "total_r": 1.8,
+      "max_dd_r": 3.11,
+      "max_dd_pct_at_0p5": 1.55,
+      "trades_per_month": 4.51,
+      "t": 0.43,
+      "p_one_sided": 0.3412,
+      "ci95": [
+       -0.6538,
+       1.2286
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-06-01",
+      "2025-11-30"
+     ],
+     "test": [
+      "2025-11-30",
+      "2026-03-01"
+     ],
+     "selected": 1,
+     "params": {
+      "shock_atr": 2.0,
+      "confirm_bars": 1,
+      "exit": "2r"
+     },
+     "train_t": 1.49,
+     "test_summary": {
+      "trades": 14,
+      "expectancy_r": 0.4673,
+      "median_r": 0.424,
+      "win_rate": 50.0,
+      "profit_factor": 1.981,
+      "total_r": 6.54,
+      "max_dd_r": 2.3,
+      "max_dd_pct_at_0p5": 1.15,
+      "trades_per_month": 5.68,
+      "t": 1.18,
+      "p_one_sided": 0.1306,
+      "ci95": [
+       -0.2741,
+       1.2442
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-08-31",
+      "2026-03-01"
+     ],
+     "test": [
+      "2026-03-01",
+      "2026-05-31"
+     ],
+     "selected": 1,
+     "params": {
+      "shock_atr": 2.0,
+      "confirm_bars": 1,
+      "exit": "2r"
+     },
+     "train_t": 1.22,
+     "test_summary": {
+      "trades": 5,
+      "expectancy_r": 0.288,
+      "median_r": -0.397,
+      "win_rate": 40.0,
+      "profit_factor": 1.588,
+      "total_r": 1.44,
+      "max_dd_r": 1.43,
+      "max_dd_pct_at_0p5": 0.72,
+      "trades_per_month": 1.95,
+      "t": 0.42,
+      "p_one_sided": 0.3486,
+      "ci95": [
+       -0.8968,
+       1.4763
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-11-30",
+      "2026-05-31"
+     ],
+     "test": [
+      "2026-05-31",
+      "2026-07-01"
+     ],
+     "selected": 2,
+     "params": {
+      "shock_atr": 2.0,
+      "confirm_bars": 2,
+      "exit": "time_4h"
+     },
+     "train_t": 0.22,
+     "test_summary": {
+      "trades": 1,
+      "expectancy_r": -0.0524,
+      "median_r": -0.052,
+      "win_rate": 0.0,
+      "profit_factor": 0.0,
+      "total_r": -0.05,
+      "max_dd_r": 0.05,
+      "max_dd_pct_at_0p5": 0.03,
+      "trades_per_month": 1.0,
+      "t": NaN,
+      "p_one_sided": NaN,
+      "ci95": [
+       NaN,
+       NaN
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 54,
+    "expectancy_r": 0.2618,
+    "median_r": -0.149,
+    "win_rate": 46.3,
+    "profit_factor": 1.565,
+    "total_r": 14.14,
+    "max_dd_r": 4.26,
+    "max_dd_pct_at_0p5": 2.13,
+    "trades_per_month": 3.45,
+    "t": 1.46,
+    "p_one_sided": 0.0756,
+    "ci95": [
+     -0.0838,
+     0.6281
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 55,
+    "expectancy_r": 0.1521,
+    "median_r": -0.421,
+    "win_rate": 43.6,
+    "profit_factor": 1.297,
+    "total_r": 8.36,
+    "max_dd_r": 5.86,
+    "max_dd_pct_at_0p5": 2.93,
+    "trades_per_month": 3.51,
+    "t": 0.86,
+    "p_one_sided": 0.1974,
+    "ci95": [
+     -0.187,
+     0.4965
+    ]
+   },
+   "oos_default_config": {
+    "trades": 57,
+    "expectancy_r": 0.356,
+    "median_r": -0.438,
+    "win_rate": 43.9,
+    "profit_factor": 1.713,
+    "total_r": 20.29,
+    "max_dd_r": 8.38,
+    "max_dd_pct_at_0p5": 4.19,
+    "trades_per_month": 3.59,
+    "t": 1.46,
+    "p_one_sided": 0.0749,
+    "ci95": [
+     -0.0903,
+     0.838
+    ]
+   },
+   "oos_by_session": {
+    "newyork": {
+     "trades": 3,
+     "expectancy_r": 1.1382,
+     "win_rate": 100.0,
+     "profit_factor": null,
+     "p_one_sided": 0.1034
+    },
+    "overlap": {
+     "trades": 51,
+     "expectancy_r": 0.2102,
+     "win_rate": 43.1,
+     "profit_factor": 1.428,
+     "p_one_sided": 0.1319
+    }
+   },
+   "oos_by_side": {
+    "-1": {
+     "trades": 18,
+     "expectancy_r": 0.0964,
+     "win_rate": 33.3,
+     "profit_factor": 1.172,
+     "p_one_sided": 0.386
+    },
+    "1": {
+     "trades": 36,
+     "expectancy_r": 0.3445,
+     "win_rate": 52.8,
+     "profit_factor": 1.831,
+     "p_one_sided": 0.0602
+    }
+   },
+   "oos_by_reason": {
+    "stop": {
+     "trades": 22,
+     "expectancy_r": -1.0344,
+     "win_rate": 0.0,
+     "profit_factor": 0.0,
+     "p_one_sided": 1.0
+    },
+    "target": {
+     "trades": 16,
+     "expectancy_r": 1.9711,
+     "win_rate": 100.0,
+     "profit_factor": null,
+     "p_one_sided": 0.0
+    },
+    "time": {
+     "trades": 16,
+     "expectancy_r": 0.3348,
+     "win_rate": 56.2,
+     "profit_factor": 3.357,
+     "p_one_sided": 0.0496
+    }
+   },
+   "oos_by_year": {
+    "2025": {
+     "trades": 38,
+     "expectancy_r": 0.2919,
+     "win_rate": 50.0,
+     "profit_factor": 1.657,
+     "p_one_sided": 0.0899
+    },
+    "2026": {
+     "trades": 16,
+     "expectancy_r": 0.1903,
+     "win_rate": 37.5,
+     "profit_factor": 1.374,
+     "p_one_sided": 0.2939
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "control_mean": 0.0048,
+    "control_p90": 0.2021,
+    "strategy_percentile": 0.96
+   },
+   "gate1_checks": {
+    "min_oos_trades": true,
+    "expectancy_positive": true,
+    "profit_factor": true,
+    "p_value": true,
+    "beats_direction_control": true,
+    "parameter_robustness": true
+   },
+   "gate1_pass": true,
+   "final_config": 0,
+   "final_params": {
+    "shock_atr": 2.0,
+    "confirm_bars": 1,
+    "exit": "time_4h"
+   }
+  },
+  "H8_failed_breakout": {
+   "mechanism": "Breakout traders who entered on a close beyond a level are trapped when price closes back inside; their exits fuel the reversal.",
+   "configs": 8,
+   "development_full": [
+    {
+     "config": 0,
+     "params": {
+      "level": "prev_day",
+      "window": 2,
+      "target": "2r"
+     },
+     "trades": 61,
+     "expectancy_r": -0.2313,
+     "profit_factor": 0.646,
+     "t": -1.55,
+     "p_one_sided": 0.9364
+    },
+    {
+     "config": 1,
+     "params": {
+      "level": "prev_day",
+      "window": 2,
+      "target": "level_mid"
+     },
+     "trades": 61,
+     "expectancy_r": -0.2423,
+     "profit_factor": 0.636,
+     "t": -1.51,
+     "p_one_sided": 0.9323
+    },
+    {
+     "config": 2,
+     "params": {
+      "level": "prev_day",
+      "window": 4,
+      "target": "2r"
+     },
+     "trades": 93,
+     "expectancy_r": -0.1924,
+     "profit_factor": 0.678,
+     "t": -1.66,
+     "p_one_sided": 0.9498
+    },
+    {
+     "config": 3,
+     "params": {
+      "level": "prev_day",
+      "window": 4,
+      "target": "level_mid"
+     },
+     "trades": 93,
+     "expectancy_r": -0.1429,
+     "profit_factor": 0.753,
+     "t": -1.12,
+     "p_one_sided": 0.867
+    },
+    {
+     "config": 4,
+     "params": {
+      "level": "prev_week",
+      "window": 2,
+      "target": "2r"
+     },
+     "trades": 23,
+     "expectancy_r": -0.049,
+     "profit_factor": 0.917,
+     "t": -0.18,
+     "p_one_sided": 0.5723
+    },
+    {
+     "config": 5,
+     "params": {
+      "level": "prev_week",
+      "window": 2,
+      "target": "level_mid"
+     },
+     "trades": 23,
+     "expectancy_r": -0.2687,
+     "profit_factor": 0.603,
+     "t": -1.05,
+     "p_one_sided": 0.8468
+    },
+    {
+     "config": 6,
+     "params": {
+      "level": "prev_week",
+      "window": 4,
+      "target": "2r"
+     },
+     "trades": 34,
+     "expectancy_r": -0.1867,
+     "profit_factor": 0.693,
+     "t": -0.93,
+     "p_one_sided": 0.8207
+    },
+    {
+     "config": 7,
+     "params": {
+      "level": "prev_week",
+      "window": 4,
+      "target": "level_mid"
+     },
+     "trades": 34,
+     "expectancy_r": -0.3224,
+     "profit_factor": 0.518,
+     "t": -1.63,
+     "p_one_sided": 0.9436
+    }
+   ],
+   "share_configs_positive": 0.0,
+   "folds": [
+    {
+     "train": [
+      "2024-09-01",
+      "2025-03-02"
+     ],
+     "test": [
+      "2025-03-02",
+      "2025-06-01"
+     ],
+     "selected": 2,
+     "params": {
+      "level": "prev_day",
+      "window": 4,
+      "target": "2r"
+     },
+     "train_t": 0.59,
+     "test_summary": {
+      "trades": 7,
+      "expectancy_r": 0.5483,
+      "median_r": 0.552,
+      "win_rate": 71.4,
+      "profit_factor": 3.678,
+      "total_r": 3.84,
+      "max_dd_r": 1.02,
+      "max_dd_pct_at_0p5": 0.51,
+      "trades_per_month": 2.51,
+      "t": 1.29,
+      "p_one_sided": 0.1229,
+      "ci95": [
+       -0.2157,
+       1.3169
+      ]
+     }
+    },
+    {
+     "train": [
+      "2024-12-01",
+      "2025-06-01"
+     ],
+     "test": [
+      "2025-06-01",
+      "2025-08-31"
+     ],
+     "selected": null
+    },
+    {
+     "train": [
+      "2025-03-02",
+      "2025-08-31"
+     ],
+     "test": [
+      "2025-08-31",
+      "2025-11-30"
+     ],
+     "selected": 3,
+     "params": {
+      "level": "prev_day",
+      "window": 4,
+      "target": "level_mid"
+     },
+     "train_t": 0.65,
+     "test_summary": {
+      "trades": 14,
+      "expectancy_r": -0.4282,
+      "median_r": -1.019,
+      "win_rate": 28.6,
+      "profit_factor": 0.418,
+      "total_r": -5.99,
+      "max_dd_r": 8.26,
+      "max_dd_pct_at_0p5": 4.13,
+      "trades_per_month": 4.96,
+      "t": -1.55,
+      "p_one_sided": 0.9271,
+      "ci95": [
+       -0.8726,
+       0.1372
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-06-01",
+      "2025-11-30"
+     ],
+     "test": [
+      "2025-11-30",
+      "2026-03-01"
+     ],
+     "selected": 3,
+     "params": {
+      "level": "prev_day",
+      "window": 4,
+      "target": "level_mid"
+     },
+     "train_t": -0.42,
+     "test_summary": {
+      "trades": 12,
+      "expectancy_r": -0.4396,
+      "median_r": -1.007,
+      "win_rate": 25.0,
+      "profit_factor": 0.309,
+      "total_r": -5.28,
+      "max_dd_r": 5.54,
+      "max_dd_pct_at_0p5": 2.77,
+      "trades_per_month": 6.41,
+      "t": -1.82,
+      "p_one_sided": 0.9511,
+      "ci95": [
+       -0.8598,
+       0.0435
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-08-31",
+      "2026-03-01"
+     ],
+     "test": [
+      "2026-03-01",
+      "2026-05-31"
+     ],
+     "selected": 3,
+     "params": {
+      "level": "prev_day",
+      "window": 4,
+      "target": "level_mid"
+     },
+     "train_t": -2.38,
+     "test_summary": {
+      "trades": 13,
+      "expectancy_r": -0.8291,
+      "median_r": -1.013,
+      "win_rate": 7.7,
+      "profit_factor": 0.067,
+      "total_r": -10.78,
+      "max_dd_r": 10.78,
+      "max_dd_pct_at_0p5": 5.39,
+      "trades_per_month": 4.71,
+      "t": -5.76,
+      "p_one_sided": 0.9999,
+      "ci95": [
+       -1.0236,
+       -0.5022
+      ]
+     }
+    },
+    {
+     "train": [
+      "2025-11-30",
+      "2026-05-31"
+     ],
+     "test": [
+      "2026-05-31",
+      "2026-07-01"
+     ],
+     "selected": 2,
+     "params": {
+      "level": "prev_day",
+      "window": 4,
+      "target": "2r"
+     },
+     "train_t": -4.3,
+     "test_summary": {
+      "trades": 4,
+      "expectancy_r": 0.1377,
+      "median_r": -0.208,
+      "win_rate": 50.0,
+      "profit_factor": 1.272,
+      "total_r": 0.55,
+      "max_dd_r": 2.03,
+      "max_dd_pct_at_0p5": 1.01,
+      "trades_per_month": 4.0,
+      "t": 0.19,
+      "p_one_sided": 0.431,
+      "ci95": [
+       NaN,
+       NaN
+      ]
+     }
+    }
+   ],
+   "oos": {
+    "trades": 50,
+    "expectancy_r": -0.3532,
+    "median_r": -1.01,
+    "win_rate": 30.0,
+    "profit_factor": 0.464,
+    "total_r": -17.66,
+    "max_dd_r": 22.05,
+    "max_dd_pct_at_0p5": 11.02,
+    "trades_per_month": 3.25,
+    "t": -2.51,
+    "p_one_sided": 0.9923,
+    "ci95": [
+     -0.6196,
+     -0.0674
+    ]
+   },
+   "oos_stress_2x": {
+    "trades": 50,
+    "expectancy_r": -0.4073,
+    "median_r": -1.023,
+    "win_rate": 28.0,
+    "profit_factor": 0.414,
+    "total_r": -20.36,
+    "max_dd_r": 23.96,
+    "max_dd_pct_at_0p5": 11.98,
+    "trades_per_month": 3.25,
+    "t": -2.91,
+    "p_one_sided": 0.9973,
+    "ci95": [
+     -0.6709,
+     -0.1209
+    ]
+   },
+   "oos_default_config": {
+    "trades": 43,
+    "expectancy_r": -0.4007,
+    "median_r": -1.013,
+    "win_rate": 25.6,
+    "profit_factor": 0.437,
+    "total_r": -17.23,
+    "max_dd_r": 20.92,
+    "max_dd_pct_at_0p5": 10.46,
+    "trades_per_month": 2.79,
+    "t": -2.5,
+    "p_one_sided": 0.9918,
+    "ci95": [
+     -0.6945,
+     -0.0765
+    ]
+   },
+   "oos_by_session": {
+    "asia": {
+     "trades": 1,
+     "expectancy_r": -1.0127,
+     "win_rate": 0.0,
+     "profit_factor": 0.0,
+     "p_one_sided": NaN
+    },
+    "london": {
+     "trades": 23,
+     "expectancy_r": -0.5908,
+     "win_rate": 17.4,
+     "profit_factor": 0.275,
+     "p_one_sided": 0.9971
+    },
+    "newyork": {
+     "trades": 8,
+     "expectancy_r": -0.3059,
+     "win_rate": 50.0,
+     "profit_factor": 0.285,
+     "p_one_sided": 0.8876
+    },
+    "overlap": {
+     "trades": 18,
+     "expectancy_r": -0.034,
+     "win_rate": 38.9,
+     "profit_factor": 0.937,
+     "p_one_sided": 0.5484
+    }
+   },
+   "oos_by_side": {
+    "-1": {
+     "trades": 24,
+     "expectancy_r": -0.3482,
+     "win_rate": 37.5,
+     "profit_factor": 0.434,
+     "p_one_sided": 0.9602
+    },
+    "1": {
+     "trades": 26,
+     "expectancy_r": -0.3578,
+     "win_rate": 23.1,
+     "profit_factor": 0.488,
+     "p_one_sided": 0.9496
+    }
+   },
+   "oos_by_reason": {
+    "stop": {
+     "trades": 31,
+     "expectancy_r": -1.0222,
+     "win_rate": 0.0,
+     "profit_factor": 0.0,
+     "p_one_sided": 1.0
+    },
+    "target": {
+     "trades": 8,
+     "expectancy_r": 1.3643,
+     "win_rate": 100.0,
+     "profit_factor": null,
+     "p_one_sided": 0.0012
+    },
+    "time": {
+     "trades": 11,
+     "expectancy_r": 0.2831,
+     "win_rate": 63.6,
+     "profit_factor": 3.477,
+     "p_one_sided": 0.0729
+    }
+   },
+   "oos_by_year": {
+    "2025": {
+     "trades": 26,
+     "expectancy_r": -0.2104,
+     "win_rate": 38.5,
+     "profit_factor": 0.638,
+     "p_one_sided": 0.8391
+    },
+    "2026": {
+     "trades": 24,
+     "expectancy_r": -0.5078,
+     "win_rate": 20.8,
+     "profit_factor": 0.317,
+     "p_one_sided": 0.9938
+    }
+   },
+   "direction_control": {
+    "seeds": 200,
+    "control_mean": -0.123,
+    "control_p90": 0.0548,
+    "strategy_percentile": 0.055
+   },
+   "gate1_checks": {
+    "min_oos_trades": true,
+    "expectancy_positive": false,
+    "profit_factor": false,
+    "p_value": false,
+    "beats_direction_control": false,
+    "parameter_robustness": false
+   },
+   "gate1_pass": false,
+   "final_config": 3,
+   "final_params": {
+    "level": "prev_day",
+    "window": 4,
+    "target": "level_mid"
+   }
+  }
+ }
+}

@@ -1,0 +1,58 @@
+{
+ "experiment": "fwd-xau-001",
+ "date_utc": "2026-11-22",
+ "generated_utc": "2026-11-23T19:26:14+00:00",
+ "status": {
+  "ever_started": false,
+  "last_start": null,
+  "live_ever_seen": false,
+  "heartbeats_today": 0,
+  "last_heartbeat": null,
+  "halted_now": null,
+  "halt_reason": null
+ },
+ "signals": {
+  "total": 0,
+  "decisions": {},
+  "skip_reasons": {}
+ },
+ "today": {
+  "trades": 0
+ },
+ "cumulative": {
+  "trades": 0
+ },
+ "risk_events": [],
+ "costs_today": {
+  "assumed": {
+   "spread_floor": 0.08,
+   "slippage_per_fill": 0.03,
+   "commission_per_side_rate": 3e-05
+  }
+ },
+ "costs_cumulative": {
+  "assumed": {
+   "spread_floor": 0.08,
+   "slippage_per_fill": 0.03,
+   "commission_per_side_rate": 3e-05
+  }
+ },
+ "reconciliation": {
+  "available": true,
+  "signal_parity": {
+   "reference_candidates": 0,
+   "cbot_signals": 0,
+   "matched": 0,
+   "only_reference": 0,
+   "only_cbot": 0,
+   "note": "differences come from the two price feeds (cTrader vs MT5) and from bars missing around restarts"
+  },
+  "fill_model": {
+   "trades_compared": 0,
+   "same_exit_reason": 0,
+   "mean_actual_r": null,
+   "mean_sim_r": null,
+   "rows": []
+  }
+ }
+}
