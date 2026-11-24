@@ -136,7 +136,7 @@ def install(app):
                 return JSONResponse({"detail": "Try sign in again later"}, 429)
             _LOGIN_ATTEMPTS[address] = (start, count + 1)
         if enabled and (path.startswith("/api/") and not path.startswith("/api/auth/")
-                        and path not in {"/api/health", "/api/ready"}):
+                        and path not in {"/api/health", "/api/ready", "/api/platform/plans"}):
             if not request.state.user:
                 return JSONResponse({"detail": "Sign in required"}, 401)
             if path == "/api/market/chart" and request.state.user["plan"] != "pro" and request.query_params.get("symbol", "XAUUSD") not in FREE_SYMBOLS:

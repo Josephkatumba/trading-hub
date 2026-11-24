@@ -211,6 +211,8 @@ from scalper_journal import router as scalper_router
 app.include_router(scalper_router)
 from research_overview import router as research_router
 app.include_router(research_router)
+from product.api import router as product_router
+app.include_router(product_router)
 
 app.add_middleware(
     CORSMiddleware,
