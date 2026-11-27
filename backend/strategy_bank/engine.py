@@ -120,6 +120,11 @@ def confirm(spec: dict[str, Any], d: rules.Decision, ctx: rules.Ctx, i: int, quo
               "explanation": d.explanation, "contradictions": contradictions(ctx, tf, i, d.direction),
               "evidence": {k: (float(v) if isinstance(v, (int, float)) else v) for k, v in d.evidence.items()},
               "r_basis": "hypothetical (signal outcome, not an executed trade)"}
+    try:                                   # V7: regime context (informational; never blocks a signal)
+        import market_regime
+        signal["regime"] = market_regime.tag(ctx, spec["key"], close_t)
+    except Exception:
+        signal["regime"] = None
     return signal, ""
 
 

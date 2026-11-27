@@ -19,6 +19,8 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query, Request
 
+import ctrader_feed
+
 REPO = Path(__file__).resolve().parent.parent
 REPORTS_DIR = REPO / "ctrader_scalper" / "reports"
 HEARTBEAT_STALE_SECONDS = 180
@@ -265,3 +267,36 @@ def api_trades(request: Request, limit: int = Query(200, ge=1, le=5000)):
 def api_daily_report(request: Request, date: str | None = None):
     _local_only(request)
     return daily_report(date or datetime.now(timezone.utc).date().isoformat())
+
+
+# ---------------------------------------------------------------- cTrader desktop feed (TradeDenCollector cBot)
+# Read-only views of the files written by the data-only collector cBot; see ctrader_feed.py.
+
+@router.get("/api/ctrader/status")
+def api_ctrader_status(request: Request):
+    _local_only(request)
+    return ctrader_feed.status()
+
+
+@router.get("/api/ctrader/bars")
+def api_ctrader_bars(request: Request, symbol: str = Query("XAUUSD", pattern=r"^[A-Za-z0-9._]{2,20}$"),
+                     limit: int = Query(500, ge=1, le=20000)):
+    _local_only(request)
+    st = ctrader_feed.status()
+    rows = ctrader_feed.bars(symbol, limit)
+    return {"symbol": symbol.upper(), "timeframe": "M1", "source": "ctrader_desktop", "connected": st["connected"],
+            "state": st["state"], "last_bar": rows[-1]["t"] if rows else None, "count": len(rows), "bars": rows}
+
+
+@router.get("/api/ctrader/deals")
+def api_ctrader_deals(request: Request, limit: int = Query(200, ge=1, le=5000)):
+    _local_only(request)
+    rows = ctrader_feed.deals()
+    return {"source": "ctrader_desktop", "count": len(rows), "deals": rows[-limit:][::-1]}
+
+
+@router.get("/api/ctrader/equity")
+def api_ctrader_equity(request: Request, limit: int = Query(1440, ge=1, le=20000)):
+    _local_only(request)
+    rows = ctrader_feed.equity(limit)
+    return {"source": "ctrader_desktop", "interval_seconds": 60, "count": len(rows), "points": rows}

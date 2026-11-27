@@ -78,6 +78,12 @@ from .base import MarketInput, Strategy
 from .price_action import confirm_rejection
 
 STRATEGY_VERSION = "smc-confluence-v1"
+# smc-confluence-v2 (V7 audit): identical detection and confirmation; the target is the nearest
+# UNTAKEN H1 swing (buy-side liquidity still resting above price: no closed H1 bar after the pivot
+# traded beyond it). v1 also targets swings price already traded through, whose liquidity is gone.
+V2_VERSION = "smc-confluence-v2"
+VERSIONS = (STRATEGY_VERSION, V2_VERSION)
+TARGET_MODELS = {STRATEGY_VERSION: "nearest-h1-swing", V2_VERSION: "nearest-untaken-h1-swing"}
 SCOPE = "TRADEDEN_SIGNAL_ONLY"        # not connected to Company HQ / Trading Floor / execution
 SWING_STRENGTH = 2
 SETUP_WINDOW = 48
@@ -187,8 +193,29 @@ def liquidity_sweep(rows: Sequence[Mapping[str, Any]], origin: int, swings: Sequ
 
 # ---------------------------------------------------------------- the setup
 
-def _no_setup(reason: str, **extra: Any) -> dict[str, Any]:
-    return {"strategy_version": STRATEGY_VERSION, "timeframe": "M15", "higher_timeframes": ["H1", "H4"],
+def untaken(rows: Sequence[Mapping[str, Any]], swings: Sequence[tuple[int, float]], high: bool) -> list[tuple[int, float]]:
+    """Swings whose liquidity is still resting: no later closed bar traded beyond them
+    (an equal high/low leaves it resting; equal highs are liquidity too)."""
+    out = []
+    for index, price in swings:
+        later = rows[index + 1:]
+        if all((_f(bar, "high") <= price) if high else (_f(bar, "low") >= price) for bar in later):
+            out.append((index, price))
+    return out
+
+
+def liquidity_target(h1: Sequence[Mapping[str, Any]], entry: float, long: bool, version: str = STRATEGY_VERSION) -> float | None:
+    """The plan target: the nearest H1 swing beyond entry (v1), or the nearest untaken one (v2)."""
+    highs, lows = swing_points(h1)
+    swings = highs if long else lows
+    if version == V2_VERSION:
+        swings = untaken(h1, swings, long)
+    beyond = [p for _, p in swings if p > entry] if long else [p for _, p in swings if p < entry]
+    return (min(beyond) if long else max(beyond)) if beyond else None
+
+
+def _no_setup(reason: str, version: str = STRATEGY_VERSION, **extra: Any) -> dict[str, Any]:
+    return {"strategy_version": version, "timeframe": "M15", "higher_timeframes": ["H1", "H4"],
             "state": "NO SETUP", "direction": None, "setup": "No SMC setup", "setup_family": None,
             "strategy_valid": False, "reason": reason, "score": 0, "score_breakdown": {},
             "entry": None, "stop_loss": None, "take_profit": None, "invalidation_hint": None, "rr": None, **extra}
@@ -198,22 +225,24 @@ def _time(rows: Sequence[Mapping[str, Any]], index: int | None) -> Any:
     return rows[index]["time"] if index is not None else None
 
 
-def analyze_smc(market: MarketInput) -> dict[str, Any]:
+def analyze_smc(market: MarketInput, version: str = STRATEGY_VERSION) -> dict[str, Any]:
+    if version not in VERSIONS:
+        raise ValueError(f"unknown SMC version {version!r}")
     bars = dict(market.bars) if market.bars else {"M15": list(market.rows), "H1": list(market.higher_rows or [])}
     closed = {tf: list(bars.get(tf) or [])[:-1] for tf in ("M15", "H1", "H4")}
-    context: dict[str, Any] = {"method": STRATEGY_VERSION, "scope": SCOPE, "parameters": PARAMETERS,
+    context: dict[str, Any] = {"method": version, "scope": SCOPE, "parameters": {**PARAMETERS, "target_model": TARGET_MODELS[version]},
                                "timeframes_used": sorted(tf for tf in closed if closed[tf]),
                                "unavailable_timeframes": dict(market.unavailable_timeframes)}
     for tf in ("M15", "H1"):
         if len(closed[tf]) < MIN_BARS[tf]:
-            return _no_setup(f"Insufficient {tf} history for SMC ({len(closed[tf])} closed bars, needs {MIN_BARS[tf]}).",
+            return _no_setup(version=version, reason=f"Insufficient {tf} history for SMC ({len(closed[tf])} closed bars, needs {MIN_BARS[tf]}).",
                              strategy_evidence=context)
     m15 = closed["M15"]
     n = len(m15)
     price = _f(bars["M15"][-1], "close")
     atr_m15, atr_h1 = _atr(m15), _atr(closed["H1"])
     if atr_m15 <= 0 or atr_h1 <= 0:
-        return _no_setup("No volatility (ATR) available.", strategy_evidence=context)
+        return _no_setup(version=version, reason="No volatility (ATR) available.", strategy_evidence=context)
     context["atr"] = {"M15": atr_m15, "H1": atr_h1}
 
     # 1. Higher-timeframe directional context.
@@ -224,7 +253,7 @@ def analyze_smc(market: MarketInput) -> dict[str, Any]:
                       "last_break": ({"kind": last_htf["kind"], "direction": last_htf["direction"], "level": last_htf["level"],
                                       "time": _time(closed[htf_tf], last_htf["index"])} if last_htf else None)}
     if htf["trend"] is None:
-        return _no_setup(f"No {htf_tf} structure trend yet.", atr=atr_m15, strategy_evidence=context)
+        return _no_setup(version=version, reason=f"No {htf_tf} structure trend yet.", atr=atr_m15, strategy_evidence=context)
     long = htf["trend"] == "BULLISH"
     direction = "LONG" if long else "SHORT"
 
@@ -236,11 +265,11 @@ def analyze_smc(market: MarketInput) -> dict[str, Any]:
                                             "time": _time(m15, event["index"]), "broken_swing_time": _time(m15, event["swing_index"]),
                                             "bars_ago": n - 1 - event["index"]} if event else None)}
     if event is None or ms["trend"] != htf["trend"]:
-        return _no_setup(f"M15 structure is not {htf['trend'].lower()} ({htf_tf} context is {htf['trend'].lower()}).",
+        return _no_setup(version=version, reason=f"M15 structure is not {htf['trend'].lower()} ({htf_tf} context is {htf['trend'].lower()}).",
                          atr=atr_m15, strategy_evidence=context)
     k, swing = event["index"], event["swing_index"]
     if n - 1 - k > SETUP_WINDOW:
-        return _no_setup(f"Last M15 {event['kind']} is {n - 1 - k} bars old (max {SETUP_WINDOW}).", atr=atr_m15,
+        return _no_setup(version=version, reason=f"Last M15 {event['kind']} is {n - 1 - k} bars old (max {SETUP_WINDOW}).", atr=atr_m15,
                          strategy_evidence=context)
 
     # 3-5. Displacement leg, FVG, order block, liquidity sweep.
@@ -267,7 +296,7 @@ def analyze_smc(market: MarketInput) -> dict[str, Any]:
     if unmet:
         why = {"displacement": "no fair value gap in the break leg", "order_block": "no order block before the displacement",
                "liquidity": "CHoCH without a liquidity sweep"}
-        return _no_setup(f"M15 {event['kind']} does not qualify: " + "; ".join(why[name] for name in unmet) + ".",
+        return _no_setup(version=version, reason=f"M15 {event['kind']} does not qualify: " + "; ".join(why[name] for name in unmet) + ".",
                          atr=atr_m15, strategy_evidence={**context, "confirmation": {"rules": gates, "failed": unmet}})
 
     # 6. Retest of the order block (point of interest).
@@ -280,10 +309,10 @@ def analyze_smc(market: MarketInput) -> dict[str, Any]:
     context["poi"] = {"type": "ORDER_BLOCK", "zone_low": zone_low, "zone_high": zone_high, "invalidated": invalidated,
                       "first_tap_time": _time(m15, first_tap), "bars_since_first_tap": (n - 1 - first_tap) if taps else None}
     if invalidated:
-        return _no_setup("Order block invalidated: price closed through it after the structure break.", atr=atr_m15,
+        return _no_setup(version=version, reason="Order block invalidated: price closed through it after the structure break.", atr=atr_m15,
                          strategy_evidence=context)
     if first_tap is not None and n - 1 - first_tap >= POI_REACTION_BARS:
-        return _no_setup(f"Order block mitigated: no confirmed reaction within {POI_REACTION_BARS} bars of the first retest.",
+        return _no_setup(version=version, reason=f"Order block mitigated: no confirmed reaction within {POI_REACTION_BARS} bars of the first retest.",
                          atr=atr_m15, strategy_evidence=context)
     gates["poi_retest"] = first_tap is not None
 
@@ -304,9 +333,7 @@ def analyze_smc(market: MarketInput) -> dict[str, Any]:
     stop = (min(zone_low, origin_extreme) - STOP_BUFFER_ATR_M15 * atr_m15 if long
             else max(zone_high, origin_extreme) + STOP_BUFFER_ATR_M15 * atr_m15)
     risk = (entry - stop) if long else (stop - entry)
-    h1_highs, h1_lows = swing_points(closed["H1"])
-    beyond = [p for _, p in h1_highs if p > entry] if long else [p for _, p in h1_lows if p < entry]
-    target = (min(beyond) if long else max(beyond)) if beyond else None
+    target = liquidity_target(closed["H1"], entry, long, version)
     reward = ((target - entry) if long else (entry - target)) if target is not None else None
     rr = round(reward / risk, 2) if reward is not None and risk > 0 else None
     gates["not_chasing"] = ((entry - zone_high) if long else (zone_low - entry)) <= MAX_CHASE_ATR_H1 * atr_h1
@@ -341,7 +368,7 @@ def analyze_smc(market: MarketInput) -> dict[str, Any]:
                        "structure_invalidation": min(zone_low, origin_extreme) if long else max(zone_high, origin_extreme)}
     kind = "BOS" if event["kind"] == "BOS" else "CHoCH"
     setup = f"{'Bullish' if long else 'Bearish'} order block retest after {kind}"
-    return {"strategy_version": STRATEGY_VERSION, "timeframe": "M15", "higher_timeframes": ["H1", "H4"],
+    return {"strategy_version": version, "timeframe": "M15", "higher_timeframes": ["H1", "H4"],
             "state": state, "direction": direction, "setup": setup, "setup_family": family,
             "strategy_valid": valid, "reason": reason,
             "trigger": None if valid else ("Rejection candle closing back above the order block" if long
@@ -364,4 +391,9 @@ class SmcStrategy(Strategy):
     data_requirements = {"M15": 300, "H1": 160}
 
     def evaluate(self, market: MarketInput) -> dict[str, Any]:
-        return analyze_smc(market)
+        return analyze_smc(market, self.version)
+
+
+class SmcV2Strategy(SmcStrategy):
+    """smc-confluence-v2: v1 with the untaken-liquidity target (see V2_VERSION)."""
+    version = V2_VERSION

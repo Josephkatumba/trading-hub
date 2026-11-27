@@ -1,0 +1,7 @@
+{
+  "version": "allocation-policy-v1",
+  "max_weight_per_strategy": 0.25,
+  "min_ci_lower_r": 0.0,
+  "production_approved": [],
+  "notes": "Advisory allocation policy (strategy_bank/allocation.py). production_approved lists strategies the owner has explicitly approved for PRODUCTION once they are VALIDATED with a forward record. Editing this file never changes the live engine, alerts or execution permissions."
+}

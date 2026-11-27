@@ -9,7 +9,7 @@ test('local labs shows actual dry-run evidence and preserves Garden, Markets and
   const data=path==='/api/quant-labs/live'?fixture:path==='/api/auth/me'?{user:{id:'local-owner'},entitlements:{plan:'owner'}}:path.startsWith('/api/journal/')?{records:[]}:path==='/api/market/chart'?{candles:[],episodes:[],outcomes:[],symbol:'XAUUSD',timeframe:'M15'}:{markets:[],strategies:[],status:'CONNECTED'};
   await route.fulfill({contentType:'application/json',body:JSON.stringify(data)});
  });
- await page.goto('/');await page.locator('[data-view="quantLabs"]').click();
+ await page.goto('/classic.html');await page.locator('[data-view="quantLabs"]').click();
  await expect(page.locator('#quantLabsData')).toContainText('Compression Escape');
  await expect(page.locator('#quantLabsData')).toContainText('Claude Quant Lab');
  await expect(page.locator('#quantLabsData')).toContainText('Kimi Quant Lab');

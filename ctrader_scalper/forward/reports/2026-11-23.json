@@ -1,7 +1,7 @@
 {
  "experiment": "fwd-xau-001",
  "date_utc": "2026-11-23",
- "generated_utc": "2026-11-23T20:41:14+00:00",
+ "generated_utc": "2026-11-24T22:39:03+00:00",
  "status": {
   "ever_started": true,
   "last_start": {
@@ -15,8 +15,8 @@
    "balance": 1516.54
   },
   "live_ever_seen": false,
-  "heartbeats_today": 51,
-  "last_heartbeat": "2026-11-23T20:40:53.062Z",
+  "heartbeats_today": 86,
+  "last_heartbeat": "2026-11-23T21:15:58.120Z",
   "halted_now": false,
   "halt_reason": null
  },
@@ -47,42 +47,28 @@
   }
  },
  "reconciliation": {
-  "available": true,
-  "signal_parity": {
-   "reference_candidates": 13,
-   "cbot_signals": 0,
-   "matched": 0,
-   "only_reference": 13,
-   "only_cbot": 0,
-   "note": "differences come from the two price feeds (cTrader vs MT5) and from bars missing around restarts"
-  },
-  "fill_model": {
-   "trades_compared": 0,
-   "same_exit_reason": 0,
-   "mean_actual_r": null,
-   "mean_sim_r": null,
-   "rows": []
-  }
+  "available": false,
+  "reason": "MT5 terminal not reachable; reconciliation skipped"
  },
  "assessments": {
-  "count": 3,
+  "count": 4,
   "latest": {
-   "ts": "2026-11-23T20:35:51.749Z",
-   "bid": 3640.08,
-   "ask": 3640.16,
-   "spread": 0.07999999999992724,
-   "session": "newyork",
-   "m15_bias": "up",
+   "ts": "2026-11-23T21:00:00.091Z",
+   "bid": 3635.24,
+   "ask": 3635.32,
+   "spread": 0.08000000000038199,
+   "session": "asia",
+   "m15_bias": "neutral",
    "m5_ema_stack": "bearish",
-   "atr_m5": 4.604001579641912,
-   "atr_rank_1d": 0.16666666666666666,
+   "atr_m5": 4.294544958250546,
+   "atr_rank_1d": 0.12152777777777778,
    "execution_gate": "allowed",
    "risk_check": "ok",
-   "risk_budget": 3.79135,
-   "max_affordable_stop_at_min_volume": 3.79135,
-   "typical_stop_estimate": 6.4456022114986755,
-   "eligible_for_next_signal": true,
-   "why_no_trade": "no strategy setup closed since the previous assessment"
+   "risk_budget": 3.79115,
+   "max_affordable_stop_at_min_volume": 3.79115,
+   "typical_stop_estimate": 6.012362941550764,
+   "eligible_for_next_signal": false,
+   "why_no_trade": "M15 trend filter is neutral, so no setup can qualify | session blocked (rollover, weekend or Friday close) | no strategy setup closed since the previous assessment"
   },
   "hourly": [
    {
@@ -117,8 +103,22 @@
     "signals_since_last_assessment": 0.0,
     "eligible_for_next_signal": true,
     "why_no_trade": "no strategy setup closed since the previous assessment"
+   },
+   {
+    "ts": "2026-11-23T21:00:00.091Z",
+    "bid": 3635.24,
+    "spread": 0.08000000000038199,
+    "m15_bias": "neutral",
+    "m5_ema_stack": "bearish",
+    "atr_m5": 4.294544958250546,
+    "signals_since_last_assessment": 0.0,
+    "eligible_for_next_signal": false,
+    "why_no_trade": "M15 trend filter is neutral, so no setup can qualify | session blocked (rollover, weekend or Friday close) | no strategy setup closed since the previous assessment"
    }
   ]
+ },
+ "tradeden_copy": {
+  "received": 0
  },
  "execution_test": [
   {

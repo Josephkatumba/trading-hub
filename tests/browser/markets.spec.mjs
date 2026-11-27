@@ -21,7 +21,7 @@ test("authenticated markets renders broker candles, overlays, widget and mobile 
  // Inspect official integration without requesting a third-party site in CI.
  let official=false;
  await page.route("https://s3.tradingview.com/**",async route=>{official=true;await route.fulfill({contentType:"application/javascript",body:"document.querySelector('.tradingview-widget-container__widget').textContent='Official widget loaded';"});});
- await page.goto("/");
+ await page.goto("/classic.html");
  await expect(page.locator('[data-view="markets"]')).toBeVisible({timeout:5000}).catch(async error=>{console.log({errors,body:await page.locator('body').innerText()});throw error;});
  await page.locator('[data-view="markets"]').click();
  await expect(page.locator("#chartStatus")).toContainText("100 broker candles");
@@ -69,7 +69,7 @@ test("commercial sign-in cannot display legacy browser trades",async({page})=>{
   localStorage.setItem("th_trades",JSON.stringify([{id:"private-owner-secret",symbol:"PRIVATE_SECRET",side:"BUY"}]));
  });
  await page.route("**/api/**",route=>route.fulfill({status:401,contentType:"application/json",body:'{"detail":"Sign in required"}'}));
- await page.goto("/");
+ await page.goto("/classic.html");
  await expect(page.locator("#root")).toContainText("Sign in");
  await expect(page.locator("#root")).not.toContainText("PRIVATE_SECRET");
  await expect(page.locator('[data-view="trades"]')).toHaveCount(0);

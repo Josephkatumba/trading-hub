@@ -566,6 +566,7 @@ def alerting(spec: dict[str, Any]) -> bool:
 
 
 def load_expansion() -> list[str]:
-    """Register the expansion strategies the qualification registry admits (idempotent)."""
-    from strategy_bank import expansion
-    return expansion.register_admitted()
+    """Register the expansion strategies the qualification registry admits, plus the ICT family and the
+    audited strategy upgrades (both RESEARCH: shadow, never alerted). Idempotent."""
+    from strategy_bank import expansion, ict, upgrades
+    return expansion.register_admitted() + ict.register() + upgrades.register()

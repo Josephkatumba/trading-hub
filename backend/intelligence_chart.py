@@ -22,7 +22,15 @@ def normalize_candles(rates, basis):
                 prices["low"] <= min(prices["open"], prices["close"]) <=
                 max(prices["open"], prices["close"]) <= prices["high"]):
             continue
-        candles[epoch] = {"time": epoch, **prices}
+        candle = {"time": epoch, **prices}
+        # Additive: MT5 tick volume when the rates row carries it (fields absent otherwise).
+        try:
+            volume = float(r["tick_volume"])
+            if math.isfinite(volume) and volume >= 0:
+                candle["volume"] = volume
+        except (KeyError, IndexError, TypeError, ValueError):
+            pass
+        candles[epoch] = candle
     return [candles[t] for t in sorted(candles)]
 
 

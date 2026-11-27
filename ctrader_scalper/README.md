@@ -51,6 +51,30 @@ Start **one instance only**. It trades every symbol in its `Symbols`
 parameter, and the global limits (2 positions, daily loss) are enforced
 across instances anyway.
 
+## Data collector (read-only, no orders)
+
+`cbot/TradeDenCollector.cs` is a separate, **data-only** cBot. It contains no order code (enforced by
+`tests/test_collector.py`) and refuses to run on a live account unless "Allow live account" is set.
+It writes to `Documents\TradeDenScalper\collector\`:
+
+| File | Content |
+|---|---|
+| `status.json` | rewritten every 5 s: account (masked number, balance, equity, margin), bid/ask per symbol, open positions |
+| `account-YYYYMMDD.jsonl` | balance/equity every 60 s |
+| `deals.jsonl` | closed deals from cTrader history (all at start, then each close) |
+| `bars\<SYMBOL>\M1-YYYYMMDD.jsonl` | closed M1 bars (1440 backfilled at start) |
+
+Default symbols: XAUUSD, BTCUSD, ETHUSD, NAS100 (USTEC), US500, GER40 (DE40), GBPJPY, EURUSD, GBPUSD.
+Symbols the broker doesn't offer are listed in `missing_symbols`.
+
+Install: `powershell -ExecutionPolicy Bypass -File ctrader_scalper\install_cbot.ps1 -Bot TradeDenCollector`,
+then in cTrader **Algo → cBots → TradeDenCollector → Build**, add an instance on any chart, grant
+**Full Access** (needed to write the files) and Start. Run one instance only.
+
+The engine reads it read-only at `/api/ctrader/status`, `/api/ctrader/bars?symbol=XAUUSD&limit=500`,
+`/api/ctrader/deals` and `/api/ctrader/equity` (`backend/ctrader_feed.py`). `connected` is true only while
+`status.json` is under 30 s old.
+
 ## Safety contract (enforced in code)
 
 - `Account.IsLive == true` → the cBot logs a safety record and stops at
