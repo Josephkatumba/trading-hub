@@ -1,0 +1,22 @@
+{
+  "status": "COMPLETE",
+  "lab": "kimi",
+  "source_sha256": "ebacc73ffca665ca461603725c7cdce37eea0252058f1848b0b63f9bd6c0ec59",
+  "source": "MT5_SHARED_CACHE_PROBE",
+  "input_sha256": "0e51c85f4ed7ae49f7ce468112666223e874aa3a8a81184e9aafcf3eadcbddee",
+  "asof": 1792712586.544808,
+  "symbol": "XAUUSD",
+  "resources": {
+    "enforced": true,
+    "memory_limit_mb": 192.0,
+    "peak_committed_mb": 14.84375,
+    "cpu_cap_percent": 15.0,
+    "cpu_limit_seconds": 4.0,
+    "cpu_seconds_used": 0.078125,
+    "max_processes": 1
+  },
+  "decisions": [],
+  "scope": "read-only real-data capability probe, not live model admission or a committed signal",
+  "live_writes": 0,
+  "outbound_calls": 0
+}

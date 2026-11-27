@@ -1,0 +1,189 @@
+{
+  "captured_at": "2026-10-19T21:44:22.463049+00:00",
+  "pid": 24752,
+  "health": {
+    "ok": true,
+    "status": "CONNECTED",
+    "service": "trading-hub-market-engine",
+    "engine_version": "0.4.0",
+    "strategy": "trendline-first-v5.1",
+    "strategy_id": "trendline_v5",
+    "strategies": [
+      {
+        "strategy_id": "trendline_v5",
+        "version": "trendline-first-v5.1",
+        "status": "LIVE"
+      },
+      {
+        "strategy_id": "support_resistance",
+        "version": "sr-levels-v2",
+        "status": "LIVE"
+      },
+      {
+        "strategy_id": "trend_momentum",
+        "version": "tm-pullback-v2",
+        "status": "LIVE"
+      },
+      {
+        "strategy_id": "smc",
+        "version": "smc-confluence-v1",
+        "status": "LIVE"
+      }
+    ],
+    "execution_enabled": false,
+    "mt5_available": true,
+    "mt5_connected": true,
+    "mt5_status": "CONNECTED",
+    "scanner_status": "READY",
+    "data_freshness": {
+      "status": "FRESH",
+      "last_scan_at": "2026-10-19T21:44:03.245783+00:00",
+      "age_seconds": 19.215459,
+      "market_count": 16
+    },
+    "last_scan": {
+      "status": "CONNECTED",
+      "started_at": "2026-10-19T21:44:01.508443+00:00",
+      "completed_at": "2026-10-19T21:44:03.245783+00:00",
+      "market_count": 16,
+      "error": null,
+      "elapsed_ms": 1737.35,
+      "strategy_results": {
+        "trendline_v5": {
+          "ok": 16,
+          "error": 0
+        },
+        "support_resistance": {
+          "ok": 16,
+          "error": 0
+        },
+        "trend_momentum": {
+          "ok": 16,
+          "error": 0
+        },
+        "smc": {
+          "ok": 16,
+          "error": 0
+        }
+      }
+    },
+    "source_time_basis": "America/New_York+07:00",
+    "storage": {
+      "setup_observations.jsonl": {
+        "status": "AVAILABLE",
+        "bytes": 1456537569,
+        "index": {
+          "indexed_bytes": 1456537569,
+          "rows": 300849,
+          "unparseable_lines": 79,
+          "rebuilds": 0
+        }
+      },
+      "setup_lifecycle.jsonl": {
+        "status": "AVAILABLE",
+        "bytes": 8856237
+      },
+      "setup_confirmations.jsonl": {
+        "status": "AVAILABLE",
+        "bytes": 403373
+      },
+      "market_outcomes.jsonl": {
+        "status": "AVAILABLE",
+        "bytes": 554917627
+      },
+      "trade_outcomes.jsonl": {
+        "status": "NOT_CREATED",
+        "bytes": 0
+      }
+    },
+    "terminal": {
+      "connected": true,
+      "version": "500.6230.25 Sep 2026"
+    },
+    "account": {
+      "available": true
+    },
+    "symbols": 7782,
+    "bridge": {
+      "connected": false,
+      "status": "OFFLINE"
+    },
+    "uptime_started": "2026-10-19T20:01:21.601925+00:00",
+    "error": null,
+    "shadow_strategies": [],
+    "trendline_v5_shadow": "NOT_REGISTERED",
+    "telegram_alerts": {
+      "enabled": true,
+      "configured": true,
+      "running": true,
+      "last_tick_at": "2026-10-19T21:44:20.974214+00:00",
+      "last_error": null
+    },
+    "signal_outcomes": {
+      "enabled": true,
+      "running": true,
+      "last_run_at": "2026-10-19T21:41:26.572001+00:00",
+      "last_written": 0,
+      "last_error": null,
+      "outstanding": 0
+    },
+    "telegram_reports": {
+      "enabled": true,
+      "schedule": "daily 23:00 EAT; weekly Friday 23:00 EAT (Africa/Kampala)",
+      "running": true,
+      "last_tick_at": "2026-10-19T21:43:31.876104+00:00",
+      "last_error": null
+    },
+    "strategy_bank": {
+      "enabled": true,
+      "telegram_enabled": true,
+      "running": true,
+      "last_scan_at": "2026-10-19T21:30:20.793215+00:00",
+      "last_error": null,
+      "signals_this_session": 0
+    }
+  },
+  "permissions": {
+    "execution_enabled": false,
+    "strategies": [
+      {
+        "strategy_id": "trendline_v5",
+        "version": "trendline-first-v5.1",
+        "status": "LIVE"
+      },
+      {
+        "strategy_id": "support_resistance",
+        "version": "sr-levels-v2",
+        "status": "LIVE"
+      },
+      {
+        "strategy_id": "trend_momentum",
+        "version": "tm-pullback-v2",
+        "status": "LIVE"
+      },
+      {
+        "strategy_id": "smc",
+        "version": "smc-confluence-v1",
+        "status": "LIVE"
+      }
+    ],
+    "source_time_basis": "America/New_York+07:00",
+    "telegram_alerts_enabled": true,
+    "signal_outcomes_enabled": true,
+    "telegram_reports_enabled": true,
+    "strategy_bank_enabled": true
+  },
+  "effective_setting_names": [
+    "TRADEDEN_SIGNAL_OUTCOMES_ENABLED",
+    "TRADEDEN_STRATEGY_BANK_ENABLED",
+    "TRADEDEN_STRATEGY_BANK_TELEGRAM_ENABLED",
+    "TRADEDEN_TELEGRAM_ALERTS_ENABLED",
+    "TRADEDEN_TELEGRAM_BOT_TOKEN",
+    "TRADEDEN_TELEGRAM_CHAT_ID",
+    "TRADEDEN_TELEGRAM_REPORTS_ENABLED",
+    "TRADING_HUB_CORS_ORIGINS",
+    "TRADING_HUB_MT5_SOURCE_TIMEZONE"
+  ],
+  "experimental_consumer_enabled": false,
+  "env_other_lines_sha256": "77c88205811365f2889ef4b4f940fa36459c7053385fd233a6a07af84d316bea"
+}

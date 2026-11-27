@@ -1,0 +1,31 @@
+{
+ "lab": "kimi",
+ "key": "h1_momentum",
+ "version": "0.1.0",
+ "name": "H1 Momentum",
+ "timeframe": "H1",
+ "requirements": {
+  "H1": 400,
+  "M15": 120,
+  "M1": 90
+ },
+ "instruments": [
+  "EURUSD",
+  "GBPUSD",
+  "GBPJPY",
+  "XAUUSD",
+  "BTCUSD",
+  "ETHUSD"
+ ],
+ "classification": "EXPERIMENTAL",
+ "entry_type": "MARKET_PAPER_QUOTE",
+ "hypothesis": "Decisive H1 closes beyond 20-hour extremes on volume persist for 24h.",
+ "risk_model": "One planned risk unit; structural stop; screening candidate v0.1.0",
+ "planned_rr": "2R-2.5R planned",
+ "known_limitations": "Screening candidate; not yet promoted.",
+ "authorship": {
+  "lab": "kimi",
+  "session_reference": "Kimi Code session 2026-10-20/23 on Windows host katjo under the TradeDen CEO profitability-discovery directive",
+  "statement": "Authored by this actual Kimi Code session; not attributed to Codex or Claude."
+ }
+}

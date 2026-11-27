@@ -1,0 +1,2134 @@
+{
+  "health": {
+    "ok": true,
+    "status": "CONNECTED",
+    "service": "trading-hub-market-engine",
+    "engine_version": "0.4.0",
+    "strategy": "trendline-first-v5.1",
+    "strategy_id": "trendline_v5",
+    "strategies": [
+      {
+        "strategy_id": "trendline_v5",
+        "version": "trendline-first-v5.1",
+        "status": "LIVE"
+      },
+      {
+        "strategy_id": "support_resistance",
+        "version": "sr-levels-v2",
+        "status": "LIVE"
+      },
+      {
+        "strategy_id": "trend_momentum",
+        "version": "tm-pullback-v2",
+        "status": "LIVE"
+      },
+      {
+        "strategy_id": "smc",
+        "version": "smc-confluence-v1",
+        "status": "LIVE"
+      }
+    ],
+    "execution_enabled": false,
+    "mt5_available": true,
+    "mt5_connected": true,
+    "mt5_status": "CONNECTED",
+    "scanner_status": "READY",
+    "data_freshness": {
+      "status": "FRESH",
+      "last_scan_at": "2026-10-19T21:59:35.037687+00:00",
+      "age_seconds": 2.424029,
+      "market_count": 16
+    },
+    "last_scan": {
+      "status": "CONNECTED",
+      "started_at": "2026-10-19T21:59:34.014070+00:00",
+      "completed_at": "2026-10-19T21:59:35.037687+00:00",
+      "market_count": 16,
+      "error": null,
+      "elapsed_ms": 1023.63,
+      "strategy_results": {
+        "trendline_v5": {
+          "ok": 16,
+          "error": 0
+        },
+        "support_resistance": {
+          "ok": 16,
+          "error": 0
+        },
+        "trend_momentum": {
+          "ok": 16,
+          "error": 0
+        },
+        "smc": {
+          "ok": 16,
+          "error": 0
+        }
+      }
+    },
+    "source_time_basis": "America/New_York+07:00",
+    "storage": {
+      "setup_observations.jsonl": {
+        "status": "AVAILABLE",
+        "bytes": 1461631508,
+        "index": {
+          "indexed_bytes": 1461631508,
+          "rows": 301724,
+          "unparseable_lines": 79,
+          "rebuilds": 0
+        }
+      },
+      "setup_lifecycle.jsonl": {
+        "status": "AVAILABLE",
+        "bytes": 8860056
+      },
+      "setup_confirmations.jsonl": {
+        "status": "AVAILABLE",
+        "bytes": 403373
+      },
+      "market_outcomes.jsonl": {
+        "status": "AVAILABLE",
+        "bytes": 556308653
+      },
+      "trade_outcomes.jsonl": {
+        "status": "NOT_CREATED",
+        "bytes": 0
+      }
+    },
+    "terminal": {
+      "connected": true,
+      "version": "500.6230.25 Sep 2026"
+    },
+    "account": {
+      "available": true
+    },
+    "symbols": 7782,
+    "bridge": {
+      "connected": false,
+      "status": "OFFLINE"
+    },
+    "uptime_started": "2026-10-19T21:44:24.868848+00:00",
+    "error": null,
+    "shadow_strategies": [],
+    "trendline_v5_shadow": "NOT_REGISTERED",
+    "telegram_alerts": {
+      "enabled": true,
+      "configured": true,
+      "running": true,
+      "last_tick_at": "2026-10-19T21:59:35.506474+00:00",
+      "last_error": null
+    },
+    "signal_outcomes": {
+      "enabled": true,
+      "running": true,
+      "last_run_at": "2026-10-19T21:59:28.947325+00:00",
+      "last_written": 0,
+      "last_error": null,
+      "outstanding": 0
+    },
+    "telegram_reports": {
+      "enabled": true,
+      "schedule": "daily 23:00 EAT; weekly Friday 23:00 EAT (Africa/Kampala)",
+      "running": true,
+      "last_tick_at": "2026-10-19T21:59:25.475997+00:00",
+      "last_error": null
+    },
+    "strategy_bank": {
+      "enabled": true,
+      "telegram_enabled": true,
+      "running": true,
+      "last_scan_at": "2026-10-19T21:45:07.902278+00:00",
+      "last_error": null,
+      "signals_this_session": 0
+    }
+  },
+  "paper": {
+    "mode": "EXPERIMENTAL_PAPER_SIGNALS",
+    "telegram_mode": "DRY_RUN",
+    "outbound_activation_approved": false,
+    "labs": [
+      {
+        "id": "codex",
+        "name": "Codex Quant Lab",
+        "status": "READY",
+        "models": [
+          {
+            "key": "compression_escape",
+            "version": "0.1.0",
+            "status": "EXPERIMENTAL",
+            "scan_enabled": 1,
+            "alert_enabled": 0,
+            "sha": "e1544089d460ed90050b1db223143581cb907963b9f3446f20fb1023690d54f9",
+            "name": "Compression Escape",
+            "classification": "EXPERIMENTAL",
+            "authorship": {
+              "lab": "codex",
+              "session_reference": "Codex current task 01a155be-ad08-7922-bb69-2762009efd16",
+              "statement": "Created by this actual Codex session; not attributed to Claude or Kimi."
+            }
+          }
+        ],
+        "performance": {
+          "detected": 0,
+          "confirmed": 0,
+          "resolved": 0,
+          "unresolved": 0,
+          "win_rate": null,
+          "net_paper_r": null,
+          "net_expectancy_r": null,
+          "profit_factor": null,
+          "max_realized_paper_drawdown_r": null,
+          "actual_realized_r": null,
+          "basis": "simulated net paper outcomes; no broker fills; unknown paths excluded and counted separately"
+        }
+      },
+      {
+        "id": "claude",
+        "name": "Claude Quant Lab",
+        "status": "PENDING_ACTUAL_AI_MODEL",
+        "models": [],
+        "performance": {
+          "detected": 0,
+          "confirmed": 0,
+          "resolved": 0,
+          "unresolved": 0,
+          "win_rate": null,
+          "net_paper_r": null,
+          "net_expectancy_r": null,
+          "profit_factor": null,
+          "max_realized_paper_drawdown_r": null,
+          "actual_realized_r": null,
+          "basis": "simulated net paper outcomes; no broker fills; unknown paths excluded and counted separately"
+        }
+      },
+      {
+        "id": "kimi",
+        "name": "Kimi Quant Lab",
+        "status": "PENDING_ACTUAL_AI_MODEL",
+        "models": [],
+        "performance": {
+          "detected": 0,
+          "confirmed": 0,
+          "resolved": 0,
+          "unresolved": 0,
+          "win_rate": null,
+          "net_paper_r": null,
+          "net_expectancy_r": null,
+          "profit_factor": null,
+          "max_realized_paper_drawdown_r": null,
+          "actual_realized_r": null,
+          "basis": "simulated net paper outcomes; no broker fills; unknown paths excluded and counted separately"
+        }
+      }
+    ],
+    "signals": [],
+    "performance": {
+      "detected": 0,
+      "confirmed": 0,
+      "resolved": 0,
+      "unresolved": 0,
+      "win_rate": null,
+      "net_paper_r": null,
+      "net_expectancy_r": null,
+      "profit_factor": null,
+      "max_realized_paper_drawdown_r": null,
+      "actual_realized_r": null,
+      "basis": "simulated net paper outcomes; no broker fills; unknown paths excluded and counted separately"
+    },
+    "breakdown": {
+      "lab": {},
+      "strategy": {},
+      "model_version": {},
+      "market": {},
+      "session": {},
+      "timeframe": {},
+      "planned_rr": {},
+      "realized_paper_r": {}
+    },
+    "outbox": [],
+    "verified_models": [],
+    "scope": "latest 1000 detected signals; experimental and verified never pooled",
+    "runtime": {
+      "enabled": true,
+      "telegram_mode": "DRY_RUN",
+      "outbound_activation_approved": false,
+      "running": true,
+      "last_processed": 1792447177.4416683,
+      "last_error": null,
+      "overwritten_snapshots": 0,
+      "latest_inputs": {
+        "XAUUSD": {
+          "source": "MT5_SHARED_COLLECTOR",
+          "broker_symbol": "XAUUSD",
+          "asof": 1792447174.019263,
+          "source_basis": "America/New_York+07:00",
+          "time_verified": true,
+          "input_sha256": "92cfee5399662639110944dd79eda869413207357aa6ee06b379990d06eaf3c4",
+          "quote": {
+            "bid": 4140.38,
+            "ask": 4140.78,
+            "tick_at": 1792443533.248
+          },
+          "metadata": {
+            "point": 0.01,
+            "tick_size": 0.01,
+            "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+            "tradable_long": true,
+            "tradable_short": true,
+            "commission_price": 0.07,
+            "cost_basis": "assumed research schedule; account charges unverified",
+            "swap_mode": 1,
+            "swap_long": -56.039,
+            "swap_short": 39.182,
+            "swap_rollover3days": 3
+          },
+          "frames": {
+            "M15": {
+              "closed_count": 300,
+              "last_closed_bar": {
+                "open": 4137.97,
+                "high": 4140.6,
+                "low": 4137.56,
+                "close": 4140.38,
+                "utc": 1792442700.0,
+                "spread": 0.4,
+                "tick_volume": 721
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H1": {
+              "closed_count": 160,
+              "last_closed_bar": {
+                "open": 4142.29,
+                "high": 4142.67,
+                "low": 4137.56,
+                "close": 4140.38,
+                "utc": 1792440000.0,
+                "spread": 0.05,
+                "tick_volume": 4694
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H4": {
+              "closed_count": 200,
+              "last_closed_bar": {
+                "open": 4141.02,
+                "high": 4149.49,
+                "low": 4136.55,
+                "close": 4140.38,
+                "utc": 1792429200.0,
+                "spread": 0.05,
+                "tick_volume": 51472
+              },
+              "last_close_at": 1792443600.0
+            },
+            "D1": {
+              "closed_count": 200,
+              "last_closed_bar": {
+                "open": 4164.72,
+                "high": 4190.42,
+                "low": 4136.55,
+                "close": 4140.38,
+                "utc": 1792357200.0,
+                "spread": 0.05,
+                "tick_volume": 504527
+              },
+              "last_close_at": 1792443600.0
+            },
+            "M1": {
+              "closed_count": 120,
+              "last_closed_bar": {
+                "open": 4140.47,
+                "high": 4140.54,
+                "low": 4140.07,
+                "close": 4140.38,
+                "utc": 1792443480.0,
+                "spread": 0.4,
+                "tick_volume": 56
+              },
+              "last_close_at": 1792443540.0
+            }
+          },
+          "data_quality": {
+            "M15": {},
+            "H1": {},
+            "H4": {},
+            "D1": {},
+            "M1": {}
+          },
+          "processed_count": 29,
+          "cycle_status": "COMPLETE",
+          "last_model_runs": [],
+          "last_model_run_at": null,
+          "generated_signal_count": 0
+        },
+        "BTCUSD": {
+          "source": "MT5_SHARED_COLLECTOR",
+          "broker_symbol": "BTCUSD",
+          "asof": 1792447174.042265,
+          "source_basis": "America/New_York+07:00",
+          "time_verified": true,
+          "input_sha256": "7f84f3c9e9d5a17b616f06ef96a742e6f818236f74016ad7d0203c6da6f92316",
+          "quote": {
+            "bid": 81934.74,
+            "ask": 81940.74,
+            "tick_at": 1792447175.3
+          },
+          "metadata": {
+            "point": 0.01,
+            "tick_size": 0.01,
+            "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+            "tradable_long": true,
+            "tradable_short": true,
+            "commission_price": 0.0,
+            "cost_basis": "assumed research schedule; account charges unverified",
+            "swap_mode": 5,
+            "swap_long": -20.0,
+            "swap_short": 0.0,
+            "swap_rollover3days": 7
+          },
+          "frames": {
+            "M15": {
+              "closed_count": 299,
+              "last_closed_bar": {
+                "open": 81976.59,
+                "high": 81985.67,
+                "low": 81914.88,
+                "close": 81943.54,
+                "utc": 1792445400.0,
+                "spread": 6.0,
+                "tick_volume": 2783
+              },
+              "last_close_at": 1792446300.0
+            },
+            "H1": {
+              "closed_count": 159,
+              "last_closed_bar": {
+                "open": 81765.32,
+                "high": 81985.0,
+                "low": 81734.72,
+                "close": 81908.12,
+                "utc": 1792440000.0,
+                "spread": 5.0,
+                "tick_volume": 22045
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H4": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 81895.43,
+                "high": 82063.67,
+                "low": 81680.16,
+                "close": 81908.12,
+                "utc": 1792429200.0,
+                "spread": 5.0,
+                "tick_volume": 163664
+              },
+              "last_close_at": 1792443600.0
+            },
+            "D1": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 80871.56,
+                "high": 83066.83,
+                "low": 80797.15,
+                "close": 81908.12,
+                "utc": 1792357200.0,
+                "spread": 5.0,
+                "tick_volume": 1204843
+              },
+              "last_close_at": 1792443600.0
+            },
+            "M1": {
+              "closed_count": 119,
+              "last_closed_bar": {
+                "open": 81912.77,
+                "high": 81943.86,
+                "low": 81912.77,
+                "close": 81924.93,
+                "utc": 1792447080.0,
+                "spread": 6.0,
+                "tick_volume": 238
+              },
+              "last_close_at": 1792447140.0
+            }
+          },
+          "data_quality": {
+            "M15": {
+              "forming": 1
+            },
+            "H1": {
+              "forming": 1
+            },
+            "H4": {
+              "forming": 1
+            },
+            "D1": {
+              "forming": 1
+            },
+            "M1": {
+              "forming": 1
+            }
+          },
+          "processed_count": 29,
+          "cycle_status": "COMPLETE",
+          "last_model_runs": [
+            {
+              "model": "compression_escape",
+              "status": "COMPLETE",
+              "decisions": [],
+              "resources": {
+                "enforced": true,
+                "memory_limit_mb": 192.0,
+                "peak_committed_mb": 13.828125,
+                "cpu_cap_percent": 15.0,
+                "cpu_limit_seconds": 4.0,
+                "cpu_seconds_used": 0.109375,
+                "max_processes": 1
+              }
+            }
+          ],
+          "last_model_run_at": 1792446319.851396,
+          "generated_signal_count": 0
+        },
+        "ETHUSD": {
+          "source": "MT5_SHARED_COLLECTOR",
+          "broker_symbol": "ETHUSD",
+          "asof": 1792447174.0525,
+          "source_basis": "America/New_York+07:00",
+          "time_verified": true,
+          "input_sha256": "f119c06c3021161882411e9e718a1598792109dbc7823536f8b374cc84df30ad",
+          "quote": {
+            "bid": 2398.11,
+            "ask": 2401.07,
+            "tick_at": 1792447172.688
+          },
+          "metadata": {
+            "point": 0.01,
+            "tick_size": 0.01,
+            "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+            "tradable_long": true,
+            "tradable_short": true,
+            "commission_price": 0.0,
+            "cost_basis": "assumed research schedule; account charges unverified",
+            "swap_mode": 5,
+            "swap_long": -20.0,
+            "swap_short": 0.0,
+            "swap_rollover3days": 7
+          },
+          "frames": {
+            "M15": {
+              "closed_count": 299,
+              "last_closed_bar": {
+                "open": 2401.29,
+                "high": 2402.43,
+                "low": 2397.0,
+                "close": 2399.07,
+                "utc": 1792445400.0,
+                "spread": 2.95,
+                "tick_volume": 1129
+              },
+              "last_close_at": 1792446300.0
+            },
+            "H1": {
+              "closed_count": 159,
+              "last_closed_bar": {
+                "open": 2390.87,
+                "high": 2400.48,
+                "low": 2388.88,
+                "close": 2397.25,
+                "utc": 1792440000.0,
+                "spread": 2.9,
+                "tick_volume": 5917
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H4": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 2398.72,
+                "high": 2404.72,
+                "low": 2385.19,
+                "close": 2397.25,
+                "utc": 1792429200.0,
+                "spread": 2.9,
+                "tick_volume": 37087
+              },
+              "last_close_at": 1792443600.0
+            },
+            "D1": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 2346.54,
+                "high": 2445.65,
+                "low": 2346.12,
+                "close": 2397.25,
+                "utc": 1792357200.0,
+                "spread": 2.9,
+                "tick_volume": 232656
+              },
+              "last_close_at": 1792443600.0
+            },
+            "M1": {
+              "closed_count": 119,
+              "last_closed_bar": {
+                "open": 2396.98,
+                "high": 2398.1,
+                "low": 2396.94,
+                "close": 2397.42,
+                "utc": 1792447080.0,
+                "spread": 2.95,
+                "tick_volume": 48
+              },
+              "last_close_at": 1792447140.0
+            }
+          },
+          "data_quality": {
+            "M15": {
+              "forming": 1
+            },
+            "H1": {
+              "forming": 1
+            },
+            "H4": {
+              "forming": 1
+            },
+            "D1": {
+              "forming": 1
+            },
+            "M1": {
+              "forming": 1
+            }
+          },
+          "processed_count": 29,
+          "cycle_status": "COMPLETE",
+          "last_model_runs": [
+            {
+              "model": "compression_escape",
+              "status": "COMPLETE",
+              "decisions": [],
+              "resources": {
+                "enforced": true,
+                "memory_limit_mb": 192.0,
+                "peak_committed_mb": 13.9375,
+                "cpu_cap_percent": 15.0,
+                "cpu_limit_seconds": 4.0,
+                "cpu_seconds_used": 0.109375,
+                "max_processes": 1
+              }
+            }
+          ],
+          "last_model_run_at": 1792446319.860307,
+          "generated_signal_count": 0
+        },
+        "EURUSD": {
+          "source": "MT5_SHARED_COLLECTOR",
+          "broker_symbol": "EURUSD",
+          "asof": 1792447174.066687,
+          "source_basis": "America/New_York+07:00",
+          "time_verified": true,
+          "input_sha256": "71f692a2302c014ce0011af482298554b1b24e0d281f1ef6063986bf29fab970",
+          "quote": {
+            "bid": 1.12124,
+            "ask": 1.12151,
+            "tick_at": 1792447171.302
+          },
+          "metadata": {
+            "point": 1e-05,
+            "tick_size": 1e-05,
+            "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+            "tradable_long": true,
+            "tradable_short": true,
+            "commission_price": 7e-05,
+            "cost_basis": "assumed research schedule; account charges unverified",
+            "swap_mode": 1,
+            "swap_long": -8.056,
+            "swap_short": 1.364,
+            "swap_rollover3days": 3
+          },
+          "frames": {
+            "M15": {
+              "closed_count": 299,
+              "last_closed_bar": {
+                "open": 1.12099,
+                "high": 1.12109,
+                "low": 1.12088,
+                "close": 1.12109,
+                "utc": 1792445400.0,
+                "spread": 0.00023,
+                "tick_volume": 39
+              },
+              "last_close_at": 1792446300.0
+            },
+            "H1": {
+              "closed_count": 159,
+              "last_closed_bar": {
+                "open": 1.12114,
+                "high": 1.12128,
+                "low": 1.1209,
+                "close": 1.12114,
+                "utc": 1792440000.0,
+                "spread": 0.0,
+                "tick_volume": 708
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H4": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 1.1212,
+                "high": 1.1218,
+                "low": 1.12068,
+                "close": 1.12114,
+                "utc": 1792429200.0,
+                "spread": 0.0,
+                "tick_volume": 4557
+              },
+              "last_close_at": 1792443600.0
+            },
+            "D1": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 1.11979,
+                "high": 1.12347,
+                "low": 1.11807,
+                "close": 1.12114,
+                "utc": 1792357200.0,
+                "spread": 0.0,
+                "tick_volume": 47575
+              },
+              "last_close_at": 1792443600.0
+            },
+            "M1": {
+              "closed_count": 119,
+              "last_closed_bar": {
+                "open": 1.12124,
+                "high": 1.12124,
+                "low": 1.12124,
+                "close": 1.12124,
+                "utc": 1792447080.0,
+                "spread": 0.00028000000000000003,
+                "tick_volume": 1
+              },
+              "last_close_at": 1792447140.0
+            }
+          },
+          "data_quality": {
+            "M15": {
+              "forming": 1
+            },
+            "H1": {
+              "forming": 1
+            },
+            "H4": {
+              "forming": 1
+            },
+            "D1": {
+              "forming": 1
+            },
+            "M1": {
+              "forming": 1
+            }
+          },
+          "processed_count": 29,
+          "cycle_status": "COMPLETE",
+          "last_model_runs": [
+            {
+              "model": "compression_escape",
+              "status": "COMPLETE",
+              "decisions": [],
+              "resources": {
+                "enforced": true,
+                "memory_limit_mb": 192.0,
+                "peak_committed_mb": 13.88671875,
+                "cpu_cap_percent": 15.0,
+                "cpu_limit_seconds": 4.0,
+                "cpu_seconds_used": 0.09375,
+                "max_processes": 1
+              }
+            }
+          ],
+          "last_model_run_at": 1792446319.869002,
+          "generated_signal_count": 0
+        },
+        "GBPUSD": {
+          "source": "MT5_SHARED_COLLECTOR",
+          "broker_symbol": "GBPUSD",
+          "asof": 1792447174.079572,
+          "source_basis": "America/New_York+07:00",
+          "time_verified": true,
+          "input_sha256": "75d41e1916a1efca89090f9e45c652bf3a6a3795baa466d4a411b435b56dc7ed",
+          "quote": {
+            "bid": 1.33027,
+            "ask": 1.33137,
+            "tick_at": 1792447171.302
+          },
+          "metadata": {
+            "point": 1e-05,
+            "tick_size": 1e-05,
+            "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+            "tradable_long": true,
+            "tradable_short": true,
+            "commission_price": 7e-05,
+            "cost_basis": "assumed research schedule; account charges unverified",
+            "swap_mode": 1,
+            "swap_long": -4.852,
+            "swap_short": -3.18,
+            "swap_rollover3days": 3
+          },
+          "frames": {
+            "M15": {
+              "closed_count": 299,
+              "last_closed_bar": {
+                "open": 1.32979,
+                "high": 1.33035,
+                "low": 1.32961,
+                "close": 1.33023,
+                "utc": 1792445400.0,
+                "spread": 0.00051,
+                "tick_volume": 237
+              },
+              "last_close_at": 1792446300.0
+            },
+            "H1": {
+              "closed_count": 159,
+              "last_closed_bar": {
+                "open": 1.33036,
+                "high": 1.33054,
+                "low": 1.33019,
+                "close": 1.33035,
+                "utc": 1792440000.0,
+                "spread": 1e-05,
+                "tick_volume": 1121
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H4": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 1.3304,
+                "high": 1.33122,
+                "low": 1.3299400000000001,
+                "close": 1.33035,
+                "utc": 1792429200.0,
+                "spread": 1e-05,
+                "tick_volume": 8423
+              },
+              "last_close_at": 1792443600.0
+            },
+            "D1": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 1.33052,
+                "high": 1.3342,
+                "low": 1.32988,
+                "close": 1.33035,
+                "utc": 1792357200.0,
+                "spread": 0.0,
+                "tick_volume": 70950
+              },
+              "last_close_at": 1792443600.0
+            },
+            "M1": {
+              "closed_count": 119,
+              "last_closed_bar": {
+                "open": 1.33033,
+                "high": 1.33033,
+                "low": 1.33027,
+                "close": 1.33033,
+                "utc": 1792447080.0,
+                "spread": 0.0010400000000000001,
+                "tick_volume": 3
+              },
+              "last_close_at": 1792447140.0
+            }
+          },
+          "data_quality": {
+            "M15": {
+              "forming": 1
+            },
+            "H1": {
+              "forming": 1
+            },
+            "H4": {
+              "forming": 1
+            },
+            "D1": {
+              "forming": 1
+            },
+            "M1": {
+              "forming": 1
+            }
+          },
+          "processed_count": 29,
+          "cycle_status": "COMPLETE",
+          "last_model_runs": [
+            {
+              "model": "compression_escape",
+              "status": "COMPLETE",
+              "decisions": [],
+              "resources": {
+                "enforced": true,
+                "memory_limit_mb": 192.0,
+                "peak_committed_mb": 14.01171875,
+                "cpu_cap_percent": 15.0,
+                "cpu_limit_seconds": 4.0,
+                "cpu_seconds_used": 0.03125,
+                "max_processes": 1
+              }
+            }
+          ],
+          "last_model_run_at": 1792446319.881676,
+          "generated_signal_count": 0
+        },
+        "GBPJPY": {
+          "source": "MT5_SHARED_COLLECTOR",
+          "broker_symbol": "GBPJPY",
+          "asof": 1792447174.092407,
+          "source_basis": "America/New_York+07:00",
+          "time_verified": true,
+          "input_sha256": "6396283f293d77084789bde5cbbb325e5a430394ad5340c35a344be3f87287e9",
+          "quote": {
+            "bid": 210.776,
+            "ask": 211.026,
+            "tick_at": 1792447171.303
+          },
+          "metadata": {
+            "point": 0.001,
+            "tick_size": 0.001,
+            "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+            "tradable_long": true,
+            "tradable_short": true,
+            "commission_price": 0.007,
+            "cost_basis": "assumed research schedule; account charges unverified",
+            "swap_mode": 1,
+            "swap_long": 10.172,
+            "swap_short": -21.404,
+            "swap_rollover3days": 3
+          },
+          "frames": {
+            "M15": {
+              "closed_count": 299,
+              "last_closed_bar": {
+                "open": 210.743,
+                "high": 210.82,
+                "low": 210.717,
+                "close": 210.784,
+                "utc": 1792445400.0,
+                "spread": 0.165,
+                "tick_volume": 378
+              },
+              "last_close_at": 1792446300.0
+            },
+            "H1": {
+              "closed_count": 159,
+              "last_closed_bar": {
+                "open": 210.92,
+                "high": 210.934,
+                "low": 210.873,
+                "close": 210.89,
+                "utc": 1792440000.0,
+                "spread": 0.0,
+                "tick_volume": 1816
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H4": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 210.891,
+                "high": 210.944,
+                "low": 210.835,
+                "close": 210.89,
+                "utc": 1792429200.0,
+                "spread": 0.0,
+                "tick_volume": 11823
+              },
+              "last_close_at": 1792443600.0
+            },
+            "D1": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 210.135,
+                "high": 211.086,
+                "low": 210.074,
+                "close": 210.89,
+                "utc": 1792357200.0,
+                "spread": 0.0,
+                "tick_volume": 108452
+              },
+              "last_close_at": 1792443600.0
+            },
+            "M1": {
+              "closed_count": 119,
+              "last_closed_bar": {
+                "open": 210.782,
+                "high": 210.784,
+                "low": 210.776,
+                "close": 210.776,
+                "utc": 1792447080.0,
+                "spread": 0.249,
+                "tick_volume": 10
+              },
+              "last_close_at": 1792447140.0
+            }
+          },
+          "data_quality": {
+            "M15": {
+              "forming": 1
+            },
+            "H1": {
+              "forming": 1
+            },
+            "H4": {
+              "forming": 1
+            },
+            "D1": {
+              "forming": 1
+            },
+            "M1": {
+              "forming": 1
+            }
+          },
+          "processed_count": 29,
+          "cycle_status": "COMPLETE",
+          "last_model_runs": [
+            {
+              "model": "compression_escape",
+              "status": "COMPLETE",
+              "decisions": [],
+              "resources": {
+                "enforced": true,
+                "memory_limit_mb": 192.0,
+                "peak_committed_mb": 13.94140625,
+                "cpu_cap_percent": 15.0,
+                "cpu_limit_seconds": 4.0,
+                "cpu_seconds_used": 0.0625,
+                "max_processes": 1
+              }
+            }
+          ],
+          "last_model_run_at": 1792446319.891656,
+          "generated_signal_count": 0
+        },
+        "USDJPY": {
+          "source": "MT5_SHARED_COLLECTOR",
+          "broker_symbol": "USDJPY",
+          "asof": 1792447174.115387,
+          "source_basis": "America/New_York+07:00",
+          "time_verified": true,
+          "input_sha256": "52499d385882ce48b1045602c72d78f09527ecafc493d193d6952ae9bfe2fc38",
+          "quote": {
+            "bid": 158.442,
+            "ask": 158.504,
+            "tick_at": 1792447175.746
+          },
+          "metadata": {
+            "point": 0.001,
+            "tick_size": 0.001,
+            "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+            "tradable_long": true,
+            "tradable_short": true,
+            "commission_price": 0.007,
+            "cost_basis": "assumed research schedule; account charges unverified",
+            "swap_mode": 1,
+            "swap_long": 8.365,
+            "swap_short": -17.145,
+            "swap_rollover3days": 3
+          },
+          "frames": {
+            "M15": {
+              "closed_count": 299,
+              "last_closed_bar": {
+                "open": 158.479,
+                "high": 158.496,
+                "low": 158.448,
+                "close": 158.458,
+                "utc": 1792445400.0,
+                "spread": 0.062,
+                "tick_volume": 159
+              },
+              "last_close_at": 1792446300.0
+            },
+            "H1": {
+              "closed_count": 159,
+              "last_closed_bar": {
+                "open": 158.545,
+                "high": 158.551,
+                "low": 158.509,
+                "close": 158.523,
+                "utc": 1792440000.0,
+                "spread": 0.0,
+                "tick_volume": 948
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H4": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 158.518,
+                "high": 158.551,
+                "low": 158.438,
+                "close": 158.523,
+                "utc": 1792429200.0,
+                "spread": 0.0,
+                "tick_volume": 5440
+              },
+              "last_close_at": 1792443600.0
+            },
+            "D1": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 157.896,
+                "high": 158.551,
+                "low": 157.702,
+                "close": 158.523,
+                "utc": 1792357200.0,
+                "spread": 0.0,
+                "tick_volume": 62780
+              },
+              "last_close_at": 1792443600.0
+            },
+            "M1": {
+              "closed_count": 119,
+              "last_closed_bar": {
+                "open": 158.444,
+                "high": 158.446,
+                "low": 158.44,
+                "close": 158.44,
+                "utc": 1792447080.0,
+                "spread": 0.062,
+                "tick_volume": 8
+              },
+              "last_close_at": 1792447140.0
+            }
+          },
+          "data_quality": {
+            "M15": {
+              "forming": 1
+            },
+            "H1": {
+              "forming": 1
+            },
+            "H4": {
+              "forming": 1
+            },
+            "D1": {
+              "forming": 1
+            },
+            "M1": {
+              "forming": 1
+            }
+          },
+          "processed_count": 29,
+          "cycle_status": "COMPLETE",
+          "last_model_runs": [],
+          "last_model_run_at": null,
+          "generated_signal_count": 0
+        },
+        "NAS100": {
+          "source": "MT5_SHARED_COLLECTOR",
+          "broker_symbol": "USTEC",
+          "asof": 1792447174.127084,
+          "source_basis": "America/New_York+07:00",
+          "time_verified": true,
+          "input_sha256": "e5cd2205d6cee40538a359700bcfa9caf5dddda4d8b932b7337d2033ce6c80a7",
+          "quote": {
+            "bid": 29552.4,
+            "ask": 29553.4,
+            "tick_at": 1792443584.076
+          },
+          "metadata": {
+            "point": 0.01,
+            "tick_size": 0.01,
+            "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+            "tradable_long": true,
+            "tradable_short": true,
+            "commission_price": 0.0,
+            "cost_basis": "assumed research schedule; account charges unverified",
+            "swap_mode": 3,
+            "swap_long": -7.829,
+            "swap_short": -0.968,
+            "swap_rollover3days": 5
+          },
+          "frames": {
+            "M15": {
+              "closed_count": 300,
+              "last_closed_bar": {
+                "open": 29548.6,
+                "high": 29555.1,
+                "low": 29539.6,
+                "close": 29552.4,
+                "utc": 1792442700.0,
+                "spread": 1.0,
+                "tick_volume": 1322
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H1": {
+              "closed_count": 160,
+              "last_closed_bar": {
+                "open": 29532.3,
+                "high": 29562.8,
+                "low": 29509.1,
+                "close": 29552.4,
+                "utc": 1792440000.0,
+                "spread": 1.0,
+                "tick_volume": 7820
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H4": {
+              "closed_count": 200,
+              "last_closed_bar": {
+                "open": 29600.1,
+                "high": 29650.0,
+                "low": 29509.1,
+                "close": 29552.4,
+                "utc": 1792429200.0,
+                "spread": 0.0,
+                "tick_volume": 51103
+              },
+              "last_close_at": 1792443600.0
+            },
+            "D1": {
+              "closed_count": 200,
+              "last_closed_bar": {
+                "open": 29128.4,
+                "high": 29790.6,
+                "low": 29122.2,
+                "close": 29552.4,
+                "utc": 1792357200.0,
+                "spread": 0.0,
+                "tick_volume": 286498
+              },
+              "last_close_at": 1792443600.0
+            },
+            "M1": {
+              "closed_count": 120,
+              "last_closed_bar": {
+                "open": 29552.4,
+                "high": 29555.1,
+                "low": 29551.4,
+                "close": 29552.4,
+                "utc": 1792443540.0,
+                "spread": 1.0,
+                "tick_volume": 58
+              },
+              "last_close_at": 1792443600.0
+            }
+          },
+          "data_quality": {
+            "M15": {},
+            "H1": {},
+            "H4": {},
+            "D1": {},
+            "M1": {}
+          },
+          "processed_count": 29,
+          "cycle_status": "COMPLETE",
+          "last_model_runs": [],
+          "last_model_run_at": null,
+          "generated_signal_count": 0
+        },
+        "US500": {
+          "source": "MT5_SHARED_COLLECTOR",
+          "broker_symbol": "US500",
+          "asof": 1792447174.141125,
+          "source_basis": "America/New_York+07:00",
+          "time_verified": true,
+          "input_sha256": "1cd01432a4caf61ca33ef4690e282740a4bf4b7cabe6dadaab21600959afe5fe",
+          "quote": {
+            "bid": 7696.2,
+            "ask": 7696.7,
+            "tick_at": 1792443583.674
+          },
+          "metadata": {
+            "point": 0.01,
+            "tick_size": 0.01,
+            "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+            "tradable_long": true,
+            "tradable_short": true,
+            "commission_price": 0.0,
+            "cost_basis": "assumed research schedule; account charges unverified",
+            "swap_mode": 2,
+            "swap_long": -2.054,
+            "swap_short": -0.254,
+            "swap_rollover3days": 5
+          },
+          "frames": {
+            "M15": {
+              "closed_count": 300,
+              "last_closed_bar": {
+                "open": 7695.7,
+                "high": 7696.9,
+                "low": 7694.8,
+                "close": 7696.2,
+                "utc": 1792442700.0,
+                "spread": 0.5,
+                "tick_volume": 143
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H1": {
+              "closed_count": 160,
+              "last_closed_bar": {
+                "open": 7691.9,
+                "high": 7696.9,
+                "low": 7688.9,
+                "close": 7696.2,
+                "utc": 1792440000.0,
+                "spread": 0.5,
+                "tick_volume": 907
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H4": {
+              "closed_count": 200,
+              "last_closed_bar": {
+                "open": 7700.3,
+                "high": 7710.8,
+                "low": 7687.5,
+                "close": 7696.2,
+                "utc": 1792429200.0,
+                "spread": 0.3,
+                "tick_volume": 12437
+              },
+              "last_close_at": 1792443600.0
+            },
+            "D1": {
+              "closed_count": 200,
+              "last_closed_bar": {
+                "open": 7651.0,
+                "high": 7729.8,
+                "low": 7650.3,
+                "close": 7696.2,
+                "utc": 1792357200.0,
+                "spread": 0.3,
+                "tick_volume": 77057
+              },
+              "last_close_at": 1792443600.0
+            },
+            "M1": {
+              "closed_count": 120,
+              "last_closed_bar": {
+                "open": 7696.7,
+                "high": 7696.9,
+                "low": 7696.2,
+                "close": 7696.2,
+                "utc": 1792443540.0,
+                "spread": 0.5,
+                "tick_volume": 19
+              },
+              "last_close_at": 1792443600.0
+            }
+          },
+          "data_quality": {
+            "M15": {},
+            "H1": {},
+            "H4": {},
+            "D1": {},
+            "M1": {}
+          },
+          "processed_count": 29,
+          "cycle_status": "COMPLETE",
+          "last_model_runs": [],
+          "last_model_run_at": null,
+          "generated_signal_count": 0
+        },
+        "GER40": {
+          "source": "MT5_SHARED_COLLECTOR",
+          "broker_symbol": "DE40",
+          "asof": 1792447174.155685,
+          "source_basis": "America/New_York+07:00",
+          "time_verified": true,
+          "input_sha256": "9f0601a7d41197378ecc1623c17946438d15f11af28a5fae202b09344fb8169a",
+          "quote": {
+            "bid": 25207.6,
+            "ask": 25211.6,
+            "tick_at": 1792443536.774
+          },
+          "metadata": {
+            "point": 0.01,
+            "tick_size": 0.01,
+            "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+            "tradable_long": true,
+            "tradable_short": true,
+            "commission_price": 0.0,
+            "cost_basis": "assumed research schedule; account charges unverified",
+            "swap_mode": 3,
+            "swap_long": -5.796,
+            "swap_short": -1.984,
+            "swap_rollover3days": 5
+          },
+          "frames": {
+            "M15": {
+              "closed_count": 300,
+              "last_closed_bar": {
+                "open": 25202.7,
+                "high": 25217.3,
+                "low": 25197.7,
+                "close": 25207.6,
+                "utc": 1792442700.0,
+                "spread": 4.0,
+                "tick_volume": 398
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H1": {
+              "closed_count": 160,
+              "last_closed_bar": {
+                "open": 25176.2,
+                "high": 25217.3,
+                "low": 25171.1,
+                "close": 25207.6,
+                "utc": 1792440000.0,
+                "spread": 4.0,
+                "tick_volume": 2658
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H4": {
+              "closed_count": 200,
+              "last_closed_bar": {
+                "open": 25223.3,
+                "high": 25224.8,
+                "low": 25168.3,
+                "close": 25207.6,
+                "utc": 1792429200.0,
+                "spread": 0.8,
+                "tick_volume": 11642
+              },
+              "last_close_at": 1792443600.0
+            },
+            "D1": {
+              "closed_count": 200,
+              "last_closed_bar": {
+                "open": 25499.2,
+                "high": 25601.5,
+                "low": 25168.3,
+                "close": 25207.6,
+                "utc": 1792357200.0,
+                "spread": 0.5,
+                "tick_volume": 84253
+              },
+              "last_close_at": 1792443600.0
+            },
+            "M1": {
+              "closed_count": 120,
+              "last_closed_bar": {
+                "open": 25207.1,
+                "high": 25207.6,
+                "low": 25204.7,
+                "close": 25207.6,
+                "utc": 1792443480.0,
+                "spread": 4.0,
+                "tick_volume": 23
+              },
+              "last_close_at": 1792443540.0
+            }
+          },
+          "data_quality": {
+            "M15": {},
+            "H1": {},
+            "H4": {},
+            "D1": {},
+            "M1": {}
+          },
+          "processed_count": 29,
+          "cycle_status": "COMPLETE",
+          "last_model_runs": [],
+          "last_model_run_at": null,
+          "generated_signal_count": 0
+        },
+        "USDCHF": {
+          "source": "MT5_SHARED_COLLECTOR",
+          "broker_symbol": "USDCHF",
+          "asof": 1792447174.166089,
+          "source_basis": "America/New_York+07:00",
+          "time_verified": true,
+          "input_sha256": "cb3e807d2adc3fbe449f8441e326eb59c0ac6a831b65c103830c94f2d2e5d1b6",
+          "quote": {
+            "bid": 0.82578,
+            "ask": 0.82726,
+            "tick_at": 1792447174.541
+          },
+          "metadata": {
+            "point": 1e-05,
+            "tick_size": 1e-05,
+            "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+            "tradable_long": true,
+            "tradable_short": true,
+            "commission_price": 7e-05,
+            "cost_basis": "assumed research schedule; account charges unverified",
+            "swap_mode": 1,
+            "swap_long": 6.211,
+            "swap_short": -13.155,
+            "swap_rollover3days": 3
+          },
+          "frames": {
+            "M15": {
+              "closed_count": 299,
+              "last_closed_bar": {
+                "open": 0.8253,
+                "high": 0.82606,
+                "low": 0.8253,
+                "close": 0.82591,
+                "utc": 1792445400.0,
+                "spread": 0.0014000000000000002,
+                "tick_volume": 146
+              },
+              "last_close_at": 1792446300.0
+            },
+            "H1": {
+              "closed_count": 159,
+              "last_closed_bar": {
+                "open": 0.82666,
+                "high": 0.82692,
+                "low": 0.82661,
+                "close": 0.82666,
+                "utc": 1792440000.0,
+                "spread": 0.0,
+                "tick_volume": 761
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H4": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 0.8261,
+                "high": 0.82694,
+                "low": 0.82567,
+                "close": 0.82666,
+                "utc": 1792429200.0,
+                "spread": 0.0,
+                "tick_volume": 4308
+              },
+              "last_close_at": 1792443600.0
+            },
+            "D1": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 0.8236,
+                "high": 0.82703,
+                "low": 0.82283,
+                "close": 0.82666,
+                "utc": 1792357200.0,
+                "spread": 0.0,
+                "tick_volume": 46725
+              },
+              "last_close_at": 1792443600.0
+            },
+            "M1": {
+              "closed_count": 119,
+              "last_closed_bar": {
+                "open": 0.82584,
+                "high": 0.82618,
+                "low": 0.82578,
+                "close": 0.82617,
+                "utc": 1792447080.0,
+                "spread": 0.00124,
+                "tick_volume": 8
+              },
+              "last_close_at": 1792447140.0
+            }
+          },
+          "data_quality": {
+            "M15": {
+              "forming": 1
+            },
+            "H1": {
+              "forming": 1
+            },
+            "H4": {
+              "forming": 1
+            },
+            "D1": {
+              "forming": 1
+            },
+            "M1": {
+              "forming": 1
+            }
+          },
+          "processed_count": 29,
+          "cycle_status": "COMPLETE",
+          "last_model_runs": [],
+          "last_model_run_at": null,
+          "generated_signal_count": 0
+        },
+        "USDCAD": {
+          "source": "MT5_SHARED_COLLECTOR",
+          "broker_symbol": "USDCAD",
+          "asof": 1792447174.177067,
+          "source_basis": "America/New_York+07:00",
+          "time_verified": true,
+          "input_sha256": "8d437caf04cbeb430ff36a293116a76bc3084cf2334c106014f48106df51ce1e",
+          "quote": {
+            "bid": 1.41073,
+            "ask": 1.41132,
+            "tick_at": 1792447169.278
+          },
+          "metadata": {
+            "point": 1e-05,
+            "tick_size": 1e-05,
+            "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+            "tradable_long": true,
+            "tradable_short": true,
+            "commission_price": 7e-05,
+            "cost_basis": "assumed research schedule; account charges unverified",
+            "swap_mode": 1,
+            "swap_long": 3.215,
+            "swap_short": -10.91,
+            "swap_rollover3days": 3
+          },
+          "frames": {
+            "M15": {
+              "closed_count": 299,
+              "last_closed_bar": {
+                "open": 1.41083,
+                "high": 1.41092,
+                "low": 1.41079,
+                "close": 1.4109,
+                "utc": 1792445400.0,
+                "spread": 0.00047000000000000004,
+                "tick_volume": 46
+              },
+              "last_close_at": 1792446300.0
+            },
+            "H1": {
+              "closed_count": 159,
+              "last_closed_bar": {
+                "open": 1.4111099999999999,
+                "high": 1.41122,
+                "low": 1.4108100000000001,
+                "close": 1.4111500000000001,
+                "utc": 1792440000.0,
+                "spread": 1e-05,
+                "tick_volume": 849
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H4": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 1.4095,
+                "high": 1.41126,
+                "low": 1.40924,
+                "close": 1.4111500000000001,
+                "utc": 1792429200.0,
+                "spread": 0.0,
+                "tick_volume": 6401
+              },
+              "last_close_at": 1792443600.0
+            },
+            "D1": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 1.4108100000000001,
+                "high": 1.41343,
+                "low": 1.40706,
+                "close": 1.4111500000000001,
+                "utc": 1792357200.0,
+                "spread": 0.0,
+                "tick_volume": 56355
+              },
+              "last_close_at": 1792443600.0
+            },
+            "M1": {
+              "closed_count": 119,
+              "last_closed_bar": {
+                "open": 1.41079,
+                "high": 1.41083,
+                "low": 1.41074,
+                "close": 1.41074,
+                "utc": 1792447080.0,
+                "spread": 0.00048000000000000007,
+                "tick_volume": 9
+              },
+              "last_close_at": 1792447140.0
+            }
+          },
+          "data_quality": {
+            "M15": {
+              "forming": 1
+            },
+            "H1": {
+              "forming": 1
+            },
+            "H4": {
+              "forming": 1
+            },
+            "D1": {
+              "forming": 1
+            },
+            "M1": {
+              "forming": 1
+            }
+          },
+          "processed_count": 29,
+          "cycle_status": "COMPLETE",
+          "last_model_runs": [],
+          "last_model_run_at": null,
+          "generated_signal_count": 0
+        },
+        "AUDUSD": {
+          "source": "MT5_SHARED_COLLECTOR",
+          "broker_symbol": "AUDUSD",
+          "asof": 1792447174.186931,
+          "source_basis": "America/New_York+07:00",
+          "time_verified": true,
+          "input_sha256": "0344e07d3b93d200ac9a84bfbfdd4bd0188191ab445d18bc177d42b4c628b4f7",
+          "quote": {
+            "bid": 0.69779,
+            "ask": 0.69802,
+            "tick_at": 1792447174.541
+          },
+          "metadata": {
+            "point": 1e-05,
+            "tick_size": 1e-05,
+            "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+            "tradable_long": true,
+            "tradable_short": true,
+            "commission_price": 7e-05,
+            "cost_basis": "assumed research schedule; account charges unverified",
+            "swap_mode": 1,
+            "swap_long": -2.385,
+            "swap_short": -4.607,
+            "swap_rollover3days": 3
+          },
+          "frames": {
+            "M15": {
+              "closed_count": 299,
+              "last_closed_bar": {
+                "open": 0.69779,
+                "high": 0.69783,
+                "low": 0.69774,
+                "close": 0.69782,
+                "utc": 1792445400.0,
+                "spread": 0.00023,
+                "tick_volume": 36
+              },
+              "last_close_at": 1792446300.0
+            },
+            "H1": {
+              "closed_count": 159,
+              "last_closed_bar": {
+                "open": 0.69793,
+                "high": 0.69804,
+                "low": 0.69779,
+                "close": 0.69791,
+                "utc": 1792440000.0,
+                "spread": 0.0,
+                "tick_volume": 735
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H4": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 0.69765,
+                "high": 0.69819,
+                "low": 0.69744,
+                "close": 0.69791,
+                "utc": 1792429200.0,
+                "spread": 0.0,
+                "tick_volume": 5536
+              },
+              "last_close_at": 1792443600.0
+            },
+            "D1": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 0.69646,
+                "high": 0.69929,
+                "low": 0.69493,
+                "close": 0.69791,
+                "utc": 1792357200.0,
+                "spread": 0.0,
+                "tick_volume": 42945
+              },
+              "last_close_at": 1792443600.0
+            },
+            "M1": {
+              "closed_count": 119,
+              "last_closed_bar": {
+                "open": 0.69781,
+                "high": 0.69784,
+                "low": 0.69775,
+                "close": 0.69777,
+                "utc": 1792447080.0,
+                "spread": 0.00023,
+                "tick_volume": 11
+              },
+              "last_close_at": 1792447140.0
+            }
+          },
+          "data_quality": {
+            "M15": {
+              "forming": 1
+            },
+            "H1": {
+              "forming": 1
+            },
+            "H4": {
+              "forming": 1
+            },
+            "D1": {
+              "forming": 1
+            },
+            "M1": {
+              "forming": 1
+            }
+          },
+          "processed_count": 29,
+          "cycle_status": "COMPLETE",
+          "last_model_runs": [],
+          "last_model_run_at": null,
+          "generated_signal_count": 0
+        },
+        "NZDUSD": {
+          "source": "MT5_SHARED_COLLECTOR",
+          "broker_symbol": "NZDUSD",
+          "asof": 1792447174.199734,
+          "source_basis": "America/New_York+07:00",
+          "time_verified": true,
+          "input_sha256": "7b47f9ae2f6cd99f04c41c5aa530613c11ac13da1d5c5ace00fec7db2c3a23ce",
+          "quote": {
+            "bid": 0.56611,
+            "ask": 0.5665,
+            "tick_at": 1792447174.74
+          },
+          "metadata": {
+            "point": 1e-05,
+            "tick_size": 1e-05,
+            "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+            "tradable_long": true,
+            "tradable_short": true,
+            "commission_price": 7e-05,
+            "cost_basis": "assumed research schedule; account charges unverified",
+            "swap_mode": 1,
+            "swap_long": -4.101,
+            "swap_short": 0.209,
+            "swap_rollover3days": 3
+          },
+          "frames": {
+            "M15": {
+              "closed_count": 299,
+              "last_closed_bar": {
+                "open": 0.5662,
+                "high": 0.56628,
+                "low": 0.56598,
+                "close": 0.56604,
+                "utc": 1792445400.0,
+                "spread": 0.00034,
+                "tick_volume": 176
+              },
+              "last_close_at": 1792446300.0
+            },
+            "H1": {
+              "closed_count": 159,
+              "last_closed_bar": {
+                "open": 0.56609,
+                "high": 0.56625,
+                "low": 0.56602,
+                "close": 0.56615,
+                "utc": 1792440000.0,
+                "spread": 0.0,
+                "tick_volume": 693
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H4": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 0.56616,
+                "high": 0.56652,
+                "low": 0.56593,
+                "close": 0.56615,
+                "utc": 1792429200.0,
+                "spread": 0.0,
+                "tick_volume": 5362
+              },
+              "last_close_at": 1792443600.0
+            },
+            "D1": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 0.56526,
+                "high": 0.56748,
+                "low": 0.56479,
+                "close": 0.56615,
+                "utc": 1792357200.0,
+                "spread": 0.0,
+                "tick_volume": 49400
+              },
+              "last_close_at": 1792443600.0
+            },
+            "M1": {
+              "closed_count": 119,
+              "last_closed_bar": {
+                "open": 0.56613,
+                "high": 0.56614,
+                "low": 0.56613,
+                "close": 0.56613,
+                "utc": 1792447080.0,
+                "spread": 0.00033000000000000005,
+                "tick_volume": 11
+              },
+              "last_close_at": 1792447140.0
+            }
+          },
+          "data_quality": {
+            "M15": {
+              "forming": 1
+            },
+            "H1": {
+              "forming": 1
+            },
+            "H4": {
+              "forming": 1
+            },
+            "D1": {
+              "forming": 1
+            },
+            "M1": {
+              "forming": 1
+            }
+          },
+          "processed_count": 29,
+          "cycle_status": "COMPLETE",
+          "last_model_runs": [],
+          "last_model_run_at": null,
+          "generated_signal_count": 0
+        },
+        "XAGUSD": {
+          "source": "MT5_SHARED_COLLECTOR",
+          "broker_symbol": "XAGUSD",
+          "asof": 1792447174.208868,
+          "source_basis": "America/New_York+07:00",
+          "time_verified": true,
+          "input_sha256": "ced3ba37547afebe9bcfb5fe6c90b0247e171605c476180223d9287697c4bfee",
+          "quote": {
+            "bid": 57.094,
+            "ask": 57.114,
+            "tick_at": 1792443538.82
+          },
+          "metadata": {
+            "point": 0.001,
+            "tick_size": 0.001,
+            "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+            "tradable_long": true,
+            "tradable_short": true,
+            "commission_price": 0.0014,
+            "cost_basis": "assumed research schedule; account charges unverified",
+            "swap_mode": 1,
+            "swap_long": -7.801,
+            "swap_short": 5.32,
+            "swap_rollover3days": 3
+          },
+          "frames": {
+            "M15": {
+              "closed_count": 300,
+              "last_closed_bar": {
+                "open": 57.042,
+                "high": 57.096,
+                "low": 57.036,
+                "close": 57.094,
+                "utc": 1792442700.0,
+                "spread": 0.02,
+                "tick_volume": 223
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H1": {
+              "closed_count": 160,
+              "last_closed_bar": {
+                "open": 57.092,
+                "high": 57.098,
+                "low": 57.026,
+                "close": 57.094,
+                "utc": 1792440000.0,
+                "spread": 0.005,
+                "tick_volume": 1287
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H4": {
+              "closed_count": 200,
+              "last_closed_bar": {
+                "open": 57.19,
+                "high": 57.432,
+                "low": 57.026,
+                "close": 57.094,
+                "utc": 1792429200.0,
+                "spread": 0.005,
+                "tick_volume": 14279
+              },
+              "last_close_at": 1792443600.0
+            },
+            "D1": {
+              "closed_count": 200,
+              "last_closed_bar": {
+                "open": 56.785,
+                "high": 57.85,
+                "low": 56.484,
+                "close": 57.094,
+                "utc": 1792357200.0,
+                "spread": 0.005,
+                "tick_volume": 131990
+              },
+              "last_close_at": 1792443600.0
+            },
+            "M1": {
+              "closed_count": 120,
+              "last_closed_bar": {
+                "open": 57.092,
+                "high": 57.096,
+                "low": 57.091,
+                "close": 57.094,
+                "utc": 1792443480.0,
+                "spread": 0.02,
+                "tick_volume": 12
+              },
+              "last_close_at": 1792443540.0
+            }
+          },
+          "data_quality": {
+            "M15": {},
+            "H1": {},
+            "H4": {},
+            "D1": {},
+            "M1": {}
+          },
+          "processed_count": 29,
+          "cycle_status": "COMPLETE",
+          "last_model_runs": [],
+          "last_model_run_at": null,
+          "generated_signal_count": 0
+        },
+        "EURJPY": {
+          "source": "MT5_SHARED_COLLECTOR",
+          "broker_symbol": "EURJPY",
+          "asof": 1792447174.219544,
+          "source_basis": "America/New_York+07:00",
+          "time_verified": true,
+          "input_sha256": "474388a90a79aaa895cd2bd3591702e477a8601da2135f8abbc0baa99c3b5c9d",
+          "quote": {
+            "bid": 177.683,
+            "ask": 177.767,
+            "tick_at": 1792447175.543
+          },
+          "metadata": {
+            "point": 0.001,
+            "tick_size": 0.001,
+            "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+            "tradable_long": true,
+            "tradable_short": true,
+            "commission_price": 0.007,
+            "cost_basis": "assumed research schedule; account charges unverified",
+            "swap_mode": 1,
+            "swap_long": 4.291,
+            "swap_short": -10.144,
+            "swap_rollover3days": 3
+          },
+          "frames": {
+            "M15": {
+              "closed_count": 299,
+              "last_closed_bar": {
+                "open": 177.682,
+                "high": 177.705,
+                "low": 177.653,
+                "close": 177.667,
+                "utc": 1792445400.0,
+                "spread": 0.082,
+                "tick_volume": 202
+              },
+              "last_close_at": 1792446300.0
+            },
+            "H1": {
+              "closed_count": 159,
+              "last_closed_bar": {
+                "open": 177.747,
+                "high": 177.757,
+                "low": 177.701,
+                "close": 177.726,
+                "utc": 1792440000.0,
+                "spread": 0.011,
+                "tick_volume": 1509
+              },
+              "last_close_at": 1792443600.0
+            },
+            "H4": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 177.728,
+                "high": 177.778,
+                "low": 177.668,
+                "close": 177.726,
+                "utc": 1792429200.0,
+                "spread": 0.011,
+                "tick_volume": 8888
+              },
+              "last_close_at": 1792443600.0
+            },
+            "D1": {
+              "closed_count": 199,
+              "last_closed_bar": {
+                "open": 176.816,
+                "high": 177.778,
+                "low": 176.61,
+                "close": 177.726,
+                "utc": 1792357200.0,
+                "spread": 0.009000000000000001,
+                "tick_volume": 89312
+              },
+              "last_close_at": 1792443600.0
+            },
+            "M1": {
+              "closed_count": 119,
+              "last_closed_bar": {
+                "open": 177.673,
+                "high": 177.675,
+                "low": 177.67,
+                "close": 177.672,
+                "utc": 1792447080.0,
+                "spread": 0.082,
+                "tick_volume": 18
+              },
+              "last_close_at": 1792447140.0
+            }
+          },
+          "data_quality": {
+            "M15": {
+              "forming": 1
+            },
+            "H1": {
+              "forming": 1
+            },
+            "H4": {
+              "forming": 1
+            },
+            "D1": {
+              "forming": 1
+            },
+            "M1": {
+              "forming": 1
+            }
+          },
+          "processed_count": 29,
+          "cycle_status": "COMPLETE",
+          "last_model_runs": [],
+          "last_model_run_at": null,
+          "generated_signal_count": 0
+        }
+      }
+    }
+  },
+  "usage": {
+    "working_set_mb": 4414.2265625,
+    "peak_working_set_mb": 5872.265625,
+    "private_mb": 5009.79296875,
+    "cpu_seconds": 88.0625,
+    "logical_cpus": 20
+  }
+}

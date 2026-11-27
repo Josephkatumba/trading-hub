@@ -1,0 +1,30 @@
+import {test,expect} from '@playwright/test';
+import fs from 'node:fs';
+const fixture=JSON.parse(fs.readFileSync(new URL('../../quant_labs/live_dry_run/dashboard_fixture.json',import.meta.url),'utf8'));
+test('local labs shows actual dry-run evidence and preserves Garden, Markets and Portfolio navigation',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.addInitScript(()=>localStorage.setItem('th_engine_url',location.origin));
+ await page.route('**/api/**',async route=>{
+  const path=new URL(route.request().url()).pathname;
+  const data=path==='/api/quant-labs/live'?fixture:path==='/api/auth/me'?{user:{id:'local-owner'},entitlements:{plan:'owner'}}:path.startsWith('/api/journal/')?{records:[]}:path==='/api/market/chart'?{candles:[],episodes:[],outcomes:[],symbol:'XAUUSD',timeframe:'M15'}:{markets:[],strategies:[],status:'CONNECTED'};
+  await route.fulfill({contentType:'application/json',body:JSON.stringify(data)});
+ });
+ await page.goto('/classic.html');await page.locator('[data-view="quantLabs"]').click();
+ await expect(page.locator('#quantLabsData')).toContainText('Compression Escape');
+ await expect(page.locator('#quantLabsData')).toContainText('Claude Quant Lab');
+ await expect(page.locator('#quantLabsData')).toContainText('Kimi Quant Lab');
+ await expect(page.locator('#quantLabsData')).toContainText('PENDING_ACTUAL_AI_MODEL');
+ await expect(page.locator('#quantLabsData')).toContainText('TP_HIT');
+ await expect(page.locator('#quantLabsData')).toContainText('NO OUTBOUND DELIVERY');
+ await page.setViewportSize({width:390,height:844});
+ await expect.poll(()=>page.locator('aside').evaluate(el=>el.getBoundingClientRect().right)).toBeLessThanOrEqual(0);
+ expect(await page.locator('.ql-workspace').evaluate(el=>el.getBoundingClientRect().width)).toBeLessThan(391);
+ await page.screenshot({path:'quant_labs/live_dry_run/dashboard-mobile.png',fullPage:true});
+ await page.setViewportSize({width:1440,height:1000});
+ await expect.poll(()=>page.locator('aside').evaluate(el=>el.getBoundingClientRect().left)).toBe(0);
+ await page.screenshot({path:'quant_labs/live_dry_run/dashboard-desktop.png',fullPage:true});
+ await page.locator('[data-view="overview"]').click();await expect(page.locator('main')).toContainText('Your portfolio.');
+ await page.locator('[data-view="markets"]').click();await expect(page.locator('#intelligenceChart')).toBeVisible();
+ await page.locator('[data-view="radar"]').first().click();await expect(page.locator('#radarRoot')).toBeVisible();
+ expect(errors).toEqual([]);
+});

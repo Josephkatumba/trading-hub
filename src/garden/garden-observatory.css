@@ -286,3 +286,13 @@
   border-radius: 8px; background: var(--st-soft, rgba(143, 163, 150, .1)); font-size: 12.5px; }
 .gd-bank-caption { caption-side: top; padding: 0 0 6px; color: var(--gd-muted); font-size: 11.5px; text-align: left; }
 .gd-bank-forward { flex-wrap: wrap; gap: 6px 10px; }
+
+/* Signal Quality panel */
+.gd-quality-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin: 8px 0 14px; }
+.gd-quality-tile { border: 1px solid var(--gd-line, rgba(127,127,127,.25)); border-radius: 10px; padding: 10px 12px; display: grid; gap: 4px; }
+.gd-quality-tile span, .gd-quality-tile small { color: var(--gd-muted); font-size: 11.5px; }
+.gd-quality-tile b { font-size: 16px; }
+.gd-quality-policies tr.gd-quality-key td { font-weight: 600; }
+.gd-quality-split { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+.gd-quality-compare { margin: 6px 0; }
+.gd-grade { display: inline-block; min-width: 2.2em; padding: 1px 6px; border-radius: 6px; font-weight: 700; text-align: center; border: 1px solid currentColor; }

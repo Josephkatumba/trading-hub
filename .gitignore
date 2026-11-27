@@ -159,3 +159,6 @@ backend/*.before-*
 .venv/
 test-results/
 playwright-report/
+
+# Consistent private session snapshots; never commit credentials or runtime databases
+quant_labs/session_private_backups/

@@ -1,0 +1,21 @@
+{
+  "status": "COMPLETE",
+  "seconds": 19.31966450001346,
+  "python": "3.14.7 (tags/v3.14.7:823f032, Aug  5 2026, 10:51:32) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.4",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "config_hash": "8167823f7f9dd2673f62a7f429df1bf2d366aaa8df6b33cff141800c8ed70de8",
+  "code_hashes": {
+    "experiment.py": "3c275f1e5711f45ff6a15597b26bc4dcac357f13419d934d0d6b4cdf50417b77",
+    "foundation.py": "b9d84df11eb1b74c5502a79cc104c2f2e26a9e46afb3daf1f63c69e578c56104",
+    "hypotheses.py": "3eca79e38d9e23f110d4b12bea3ab64f46ed1491c2351b56e9b2726420d722f0",
+    "test_foundation.py": "c8e26ec9ddc5015f3b2ff39ac8073acf5289d094a2a788fcdba8d310f9f72b03",
+    "__init__.py": "4d1bd099446157209bdd3227e8c526e14cd396bf067dbff20427daf9512cbf3c"
+  },
+  "strategies": 5,
+  "registered_cases": 80,
+  "executed_cases": 66,
+  "trades": 11188,
+  "shadow_review_candidates": [],
+  "production_authorized": false
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "key": "trend_reclaim_r2",
+    "status": "EXPERIMENTAL",
+    "scan_enabled": 1,
+    "alert_enabled": 0,
+    "run_states": {
+      "COMPLETE": 3
+    },
+    "raw_detections": 0
+  },
+  {
+    "key": "trend_reclaim_r3",
+    "status": "EXPERIMENTAL",
+    "scan_enabled": 1,
+    "alert_enabled": 0,
+    "run_states": {
+      "COMPLETE": 3
+    },
+    "raw_detections": 0
+  },
+  {
+    "key": "trend_reclaim_r4",
+    "status": "EXPERIMENTAL",
+    "scan_enabled": 1,
+    "alert_enabled": 0,
+    "run_states": {
+      "COMPLETE": 3
+    },
+    "raw_detections": 0
+  },
+  {
+    "key": "trend_reclaim_r5",
+    "status": "EXPERIMENTAL",
+    "scan_enabled": 1,
+    "alert_enabled": 0,
+    "run_states": {
+      "COMPLETE": 3
+    },
+    "raw_detections": 0
+  },
+  {
+    "key": "trend_reclaim_r7",
+    "status": "EXPERIMENTAL",
+    "scan_enabled": 1,
+    "alert_enabled": 0,
+    "run_states": {
+      "COMPLETE": 3
+    },
+    "raw_detections": 0
+  },
+  {
+    "key": "trend_reclaim_r9",
+    "status": "EXPERIMENTAL",
+    "scan_enabled": 1,
+    "alert_enabled": 0,
+    "run_states": {
+      "COMPLETE": 3
+    },
+    "raw_detections": 0
+  },
+  {
+    "key": "range_sweep_reversion",
+    "status": "EXPERIMENTAL",
+    "scan_enabled": 1,
+    "alert_enabled": 0,
+    "run_states": {
+      "COMPLETE": 3
+    },
+    "raw_detections": 0
+  }
+]

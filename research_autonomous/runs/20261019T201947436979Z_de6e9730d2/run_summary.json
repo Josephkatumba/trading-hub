@@ -1,0 +1,24 @@
+{
+  "status": "COMPLETE",
+  "seconds": 19.3745061000227,
+  "python": "3.14.7 (tags/v3.14.7:823f032, Aug  5 2026, 10:51:32) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.4",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "config_hash": "de6e9730d241c0ef34f678fd224a1ff8d8d7891e11cdf03db6d01c8b152b7201",
+  "code_hashes": {
+    "experiment.py": "97fba840d77e6796492ea7c10fc88958399a78c71247171bacf1adfe228f8a3d",
+    "forward.py": "80dc989dfe70550e0ea3a84b5a54309405d8219fd424c2625e93fd19a4b9c49b",
+    "foundation.py": "483bfb52c4f18e38a99a2b3b342f0133e3313dde73eaa1f9828870860b24c59b",
+    "hypotheses.py": "3eca79e38d9e23f110d4b12bea3ab64f46ed1491c2351b56e9b2726420d722f0",
+    "lifecycle.py": "7dbb53c674452cf62e18d90ecd079e7df2aa091fc1eb96c67584ed664f1714f9",
+    "replay_corrections.py": "2aaf33ecf9388c1af0015d1dec92e75a60903862231ea8d5432120574d7f9969",
+    "test_foundation.py": "73ebc4cff1656a325c53df59537187d73f739656388ed28b8445449edfa95954",
+    "__init__.py": "4d1bd099446157209bdd3227e8c526e14cd396bf067dbff20427daf9512cbf3c"
+  },
+  "strategies": 5,
+  "registered_cases": 80,
+  "executed_cases": 66,
+  "trades": 11188,
+  "shadow_review_candidates": [],
+  "production_authorized": false
+}

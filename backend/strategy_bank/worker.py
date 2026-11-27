@@ -24,7 +24,9 @@ LOGGER = logging.getLogger("trading_hub.strategy_bank")
 ENABLED_ENV = "TRADEDEN_STRATEGY_BANK_ENABLED"
 POLL_SECONDS = 20.0
 OUTCOME_SECONDS = 300.0
-COUNTS = {"M15": 400, "H1": 400, "H4": 260, "D1": 60}
+# H4/D1 windows are long enough for EMA200 (H4) and EMA50 (D1) to converge to their full-history values,
+# so the live quality features match the historical research (signal_quality/features.py).
+COUNTS = {"M15": 400, "H1": 400, "H4": 700, "D1": 120}
 _STATUS: dict[str, Any] = {"running": False, "last_scan_at": None, "last_error": None, "signals_this_session": 0}
 
 

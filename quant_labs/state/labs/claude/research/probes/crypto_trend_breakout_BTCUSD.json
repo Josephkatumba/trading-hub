@@ -1,0 +1,22 @@
+{
+  "status": "COMPLETE",
+  "lab": "claude",
+  "source_sha256": "8fa03ce9d0d6836ef2b31c12f72c694029e309d61b9a660a0beeb929c027c34c",
+  "source": "MT5_SHARED_CACHE_PROBE",
+  "input_sha256": "9405e35ff996e29d7666b6e8f1ae4d3094f35f262e07943304988cf242a75e55",
+  "asof": 1792451012.520667,
+  "symbol": "BTCUSD",
+  "resources": {
+    "enforced": true,
+    "memory_limit_mb": 192.0,
+    "peak_committed_mb": 13.8515625,
+    "cpu_cap_percent": 15.0,
+    "cpu_limit_seconds": 4.0,
+    "cpu_seconds_used": 0.09375,
+    "max_processes": 1
+  },
+  "decisions": [],
+  "scope": "read-only real-data capability probe, not live model admission or a committed signal",
+  "live_writes": 0,
+  "outbound_calls": 0
+}

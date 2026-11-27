@@ -1,0 +1,22 @@
+{
+  "status": "COMPLETE",
+  "lab": "kimi",
+  "source_sha256": "ec92d5a8407fa95e20d8b610c6fd4ec78a88031aba9df8cc39d3f5672edce392",
+  "source": "MT5_SHARED_CACHE_PROBE",
+  "input_sha256": "6a537c7fcb0886109e78e461643576809c920aa14637daa6e71340386c864756",
+  "asof": 1792712586.591438,
+  "symbol": "BTCUSD",
+  "resources": {
+    "enforced": true,
+    "memory_limit_mb": 192.0,
+    "peak_committed_mb": 14.86328125,
+    "cpu_cap_percent": 15.0,
+    "cpu_limit_seconds": 4.0,
+    "cpu_seconds_used": 0.09375,
+    "max_processes": 1
+  },
+  "decisions": [],
+  "scope": "read-only real-data capability probe, not live model admission or a committed signal",
+  "live_writes": 0,
+  "outbound_calls": 0
+}

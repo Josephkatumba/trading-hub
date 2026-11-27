@@ -120,6 +120,11 @@ def confirm(spec: dict[str, Any], d: rules.Decision, ctx: rules.Ctx, i: int, quo
               "explanation": d.explanation, "contradictions": contradictions(ctx, tf, i, d.direction),
               "evidence": {k: (float(v) if isinstance(v, (int, float)) else v) for k, v in d.evidence.items()},
               "r_basis": "hypothetical (signal outcome, not an executed trade)"}
+    try:                                   # V7: regime context (informational; never blocks a signal)
+        import market_regime
+        signal["regime"] = market_regime.tag(ctx, spec["key"], close_t)
+    except Exception:
+        signal["regime"] = None
     return signal, ""
 
 
@@ -168,6 +173,8 @@ class BankStore:
 
     def open_signal(self, key: str, symbol: str) -> dict[str, Any] | None:
         for s in self.signals.values():
+            if s.get("alert") == "no trade (quality gate)":       # a NO TRADE record never blocks a later signal
+                continue
             if s["strategy_key"] == key and s["symbol"] == symbol and s.get("outcome_status") not in FINAL:
                 return s
         return None
@@ -212,6 +219,17 @@ class Bank:
             if self.store.open_signal(spec["key"], ctx.symbol):
                 self.store.rejections[spec["key"]]["duplicate: previous signal still open"] += 1
                 continue
+            from signal_quality import live as quality_live
+            quality = quality_live.assess(ctx, signal, self.store.signals.values())
+            if quality is not None:
+                signal["quality"] = quality
+                if quality["mode"] == "enforce" and not quality["confirmable"]:
+                    # NO TRADE: recorded and outcome-tracked for research, never alerted or merged
+                    signal["alert"] = "no trade (quality gate)"
+                    self.store.rejections[spec["key"]][f"quality gate: grade {quality['grade']}"] += 1
+                    self.store.put_signal(signal)
+                    new.append(signal)
+                    continue
             self._attach(signal, now)
             self.store.put_signal(signal)
             new.append(signal)

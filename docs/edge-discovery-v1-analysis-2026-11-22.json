@@ -1,0 +1,509 @@
+{
+ "null_check": {
+  "pairs": 153,
+  "p_below_0.05": 3,
+  "expected_by_chance_0.05": 7.7,
+  "p_below_0.10": 13,
+  "expected_by_chance_0.10": 15.3,
+  "smallest_p": [
+   0.0094,
+   0.0233,
+   0.0244,
+   0.0516,
+   0.0526
+  ]
+ },
+ "persistence": {
+  "trials": 1569,
+  "rank_corr_train_vs_oos": 0.218,
+  "share_train_positive_that_stay_positive": 0.372,
+  "share_train_negative_that_turn_positive": 0.291
+ },
+ "selection_decay": {
+  "new_family_pairs": 68,
+  "mean_train_expectancy_selected": 0.0719,
+  "mean_oos_expectancy_selected": -0.0546
+ },
+ "exit_mechanics": {
+  "1.5R": {
+   "cells": 240,
+   "mean_oos_expectancy_r": -0.0478,
+   "median_oos_expectancy_r": -0.0367,
+   "share_positive": 0.325,
+   "mean_oos_win_rate": 0.415
+  },
+  "2R": {
+   "cells": 240,
+   "mean_oos_expectancy_r": -0.0447,
+   "median_oos_expectancy_r": -0.0306,
+   "share_positive": 0.346,
+   "mean_oos_win_rate": 0.383
+  },
+  "3R": {
+   "cells": 238,
+   "mean_oos_expectancy_r": -0.0472,
+   "median_oos_expectancy_r": -0.0421,
+   "share_positive": 0.319,
+   "mean_oos_win_rate": 0.352
+  },
+  "natural": {
+   "cells": 133,
+   "mean_oos_expectancy_r": -0.047,
+   "median_oos_expectancy_r": -0.0276,
+   "share_positive": 0.338,
+   "mean_oos_win_rate": 0.373
+  },
+  "partial": {
+   "cells": 240,
+   "mean_oos_expectancy_r": -0.0494,
+   "median_oos_expectancy_r": -0.0383,
+   "share_positive": 0.3,
+   "mean_oos_win_rate": 0.46
+  },
+  "time": {
+   "cells": 236,
+   "mean_oos_expectancy_r": -0.0521,
+   "median_oos_expectancy_r": -0.0416,
+   "share_positive": 0.326,
+   "mean_oos_win_rate": 0.324
+  },
+  "trail": {
+   "cells": 242,
+   "mean_oos_expectancy_r": -0.0429,
+   "median_oos_expectancy_r": -0.0313,
+   "share_positive": 0.322,
+   "mean_oos_win_rate": 0.37
+  }
+ },
+ "timeframes": {
+  "H1": {
+   "cells": 198,
+   "mean_oos_expectancy_r": -0.045,
+   "median_oos_expectancy_r": -0.0311,
+   "share_positive": 0.348,
+   "mean_oos_win_rate": 0.374
+  },
+  "H4": {
+   "cells": 45,
+   "mean_oos_expectancy_r": -0.0155,
+   "median_oos_expectancy_r": -0.0652,
+   "share_positive": 0.333,
+   "mean_oos_win_rate": 0.372
+  },
+  "M15": {
+   "cells": 144,
+   "mean_oos_expectancy_r": -0.0595,
+   "median_oos_expectancy_r": -0.045,
+   "share_positive": 0.243,
+   "mean_oos_win_rate": 0.403
+  },
+  "M30": {
+   "cells": 156,
+   "mean_oos_expectancy_r": -0.0378,
+   "median_oos_expectancy_r": -0.0319,
+   "share_positive": 0.372,
+   "mean_oos_win_rate": 0.391
+  }
+ },
+ "by_family": {
+  "anchored_mean_reversion": {
+   "cells": 126,
+   "mean_oos_expectancy_r": -0.0675,
+   "median_oos_expectancy_r": -0.0596,
+   "share_positive": 0.294,
+   "mean_oos_win_rate": 0.365
+  },
+  "displacement_pullback": {
+   "cells": 234,
+   "mean_oos_expectancy_r": -0.0542,
+   "median_oos_expectancy_r": -0.0384,
+   "share_positive": 0.329,
+   "mean_oos_win_rate": 0.408
+  },
+  "failed_asian_breakout": {
+   "cells": 126,
+   "mean_oos_expectancy_r": -0.1109,
+   "median_oos_expectancy_r": -0.0587,
+   "share_positive": 0.278,
+   "mean_oos_win_rate": 0.317
+  },
+  "intraday_momentum": {
+   "cells": 126,
+   "mean_oos_expectancy_r": -0.0311,
+   "median_oos_expectancy_r": -0.0237,
+   "share_positive": 0.302,
+   "mean_oos_win_rate": 0.46
+  },
+  "large_move": {
+   "cells": 126,
+   "mean_oos_expectancy_r": -0.0648,
+   "median_oos_expectancy_r": -0.0548,
+   "share_positive": 0.246,
+   "mean_oos_win_rate": 0.39
+  },
+  "logit_h1": {
+   "cells": 36,
+   "mean_oos_expectancy_r": -0.0509,
+   "median_oos_expectancy_r": -0.041,
+   "share_positive": 0.25,
+   "mean_oos_win_rate": 0.431
+  },
+  "london_compression_breakout": {
+   "cells": 126,
+   "mean_oos_expectancy_r": -0.0263,
+   "median_oos_expectancy_r": -0.0369,
+   "share_positive": 0.222,
+   "mean_oos_win_rate": 0.43
+  },
+  "london_exhaustion_fade": {
+   "cells": 7,
+   "mean_oos_expectancy_r": 0.025,
+   "median_oos_expectancy_r": -0.023,
+   "share_positive": 0.286,
+   "mean_oos_win_rate": 0.352
+  },
+  "opening_range_breakout": {
+   "cells": 126,
+   "mean_oos_expectancy_r": 0.0078,
+   "median_oos_expectancy_r": -0.0036,
+   "share_positive": 0.492,
+   "mean_oos_win_rate": 0.428
+  },
+  "overlap_continuation": {
+   "cells": 42,
+   "mean_oos_expectancy_r": -0.0047,
+   "median_oos_expectancy_r": -0.0377,
+   "share_positive": 0.357,
+   "mean_oos_win_rate": 0.382
+  },
+  "pdhl_break_retest": {
+   "cells": 108,
+   "mean_oos_expectancy_r": -0.0819,
+   "median_oos_expectancy_r": -0.0749,
+   "share_positive": 0.343,
+   "mean_oos_win_rate": 0.327
+  },
+  "pwhl_reaction": {
+   "cells": 77,
+   "mean_oos_expectancy_r": 0.0168,
+   "median_oos_expectancy_r": 0.0191,
+   "share_positive": 0.584,
+   "mean_oos_win_rate": 0.35
+  },
+  "stop_hunt_pdhl": {
+   "cells": 126,
+   "mean_oos_expectancy_r": -0.0952,
+   "median_oos_expectancy_r": -0.083,
+   "share_positive": 0.19,
+   "mean_oos_win_rate": 0.341
+  },
+  "tsmom": {
+   "cells": 117,
+   "mean_oos_expectancy_r": -0.027,
+   "median_oos_expectancy_r": -0.0494,
+   "share_positive": 0.325,
+   "mean_oos_win_rate": 0.347
+  },
+  "volatility_expansion": {
+   "cells": 66,
+   "mean_oos_expectancy_r": -0.001,
+   "median_oos_expectancy_r": -0.0025,
+   "share_positive": 0.47,
+   "mean_oos_win_rate": 0.372
+  }
+ },
+ "by_symbol": {
+  "BTCUSD": {
+   "cells": 280,
+   "mean_oos_expectancy_r": -0.0316,
+   "median_oos_expectancy_r": -0.0544,
+   "share_positive": 0.307,
+   "mean_oos_win_rate": 0.388
+  },
+  "ETHUSD": {
+   "cells": 268,
+   "mean_oos_expectancy_r": -0.1863,
+   "median_oos_expectancy_r": -0.1797,
+   "share_positive": 0.086,
+   "mean_oos_win_rate": 0.333
+  },
+  "GER40": {
+   "cells": 265,
+   "mean_oos_expectancy_r": -0.0354,
+   "median_oos_expectancy_r": -0.0326,
+   "share_positive": 0.366,
+   "mean_oos_win_rate": 0.388
+  },
+  "NAS100": {
+   "cells": 255,
+   "mean_oos_expectancy_r": -0.0345,
+   "median_oos_expectancy_r": -0.0285,
+   "share_positive": 0.251,
+   "mean_oos_win_rate": 0.384
+  },
+  "US500": {
+   "cells": 254,
+   "mean_oos_expectancy_r": -0.043,
+   "median_oos_expectancy_r": -0.0339,
+   "share_positive": 0.256,
+   "mean_oos_win_rate": 0.385
+  },
+  "XAUUSD": {
+   "cells": 247,
+   "mean_oos_expectancy_r": 0.0553,
+   "median_oos_expectancy_r": 0.0359,
+   "share_positive": 0.704,
+   "mean_oos_win_rate": 0.423
+  }
+ },
+ "noise_ceiling": {
+  "pairs": 153,
+  "expected_max_oos_expectancy_if_no_edge": 0.462,
+  "p95_max": 0.79,
+  "observed_max": 0.3593
+ },
+ "leads": [
+  {
+   "pair": "ETHUSD|tsmom",
+   "exit": "time",
+   "oos_trades": 87,
+   "oos_win_rate": 0.1839,
+   "oos_expectancy_r": 0.3593,
+   "oos_ci95": [
+    -0.4441,
+    1.3929
+   ],
+   "oos_profit_factor": 1.416,
+   "oos_2x_expectancy_r": 0.155,
+   "validation_expectancy_r": 0.3937,
+   "test_expectancy_r": 0.3313,
+   "quarters_positive": 3,
+   "p_raw": 0.2451,
+   "holm_p": 1.0,
+   "random_control": {
+    "validation": {
+     "mean": -0.0531,
+     "p95": 0.4686
+    },
+    "test": {
+     "mean": -0.0933,
+     "p95": 0.9205
+    }
+   },
+   "peers": {
+    "BTCUSD": {
+     "trades": 107,
+     "expectancy_r": -0.0958
+    }
+   }
+  },
+  {
+   "pair": "XAUUSD|volatility_expansion",
+   "exit": "time",
+   "oos_trades": 84,
+   "oos_win_rate": 0.3095,
+   "oos_expectancy_r": 0.2967,
+   "oos_ci95": [
+    -0.1681,
+    0.8196
+   ],
+   "oos_profit_factor": 1.421,
+   "oos_2x_expectancy_r": 0.2884,
+   "validation_expectancy_r": 0.0561,
+   "test_expectancy_r": 0.6175,
+   "quarters_positive": 3,
+   "p_raw": 0.4325,
+   "holm_p": 1.0,
+   "random_control": {
+    "validation": {
+     "mean": 0.1301,
+     "p95": 0.83
+    },
+    "test": {
+     "mean": 0.0253,
+     "p95": 0.6813
+    }
+   },
+   "peers": {
+    "XAGUSD": {
+     "trades": 87,
+     "expectancy_r": -0.0766
+    }
+   }
+  },
+  {
+   "pair": "XAUUSD|existing:macd_momentum",
+   "exit": "own",
+   "oos_trades": 129,
+   "oos_win_rate": 0.4341,
+   "oos_expectancy_r": 0.2901,
+   "oos_ci95": [
+    0.033,
+    0.5517
+   ],
+   "oos_profit_factor": 1.505,
+   "oos_2x_expectancy_r": 0.2839,
+   "validation_expectancy_r": 0.2896,
+   "test_expectancy_r": 0.2908,
+   "quarters_positive": 4,
+   "p_raw": 0.0526,
+   "holm_p": 1.0,
+   "random_control": {
+    "validation": {
+     "mean": 0.1127,
+     "p95": 0.3438
+    },
+    "test": {
+     "mean": 0.0194,
+     "p95": 0.4333
+    }
+   },
+   "peers": {}
+  },
+  {
+   "pair": "GER40|existing:ema_crossover",
+   "exit": "own",
+   "oos_trades": 57,
+   "oos_win_rate": 0.4211,
+   "oos_expectancy_r": 0.2304,
+   "oos_ci95": [
+    -0.1472,
+    0.6108
+   ],
+   "oos_profit_factor": 1.385,
+   "oos_2x_expectancy_r": 0.1411,
+   "validation_expectancy_r": 0.1947,
+   "test_expectancy_r": 0.2626,
+   "quarters_positive": 2,
+   "p_raw": 0.2483,
+   "holm_p": 1.0,
+   "random_control": {
+    "validation": {
+     "mean": -0.0677,
+     "p95": 0.6374
+    },
+    "test": {
+     "mean": -0.0354,
+     "p95": 0.3294
+    }
+   },
+   "peers": {}
+  },
+  {
+   "pair": "XAUUSD|existing:london_breakout",
+   "exit": "own",
+   "oos_trades": 118,
+   "oos_win_rate": 0.5169,
+   "oos_expectancy_r": 0.2186,
+   "oos_ci95": [
+    0.0091,
+    0.4314
+   ],
+   "oos_profit_factor": 1.529,
+   "oos_2x_expectancy_r": 0.2145,
+   "validation_expectancy_r": -0.0652,
+   "test_expectancy_r": 0.4581,
+   "quarters_positive": 2,
+   "p_raw": 0.6591,
+   "holm_p": 1.0,
+   "random_control": {
+    "validation": {
+     "mean": 0.0074,
+     "p95": 0.3846
+    },
+    "test": {
+     "mean": 0.0054,
+     "p95": 0.5304
+    }
+   },
+   "peers": {}
+  },
+  {
+   "pair": "BTCUSD|existing:macd_momentum",
+   "exit": "own",
+   "oos_trades": 182,
+   "oos_win_rate": 0.4011,
+   "oos_expectancy_r": 0.1834,
+   "oos_ci95": [
+    -0.0318,
+    0.3955
+   ],
+   "oos_profit_factor": 1.3,
+   "oos_2x_expectancy_r": 0.1402,
+   "validation_expectancy_r": 0.1451,
+   "test_expectancy_r": 0.2234,
+   "quarters_positive": 4,
+   "p_raw": 0.1711,
+   "holm_p": 1.0,
+   "random_control": {
+    "validation": {
+     "mean": -0.0317,
+     "p95": 0.2142
+    },
+    "test": {
+     "mean": -0.064,
+     "p95": 0.2195
+    }
+   },
+   "peers": {}
+  },
+  {
+   "pair": "US500|existing:ema_crossover",
+   "exit": "own",
+   "oos_trades": 63,
+   "oos_win_rate": 0.4127,
+   "oos_expectancy_r": 0.1811,
+   "oos_ci95": [
+    -0.1842,
+    0.5638
+   ],
+   "oos_profit_factor": 1.284,
+   "oos_2x_expectancy_r": 0.1329,
+   "validation_expectancy_r": 0.3724,
+   "test_expectancy_r": -0.0433,
+   "quarters_positive": 3,
+   "p_raw": 0.0808,
+   "holm_p": 1.0,
+   "random_control": {
+    "validation": {
+     "mean": -0.0841,
+     "p95": 0.2875
+    },
+    "test": {
+     "mean": -0.0872,
+     "p95": 0.428
+    }
+   },
+   "peers": {}
+  },
+  {
+   "pair": "ETHUSD|regime_selector",
+   "exit": "per family",
+   "oos_trades": 118,
+   "oos_win_rate": 0.2797,
+   "oos_expectancy_r": 0.1606,
+   "oos_ci95": [
+    -0.3802,
+    0.8861
+   ],
+   "oos_profit_factor": 1.219,
+   "oos_2x_expectancy_r": -0.0213,
+   "validation_expectancy_r": 0.2072,
+   "test_expectancy_r": 0.1263,
+   "quarters_positive": 3,
+   "p_raw": 0.2981,
+   "holm_p": 1.0,
+   "random_control": {
+    "validation": {
+     "mean": -0.0976,
+     "p95": 0.2486
+    },
+    "test": {
+     "mean": -0.3093,
+     "p95": -0.0228
+    }
+   },
+   "peers": {}
+  }
+ ]
+}

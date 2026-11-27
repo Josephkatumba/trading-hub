@@ -1,0 +1,29 @@
+{
+ "status": "PENDING_CEO_REVIEW",
+ "request": "Enable EXPERIMENTAL Telegram delivery for these RESEARCH_ONLY models, each message labelled RESEARCH ONLY (no positive out-of-sample evidence).",
+ "to_approve": "python -m quant_live --store data/quant_live approve-delivery --approval <file whose scope = paper candidates + the entries below>",
+ "recommendation": "Do not enable. All three have negative or flat out-of-sample results; internal monitoring already records their paper signals and outcomes.",
+ "entries": [
+  {
+   "lab": "codex",
+   "key": "compression_escape",
+   "version": "0.1.0",
+   "tier": "RESEARCH_ONLY",
+   "evidence": "lab-harness replay of Codex's unmodified source: train -0.051R (430), validation -0.275R (242), test -0.005R (208); never run through the shared queue"
+  },
+  {
+   "lab": "claude",
+   "key": "hourly_shock_drift",
+   "version": "0.1.0",
+   "tier": "RESEARCH_ONLY",
+   "evidence": "official: train -0.099R (613), validation -0.130R (316), test -0.075R (328)"
+  },
+  {
+   "lab": "claude",
+   "key": "index_gap_fade",
+   "version": "0.1.0",
+   "tier": "RESEARCH_ONLY",
+   "evidence": "official: train -0.049R (37), validation +0.083R (17), test -0.494R (31)"
+  }
+ ]
+}

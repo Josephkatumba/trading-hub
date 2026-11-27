@@ -1,0 +1,148 @@
+"""Claude-authored experimental model: Volatility Climax Acceleration (pre-registered 2026-10-23, commit 674ab1e).
+
+Inverse of Kimi's Volatility Exhaustion Fade question: inside an established H1 trend, does
+an M15 volatility climax mark acceleration rather than exhaustion?
+Climax: range >= 1.6 ATR(M15,14), close in outer 20% of range, close beyond the prior
+20-candle extreme. Regime: H1 efficiency ratio (24 candles) >= 0.35 in the climax direction.
+Trade with the climax; stop at the climax midpoint; 2.5R; 8h or next data gap.
+Independent Claude implementation; Kimi's code is not used. Pure functions only.
+"""
+
+SYMBOLS = {'EURUSD', 'GBPUSD', 'GBPJPY', 'XAUUSD', 'BTCUSD', 'ETHUSD'}
+CLIMAX_ATR = 1.6
+CLOSE_FRAC = 0.8
+LOOKBACK = 20
+MIN_EFFICIENCY = 0.35
+TARGET_R = 2.5
+HORIZON = 8 * 3600
+MIN_HORIZON = 2 * 3600
+
+DAILY_BREAK = {'XAUUSD', 'XAGUSD', 'NAS100', 'US500', 'GER40'}
+CUTOFF = 20 * 3600 + 45 * 60   # 20:45 UTC, ahead of the 21:00/22:00 UTC broker break / index rollover
+
+
+def seconds_to_cutoff(symbol, now):
+    """Seconds until the next broker data gap that would make an outcome unmeasurable."""
+    if symbol in DAILY_BREAK:
+        return (CUTOFF - now % 86400) % 86400
+    since_sunday = (now // 86400 + 4) % 7 * 86400 + now % 86400
+    return (5 * 86400 + CUTOFF - since_sunday) % (7 * 86400)
+
+
+def atr_of(bars, n):
+    trs = []
+    for i in range(len(bars) - n, len(bars)):
+        b, pc = bars[i], bars[i - 1]['close']
+        trs.append(max(b['high'] - b['low'], abs(b['high'] - pc), abs(b['low'] - pc)))
+    return sum(trs) / len(trs)
+
+
+def days_from_civil(y, m, d):
+    y = y - 1 if m <= 2 else y
+    era = (y if y >= 0 else y - 399) // 400
+    yoe = y - era * 400
+    doy = (153 * (m + (-3 if m > 2 else 9)) + 2) // 5 + d - 1
+    doe = yoe * 365 + yoe // 4 - yoe // 100 + doy
+    return era * 146097 + doe - 719468
+
+
+def year_of(t):
+    z = t // 86400 + 719468
+    era = (z if z >= 0 else z - 146096) // 146097
+    doe = z - era * 146097
+    yoe = (doe - doe // 1460 + doe // 36524 - doe // 146096) // 365
+    doy = doe - (365 * yoe + yoe // 4 - yoe // 100)
+    mp = (5 * doy + 2) // 153
+    return yoe + era * 400 + (1 if mp >= 10 else 0)
+
+
+def weekday(days):
+    return (days + 4) % 7  # 0 = Sunday
+
+
+def nth_sunday(y, m, n):
+    first = days_from_civil(y, m, 1)
+    return first + (7 - weekday(first)) % 7 + 7 * (n - 1)
+
+
+def last_sunday(y, m):
+    nxt = days_from_civil(y + (m == 12), m % 12 + 1, 1) - 1
+    return nxt - weekday(nxt)
+
+
+def utc_offset(zone, t):
+    y = year_of(t)
+    if zone == 'US':
+        start = nth_sunday(y, 3, 2) * 86400 + 7 * 3600
+        end = nth_sunday(y, 11, 1) * 86400 + 6 * 3600
+        return -4 * 3600 if start <= t < end else -5 * 3600
+    start = last_sunday(y, 3) * 86400 + 3600
+    end = last_sunday(y, 10) * 86400 + 3600
+    return (2 * 3600 if start <= t < end else 3600) if zone == 'EU' else (3600 if start <= t < end else 0)
+
+
+def broker_day(t):
+    """Broker trading-day index (day rolls at 17:00 New York)."""
+    return (t + utc_offset('US', t) + 7 * 3600) // 86400
+
+
+def broker_days(bars, duration, before):
+    """Aggregate completed candles into broker days strictly before the broker day containing `before`."""
+    today = broker_day(before)
+    days = []
+    for b in bars:
+        if b['utc'] + duration > before:
+            break
+        key = broker_day(b['utc'])
+        if key >= today:
+            break
+        if days and days[-1]['key'] == key:
+            d = days[-1]
+            d['high'] = max(d['high'], b['high'])
+            d['low'] = min(d['low'], b['low'])
+            d['close'] = b['close']
+            d['bars'] += 1
+        else:
+            days.append({'key': key, 'open': b['open'], 'high': b['high'], 'low': b['low'], 'close': b['close'], 'bars': 1})
+    return days
+
+
+def detect(snapshot):
+    if snapshot['symbol'] not in SYMBOLS:
+        return []
+    bars = snapshot['frames'].get('M15', ())
+    h1 = snapshot['frames'].get('H1', ())
+    if len(bars) < LOOKBACK + 16 or len(h1) < 26:
+        return []
+    last = bars[-1]
+    atr = atr_of(bars, 14)
+    rng = last['high'] - last['low']
+    if atr <= 0 or rng < CLIMAX_ATR * atr:
+        return []
+    location = (last['close'] - last['low']) / rng
+    prior = bars[-LOOKBACK - 1:-1]
+    if location >= CLOSE_FRAC and last['close'] > max(b['high'] for b in prior):
+        side = 1
+    elif location <= 1 - CLOSE_FRAC and last['close'] < min(b['low'] for b in prior):
+        side = -1
+    else:
+        return []
+    closes = [b['close'] for b in h1[-25:]]
+    path = sum(abs(closes[i] - closes[i - 1]) for i in range(1, len(closes)))
+    move = closes[-1] - closes[0]
+    if path <= 0 or abs(move) / path < MIN_EFFICIENCY or (move > 0) != (side > 0):
+        return []
+    now = last['utc'] + 900
+    horizon = min(HORIZON, seconds_to_cutoff(snapshot['symbol'], now))
+    if horizon < MIN_HORIZON:
+        return []
+    quote = snapshot['quote']
+    long = side > 0
+    entry = quote['ask'] if long else quote['bid']
+    stop = (last['high'] + last['low']) / 2
+    risk = entry - stop if long else stop - entry
+    if risk <= 0:
+        return []
+    target = entry + TARGET_R * risk if long else entry - TARGET_R * risk
+    return [{'direction': 'LONG' if long else 'SHORT', 'stop_loss': stop, 'take_profit': target, 'horizon_seconds': horizon, 'atr': atr,
+             'rationale': 'M15 climax of %.1fx ATR closing at its extreme beyond the 20-candle range, inside an H1 trend (efficiency %.2f); trading acceleration, stop at the climax midpoint, 2.5R.' % (rng / atr, abs(move) / path)}]

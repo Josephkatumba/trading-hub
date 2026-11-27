@@ -1,0 +1,31 @@
+{
+ "lab": "kimi",
+ "key": "xau_afternoon_drift",
+ "version": "0.1.0",
+ "name": "Xau Afternoon Drift",
+ "timeframe": "M15",
+ "requirements": {
+  "M15": 1200,
+  "H1": 350,
+  "M1": 90
+ },
+ "instruments": [
+  "EURUSD",
+  "GBPUSD",
+  "GBPJPY",
+  "XAUUSD",
+  "BTCUSD",
+  "ETHUSD"
+ ],
+ "classification": "EXPERIMENTAL",
+ "entry_type": "MARKET_PAPER_QUOTE",
+ "hypothesis": "Gold London-morning moves persist into the US afternoon (intraday momentum).",
+ "risk_model": "One planned risk unit; structural stop; screening candidate v0.1.0",
+ "planned_rr": "2R-2.5R planned",
+ "known_limitations": "Screening candidate; not yet promoted.",
+ "authorship": {
+  "lab": "kimi",
+  "session_reference": "Kimi Code session 2026-10-20/23 on Windows host katjo under the TradeDen CEO profitability-discovery directive",
+  "statement": "Authored by this actual Kimi Code session; not attributed to Codex or Claude."
+ }
+}

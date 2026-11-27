@@ -1,0 +1,27 @@
+{
+  "lab": "claude",
+  "key": "index_first_candle_drive",
+  "version": "0.1.0",
+  "name": "Index Opening-Candle Drive",
+  "timeframe": "M15",
+  "requirements": {
+    "M15": 40
+  },
+  "instruments": [
+    "NAS100",
+    "US500",
+    "GER40"
+  ],
+  "classification": "EXPERIMENTAL",
+  "entry_type": "MARKET_PAPER_QUOTE",
+  "hypothesis": "The first cash-session M15 candle direction of NAS100/US500/GER40 persists through the session (opening-range momentum, adapted to 15 minutes).",
+  "risk_model": "One planned risk unit; stop at the opening candle opposite extreme; 6R objective; flat 15 minutes before the cash close; dojis (body <25% of range) skipped.",
+  "planned_rr": "6R fixed target (most exits expected at the session time limit)",
+  "known_limitations": "No verified edge. M15 both-barrier candles need M1 (only since Jul 2026) and are otherwise AMBIGUOUS; CFD spread proxies; correlated instruments; broker holiday calendar unverified. Correlated with index_trend_day (same instruments and sessions).",
+  "declared_trials_in_phase": 1,
+  "authorship": {
+    "lab": "claude",
+    "session_reference": "Claude Code (claude-opus-5-5) desktop session 14e835e0-e7e8-43cf-b286-855a18365bd7, 2026-10-20",
+    "statement": "Created by this actual Claude Code session; not attributed to Codex or Kimi."
+  }
+}

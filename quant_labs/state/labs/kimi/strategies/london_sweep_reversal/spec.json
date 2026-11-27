@@ -1,0 +1,15 @@
+{
+ "id": "london_sweep_reversal",
+ "version": "0.2.0",
+ "name": "London Sweep Reversal",
+ "hypothesis": "During the London open (07:00-09:00 UTC bar closes), stops resting beyond the Asian session range (00:00-06:00 UTC) are swept and price closes back inside the range; the subsequent rotation toward the opposite Asian boundary offers asymmetric payoff with the sweep extreme as structural invalidation.",
+ "entry_conditions": "M15 bar closing 07:00-09:00 UTC whose low undercuts the Asian low by at least 0.05 ATR(14) and closes back above it in the upper half of its range (LONG), symmetric for SHORT; Asian range built from at least 20 M15 bars and not wider than 4 ATR; no earlier sweep of either Asian boundary earlier the same day; planned RR >= 2. DST-aware London window (approximate Europe/London local time); sweep depth >= 0.10 ATR; rejection-wick confirmation (directional 45% of range, opposite wick <= 35%); Asian range cap 3.5 ATR.",
+ "exit_conditions": "Fixed stop-loss and take-profit; take-profit at the opposite Asian session boundary; time exit after 18 hours if neither barrier trades.",
+ "stop_loss_method": "Sweep bar extreme minus/plus 0.15 M15 ATR(14) buffer; risk must be between 0.6 and 5 ATR.",
+ "take_profit_method": "Opposite Asian range boundary (structural liquidity objective); trade admitted only when (target-entry)/risk >= 2.",
+ "risk_model": "One planned risk unit per opportunity; one opportunity per symbol per day enforced by model state; per-symbol overlap lock enforced by the common evaluator.",
+ "intended_conditions": "FX majors, gold and crypto during liquid London hours; regimes where session liquidity pools get swept and retrace (mean-rotating intraday regimes).",
+ "limitations": "UTC-fixed windows ignore daylight-saving shifts; excludes indices (shared evaluator cannot finance modes 2/3); spread/risk gate 0.1 not always met on wide-spread symbols; small sample sizes per symbol; historical partitions already exposed to prior research. Prior version 0.1.0 preserved with negative results; parameters in 0.2.0 changed for stated a-priori reasons (session alignment, selectivity), not fitted to validation/test outcomes.",
+ "timeframe": "M15",
+ "declared_trials": 2
+}

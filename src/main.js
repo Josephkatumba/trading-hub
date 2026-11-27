@@ -1,5 +1,7 @@
 import "./styles.css";
 import "./shell.css";
+import "./quantLabs.css";
+import {renderQuantLabs,initQuantLabs,stopQuantLabs,localLabsAvailable} from "./quantLabs.mjs";
 import {getTrades,saveTrades,resetTrades,parseCSV,calculateMetrics,getAccounts,getTradeContext,getBrokerTimeZone,setBrokerTimeZone,normalizeTrades} from "./data.js";
 import {mergeImportedTrades} from "./tradeImport.mjs";
 import {isValidTimeZone} from "./tradeTime.mjs";
@@ -16,9 +18,10 @@ let state={view:"radar",trades:getTrades(),importOpen:false,selectedTrade:null,f
 // Navigation: the Garden is the product; watch tools sit beside it; journal
 // tools stay available but quieter. Items with an anchor open a Garden section.
 const NAV={
- watch:[["markets","Markets","◎"],["analytics","Setup Lab","◒"],["insights","Analyst","✦"],["radar","Setup performance","▦","gardenPerformance"],["radar","Alerts","◔","gardenAlerts"],["radar","Strategy Bank","▤","strategyBank"]],
+ watch:[["markets","Markets","◎"],["analytics","Setup Lab","◒"],["insights","Analyst","✦"],["radar","Setup performance","▦","gardenPerformance"],["radar","Alerts","◔","gardenAlerts"],["radar","Strategy Bank","▤","strategyBank"],["radar","Signal Quality","◎","signalQuality"]],
  journal:[["overview","Portfolio","⌂"],["trades","Trades","↗"],["accounts","Accounts","◈"]]
 };
+if(localLabsAvailable(location.hostname))NAV.watch.push(["quantLabs","Quant Labs","⚗"]);
 const navLink=([view,label,icon,anchor])=>`<a class="${state.view===view&&!anchor?"active":""}" data-view="${view}"${anchor?` data-anchor="${anchor}"`:""}><span>${icon}</span>${label}</a>`;
 const money=n=>(n<0?"-$":"$")+Math.abs(Number(n)||0).toLocaleString(undefined,{maximumFractionDigits:0});
 const signed=n=>n>=0?"+"+money(n):money(n);
@@ -38,7 +41,7 @@ function filterSelect(key,label){
 
 function render(){
  if(authRequired()&&!identityState.user){
-  stopMarketRadar();stopMarkets();
+  stopMarketRadar();stopMarkets();stopQuantLabs();
   document.querySelector("#root").innerHTML='<main class="markets-workspace"><h1>TRADEden</h1><p>Sign in to your market intelligence and private journal.</p><button id="accountLogin" class="primary">Sign in securely</button></main>';
   document.getElementById("accountLogin").onclick=signIn;return;
  }
@@ -65,6 +68,7 @@ function render(){
  bind();
  if(state.view==="radar") initMarketRadar(); else stopMarketRadar();
  if(state.view==="markets")initMarkets();else stopMarkets();
+ if(state.view==="quantLabs")initQuantLabs();else stopQuantLabs();
  if(state.view==="insights") initInsights();
 }
 
@@ -118,6 +122,7 @@ accounts:(trades,m,accounts)=>`<div class="page-title"><div><div class="kicker">
 trades:(trades,m)=>`<div class="page-title"><div><div class="kicker">EXECUTION LEDGER</div><h1>Trade intelligence</h1><p class="sub">${trades.length} executions · click a trade to inspect the context behind it.</p></div><div><button class="ghost" id="importTrades">Import CSV</button></div></div>${sessionBasisNote(trades)}<div class="filter-bar">${filterSelect("account","ACCOUNT")}${filterSelect("symbol","SYMBOL")}${filterSelect("session","SESSION")}<button class="ghost" id="clearFilters">Clear</button></div><div class="panel table-panel"><div class="table-head"><span>SYMBOL</span><span>SIDE</span><span>SESSION</span><span>TIME</span><span>P&L</span></div>${trades.map(t=>`<button class="table-row clickable" data-trade="${esc(t.id)}"><b>${esc(t.symbol)}</b><span class="${t.side==="BUY"?"up":"down"}">${t.side}</span><span>${esc(t.session)}</span><span>${esc(t.time)}</span><strong class="${t.pnl>=0?"up":"down"}">${signed(t.pnl)}</strong></button>`).join("")||"<div class='empty-state'>No trades match these filters.</div>"}</div>`,
 radar:renderMarketRadar,
 markets:renderMarkets,
+quantLabs:renderQuantLabs,
 analytics:renderAnalytics,
 insights:renderInsights
 };

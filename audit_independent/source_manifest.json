@@ -1,0 +1,354 @@
+{
+  "backend\\signal_outcomes.py": {
+    "size": 20062,
+    "sha256": "9df1c0e4ae4c175917ca0c77a9b8f7c40c0da476a18638b357d30ec6e9f3df14"
+  },
+  "backend\\strategy_bank\\engine.py": {
+    "size": 19957,
+    "sha256": "cce60b720a3838abf366d3a3e182317555de1f86b8e6567e61c71c89b7beb5e6"
+  },
+  "backend\\strategy_bank\\rules.py": {
+    "size": 39714,
+    "sha256": "293af1fba1ab778222a5cf565deaa2dd64a96a878d085913ab3ecf78290e3ef4"
+  },
+  "backend\\strategy_bank\\qualification.py": {
+    "size": 13563,
+    "sha256": "69125bf26a39f078ca3f27451d27eaf00448320290ee2bc30e9b454cdd0f0412"
+  },
+  "backend\\strategy_bank\\telegram.py": {
+    "size": 4843,
+    "sha256": "f985059da971edfa1cf9c77563270dd1436b9e79015360f8c2e2ac98eb687c27"
+  },
+  "backend\\market_data.py": {
+    "size": 5048,
+    "sha256": "07ce29d50c958e2293880eb13c743b2145ce1f239803e1bad2a843aabeb331b3"
+  },
+  "backend\\qualification.py": {
+    "size": 7523,
+    "sha256": "a75fe7211990fc374df340fa5176ce07efb4a1444ab828676a19e3900eeaeb98"
+  },
+  "backend\\trade_planning.py": {
+    "size": 4282,
+    "sha256": "44ceacf972316e23d130335df7a5021008d3958ae2736a1a70b1efcbd5a5100c"
+  },
+  "backend\\data\\research\\bars\\AUDUSD_D1.json.gz": {
+    "size": 21202,
+    "sha256": "c5fa2b0bdfc87e053ca5bf5d598c0347d1955c7664b47c628a5d8329d9c73dd0"
+  },
+  "backend\\data\\research\\bars\\AUDUSD_H1.json.gz": {
+    "size": 281811,
+    "sha256": "9854948478d5babff7dcbbda481474b00a1239a06c9ee019f354cbfccf3447be"
+  },
+  "backend\\data\\research\\bars\\AUDUSD_H4.json.gz": {
+    "size": 81246,
+    "sha256": "75acdc8ac3a412221ffce5f030b0878f763129bcce816c57f91de44efc559f42"
+  },
+  "backend\\data\\research\\bars\\AUDUSD_M1.json.gz": {
+    "size": 1418700,
+    "sha256": "86378eb416aac48aae51ab149c0ce528a9e289fec12e0eb9af9c82fb2163d186"
+  },
+  "backend\\data\\research\\bars\\AUDUSD_M15.json.gz": {
+    "size": 1044315,
+    "sha256": "f5300d267f3683fdfb90f72e39b9b6188f6060bdedb09efefee6e25f4c408e31"
+  },
+  "backend\\data\\research\\bars\\BTCUSD_D1.json.gz": {
+    "size": 40143,
+    "sha256": "3d2aa6707f3a1cb5daaa65b40236f8302c5d58b11a88d1bd4b9f2a0e48fa8b86"
+  },
+  "backend\\data\\research\\bars\\BTCUSD_H1.json.gz": {
+    "size": 565751,
+    "sha256": "90e6da4b020d1797c9f32e8d3aa1fab36bc373887dccf13d6e530fe6981f121d"
+  },
+  "backend\\data\\research\\bars\\BTCUSD_H4.json.gz": {
+    "size": 155025,
+    "sha256": "c545b596add71727c7f3da46422c799d3f6e46aac2e6b20bcc5539b365730ab6"
+  },
+  "backend\\data\\research\\bars\\BTCUSD_M1.json.gz": {
+    "size": 2501662,
+    "sha256": "249bc618e6f24482f9eb92561a3d2c90a69c28b7600353fc715e53934b95b62b"
+  },
+  "backend\\data\\research\\bars\\BTCUSD_M15.json.gz": {
+    "size": 2165629,
+    "sha256": "32ece7a2c5686fbf043f10c1b7caa9cb9ab46437b26f5074fdde51b8d68d520b"
+  },
+  "backend\\data\\research\\bars\\ETHUSD_D1.json.gz": {
+    "size": 37556,
+    "sha256": "e85f66efec7fbfc52e088f328a372543d10487ca3791cc7a5ce2be2f3e3bbcfc"
+  },
+  "backend\\data\\research\\bars\\ETHUSD_H1.json.gz": {
+    "size": 497305,
+    "sha256": "49bede1c1f4e4e84a6ca3ed866e5ee0443ef689a2f1133da72f5638e28d9bf39"
+  },
+  "backend\\data\\research\\bars\\ETHUSD_H4.json.gz": {
+    "size": 141980,
+    "sha256": "1154bca1ba214f87c600b30e7ce9c8e38e88d35d5885f63be968c230640ab8e7"
+  },
+  "backend\\data\\research\\bars\\ETHUSD_M1.json.gz": {
+    "size": 1988514,
+    "sha256": "95c6f98eb44c62558a68b94ce48e040bfc44efe11e74dad19316aaedb839bd53"
+  },
+  "backend\\data\\research\\bars\\ETHUSD_M15.json.gz": {
+    "size": 1851751,
+    "sha256": "4bebb41800f6abcabb0fb8e775d097b2732c2094c0f25e8e6102aa1466b943bb"
+  },
+  "backend\\data\\research\\bars\\EURJPY_D1.json.gz": {
+    "size": 22793,
+    "sha256": "726e56bcfb0587659e85da271db19ff565511487e08c72d160d9db4e93d694dd"
+  },
+  "backend\\data\\research\\bars\\EURJPY_H1.json.gz": {
+    "size": 299367,
+    "sha256": "ed377b9ee75f376d19d39a996b3b7c241eaecd44fa8dba8c229920c8ca089f82"
+  },
+  "backend\\data\\research\\bars\\EURJPY_H4.json.gz": {
+    "size": 86407,
+    "sha256": "724f52df89cea923e8cf8e289bf040401ad23136d0cecb1b2b9276b47dc4739c"
+  },
+  "backend\\data\\research\\bars\\EURJPY_M1.json.gz": {
+    "size": 1636494,
+    "sha256": "b8150b1897c33ddd90bc9d56ca573b0cdcbe1a18f759900daa399a5901920c7c"
+  },
+  "backend\\data\\research\\bars\\EURJPY_M15.json.gz": {
+    "size": 1121512,
+    "sha256": "96ee4591694a1cc9277c8a93f10b7f2cfbfa3f35205d6c96de717256411088f8"
+  },
+  "backend\\data\\research\\bars\\EURUSD_D1.json.gz": {
+    "size": 21724,
+    "sha256": "ff50974b7c7446bc4acac66c91fa701893252e726d1f599aa06f98a28a27825c"
+  },
+  "backend\\data\\research\\bars\\EURUSD_H1.json.gz": {
+    "size": 290623,
+    "sha256": "de8044d1966c1e31bb553f30d7dfde6552dffaa7f23bc9b4f441f2ce7b5a698a"
+  },
+  "backend\\data\\research\\bars\\EURUSD_H4.json.gz": {
+    "size": 83473,
+    "sha256": "11236f3e7c2e3552ae9c545255792e8df5191859456dee8f3ea6d73630484c2a"
+  },
+  "backend\\data\\research\\bars\\EURUSD_M1.json.gz": {
+    "size": 1459730,
+    "sha256": "df196991c70d36d661a6ea67f25d72ac68444dca3e990103a142d9e6ab13cb70"
+  },
+  "backend\\data\\research\\bars\\EURUSD_M15.json.gz": {
+    "size": 1078177,
+    "sha256": "a7096c5e4f407d4481e77fe802eedd79c85407be9dee55e254e4301212167631"
+  },
+  "backend\\data\\research\\bars\\GBPJPY_D1.json.gz": {
+    "size": 23059,
+    "sha256": "00959e0838a7a7a0554362b0eac8247d6433086d7bfc5b4b7dca784ffd133061"
+  },
+  "backend\\data\\research\\bars\\GBPJPY_H1.json.gz": {
+    "size": 303835,
+    "sha256": "d0b403b0c91a320c06076292f9a0524dae9040324897373d204ce6ebb25d889a"
+  },
+  "backend\\data\\research\\bars\\GBPJPY_H4.json.gz": {
+    "size": 86962,
+    "sha256": "dea1676b6f38fd29aa074737aa088f28ab58b69a60158ec57271f298eabc914f"
+  },
+  "backend\\data\\research\\bars\\GBPJPY_M1.json.gz": {
+    "size": 1676660,
+    "sha256": "bb26ea8f5e44bf870730340547fc0900802317b8035963f8b2dc8bd8e60e811d"
+  },
+  "backend\\data\\research\\bars\\GBPJPY_M15.json.gz": {
+    "size": 1143925,
+    "sha256": "f2e16073dc29df2fef3f190b3b2aad8354c5a5b140f80d44fe40bbdfbcf45987"
+  },
+  "backend\\data\\research\\bars\\GBPUSD_D1.json.gz": {
+    "size": 22206,
+    "sha256": "158b2605c03f704eeeb92bbcb761d69b533085fe4e144b3f563b7ec2e4cf2186"
+  },
+  "backend\\data\\research\\bars\\GBPUSD_H1.json.gz": {
+    "size": 301379,
+    "sha256": "b6bff40adb635cd512f39178ee20bc5768f2b2313055fcbdfdddb80e27b900f9"
+  },
+  "backend\\data\\research\\bars\\GBPUSD_H4.json.gz": {
+    "size": 86240,
+    "sha256": "1cc2cbd0a7ee97fde66b318cb796d0fa32ce4a6b09ad2ef8cfa921cd08f5f610"
+  },
+  "backend\\data\\research\\bars\\GBPUSD_M1.json.gz": {
+    "size": 1545883,
+    "sha256": "36dd94aa30b06313bc4e3f7ee2fc4f0a94e3e6c386e5cc9264a63cdcb4aaa15d"
+  },
+  "backend\\data\\research\\bars\\GBPUSD_M15.json.gz": {
+    "size": 1119583,
+    "sha256": "3dea9a8f117c26b65188db2561c38994d7316e5a07daf2d88b986f0822c9b396"
+  },
+  "backend\\data\\research\\bars\\GER40_D1.json.gz": {
+    "size": 23454,
+    "sha256": "0dcefdacdd232194d31a1c163cda4891475b730dee9a6e5bb3c1ec425972ed71"
+  },
+  "backend\\data\\research\\bars\\GER40_H1.json.gz": {
+    "size": 300471,
+    "sha256": "c4536f1680d3e28eb09c2eaea9d2809594937a48d17510fcacf8b5b41b1e77a5"
+  },
+  "backend\\data\\research\\bars\\GER40_H4.json.gz": {
+    "size": 91361,
+    "sha256": "05653ce1e276af32d5b8ede99a92717a1caceaa202df861373772a485d294399"
+  },
+  "backend\\data\\research\\bars\\GER40_M1.json.gz": {
+    "size": 1614749,
+    "sha256": "68cd9f2054facab1be2ec3bb2a610d927d65c5ad892b47673d2501706f5e31e5"
+  },
+  "backend\\data\\research\\bars\\GER40_M15.json.gz": {
+    "size": 1091169,
+    "sha256": "bace6b843e03a0e7b9c763debc2cdbaf85e259140db6fe3061eabc72d215c71b"
+  },
+  "backend\\data\\research\\bars\\NAS100_D1.json.gz": {
+    "size": 25621,
+    "sha256": "ad4eac38d8de01324bc15524c66b92b9844bb13892bba217a2a0003e4c4bf585"
+  },
+  "backend\\data\\research\\bars\\NAS100_H1.json.gz": {
+    "size": 326829,
+    "sha256": "28430413c30337fbb714eb65f7a6a2dfa53d398f957837312afccb1aa3ba2e99"
+  },
+  "backend\\data\\research\\bars\\NAS100_H4.json.gz": {
+    "size": 98221,
+    "sha256": "a76992ec16143bccced4c8b8961c1a025d29cbe6d6a71301d19e87d348423f78"
+  },
+  "backend\\data\\research\\bars\\NAS100_M1.json.gz": {
+    "size": 1899084,
+    "sha256": "f849fc0bfab9ff09c825750f78bdd19e35f4c92da980d42cfe8a1dc59de1ec45"
+  },
+  "backend\\data\\research\\bars\\NAS100_M15.json.gz": {
+    "size": 1209662,
+    "sha256": "e630a83c1cae983c928f1dda0ec78f4bed957d68dbffa908d0177241df056158"
+  },
+  "backend\\data\\research\\bars\\NZDUSD_D1.json.gz": {
+    "size": 21044,
+    "sha256": "5e1157eda8eab4a9725ead31f9647b9408ab0ac630cb54849d5e7a06736e4bc0"
+  },
+  "backend\\data\\research\\bars\\NZDUSD_H1.json.gz": {
+    "size": 283452,
+    "sha256": "7a51a995041c85040c91adbc58514d401d9c256fb780c70de6dad9e0ad1d8da4"
+  },
+  "backend\\data\\research\\bars\\NZDUSD_H4.json.gz": {
+    "size": 81633,
+    "sha256": "b1f2fbf2c875a21c0b48657d06e751d14cbdbdbb97c6137870818ff973600d77"
+  },
+  "backend\\data\\research\\bars\\NZDUSD_M1.json.gz": {
+    "size": 1447355,
+    "sha256": "9a3771a103099c2f7d0f1ab7b7fe88e308dad3991359314fb8ef7f973a9717e1"
+  },
+  "backend\\data\\research\\bars\\NZDUSD_M15.json.gz": {
+    "size": 1047774,
+    "sha256": "b3b132685f0dcb2ecff4ac33231153c7df1ee572a7d694f043f2e719d1a9fe36"
+  },
+  "backend\\data\\research\\bars\\US500_D1.json.gz": {
+    "size": 23375,
+    "sha256": "2f04e4bc26307845f52858d8ac9d9444046994dacdddaa8745b305d58386021e"
+  },
+  "backend\\data\\research\\bars\\US500_H1.json.gz": {
+    "size": 283254,
+    "sha256": "60f49afbd36d7861b3b2d89913a79348a669c608d2506f7365fd2fe4d731d86e"
+  },
+  "backend\\data\\research\\bars\\US500_H4.json.gz": {
+    "size": 86980,
+    "sha256": "dc0b3c7f0d42b16187a7762986852a7d705d6733d71244611761f74fb607cea8"
+  },
+  "backend\\data\\research\\bars\\US500_M1.json.gz": {
+    "size": 1452104,
+    "sha256": "a448693e69b69067a1198debb647ba1655995da6581b34ee82865f0a1271a8a9"
+  },
+  "backend\\data\\research\\bars\\US500_M15.json.gz": {
+    "size": 1030527,
+    "sha256": "fc689cd57806bca97128df6c809f4e7e7e6bd3afe7eeaac2d3ff45ed250bf611"
+  },
+  "backend\\data\\research\\bars\\USDCAD_D1.json.gz": {
+    "size": 12702,
+    "sha256": "7bd5c2172bff3ba4e8b0eb0a42ecffa4b539d0abf7f80c5bec6ae5a1569f08ce"
+  },
+  "backend\\data\\research\\bars\\USDCAD_H1.json.gz": {
+    "size": 244493,
+    "sha256": "89d4ffb7c42e2712a8feaa65ac9ecc851797dbd53ae90666ce0ab549d31db912"
+  },
+  "backend\\data\\research\\bars\\USDCAD_H4.json.gz": {
+    "size": 67436,
+    "sha256": "45bbe0787579c642ea6767022df310e9489ca96117f5c273278a7effc9dfac6c"
+  },
+  "backend\\data\\research\\bars\\USDCAD_M1.json.gz": {
+    "size": 1505586,
+    "sha256": "f8f1943d6e717ffda9cf1a7360ffcc1fa22eee368318ae1a9369db5759fefbb4"
+  },
+  "backend\\data\\research\\bars\\USDCAD_M15.json.gz": {
+    "size": 902483,
+    "sha256": "fc380a984fe1c2de318c8bd52710b17b305ff0496430248b81b20f60889800e6"
+  },
+  "backend\\data\\research\\bars\\USDCHF_D1.json.gz": {
+    "size": 21537,
+    "sha256": "1dccba37c262513f61dd72b23a6d34dcf6b496fed00cd89a865d7dd178cb443c"
+  },
+  "backend\\data\\research\\bars\\USDCHF_H1.json.gz": {
+    "size": 285540,
+    "sha256": "11dbf0c70cc9fd892d079a14a31205afef1ccd7c83c3953b7a4af59812b8b61e"
+  },
+  "backend\\data\\research\\bars\\USDCHF_H4.json.gz": {
+    "size": 82018,
+    "sha256": "9b4340029467fd39d0aab590449c282d95713a7acbb4bc28d1cf892fa6c28cbb"
+  },
+  "backend\\data\\research\\bars\\USDCHF_M1.json.gz": {
+    "size": 1475829,
+    "sha256": "2ead226be0f8b36e4a2f267aa598ca0ed78aaa2d54d6c27f1cb50ec07dd55cf0"
+  },
+  "backend\\data\\research\\bars\\USDCHF_M15.json.gz": {
+    "size": 1058330,
+    "sha256": "6031507689a396c887b3cfbeaf8ad939edb1205f4f7ae981da00040d3fd67622"
+  },
+  "backend\\data\\research\\bars\\USDJPY_D1.json.gz": {
+    "size": 22594,
+    "sha256": "4bc32a5c3fe28fd9462f082159dbc0bbd52b732503789722f141991505895684"
+  },
+  "backend\\data\\research\\bars\\USDJPY_H1.json.gz": {
+    "size": 296710,
+    "sha256": "3fbd00c8babd4738dd1341e7b17f91a4bf50c9d50d1d4b21df0d21ef2aa8c6a6"
+  },
+  "backend\\data\\research\\bars\\USDJPY_H4.json.gz": {
+    "size": 85895,
+    "sha256": "7dc1c30f7e2b829777cec838bdb340af7d81d0dc72d85c376656da26a6fa9720"
+  },
+  "backend\\data\\research\\bars\\USDJPY_M1.json.gz": {
+    "size": 1571657,
+    "sha256": "97971f745cee4210ac135221d585472727e729e100cb265d4cc155867fbd00af"
+  },
+  "backend\\data\\research\\bars\\USDJPY_M15.json.gz": {
+    "size": 1108327,
+    "sha256": "5fe43898b8cdcf3759e835f99ad43f1084cf9f7a7db1ed363c8b7834f305bced"
+  },
+  "backend\\data\\research\\bars\\XAGUSD_D1.json.gz": {
+    "size": 23058,
+    "sha256": "e47c8d8e73a9c0323fba692a1a51225e05b4cf05a2b62e6c2ddbf77e3e5c03d7"
+  },
+  "backend\\data\\research\\bars\\XAGUSD_H1.json.gz": {
+    "size": 291844,
+    "sha256": "cb2dbedb440a675f118f1013bc4a986568bd6d4ab7528e7cc69ed0807067345e"
+  },
+  "backend\\data\\research\\bars\\XAGUSD_H4.json.gz": {
+    "size": 88340,
+    "sha256": "2c2a9ee83c42efe25baffc68b051a50c78bc214d5e8eca1e008479339bef42e3"
+  },
+  "backend\\data\\research\\bars\\XAGUSD_M1.json.gz": {
+    "size": 1837511,
+    "sha256": "86149e36eeec24d5532dc04d598df366a9a5b454633be0330a249e8d44594ad8"
+  },
+  "backend\\data\\research\\bars\\XAGUSD_M15.json.gz": {
+    "size": 1096985,
+    "sha256": "0f53f84e0d4e553ae014e3bb860d317bc9f9c2abed413e984092cd8419162a4c"
+  },
+  "backend\\data\\research\\bars\\XAUUSD_D1.json.gz": {
+    "size": 25187,
+    "sha256": "588eb0c1250983698e56a5189cf8f6b548bc5aad5c0eac87492c6906907bafb4"
+  },
+  "backend\\data\\research\\bars\\XAUUSD_H1.json.gz": {
+    "size": 329232,
+    "sha256": "489b4b40e111812e7bedec3f95e3d9a6743400c9c24d3ff90fe67514aa6584d4"
+  },
+  "backend\\data\\research\\bars\\XAUUSD_H4.json.gz": {
+    "size": 97559,
+    "sha256": "d642daa236bcfed8b809c4c676a84fe9a21afc51fdf53cfc6e9bcc5cdefaf2a5"
+  },
+  "backend\\data\\research\\bars\\XAUUSD_M1.json.gz": {
+    "size": 2077300,
+    "sha256": "586ef6e4e4409156d509a0242721dfd8f6f42e8c9abbac83cba4514a86a67ad2"
+  },
+  "backend\\data\\research\\bars\\XAUUSD_M15.json.gz": {
+    "size": 1237119,
+    "sha256": "c2578f8ff60f415ff51df8097faea0960e5ce1008f4180fdbe67270e7269ef83"
+  }
+}

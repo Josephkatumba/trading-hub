@@ -1,0 +1,267 @@
+{
+ "model": "vol_climax_acceleration",
+ "version": "0.1.0",
+ "source_sha256": "9ad66768b7d738d5f162b87c9649a6ce65575f038396e2d5524afb17f101cff6",
+ "dataset": "bf130602dca4f955f64160bc9b85f0bc4246195f9685afbde91d1856c2c62cd3",
+ "evaluator_version": "tradeden-shared-eval-1.0.0",
+ "symbols": [
+  "EURUSD",
+  "GBPUSD",
+  "GBPJPY",
+  "XAUUSD",
+  "BTCUSD",
+  "ETHUSD"
+ ],
+ "splits_examined": [
+  "train"
+ ],
+ "intents": 436,
+ "replay": {
+  "raw_decisions": 559,
+  "live_gate_rejections": {
+   "SPREAD_OR_NET_RR": 119,
+   "ENTRY_DRIFT": 1,
+   "UNREALISTIC_STOP_DISTANCE": 3
+  }
+ },
+ "evaluator_rejections": {
+  "overlapping_symbol_opportunity": 30
+ },
+ "periods": {
+  "train": {
+   "normal": {
+    "attempted": 406,
+    "resolved": 406,
+    "unknown": 0,
+    "statuses": {
+     "SL": 297,
+     "TIME_EXIT": 13,
+     "TP": 96
+    },
+    "win_rate": 0.26108374384236455,
+    "net_expectancy_r": -0.18119015663268984,
+    "total_r": -73.56320359287207,
+    "profit_factor": 0.7671182652936679,
+    "max_realized_drawdown_r": 86.61118356930135,
+    "longest_losing_streak": 13,
+    "planned_rr_mean": 2.492839838063476,
+    "realized_win_loss_ratio": 2.1710894300764183,
+    "opportunities_per_month": 35.206908831908834,
+    "weekly_bootstrap_expectancy_ci95": [
+     -0.32239163960762185,
+     -0.05288709668673942
+    ],
+    "weekly_sign_flip_p": 0.9965
+   },
+   "stress": {
+    "attempted": 406,
+    "resolved": 406,
+    "unknown": 0,
+    "statuses": {
+     "SL": 297,
+     "TIME_EXIT": 13,
+     "TP": 96
+    },
+    "win_rate": 0.26108374384236455,
+    "net_expectancy_r": -0.24754862967451202,
+    "total_r": -100.50474364785188,
+    "profit_factor": 0.7013401902028911,
+    "max_realized_drawdown_r": 111.47536141862446,
+    "longest_losing_streak": 13,
+    "planned_rr_mean": 2.492839838063476,
+    "realized_win_loss_ratio": 1.9849250666119562,
+    "opportunities_per_month": 35.206908831908834,
+    "weekly_bootstrap_expectancy_ci95": [
+     -0.38745506449929573,
+     -0.11936383109669131
+    ],
+    "weekly_sign_flip_p": 1.0
+   }
+  }
+ },
+ "by_symbol": {
+  "BTCUSD": {
+   "train": {
+    "n": 91,
+    "unknown": 0,
+    "win": 0.25274725274725274,
+    "exp": -0.20571767400056068,
+    "stress_exp": -0.2241185248867084,
+    "pf": 0.725464955489428,
+    "dd": 24.14217237420514
+   },
+   "validation": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   },
+   "test": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   }
+  },
+  "ETHUSD": {
+   "train": {
+    "n": 13,
+    "unknown": 0,
+    "win": 0.46153846153846156,
+    "exp": 0.28123734970221703,
+    "stress_exp": 0.1975224377156155,
+    "pf": 1.486528984263978,
+    "dd": 5.1771085750506805
+   },
+   "validation": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   },
+   "test": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   }
+  },
+  "EURUSD": {
+   "train": {
+    "n": 79,
+    "unknown": 0,
+    "win": 0.27848101265822783,
+    "exp": -0.14386831015808424,
+    "stress_exp": -0.23560967184028675,
+    "pf": 0.8151805559817438,
+    "dd": 18.939163674887613
+   },
+   "validation": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   },
+   "test": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   }
+  },
+  "GBPJPY": {
+   "train": {
+    "n": 58,
+    "unknown": 0,
+    "win": 0.22413793103448276,
+    "exp": -0.29184631807973827,
+    "stress_exp": -0.37522669064393616,
+    "pf": 0.6515634389303673,
+    "dd": 18.486559517165027
+   },
+   "validation": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   },
+   "test": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   }
+  },
+  "GBPUSD": {
+   "train": {
+    "n": 74,
+    "unknown": 0,
+    "win": 0.24324324324324326,
+    "exp": -0.23833434939587123,
+    "stress_exp": -0.34178400995955666,
+    "pf": 0.709329547859003,
+    "dd": 26.358076476800782
+   },
+   "validation": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   },
+   "test": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   }
+  },
+  "XAUUSD": {
+   "train": {
+    "n": 91,
+    "unknown": 0,
+    "win": 0.26373626373626374,
+    "exp": -0.13812698899496614,
+    "stress_exp": -0.1869167110299592,
+    "pf": 0.8189518961722727,
+    "dd": 14.259750052733022
+   },
+   "validation": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   },
+   "test": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   }
+  }
+ },
+ "frequency": {
+  "weekdays": 251,
+  "qualified_intents_per_weekday": 1.737,
+  "evaluated_trades_per_weekday": 1.618
+ },
+ "seconds": {
+  "replay": 3.4,
+  "evaluate": 4.4
+ }
+}

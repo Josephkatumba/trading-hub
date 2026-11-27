@@ -1,0 +1,110 @@
+{
+ "window_utc": [
+  "2026-10-23T01:15:25.573618+00:00",
+  "2026-10-23T01:30:34.673896+00:00"
+ ],
+ "runs_with_identity": 82,
+ "breakdown": {
+  "by_strategy": {
+   "compression_escape | COMPLETE": 13,
+   "vol_exhaustion_fade | COMPLETE": 9,
+   "london_sweep_reversal | COMPLETE": 9,
+   "opening_range_drive | COMPLETE": 9,
+   "index_gap_fade | COMPLETE": 5,
+   "index_trend_day | COMPLETE": 5,
+   "range_sweep_reversion | COMPLETE": 4,
+   "trend_reclaim_r2 | COMPLETE": 4,
+   "trend_reclaim_r3 | COMPLETE": 4,
+   "trend_reclaim_r4 | COMPLETE": 4,
+   "trend_reclaim_r5 | COMPLETE": 4,
+   "trend_reclaim_r7 | COMPLETE": 4,
+   "trend_reclaim_r9 | COMPLETE": 4,
+   "index_turn_of_month | COMPLETE": 4
+  },
+  "by_instrument": {
+   "XAUUSD | COMPLETE": 19,
+   "BTCUSD | COMPLETE": 14,
+   "EURUSD | COMPLETE": 14,
+   "GBPJPY | COMPLETE": 7,
+   "NAS100 | COMPLETE": 7,
+   "GER40 | COMPLETE": 7,
+   "ETHUSD | COMPLETE": 5,
+   "GBPUSD | COMPLETE": 5,
+   "US500 | COMPLETE": 4
+  },
+  "by_session": {
+   "Asia 00-07 | COMPLETE": 82
+  },
+  "by_timeframe": {
+   "M15 | COMPLETE": 82
+  },
+  "decisions": {
+   "compression_escape | no_setup": 13,
+   "vol_exhaustion_fade | no_setup": 9,
+   "london_sweep_reversal | no_setup": 9,
+   "opening_range_drive | no_setup": 9,
+   "index_gap_fade | no_setup": 5,
+   "index_trend_day | no_setup": 5,
+   "range_sweep_reversion | no_setup": 4,
+   "trend_reclaim_r2 | no_setup": 4,
+   "trend_reclaim_r3 | no_setup": 4,
+   "trend_reclaim_r4 | no_setup": 4,
+   "trend_reclaim_r5 | no_setup": 4,
+   "trend_reclaim_r7 | no_setup": 4,
+   "trend_reclaim_r9 | no_setup": 4,
+   "index_turn_of_month | no_setup": 4
+  },
+  "data_shortfall": {
+   "compression_escape | {\"M1\": [119, 120]}": 9,
+   "vol_exhaustion_fade | {\"M15\": [1199, 1200]}": 6,
+   "london_sweep_reversal | {\"M15\": [1199, 1200]}": 6,
+   "opening_range_drive | {\"M15\": [1199, 1200]}": 6,
+   "range_sweep_reversion | {\"M1\": [119, 120]}": 3,
+   "trend_reclaim_r2 | {\"M1\": [119, 120]}": 3,
+   "trend_reclaim_r3 | {\"M1\": [119, 120]}": 3,
+   "trend_reclaim_r4 | {\"M1\": [119, 120]}": 3,
+   "trend_reclaim_r5 | {\"M1\": [119, 120]}": 3,
+   "trend_reclaim_r7 | {\"M1\": [119, 120]}": 3,
+   "trend_reclaim_r9 | {\"M1\": [119, 120]}": 3
+  }
+ },
+ "expected_from_history": {
+  "compression_escape": {
+   "expected_signals": 0.08984375,
+   "p_zero_if_rates_hold": 0.9140739981758944,
+   "evaluated_symbol_hours": 9
+  },
+  "index_trend_day": {
+   "expected_signals": 0.0,
+   "p_zero_if_rates_hold": 1.0,
+   "evaluated_symbol_hours": 3
+  },
+  "index_gap_fade": {
+   "expected_signals": 0.0,
+   "p_zero_if_rates_hold": 1.0,
+   "evaluated_symbol_hours": 3
+  },
+  "index_turn_of_month": {
+   "expected_signals": 0.0,
+   "p_zero_if_rates_hold": 1.0,
+   "evaluated_symbol_hours": 2
+  }
+ },
+ "independent_replay": {
+  "compression_escape | agree": 13,
+  "london_sweep_reversal | agree": 9,
+  "opening_range_drive | agree": 9,
+  "vol_exhaustion_fade | agree": 7,
+  "index_gap_fade | agree": 5,
+  "index_trend_day | agree": 5,
+  "range_sweep_reversion | agree": 4,
+  "trend_reclaim_r2 | agree": 4,
+  "trend_reclaim_r3 | agree": 4,
+  "trend_reclaim_r4 | agree": 4,
+  "trend_reclaim_r5 | agree": 4,
+  "trend_reclaim_r7 | agree": 4,
+  "trend_reclaim_r9 | agree": 4,
+  "index_turn_of_month | agree": 4,
+  "vol_exhaustion_fade | error KeyError": 2
+ }
+}

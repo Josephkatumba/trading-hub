@@ -1,0 +1,92 @@
+{
+ "crypto_trend_breakout 0.3.0": {
+  "cells": {
+   "test (exposed) | OTHER": {
+    "n": 4,
+    "exp": 1.2901578402695086
+   },
+   "test (exposed) | TRENDING": {
+    "n": 11,
+    "exp": 0.4197163079081937
+   },
+   "train | OTHER": {
+    "n": 10,
+    "exp": 0.2156457791898505
+   },
+   "train | TRENDING": {
+    "n": 30,
+    "exp": 0.20105715702786064
+   },
+   "validation | OTHER": {
+    "n": 2,
+    "exp": 0.36715558290575534
+   },
+   "validation | TRENDING": {
+    "n": 12,
+    "exp": 0.13853312978445828
+   }
+  },
+  "prediction_holds_train_and_validation": false,
+  "adopt_filter": false
+ },
+ "trend_reclaim_r4 (BTCUSD job)": {
+  "cells": {
+   "test (exposed) | OTHER": {
+    "n": 8,
+    "exp": -0.0745928836591582
+   },
+   "test (exposed) | TRENDING": {
+    "n": 13,
+    "exp": 0.5791005515123998
+   },
+   "train | OTHER": {
+    "n": 21,
+    "exp": 0.019132509480571998
+   },
+   "train | TRENDING": {
+    "n": 14,
+    "exp": 0.45800594659545213
+   },
+   "validation | OTHER": {
+    "n": 10,
+    "exp": 0.0010750352009680996
+   },
+   "validation | TRENDING": {
+    "n": 15,
+    "exp": 0.44095533142835097
+   }
+  },
+  "prediction_holds_train_and_validation": false,
+  "adopt_filter": false
+ },
+ "index_trend_day 0.1.0/0.2.0": {
+  "cells": {
+   "test (exposed) | OTHER": {
+    "n": 36,
+    "exp": 0.1575996217499073
+   },
+   "test (exposed) | TRENDING": {
+    "n": 20,
+    "exp": 0.16223903376260035
+   },
+   "train | OTHER": {
+    "n": 75,
+    "exp": 0.17020929672734345
+   },
+   "train | TRENDING": {
+    "n": 28,
+    "exp": 0.12758658247513804
+   },
+   "validation | OTHER": {
+    "n": 51,
+    "exp": 0.1936603489393677
+   },
+   "validation | TRENDING": {
+    "n": 15,
+    "exp": -0.14249689605846536
+   }
+  },
+  "prediction_holds_train_and_validation": false,
+  "adopt_filter": false
+ }
+}

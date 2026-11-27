@@ -1,0 +1,83 @@
+"""Claude-authored experimental model: Prior-Day Level Acceptance Retest. No verified edge.
+
+Mechanism (auction acceptance): the prior broker day's high/low is the most widely
+watched reference level. When an M15 candle closes beyond it, and the first pullback
+to the level holds (the retest candle closes back on the breakout side), the market
+has accepted prices outside yesterday's value range and tends to extend. This is
+the opposite of a sweep/failure setup: entry only after the level has held.
+Stop beyond the retest low/high; fixed 2.5R objective; exits before broker gaps.
+
+Prior day built from H1 candles (D1 context is rejected as stale by the live gate on
+Mondays). Uses only closed candles from the supplied snapshot. Pure functions only.
+"""
+
+ZONE = 0.15            # retest must come within this many M15 ATRs of the level
+MAX_PIERCE = 0.6       # retest may not trade more than this far back through the level
+STOP_BUFFER = 0.3
+TARGET_R = 2.5
+MAX_BARS_SINCE_BREAK = 24
+HORIZON = 8 * 3600
+MIN_HORIZON = 2 * 3600
+CRYPTO = {'BTCUSD', 'ETHUSD'}
+
+@@HELPERS@@
+
+def detect(snapshot):
+    symbol = snapshot['symbol']
+    bars = snapshot['frames'].get('M15', ())
+    h1 = snapshot['frames'].get('H1', ())
+    if len(bars) < 60 or len(h1) < 48:
+        return []
+    last = bars[-1]
+    now = last['utc'] + 900
+    hour = now % 86400 // 3600
+    if symbol not in CRYPTO and not 6 <= hour < 19:
+        return []
+    days = broker_days(h1, 3600, now)
+    if not days or days[-1]['bars'] < 12:
+        return []
+    pdh, pdl = days[-1]['high'], days[-1]['low']
+    atr = atr_of(bars, 14)
+    if atr <= 0:
+        return []
+    today = broker_day(now)
+    session = [b for b in bars if broker_day(b['utc']) == today]
+    if len(session) < 3:
+        return []
+    direction = None
+    for side in (1, -1):
+        level = pdh if side > 0 else pdl
+        brk = None
+        for i, b in enumerate(session[:-1]):
+            if side * (b['close'] - level) > 0:
+                brk = i
+                break
+        if brk is None or len(session) - 1 - brk > MAX_BARS_SINCE_BREAK or len(session) - 1 - brk < 2:
+            continue
+        between = session[brk + 1:-1]
+        if side > 0:
+            if any(b['low'] <= level + ZONE * atr for b in between):
+                continue
+            if last['low'] <= level + ZONE * atr and last['low'] >= level - MAX_PIERCE * atr and last['close'] > level and last['close'] > last['open']:
+                direction, stop = 'LONG', min(last['low'], level) - STOP_BUFFER * atr
+        else:
+            if any(b['high'] >= level - ZONE * atr for b in between):
+                continue
+            if last['high'] >= level - ZONE * atr and last['high'] <= level + MAX_PIERCE * atr and last['close'] < level and last['close'] < last['open']:
+                direction, stop = 'SHORT', max(last['high'], level) + STOP_BUFFER * atr
+        if direction:
+            break
+    if direction is None:
+        return []
+    horizon = min(HORIZON, seconds_to_cutoff(symbol, now))
+    if horizon < MIN_HORIZON:
+        return []
+    quote = snapshot['quote']
+    long = direction == 'LONG'
+    entry = quote['ask'] if long else quote['bid']
+    risk = entry - stop if long else stop - entry
+    if risk <= 0:
+        return []
+    target = entry + TARGET_R * risk if long else entry - TARGET_R * risk
+    return [{'direction': direction, 'stop_loss': stop, 'take_profit': target, 'horizon_seconds': horizon, 'atr': atr,
+             'rationale': 'Close beyond the prior broker-day %s, first retest held; stop beyond the retest, 2.5R objective.' % ('high' if long else 'low')}]

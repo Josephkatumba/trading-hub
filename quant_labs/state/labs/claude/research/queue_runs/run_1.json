@@ -1,0 +1,15 @@
+{
+  "job": "e350c08de80847bfbb73252716d76c15",
+  "status": "COMPLETE",
+  "resources": {
+    "cpu_cap_percent": 20.0,
+    "cpu_limit_seconds": 20.0,
+    "cpu_seconds_used": 2.15625,
+    "enforced": true,
+    "max_processes": 1,
+    "memory_limit_mb": 384.0,
+    "peak_committed_mb": 119.03125,
+    "wall_seconds": 2.167333699995652
+  },
+  "reason": null
+}

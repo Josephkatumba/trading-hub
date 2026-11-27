@@ -1,0 +1,26 @@
+{
+  "date_eat": "2026-10-27",
+  "backend": {
+    "command": "python backend/tests/run_suite.py --verbose --timeout 120",
+    "run": 721,
+    "passed": 720,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 1,
+    "timeouts": 0,
+    "elapsed_seconds": 115.635,
+    "skip_reason": "test_engine_resilience.SingleInstanceTests.test_second_watchdog_cannot_acquire_lock: a watchdog is already running on this machine",
+    "explicitly_not_selected": "RealStoreEquivalence: default runner excludes optional live-store tests",
+    "isolation": "Temporary market-data directory and temporary RUNNING engine-control intent; owner controls unchanged",
+    "log": "phase2-backend-complete.log"
+  },
+  "frontend": {"command": "npm test", "run": 187, "passed": 187, "failed": 0, "skipped": 0, "log": "phase2-frontend.log"},
+  "known_fault_benchmark": {"historical_prefixes": 46, "fault_types": 7, "injected_cases": 322, "detected": 322, "population_accuracy_claim": false},
+  "initial_environment_failures": [
+    "20-second API diagnostic timeout: asyncio event loop stuck in socket._fallback_socketpair accept before application request handling; identical test passed in 0.401 seconds with approved local socket access",
+    "Restricted temporary SQLite database access failed; identical calendar restart test passed with approved temporary-file access"
+  ],
+  "production_changed": false,
+  "telegram_permissions_changed": false,
+  "broker_execution_enabled": false
+}

@@ -15,6 +15,7 @@ from fastapi import FastAPI, Query, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
+from ops.control import read_state, set_state
 
 load_dotenv()
 
@@ -46,6 +47,8 @@ import telegram_notifier
 import signal_outcomes
 import reports
 from strategy_bank import worker as bank_worker
+from quant_live import service as quant_live_service
+from quant_live.api import router as quant_live_router
 
 try:
     import MetaTrader5 as mt5
@@ -87,29 +90,42 @@ def ensure_mt5() -> tuple[bool, str | None]:
     if mt5 is None:
         return False, "MetaTrader5 package is unavailable"
     with _MT5_LOCK:
+        if read_state()['state'] != 'RUNNING':
+            return False, 'Tradeden is paused or stopped; explicitly resume to connect MT5'
         if _MT5_SESSION["initialized"]:
             try:
                 terminal = mt5.terminal_info()
                 if terminal is not None and getattr(terminal, "connected", True):
                     return True, None
+                if terminal is None:
+                    set_state('PAUSED', 'MT5 disappeared; explicit resume required', expected='RUNNING')
+                    close_mt5()
+                    return False, 'MT5 closed; Tradeden paused'
+                # The terminal owns broker reconnection. Reinitializing IPC here can
+                # reopen a terminal whose window is in the middle of closing.
+                return False, 'MT5 broker connection unavailable; waiting for terminal recovery'
             except Exception:
                 LOGGER.exception("MT5 liveness check failed")
-            # Terminal went away: drop the stale session and reconnect below.
-            _MT5_SESSION["initialized"] = False
-            try:
-                mt5.shutdown()
-            except Exception:
-                LOGGER.exception("MT5 shutdown of stale session failed")
+                set_state('PAUSED', 'MT5 liveness check failed; explicit resume required', expected='RUNNING')
+                close_mt5()
+                return False, 'MT5 connection failed; Tradeden paused'
         try:
+            retry_at = _MT5_SESSION.get('retry_at', 0)
+            if monotonic_time.monotonic() < retry_at:
+                return False, 'MT5 recovery cooldown (60 seconds)'
+            _MT5_SESSION['retry_at'] = monotonic_time.monotonic() + 60
             terminal_path = os.getenv("TRADING_HUB_MT5_TERMINAL_PATH")
             connected = bool(mt5.initialize(path=terminal_path, timeout=15000) if terminal_path else mt5.initialize())
         except Exception as exc:
             LOGGER.exception("MT5 initialization failed")
+            set_state('PAUSED', 'MT5 initialization exception; explicit resume required', expected='RUNNING')
             return False, str(exc)
         _MT5_SESSION["initializations"] += 1
         _MT5_SESSION["initialized"] = connected
         if connected:
+            _MT5_SESSION['retry_at'] = 0
             return True, None
+        set_state("PAUSED", "MT5 initialization failed; explicit resume required", expected="RUNNING")
         return False, str(getattr(mt5, "last_error", lambda: "MT5 terminal is unavailable")())
 
 
@@ -136,6 +152,10 @@ def autonomous_market_worker(stop):
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    if read_state()['state'] != 'RUNNING':
+        # Keep the dashboard API available, without starting delivery or scan workers.
+        yield
+        return
     stop = threading.Event()
     worker = threading.Thread(target=autonomous_market_worker, args=(stop,),
                               name="tradeden-market-scanner", daemon=True)
@@ -157,6 +177,16 @@ async def lifespan(_app: FastAPI):
     if bank_worker.enabled() and mt5 is not None:
         background.append(threading.Thread(target=bank_worker.run, args=(stop, mt5, ensure_mt5, mt5_symbol, list(WATCHLIST)),
                                            name="tradeden-strategy-bank", daemon=True))
+    # Experimental providers consume this scanner's data; they never open an MT5 session.
+    def quant_history(broker, timeframe, start, end):
+        with _SCAN_LOCK:
+            if mt5 is None:
+                return None
+            return signal_outcomes.mt5_fetch(mt5, ensure_mt5, os.getenv("TRADING_HUB_MT5_SOURCE_TIMEZONE"))(broker, timeframe, start, end)
+    quant_worker = quant_live_service.start(stop, quant_history)
+    # Gold/Bitcoin intelligence briefings: preview generation only unless separately approved and flagged.
+    from market_intel import briefings as intel_briefings
+    intel_briefings.start(stop)
     for thread in background:
         thread.start()
     try:
@@ -164,7 +194,7 @@ async def lifespan(_app: FastAPI):
     finally:
         stop.set()
         worker.join(timeout=5)
-        for thread in [notifier, *background]:
+        for thread in [notifier, quant_worker, *background]:
             if thread is not None:
                 thread.join(timeout=5)
         # Serialize shutdown with scans and browser requests.
@@ -176,6 +206,15 @@ app = FastAPI(title="Trading Hub Market Engine", version="0.3.0", lifespan=lifes
 commercial.install(app)
 from intelligence_chart import router as chart_router
 app.include_router(chart_router)
+app.include_router(quant_live_router)
+from scalper_journal import router as scalper_router
+app.include_router(scalper_router)
+from research_overview import router as research_router
+app.include_router(research_router)
+from product.api import router as product_router
+app.include_router(product_router)
+from intelligence_api import router as intelligence_router
+app.include_router(intelligence_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -496,6 +535,7 @@ def _market_snapshot() -> list[dict[str, Any]]:
     bars_by_symbol: dict[str, list[dict[str, Any]]] = {}
     # Timeframes to collect: enabled strategies' declared needs + shared H4/D1 context.
     data_plan = market_data.plan_for(STRATEGIES)
+    data_plan = market_data.merge_requirements([data_plan, quant_live_service.requirements()])
     strategy_results: dict[str, dict[str, int]] = {}
     try:
         for requested in WATCHLIST:
@@ -556,8 +596,28 @@ def _market_snapshot() -> list[dict[str, Any]]:
             # Market context by timeframe (tick_volume kept as the broker reports it).
             # M15/H1 reuse the bars fetched above; the rows/higher_rows the trendline
             # strategy reads are unchanged.
+            quant_spreads = quant_live_service.enabled()
             bars, unavailable = market_data.fetch_timeframes(mt5, actual, data_plan, fetched={
-                "M15": market_data.bars_from_rates(rates), "H1": market_data.bars_from_rates(h1_rates)})
+                "M15": market_data.bars_from_rates(rates, include_spread=quant_spreads),
+                "H1": market_data.bars_from_rates(h1_rates, include_spread=quant_spreads)}, include_spread=quant_spreads)
+            if quant_spreads:
+                try:
+                    mode = getattr(info, "trade_mode", None)
+                    full = getattr(mt5, "SYMBOL_TRADE_MODE_FULL", 4)
+                    long_only = getattr(mt5, "SYMBOL_TRADE_MODE_LONGONLY", 1)
+                    short_only = getattr(mt5, "SYMBOL_TRADE_MODE_SHORTONLY", 2)
+                    from quant_live.costs import commission_price
+                    quant_live_service.offer(normalize_symbol(requested), actual, bars,
+                        {"bid": bid, "ask": ask, "raw_tick_at": raw_tick_epoch, "received_at": received_at.timestamp()},
+                        {"point": float(info.point), "tick_size": float(getattr(info, "trade_tick_size", 0) or 0),
+                         "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+                         "tradable_long": mode in (full, long_only), "tradable_short": mode in (full, short_only),
+                         "commission_price": commission_price(normalize_symbol(requested)), "cost_basis": "assumed research schedule; account charges unverified",
+                         "swap_mode": getattr(info, "swap_mode", None), "swap_long": getattr(info, "swap_long", None),
+                         "swap_short": getattr(info, "swap_short", None), "swap_rollover3days": getattr(info, "swap_rollover3days", None)},
+                        source_basis, normalize_mt5_epoch)
+                except Exception:
+                    LOGGER.exception("Experimental lab handoff rejected; legacy scan continues")
             # The registry runs the enabled strategies (only trendline). Market fields
             # stay the trendline payload exactly; strategy metadata is not added yet.
             results = STRATEGIES.evaluate(MarketInput(actual, rows, spread=current_spread,
@@ -722,6 +782,7 @@ def health():
         "strategy_id": TRENDLINE,
         "strategies": [{"strategy_id": item["strategy_id"], "version": item["version"], "status": item["status"]} for item in STRATEGIES.describe()],
         "execution_enabled": False,
+        "process_control": read_state(),
         "mt5_available": mt5 is not None,
         "mt5_connected": connected,
         "mt5_status": "CONNECTED" if connected else "OFFLINE" if mt5 is not None else "UNAVAILABLE",
@@ -1164,7 +1225,7 @@ def strategy_bank():
 _BANK_SIGNAL_FIELDS = ("signal_id", "strategy_key", "strategy_name", "strategy_number", "status", "symbol", "direction",
                        "timeframe", "confirmed_at", "entry", "stop_loss", "take_profit", "rr", "executable", "execution_basis",
                        "time_exit_at", "explanation", "contradictions", "opportunity_id", "alert", "outcome_status",
-                       "r_multiple", "outcome_at", "outcome_method", "outcome_reason", "r_basis")
+                       "r_multiple", "outcome_at", "outcome_method", "outcome_reason", "r_basis", "quality")
 
 
 @app.get("/api/strategy-bank/signals")
@@ -1181,6 +1242,60 @@ def strategy_bank_signals(limit: int = Query(default=200, ge=1, le=1000)):
                                     "direction": opp.get("direction"), "first_confirmed_at": opp.get("first_confirmed_at")}
                               for oid, opp in store.opportunities.items() if oid in wanted},
             "basis": "Recorded bank signals. R multiples are hypothetical signal outcomes, not executed trades.",
+            "timestamp": utc_iso(datetime.now(timezone.utc))}
+
+
+_QUALITY_CACHE: dict[str, Any] = {"at": 0.0, "audit": None}
+_QUALITY_SECTIONS = ("generated_at", "label", "method", "data", "folds", "exit_choices", "all_instruments", "target_instruments",
+                     "grade_calibration", "random_control", "breakdowns", "strategy_status", "diagnostics", "final_model")
+
+
+@app.get("/api/signal-quality")
+def signal_quality_report():
+    """Signal quality dashboard, read-only: (1) the audit of every RECORDED live signal (hypothetical R),
+    (2) the HISTORICAL walk-forward comparison of the old engine with the quality-gated engine (simulated,
+    out-of-sample, net of costs) and (3) how live bank signals are being graded. Nothing is scanned or changed."""
+    import time as time_
+    from research import signal_audit
+    from signal_quality import lifecycle as quality_lifecycle, live as quality_live
+    from strategy_bank import engine as bank_engine
+    if _QUALITY_CACHE["audit"] is None or time_.time() - _QUALITY_CACHE["at"] > 300:
+        try:
+            _QUALITY_CACHE["audit"] = signal_audit.audit()
+        except Exception:
+            LOGGER.exception("Signal quality: live audit unavailable")
+            _QUALITY_CACHE["audit"] = None
+        _QUALITY_CACHE["at"] = time_.time()
+    from storage_config import data_directory
+    research_path = data_directory() / "research" / "quality" / "walk_forward.json"
+    research = None
+    if research_path.exists():
+        try:
+            full = json.loads(research_path.read_text(encoding="utf-8"))
+            research = {k: full.get(k) for k in _QUALITY_SECTIONS}
+        except (OSError, json.JSONDecodeError):
+            LOGGER.exception("Signal quality: walk-forward results unreadable")
+    store = bank_engine.BankStore()
+    graded: dict[str, dict[str, Any]] = {}
+    stages: dict[str, int] = {}
+    for row in store.signals.values():
+        q = row.get("quality") or {}
+        grade = q.get("grade") or "UNGRADED"
+        cell = graded.setdefault(grade, {"signals": 0, "resolved": 0, "wins": 0, "total_r": 0.0})
+        cell["signals"] += 1
+        if row.get("outcome_status") in ("TARGET_HIT", "STOP_HIT", "TIME_EXIT") and row.get("r_multiple") is not None:
+            cell["resolved"] += 1
+            cell["wins"] += float(row["r_multiple"]) > 0
+            cell["total_r"] = round(cell["total_r"] + float(row["r_multiple"]), 3)
+        stage = quality_lifecycle.stage_of(row)
+        stages[stage] = stages.get(stage, 0) + 1
+    model_ = quality_live.model()
+    return {"live_audit": _QUALITY_CACHE["audit"], "research": research,
+            "live_grading": {"mode": quality_live.mode(), "model": (model_.meta if model_ else None),
+                             "by_grade": graded, "by_stage": stages},
+            "notes": ["Live figures are recorded signal outcomes (hypothetical R), not executed trades.",
+                      "Research figures are simulated on MT5 history, out of sample, net of spread, commission, slippage and financing; they are not live results.",
+                      "The quality gate runs in shadow mode unless TRADEDEN_QUALITY_GATE=enforce; it never places trades."],
             "timestamp": utc_iso(datetime.now(timezone.utc))}
 
 

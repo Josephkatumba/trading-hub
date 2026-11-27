@@ -1,0 +1,27 @@
+{
+ "as_of": "2026-10-23",
+ "method": "Frozen shared evaluator v1 results (official queue, exact-request recoveries, Codex retry file, Claude harness replay of Codex compression_escape). Net R after realistic costs; stress doubles spreads/slippage. Trade-level bootstrap CI and sign-flip p per cell; Holm across 87 instrument cells on the test split. Variants with overlapping entries are treated as one hypothesis. All historical splits were previously exposed; none is an untouched holdout.",
+ "category_A_promising": [],
+ "category_A_note": "No strategy has positive out-of-sample evidence that survives multiple-testing correction. Category A is empty; no strategy is promoted.",
+ "category_B_inconclusive": [
+  {"lab": "claude", "strategy": "index_trend_day", "version": "0.2.0", "evidence": "positive in train/validation/test (+0.159/+0.117/+0.159R, n=225); test p=0.31; robust to stop/target/threshold changes but fragile to decision time", "action": "live paper candidate, Telegram enabled"},
+  {"lab": "claude", "strategy": "crypto_trend_breakout", "version": "0.3.0", "evidence": "positive in all splits (+0.205/+0.171/+0.652R, n=69); test p=0.10; small sample", "action": "live paper candidate, Telegram enabled"},
+  {"lab": "codex", "strategy": "trend_reclaim (BTCUSD family)", "version": "0.1.0", "evidence": "one hypothesis, not six: BTCUSD entries overlap 54-94% across r2..r9. r4 is the only variant positive in all three splits (+0.195/+0.265/+0.330R, n=81; test without best trade +0.140R). r5/r7/r9 are negative or flat in train and their test results depend heavily on single trades (r9 +0.636R -> +0.060R without the best trade). Selected after looking at 18 symbol cells.", "action": "internal paper monitoring as ONE hypothesis (prefer r4); not enabled for Telegram; prospective evidence required. Same theme as crypto_trend_breakout (crypto time-series momentum)."},
+  {"lab": "claude", "strategy": "index_turn_of_month", "version": "0.1.0", "evidence": "rejected at train (-0.016R) under the original protocol; validation/test later positive (+0.199/+0.206R) but seen after rejection", "action": "prospective observation only"}
+ ],
+ "category_C_underperforming": [
+  {"lab": "codex", "strategy": "range_sweep_reversion", "version": "0.1.0", "evidence": "negative in train and validation for EURUSD (-0.288/-0.389R) and BTCUSD (-0.093/-0.146R); positive only in test (+0.482/+0.371R, n=20-22, p=0.40) and halves without the best trade; XAUUSD test -1.01R", "investigate": "whether a regime condition separates the test-period behaviour; no tuning on the test split"},
+  {"lab": "claude", "strategy": "hourly_shock_drift", "version": "0.1.0", "evidence": "negative in every split (-0.099/-0.130/-0.075R, n=1257)", "investigate": "structural: hour-adjusted shocks retrace to their midpoint ~67% of the time; a fade is a distinct hypothesis but costs are large relative to the effect"},
+  {"lab": "kimi", "strategy": "london_sweep_reversal", "version": "0.1.0/0.2.0", "evidence": "negative in all splits; v0.1.0 test -0.614R (p=0.004)", "investigate": "CEO hypothesis: do London sweeps of the Asian range predict continuation rather than reversal?"},
+  {"lab": "kimi", "strategy": "vol_exhaustion_fade", "version": "0.1.0/0.2.0", "evidence": "positive train (+0.198/+0.320R) then negative validation/test: classic in-sample overfit", "investigate": "CEO hypothesis: does a volatility climax mark acceleration rather than exhaustion?"},
+  {"lab": "kimi", "strategy": "opening_range_drive", "version": "0.1.0/0.2.0", "evidence": "near zero before costs, negative after (-0.036/-0.071/-0.045R, n=380)", "investigate": "CEO hypothesis: failed opening-range breakouts"}
+ ],
+ "category_D_rejected": [
+  {"lab": "codex", "strategy": "trend_reclaim (EURUSD, XAUUSD cells)", "evidence": "significantly negative: EURUSD r5/r7/r9 Holm p=0.04; XAUUSD r3/r7/r9 test -0.88 to -1.01R"},
+  {"lab": "codex", "strategy": "compression_escape", "version": "0.1.0", "evidence": "-0.051/-0.275/-0.005R over 880 trades"},
+  {"lab": "claude", "strategy": "index_gap_fade", "version": "0.1.0", "evidence": "-0.049/+0.083/-0.494R; test p=0.02 negative"},
+  {"lab": "claude", "strategy": "index_first_candle_drive", "version": "0.1.0", "evidence": "+0.186 -> +0.066 -> -0.002R: edge decays to zero"},
+  {"lab": "claude", "strategy": "fvg_retest, channel_trend_m15 0.1.0/0.2.0, session_mean_reversion, london_momentum, fx_fix_reversal, pdhl_acceptance, index_orb_m5, crypto_trend_breakout 0.1.0", "evidence": "negative after costs in the split where they were judged; see notes/RESEARCH_JOURNAL.md"}
+ ],
+ "preserved": "No strategy, version or result was deleted; all remain registered and scanning internally."
+}

@@ -1,0 +1,23 @@
+{
+ "approved_by": "CEO Joseph Katumba",
+ "directive": "CEO DIRECTIVE: SIGNAL ACTIVATION, STRATEGY OPTIMIZATION & PROFITABILITY DISCOVERY (2026-10-23), section 1.2: outbound delivery only for paper candidates; research-only models monitored internally pending CEO review.",
+ "production": false,
+ "evidence_basis": "Frozen shared evaluator v1 (bbc0c08a...) after realistic costs. PAPER_CANDIDATE = positive in train, validation and test but not statistically significant after multiple-testing correction. RESEARCH_ONLY = no positive out-of-sample evidence.",
+ "scope": [
+  {
+   "lab": "claude",
+   "key": "index_trend_day",
+   "version": "0.2.0",
+   "tier": "PAPER_CANDIDATE",
+   "evidence": "train +0.159R (103), validation +0.117R (66), test +0.159R (56); pooled p=0.04 unadjusted"
+  },
+  {
+   "lab": "claude",
+   "key": "crypto_trend_breakout",
+   "version": "0.3.0",
+   "tier": "PAPER_CANDIDATE",
+   "evidence": "train +0.205R (40), validation +0.171R (14), test +0.652R (15); small sample"
+  }
+ ],
+ "supersedes": "2026-10-23_quant_labs_live_signal_integration.json"
+}

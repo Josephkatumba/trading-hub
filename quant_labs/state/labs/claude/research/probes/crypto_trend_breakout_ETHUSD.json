@@ -1,0 +1,22 @@
+{
+  "status": "COMPLETE",
+  "lab": "claude",
+  "source_sha256": "8fa03ce9d0d6836ef2b31c12f72c694029e309d61b9a660a0beeb929c027c34c",
+  "source": "MT5_SHARED_CACHE_PROBE",
+  "input_sha256": "e1a52a5f91df6c3c145f8511e60b9728a8cd6977851d334ea9ff7f5ccd741472",
+  "asof": 1792451012.540287,
+  "symbol": "ETHUSD",
+  "resources": {
+    "enforced": true,
+    "memory_limit_mb": 192.0,
+    "peak_committed_mb": 13.66015625,
+    "cpu_cap_percent": 15.0,
+    "cpu_limit_seconds": 4.0,
+    "cpu_seconds_used": 0.09375,
+    "max_processes": 1
+  },
+  "decisions": [],
+  "scope": "read-only real-data capability probe, not live model admission or a committed signal",
+  "live_writes": 0,
+  "outbound_calls": 0
+}

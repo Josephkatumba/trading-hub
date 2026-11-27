@@ -1,0 +1,71 @@
+"""Claude-authored experimental model: 24-Hour Channel Trend Breakout. No verified edge.
+
+Mechanism (intraday time-series momentum with a wide, noise-tolerant stop): a fresh
+M15 close above the prior 24-hour high (below the 24-hour low) while the H4 EMA trend
+points the same way indicates that the higher-timeframe trend is resuming. Unlike
+tight-stop pattern entries, the stop is 1.5 H1 ATRs so ordinary M15 noise does not
+exit the trade; 2.5R objective; 24-hour limit or the next broker data gap.
+No compression precondition (distinct from compression-escape models).
+
+v0.2.0 (declared train-selected trial): restricted to XAUUSD, BTCUSD and ETHUSD, the
+markets where v0.1.0 was positive on the training split; v0.1.0 lost across FX and
+indices. Rules unchanged. Only validation/test can confirm it; selection bias disclosed.
+
+Uses only closed candles from the supplied snapshot. Pure functions only.
+"""
+
+CHANNEL = 96               # M15 candles = 24 hours
+STOP_H1_ATR = 1.5
+TARGET_R = 2.5
+HORIZON = 24 * 3600
+MIN_HORIZON = 3 * 3600
+MARKETS = {'XAUUSD', 'BTCUSD', 'ETHUSD'}
+
+@@HELPERS@@
+
+def detect(snapshot):
+    if snapshot['symbol'] not in MARKETS:
+        return []
+    bars = snapshot['frames'].get('M15', ())
+    h1 = snapshot['frames'].get('H1', ())
+    h4 = snapshot['frames'].get('H4', ())
+    if len(bars) < CHANNEL + 3 or len(h1) < 26 or len(h4) < 40:
+        return []
+    last, prev = bars[-1], bars[-2]
+    upper = max(b['high'] for b in bars[-CHANNEL - 1:-1])
+    lower = min(b['low'] for b in bars[-CHANNEL - 1:-1])
+    upper_prev = max(b['high'] for b in bars[-CHANNEL - 2:-2])
+    lower_prev = min(b['low'] for b in bars[-CHANNEL - 2:-2])
+    if last['close'] > upper and prev['close'] <= upper_prev:
+        side = 1
+    elif last['close'] < lower and prev['close'] >= lower_prev:
+        side = -1
+    else:
+        return []
+    closes = [b['close'] for b in h4[-40:]]
+    k = 2.0 / 21
+    ema = closes[0]
+    series = []
+    for x in closes:
+        ema = ema + k * (x - ema)
+        series.append(ema)
+    if side > 0 and not (closes[-1] > series[-1] > series[-4]):
+        return []
+    if side < 0 and not (closes[-1] < series[-1] < series[-4]):
+        return []
+    atr_h1 = atr_of(h1, 24)
+    atr = atr_of(bars, 14)
+    if atr_h1 <= 0 or atr <= 0:
+        return []
+    now = last['utc'] + 900
+    horizon = min(HORIZON, seconds_to_cutoff(snapshot['symbol'], now))
+    if horizon < MIN_HORIZON:
+        return []
+    quote = snapshot['quote']
+    long = side > 0
+    entry = quote['ask'] if long else quote['bid']
+    risk = STOP_H1_ATR * atr_h1
+    stop = entry - risk if long else entry + risk
+    target = entry + TARGET_R * risk if long else entry - TARGET_R * risk
+    return [{'direction': 'LONG' if long else 'SHORT', 'stop_loss': stop, 'take_profit': target, 'horizon_seconds': horizon,
+             'atr': atr, 'rationale': 'Fresh M15 close beyond the prior 24-hour range in the H4 EMA-trend direction; 1.5 H1-ATR stop, 2.5R objective.'}]

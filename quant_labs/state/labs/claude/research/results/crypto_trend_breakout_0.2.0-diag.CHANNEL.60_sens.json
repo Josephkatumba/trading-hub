@@ -1,0 +1,193 @@
+{
+ "model": "crypto_trend_breakout",
+ "version": "0.2.0-diag.CHANNEL.60",
+ "source_sha256": "9aefc5a5733aac564f3cb092482fea7278b55805e54ec17c7e82a48bd7856bd8",
+ "dataset": "bf130602dca4f955f64160bc9b85f0bc4246195f9685afbde91d1856c2c62cd3",
+ "evaluator_version": "tradeden-shared-eval-1.0.0",
+ "symbols": [
+  "BTCUSD",
+  "ETHUSD"
+ ],
+ "splits_examined": [
+  "train",
+  "validation"
+ ],
+ "intents": 119,
+ "replay": {
+  "raw_decisions": 121,
+  "live_gate_rejections": {
+   "ENTRY_DRIFT": 2
+  }
+ },
+ "evaluator_rejections": {
+  "overlapping_symbol_opportunity": 49
+ },
+ "periods": {
+  "train": {
+   "normal": {
+    "attempted": 52,
+    "resolved": 49,
+    "unknown": 3,
+    "statuses": {
+     "TIME_EXIT": 22,
+     "SL": 22,
+     "TP": 5,
+     "INCOMPLETE": 3
+    },
+    "win_rate": 0.3877551020408163,
+    "net_expectancy_r": 0.03323079571409332,
+    "total_r": 1.6283089899905727,
+    "profit_factor": 1.0624520614294097,
+    "max_realized_drawdown_r": 9.527278222829397,
+    "longest_losing_streak": 7,
+    "planned_rr_mean": 2.999945570897961,
+    "realized_win_loss_ratio": 1.6775558864674893,
+    "opportunities_per_month": 4.5092592592592595,
+    "weekly_bootstrap_expectancy_ci95": [
+     -0.36030376911703393,
+     0.4283178304391787
+    ],
+    "weekly_sign_flip_p": 0.449
+   },
+   "stress": {
+    "attempted": 52,
+    "resolved": 49,
+    "unknown": 3,
+    "statuses": {
+     "TIME_EXIT": 22,
+     "SL": 22,
+     "TP": 5,
+     "INCOMPLETE": 3
+    },
+    "win_rate": 0.3877551020408163,
+    "net_expectancy_r": -0.0011707575339244688,
+    "total_r": -0.057367119162298974,
+    "profit_factor": 0.997882771956425,
+    "max_realized_drawdown_r": 10.150073826796028,
+    "longest_losing_streak": 7,
+    "planned_rr_mean": 2.999945570897961,
+    "realized_win_loss_ratio": 1.5756043767733028,
+    "opportunities_per_month": 4.5092592592592595,
+    "weekly_bootstrap_expectancy_ci95": [
+     -0.3948343647025486,
+     0.39893060024690613
+    ],
+    "weekly_sign_flip_p": 0.5065
+   }
+  },
+  "validation": {
+   "normal": {
+    "attempted": 18,
+    "resolved": 18,
+    "unknown": 0,
+    "statuses": {
+     "TIME_EXIT": 8,
+     "SL": 8,
+     "TP": 2
+    },
+    "win_rate": 0.4444444444444444,
+    "net_expectancy_r": 0.028697913323724226,
+    "total_r": 0.5165624398270361,
+    "profit_factor": 1.0603716436071664,
+    "max_realized_drawdown_r": 4.5191776459456054,
+    "longest_losing_streak": 6,
+    "planned_rr_mean": 2.999945640368437,
+    "realized_win_loss_ratio": 1.325464554508958,
+    "opportunities_per_month": 3.010302197802198,
+    "weekly_bootstrap_expectancy_ci95": [
+     -0.7061189842239024,
+     0.8111846717326302
+    ],
+    "weekly_sign_flip_p": 0.477
+   },
+   "stress": {
+    "attempted": 18,
+    "resolved": 18,
+    "unknown": 0,
+    "statuses": {
+     "TIME_EXIT": 8,
+     "SL": 8,
+     "TP": 2
+    },
+    "win_rate": 0.4444444444444444,
+    "net_expectancy_r": 0.015351294493337867,
+    "total_r": 0.2763233008800816,
+    "profit_factor": 1.031591153168935,
+    "max_realized_drawdown_r": 4.658409325621227,
+    "longest_losing_streak": 6,
+    "planned_rr_mean": 2.999945640368437,
+    "realized_win_loss_ratio": 1.2894889414611688,
+    "opportunities_per_month": 3.010302197802198,
+    "weekly_bootstrap_expectancy_ci95": [
+     -0.7214553385147415,
+     0.8025244027748869
+    ],
+    "weekly_sign_flip_p": 0.491
+   }
+  }
+ },
+ "by_symbol": {
+  "BTCUSD": {
+   "train": {
+    "n": 29,
+    "unknown": 1,
+    "win": 0.3448275862068966,
+    "exp": -0.1506929891358364,
+    "stress_exp": -0.174020440106014,
+    "pf": 0.7447657305715578,
+    "dd": 8.23562285654229
+   },
+   "validation": {
+    "n": 10,
+    "unknown": 0,
+    "win": 0.5,
+    "exp": 0.1262800729019502,
+    "stress_exp": 0.1202547887227505,
+    "pf": 1.312299860561306,
+    "dd": 2.0373719824902086
+   },
+   "test": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   }
+  },
+  "ETHUSD": {
+   "train": {
+    "n": 20,
+    "unknown": 2,
+    "win": 0.45,
+    "exp": 0.2999202837464915,
+    "stress_exp": 0.24946128219560534,
+    "pf": 1.6701351941161287,
+    "dd": 3.085807355319499
+   },
+   "validation": {
+    "n": 8,
+    "unknown": 0,
+    "win": 0.375,
+    "exp": -0.09327978614905826,
+    "stress_exp": -0.11577807329342793,
+    "pf": 0.834640480632015,
+    "dd": 2.718281089059853
+   },
+   "test": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   }
+  }
+ },
+ "seconds": {
+  "replay": 0.7,
+  "evaluate": 1.7
+ }
+}

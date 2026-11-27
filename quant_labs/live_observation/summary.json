@@ -1,0 +1,1000 @@
+{
+  "observation_start": 1792446399.7931101,
+  "observation_end": 1792446729.797816,
+  "samples": 12,
+  "consumer_started": true,
+  "genuine_input_markets": [
+    "XAUUSD",
+    "BTCUSD",
+    "ETHUSD",
+    "EURUSD",
+    "GBPUSD",
+    "GBPJPY",
+    "USDJPY",
+    "NAS100",
+    "US500",
+    "GER40",
+    "USDCHF",
+    "USDCAD",
+    "AUDUSD",
+    "NZDUSD",
+    "XAGUSD",
+    "EURJPY"
+  ],
+  "actual_model_evaluated_markets": [
+    "BTCUSD",
+    "ETHUSD",
+    "EURUSD",
+    "GBPJPY",
+    "GBPUSD"
+  ],
+  "genuine_detections": 0,
+  "qualified_paper_signals": 0,
+  "signals": [],
+  "previews": [],
+  "experimental_telegram_mode": "DRY_RUN",
+  "experimental_activation_approved": false,
+  "permissions_unchanged_all_samples": true,
+  "failures": [],
+  "final_inputs": {
+    "XAUUSD": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "source_basis": "America/New_York+07:00",
+      "asof": 1792446701.197237,
+      "tick_at": 1792443533.248,
+      "quote_age_at_collection_seconds": 3167.9492371082306,
+      "bid": 4140.38,
+      "ask": 4140.78,
+      "spread_price": 0.3999999999996362,
+      "spread_points": 39.99999999996362,
+      "tick_size": 0.01,
+      "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+      "frames": {
+        "M15": {
+          "closed_count": 300,
+          "last_closed_bar": {
+            "open": 4137.97,
+            "high": 4140.6,
+            "low": 4137.56,
+            "close": 4140.38,
+            "utc": 1792442700.0,
+            "spread": 0.4,
+            "tick_volume": 721
+          },
+          "last_close_at": 1792443600.0
+        },
+        "H1": {
+          "closed_count": 160,
+          "last_closed_bar": {
+            "open": 4142.29,
+            "high": 4142.67,
+            "low": 4137.56,
+            "close": 4140.38,
+            "utc": 1792440000.0,
+            "spread": 0.05,
+            "tick_volume": 4694
+          },
+          "last_close_at": 1792443600.0
+        }
+      },
+      "issues_at_sample": [
+        "STALE_OR_FUTURE_QUOTE",
+        "STALE_OR_FUTURE_M15"
+      ],
+      "model_runs": [],
+      "last_model_run_at": null,
+      "processed_count": 14,
+      "generated_signal_count": 0,
+      "input_sha256": "b3af1aff7ca3a5c60e4344134657594c57e48aa403a8748e9594639e07df142f"
+    },
+    "BTCUSD": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "source_basis": "America/New_York+07:00",
+      "asof": 1792446701.212306,
+      "tick_at": 1792446703.273,
+      "quote_age_at_collection_seconds": -2.0606939792633057,
+      "bid": 81910.47,
+      "ask": 81916.47,
+      "spread_price": 6.0,
+      "spread_points": 600.0,
+      "tick_size": 0.01,
+      "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+      "frames": {
+        "M15": {
+          "closed_count": 299,
+          "last_closed_bar": {
+            "open": 81976.59,
+            "high": 81985.67,
+            "low": 81914.88,
+            "close": 81943.54,
+            "utc": 1792445400.0,
+            "spread": 6.0,
+            "tick_volume": 2783
+          },
+          "last_close_at": 1792446300.0
+        },
+        "H1": {
+          "closed_count": 159,
+          "last_closed_bar": {
+            "open": 81765.32,
+            "high": 81985.0,
+            "low": 81734.72,
+            "close": 81908.12,
+            "utc": 1792440000.0,
+            "spread": 5.0,
+            "tick_volume": 22045
+          },
+          "last_close_at": 1792443600.0
+        }
+      },
+      "issues_at_sample": [],
+      "model_runs": [
+        {
+          "model": "compression_escape",
+          "status": "COMPLETE",
+          "decisions": [],
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 13.828125,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.109375,
+            "max_processes": 1
+          }
+        }
+      ],
+      "last_model_run_at": 1792446319.851396,
+      "processed_count": 14,
+      "generated_signal_count": 0,
+      "input_sha256": "a40b9755fb6753d809f0246766f542d284e1e15308e14476ed3a06e32c7271db"
+    },
+    "ETHUSD": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "source_basis": "America/New_York+07:00",
+      "asof": 1792446701.22274,
+      "tick_at": 1792446703.467,
+      "quote_age_at_collection_seconds": -2.24426007270813,
+      "bid": 2398.01,
+      "ask": 2400.97,
+      "spread_price": 2.9599999999995816,
+      "spread_points": 295.99999999995816,
+      "tick_size": 0.01,
+      "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+      "frames": {
+        "M15": {
+          "closed_count": 299,
+          "last_closed_bar": {
+            "open": 2401.29,
+            "high": 2402.43,
+            "low": 2397.0,
+            "close": 2399.07,
+            "utc": 1792445400.0,
+            "spread": 2.95,
+            "tick_volume": 1129
+          },
+          "last_close_at": 1792446300.0
+        },
+        "H1": {
+          "closed_count": 159,
+          "last_closed_bar": {
+            "open": 2390.87,
+            "high": 2400.48,
+            "low": 2388.88,
+            "close": 2397.25,
+            "utc": 1792440000.0,
+            "spread": 2.9,
+            "tick_volume": 5917
+          },
+          "last_close_at": 1792443600.0
+        }
+      },
+      "issues_at_sample": [],
+      "model_runs": [
+        {
+          "model": "compression_escape",
+          "status": "COMPLETE",
+          "decisions": [],
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 13.9375,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.109375,
+            "max_processes": 1
+          }
+        }
+      ],
+      "last_model_run_at": 1792446319.860307,
+      "processed_count": 14,
+      "generated_signal_count": 0,
+      "input_sha256": "3b24e49dc03a33d7a72e8cdb5e7c32a1898db677158abde36c86e782a8777c9a"
+    },
+    "EURUSD": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "source_basis": "America/New_York+07:00",
+      "asof": 1792446701.233332,
+      "tick_at": 1792446701.286,
+      "quote_age_at_collection_seconds": -0.052668094635009766,
+      "bid": 1.12121,
+      "ask": 1.12164,
+      "spread_price": 0.00042999999999993044,
+      "spread_points": 42.999999999993044,
+      "tick_size": 1e-05,
+      "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+      "frames": {
+        "M15": {
+          "closed_count": 299,
+          "last_closed_bar": {
+            "open": 1.12099,
+            "high": 1.12109,
+            "low": 1.12088,
+            "close": 1.12109,
+            "utc": 1792445400.0,
+            "spread": 0.00023,
+            "tick_volume": 39
+          },
+          "last_close_at": 1792446300.0
+        },
+        "H1": {
+          "closed_count": 159,
+          "last_closed_bar": {
+            "open": 1.12114,
+            "high": 1.12128,
+            "low": 1.1209,
+            "close": 1.12114,
+            "utc": 1792440000.0,
+            "spread": 0.0,
+            "tick_volume": 708
+          },
+          "last_close_at": 1792443600.0
+        }
+      },
+      "issues_at_sample": [],
+      "model_runs": [
+        {
+          "model": "compression_escape",
+          "status": "COMPLETE",
+          "decisions": [],
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 13.88671875,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.09375,
+            "max_processes": 1
+          }
+        }
+      ],
+      "last_model_run_at": 1792446319.869002,
+      "processed_count": 14,
+      "generated_signal_count": 0,
+      "input_sha256": "5f95e9a9df707e519617b65d1e2540bb954b7d1bca555dcb328a1109b85f5992"
+    },
+    "GBPUSD": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "source_basis": "America/New_York+07:00",
+      "asof": 1792446701.24701,
+      "tick_at": 1792446703.294,
+      "quote_age_at_collection_seconds": -2.046989917755127,
+      "bid": 1.33037,
+      "ask": 1.33113,
+      "spread_price": 0.0007599999999998719,
+      "spread_points": 75.99999999998718,
+      "tick_size": 1e-05,
+      "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+      "frames": {
+        "M15": {
+          "closed_count": 299,
+          "last_closed_bar": {
+            "open": 1.32979,
+            "high": 1.33035,
+            "low": 1.32961,
+            "close": 1.33023,
+            "utc": 1792445400.0,
+            "spread": 0.00051,
+            "tick_volume": 237
+          },
+          "last_close_at": 1792446300.0
+        },
+        "H1": {
+          "closed_count": 159,
+          "last_closed_bar": {
+            "open": 1.33036,
+            "high": 1.33054,
+            "low": 1.33019,
+            "close": 1.33035,
+            "utc": 1792440000.0,
+            "spread": 1e-05,
+            "tick_volume": 1121
+          },
+          "last_close_at": 1792443600.0
+        }
+      },
+      "issues_at_sample": [],
+      "model_runs": [
+        {
+          "model": "compression_escape",
+          "status": "COMPLETE",
+          "decisions": [],
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 14.01171875,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.03125,
+            "max_processes": 1
+          }
+        }
+      ],
+      "last_model_run_at": 1792446319.881676,
+      "processed_count": 14,
+      "generated_signal_count": 0,
+      "input_sha256": "8b8d1091561c8cd827e472b62d71dfa9ef657e55a70eeec49622a3b280106036"
+    },
+    "GBPJPY": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "source_basis": "America/New_York+07:00",
+      "asof": 1792446701.258062,
+      "tick_at": 1792446703.295,
+      "quote_age_at_collection_seconds": -2.036938190460205,
+      "bid": 210.805,
+      "ask": 211.01,
+      "spread_price": 0.20499999999998408,
+      "spread_points": 204.99999999998408,
+      "tick_size": 0.001,
+      "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+      "frames": {
+        "M15": {
+          "closed_count": 299,
+          "last_closed_bar": {
+            "open": 210.743,
+            "high": 210.82,
+            "low": 210.717,
+            "close": 210.784,
+            "utc": 1792445400.0,
+            "spread": 0.165,
+            "tick_volume": 378
+          },
+          "last_close_at": 1792446300.0
+        },
+        "H1": {
+          "closed_count": 159,
+          "last_closed_bar": {
+            "open": 210.92,
+            "high": 210.934,
+            "low": 210.873,
+            "close": 210.89,
+            "utc": 1792440000.0,
+            "spread": 0.0,
+            "tick_volume": 1816
+          },
+          "last_close_at": 1792443600.0
+        }
+      },
+      "issues_at_sample": [],
+      "model_runs": [
+        {
+          "model": "compression_escape",
+          "status": "COMPLETE",
+          "decisions": [],
+          "resources": {
+            "enforced": true,
+            "memory_limit_mb": 192.0,
+            "peak_committed_mb": 13.94140625,
+            "cpu_cap_percent": 15.0,
+            "cpu_limit_seconds": 4.0,
+            "cpu_seconds_used": 0.0625,
+            "max_processes": 1
+          }
+        }
+      ],
+      "last_model_run_at": 1792446319.891656,
+      "processed_count": 14,
+      "generated_signal_count": 0,
+      "input_sha256": "1fdc68b50f72517115b52c3a38cd00f7afaf2393a936561c661305b1a269c90d"
+    },
+    "USDJPY": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "source_basis": "America/New_York+07:00",
+      "asof": 1792446701.269552,
+      "tick_at": 1792446676.689,
+      "quote_age_at_collection_seconds": 24.580552101135254,
+      "bid": 158.457,
+      "ask": 158.519,
+      "spread_price": 0.06200000000001182,
+      "spread_points": 62.00000000001182,
+      "tick_size": 0.001,
+      "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+      "frames": {
+        "M15": {
+          "closed_count": 299,
+          "last_closed_bar": {
+            "open": 158.479,
+            "high": 158.496,
+            "low": 158.448,
+            "close": 158.458,
+            "utc": 1792445400.0,
+            "spread": 0.062,
+            "tick_volume": 159
+          },
+          "last_close_at": 1792446300.0
+        },
+        "H1": {
+          "closed_count": 159,
+          "last_closed_bar": {
+            "open": 158.545,
+            "high": 158.551,
+            "low": 158.509,
+            "close": 158.523,
+            "utc": 1792440000.0,
+            "spread": 0.0,
+            "tick_volume": 948
+          },
+          "last_close_at": 1792443600.0
+        }
+      },
+      "issues_at_sample": [
+        "STALE_OR_FUTURE_QUOTE"
+      ],
+      "model_runs": [],
+      "last_model_run_at": null,
+      "processed_count": 14,
+      "generated_signal_count": 0,
+      "input_sha256": "d530233f6802411890c7a909e48945e22db9d58eb76a0580d32d81e8f143a575"
+    },
+    "NAS100": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "source_basis": "America/New_York+07:00",
+      "asof": 1792446701.28025,
+      "tick_at": 1792443584.076,
+      "quote_age_at_collection_seconds": 3117.204250097275,
+      "bid": 29552.4,
+      "ask": 29553.4,
+      "spread_price": 1.0,
+      "spread_points": 100.0,
+      "tick_size": 0.01,
+      "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+      "frames": {
+        "M15": {
+          "closed_count": 300,
+          "last_closed_bar": {
+            "open": 29548.6,
+            "high": 29555.1,
+            "low": 29539.6,
+            "close": 29552.4,
+            "utc": 1792442700.0,
+            "spread": 1.0,
+            "tick_volume": 1322
+          },
+          "last_close_at": 1792443600.0
+        },
+        "H1": {
+          "closed_count": 160,
+          "last_closed_bar": {
+            "open": 29532.3,
+            "high": 29562.8,
+            "low": 29509.1,
+            "close": 29552.4,
+            "utc": 1792440000.0,
+            "spread": 1.0,
+            "tick_volume": 7820
+          },
+          "last_close_at": 1792443600.0
+        }
+      },
+      "issues_at_sample": [
+        "STALE_OR_FUTURE_QUOTE",
+        "STALE_OR_FUTURE_M15"
+      ],
+      "model_runs": [],
+      "last_model_run_at": null,
+      "processed_count": 14,
+      "generated_signal_count": 0,
+      "input_sha256": "0c9ad209d6e6cf75ff153577da459dc6fd866a7c23ad83d9175f7043cfe08ec2"
+    },
+    "US500": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "source_basis": "America/New_York+07:00",
+      "asof": 1792446701.293895,
+      "tick_at": 1792443583.674,
+      "quote_age_at_collection_seconds": 3117.6198949813843,
+      "bid": 7696.2,
+      "ask": 7696.7,
+      "spread_price": 0.5,
+      "spread_points": 50.0,
+      "tick_size": 0.01,
+      "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+      "frames": {
+        "M15": {
+          "closed_count": 300,
+          "last_closed_bar": {
+            "open": 7695.7,
+            "high": 7696.9,
+            "low": 7694.8,
+            "close": 7696.2,
+            "utc": 1792442700.0,
+            "spread": 0.5,
+            "tick_volume": 143
+          },
+          "last_close_at": 1792443600.0
+        },
+        "H1": {
+          "closed_count": 160,
+          "last_closed_bar": {
+            "open": 7691.9,
+            "high": 7696.9,
+            "low": 7688.9,
+            "close": 7696.2,
+            "utc": 1792440000.0,
+            "spread": 0.5,
+            "tick_volume": 907
+          },
+          "last_close_at": 1792443600.0
+        }
+      },
+      "issues_at_sample": [
+        "STALE_OR_FUTURE_QUOTE",
+        "STALE_OR_FUTURE_M15"
+      ],
+      "model_runs": [],
+      "last_model_run_at": null,
+      "processed_count": 14,
+      "generated_signal_count": 0,
+      "input_sha256": "c50154048516019723dff74a054f508905c85031199d552f3c239df77f126473"
+    },
+    "GER40": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "source_basis": "America/New_York+07:00",
+      "asof": 1792446701.308488,
+      "tick_at": 1792443536.774,
+      "quote_age_at_collection_seconds": 3164.534487962723,
+      "bid": 25207.6,
+      "ask": 25211.6,
+      "spread_price": 4.0,
+      "spread_points": 400.0,
+      "tick_size": 0.01,
+      "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+      "frames": {
+        "M15": {
+          "closed_count": 300,
+          "last_closed_bar": {
+            "open": 25202.7,
+            "high": 25217.3,
+            "low": 25197.7,
+            "close": 25207.6,
+            "utc": 1792442700.0,
+            "spread": 4.0,
+            "tick_volume": 398
+          },
+          "last_close_at": 1792443600.0
+        },
+        "H1": {
+          "closed_count": 160,
+          "last_closed_bar": {
+            "open": 25176.2,
+            "high": 25217.3,
+            "low": 25171.1,
+            "close": 25207.6,
+            "utc": 1792440000.0,
+            "spread": 4.0,
+            "tick_volume": 2658
+          },
+          "last_close_at": 1792443600.0
+        }
+      },
+      "issues_at_sample": [
+        "STALE_OR_FUTURE_QUOTE",
+        "STALE_OR_FUTURE_M15"
+      ],
+      "model_runs": [],
+      "last_model_run_at": null,
+      "processed_count": 14,
+      "generated_signal_count": 0,
+      "input_sha256": "c3952edf9c22df9597e70badde1f470ff561b160d771ce5b85cba18dcb010979"
+    },
+    "USDCHF": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "source_basis": "America/New_York+07:00",
+      "asof": 1792446701.318447,
+      "tick_at": 1792446700.679,
+      "quote_age_at_collection_seconds": 0.6394472122192383,
+      "bid": 0.8256,
+      "ask": 0.82738,
+      "spread_price": 0.0017800000000000038,
+      "spread_points": 178.00000000000037,
+      "tick_size": 1e-05,
+      "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+      "frames": {
+        "M15": {
+          "closed_count": 299,
+          "last_closed_bar": {
+            "open": 0.8253,
+            "high": 0.82606,
+            "low": 0.8253,
+            "close": 0.82591,
+            "utc": 1792445400.0,
+            "spread": 0.0014000000000000002,
+            "tick_volume": 146
+          },
+          "last_close_at": 1792446300.0
+        },
+        "H1": {
+          "closed_count": 159,
+          "last_closed_bar": {
+            "open": 0.82666,
+            "high": 0.82692,
+            "low": 0.82661,
+            "close": 0.82666,
+            "utc": 1792440000.0,
+            "spread": 0.0,
+            "tick_volume": 761
+          },
+          "last_close_at": 1792443600.0
+        }
+      },
+      "issues_at_sample": [],
+      "model_runs": [],
+      "last_model_run_at": null,
+      "processed_count": 14,
+      "generated_signal_count": 0,
+      "input_sha256": "3bdb60fe7acb1afc9e3cdf0fe65cc2b593e52d6c0201329776c5c70b5977e91e"
+    },
+    "USDCAD": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "source_basis": "America/New_York+07:00",
+      "asof": 1792446701.328642,
+      "tick_at": 1792446687.785,
+      "quote_age_at_collection_seconds": 13.543641805648804,
+      "bid": 1.4108100000000001,
+      "ask": 1.41138,
+      "spread_price": 0.0005699999999999594,
+      "spread_points": 56.999999999995936,
+      "tick_size": 1e-05,
+      "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+      "frames": {
+        "M15": {
+          "closed_count": 299,
+          "last_closed_bar": {
+            "open": 1.41083,
+            "high": 1.41092,
+            "low": 1.41079,
+            "close": 1.4109,
+            "utc": 1792445400.0,
+            "spread": 0.00047000000000000004,
+            "tick_volume": 46
+          },
+          "last_close_at": 1792446300.0
+        },
+        "H1": {
+          "closed_count": 159,
+          "last_closed_bar": {
+            "open": 1.4111099999999999,
+            "high": 1.41122,
+            "low": 1.4108100000000001,
+            "close": 1.4111500000000001,
+            "utc": 1792440000.0,
+            "spread": 1e-05,
+            "tick_volume": 849
+          },
+          "last_close_at": 1792443600.0
+        }
+      },
+      "issues_at_sample": [
+        "STALE_OR_FUTURE_QUOTE"
+      ],
+      "model_runs": [],
+      "last_model_run_at": null,
+      "processed_count": 14,
+      "generated_signal_count": 0,
+      "input_sha256": "a6afd19d7a6bde3419d907243d44f774e5c3e6593f0ba5da40f6992b3584054a"
+    },
+    "AUDUSD": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "source_basis": "America/New_York+07:00",
+      "asof": 1792446701.338172,
+      "tick_at": 1792446702.493,
+      "quote_age_at_collection_seconds": -1.1548280715942383,
+      "bid": 0.69792,
+      "ask": 0.69815,
+      "spread_price": 0.0002300000000000635,
+      "spread_points": 23.000000000006345,
+      "tick_size": 1e-05,
+      "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+      "frames": {
+        "M15": {
+          "closed_count": 299,
+          "last_closed_bar": {
+            "open": 0.69779,
+            "high": 0.69783,
+            "low": 0.69774,
+            "close": 0.69782,
+            "utc": 1792445400.0,
+            "spread": 0.00023,
+            "tick_volume": 36
+          },
+          "last_close_at": 1792446300.0
+        },
+        "H1": {
+          "closed_count": 159,
+          "last_closed_bar": {
+            "open": 0.69793,
+            "high": 0.69804,
+            "low": 0.69779,
+            "close": 0.69791,
+            "utc": 1792440000.0,
+            "spread": 0.0,
+            "tick_volume": 735
+          },
+          "last_close_at": 1792443600.0
+        }
+      },
+      "issues_at_sample": [],
+      "model_runs": [],
+      "last_model_run_at": null,
+      "processed_count": 14,
+      "generated_signal_count": 0,
+      "input_sha256": "5ec7fedd3ea90e5108cfc51ea4c4ec4bcd9148e841acc5a2bdd196841768a6a4"
+    },
+    "NZDUSD": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "source_basis": "America/New_York+07:00",
+      "asof": 1792446701.3496,
+      "tick_at": 1792446692.191,
+      "quote_age_at_collection_seconds": 9.158600091934204,
+      "bid": 0.56616,
+      "ask": 0.56648,
+      "spread_price": 0.00031999999999998696,
+      "spread_points": 31.999999999998693,
+      "tick_size": 1e-05,
+      "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+      "frames": {
+        "M15": {
+          "closed_count": 299,
+          "last_closed_bar": {
+            "open": 0.5662,
+            "high": 0.56628,
+            "low": 0.56598,
+            "close": 0.56604,
+            "utc": 1792445400.0,
+            "spread": 0.00034,
+            "tick_volume": 176
+          },
+          "last_close_at": 1792446300.0
+        },
+        "H1": {
+          "closed_count": 159,
+          "last_closed_bar": {
+            "open": 0.56609,
+            "high": 0.56625,
+            "low": 0.56602,
+            "close": 0.56615,
+            "utc": 1792440000.0,
+            "spread": 0.0,
+            "tick_volume": 693
+          },
+          "last_close_at": 1792443600.0
+        }
+      },
+      "issues_at_sample": [
+        "STALE_OR_FUTURE_QUOTE"
+      ],
+      "model_runs": [],
+      "last_model_run_at": null,
+      "processed_count": 14,
+      "generated_signal_count": 0,
+      "input_sha256": "b95f5a75f2740218ce05ec0151389aee9aeb48d7b75e5ca4bfbd7ea44f6247e8"
+    },
+    "XAGUSD": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "source_basis": "America/New_York+07:00",
+      "asof": 1792446701.358368,
+      "tick_at": 1792443538.82,
+      "quote_age_at_collection_seconds": 3162.538367986679,
+      "bid": 57.094,
+      "ask": 57.114,
+      "spread_price": 0.01999999999999602,
+      "spread_points": 19.99999999999602,
+      "tick_size": 0.001,
+      "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+      "frames": {
+        "M15": {
+          "closed_count": 300,
+          "last_closed_bar": {
+            "open": 57.042,
+            "high": 57.096,
+            "low": 57.036,
+            "close": 57.094,
+            "utc": 1792442700.0,
+            "spread": 0.02,
+            "tick_volume": 223
+          },
+          "last_close_at": 1792443600.0
+        },
+        "H1": {
+          "closed_count": 160,
+          "last_closed_bar": {
+            "open": 57.092,
+            "high": 57.098,
+            "low": 57.026,
+            "close": 57.094,
+            "utc": 1792440000.0,
+            "spread": 0.005,
+            "tick_volume": 1287
+          },
+          "last_close_at": 1792443600.0
+        }
+      },
+      "issues_at_sample": [
+        "STALE_OR_FUTURE_QUOTE",
+        "STALE_OR_FUTURE_M15"
+      ],
+      "model_runs": [],
+      "last_model_run_at": null,
+      "processed_count": 14,
+      "generated_signal_count": 0,
+      "input_sha256": "a39920c842da441cd010d1992b594446274502fe3613530d5324a60435ec0fa2"
+    },
+    "EURJPY": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "source_basis": "America/New_York+07:00",
+      "asof": 1792446701.368906,
+      "tick_at": 1792446698.657,
+      "quote_age_at_collection_seconds": 2.7119059562683105,
+      "bid": 177.7,
+      "ask": 177.782,
+      "spread_price": 0.08200000000002206,
+      "spread_points": 82.00000000002206,
+      "tick_size": 0.001,
+      "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+      "frames": {
+        "M15": {
+          "closed_count": 299,
+          "last_closed_bar": {
+            "open": 177.682,
+            "high": 177.705,
+            "low": 177.653,
+            "close": 177.667,
+            "utc": 1792445400.0,
+            "spread": 0.082,
+            "tick_volume": 202
+          },
+          "last_close_at": 1792446300.0
+        },
+        "H1": {
+          "closed_count": 159,
+          "last_closed_bar": {
+            "open": 177.747,
+            "high": 177.757,
+            "low": 177.701,
+            "close": 177.726,
+            "utc": 1792440000.0,
+            "spread": 0.011,
+            "tick_volume": 1509
+          },
+          "last_close_at": 1792443600.0
+        }
+      },
+      "issues_at_sample": [
+        "STALE_OR_FUTURE_QUOTE"
+      ],
+      "model_runs": [],
+      "last_model_run_at": null,
+      "processed_count": 14,
+      "generated_signal_count": 0,
+      "input_sha256": "3637dbd95584c0937b5f9a9c4bf26501c0285d65663271063645dd8b0349c16c"
+    }
+  },
+  "resource_samples": [
+    {
+      "at": 1792446399.7931101,
+      "working_set_mb": 4371.16015625,
+      "peak_working_set_mb": 5872.265625,
+      "private_mb": 4967.0390625,
+      "cpu_seconds": 32.984375,
+      "logical_cpus": 20
+    },
+    {
+      "at": 1792446429.793371,
+      "working_set_mb": 4371.1640625,
+      "peak_working_set_mb": 5872.265625,
+      "private_mb": 4967.04296875,
+      "cpu_seconds": 34.453125,
+      "logical_cpus": 20,
+      "interval_machine_cpu_percent": 0.244789538385431
+    },
+    {
+      "at": 1792446459.7938256,
+      "working_set_mb": 4371.1640625,
+      "peak_working_set_mb": 5872.265625,
+      "private_mb": 4967.04296875,
+      "cpu_seconds": 36.203125,
+      "logical_cpus": 20,
+      "interval_machine_cpu_percent": 0.29166224638697413
+    },
+    {
+      "at": 1792446489.7942388,
+      "working_set_mb": 4371.2734375,
+      "peak_working_set_mb": 5872.265625,
+      "private_mb": 4967.265625,
+      "cpu_seconds": 37.6875,
+      "logical_cpus": 20,
+      "interval_machine_cpu_percent": 0.24739242608488077
+    },
+    {
+      "at": 1792446519.795041,
+      "working_set_mb": 4413.42578125,
+      "peak_working_set_mb": 5872.265625,
+      "private_mb": 5009.203125,
+      "cpu_seconds": 43.09375,
+      "logical_cpus": 20,
+      "interval_machine_cpu_percent": 0.9010175710985919
+    },
+    {
+      "at": 1792446549.7957916,
+      "working_set_mb": 4413.62890625,
+      "peak_working_set_mb": 5872.265625,
+      "private_mb": 5009.38671875,
+      "cpu_seconds": 44.578125,
+      "logical_cpus": 20,
+      "interval_machine_cpu_percent": 0.24738964412530495
+    },
+    {
+      "at": 1792446579.7961993,
+      "working_set_mb": 4413.84765625,
+      "peak_working_set_mb": 5872.265625,
+      "private_mb": 5009.453125,
+      "cpu_seconds": 47.984375,
+      "logical_cpus": 20,
+      "interval_machine_cpu_percent": 0.5677006183619706
+    },
+    {
+      "at": 1792446609.7965348,
+      "working_set_mb": 4413.84375,
+      "peak_working_set_mb": 5872.265625,
+      "private_mb": 5009.4375,
+      "cpu_seconds": 49.703125,
+      "logical_cpus": 20,
+      "interval_machine_cpu_percent": 0.28645513024037483
+    },
+    {
+      "at": 1792446639.796784,
+      "working_set_mb": 4414.33203125,
+      "peak_working_set_mb": 5872.265625,
+      "private_mb": 5009.92578125,
+      "cpu_seconds": 51.59375,
+      "logical_cpus": 20,
+      "interval_machine_cpu_percent": 0.31510154977544536
+    },
+    {
+      "at": 1792446669.796906,
+      "working_set_mb": 4414.296875,
+      "peak_working_set_mb": 5872.265625,
+      "private_mb": 5009.859375,
+      "cpu_seconds": 52.0625,
+      "logical_cpus": 20,
+      "interval_machine_cpu_percent": 0.0781246821098547
+    },
+    {
+      "at": 1792446699.7972457,
+      "working_set_mb": 4413.171875,
+      "peak_working_set_mb": 5872.265625,
+      "private_mb": 5008.734375,
+      "cpu_seconds": 53.84375,
+      "logical_cpus": 20,
+      "interval_machine_cpu_percent": 0.2968716379635803
+    },
+    {
+      "at": 1792446729.797816,
+      "working_set_mb": 4413.75,
+      "peak_working_set_mb": 5872.265625,
+      "private_mb": 5009.30078125,
+      "cpu_seconds": 55.28125,
+      "logical_cpus": 20,
+      "interval_machine_cpu_percent": 0.23957877896277685
+    }
+  ]
+}

@@ -1,0 +1,420 @@
+{
+  "observed_at": 1792714081.743127,
+  "permissions": {
+    "execution_enabled": false,
+    "strategies": [
+      {
+        "strategy_id": "trendline_v5",
+        "version": "trendline-first-v5.1",
+        "status": "LIVE"
+      },
+      {
+        "strategy_id": "support_resistance",
+        "version": "sr-levels-v2",
+        "status": "LIVE"
+      },
+      {
+        "strategy_id": "trend_momentum",
+        "version": "tm-pullback-v2",
+        "status": "LIVE"
+      },
+      {
+        "strategy_id": "smc",
+        "version": "smc-confluence-v1",
+        "status": "LIVE"
+      }
+    ],
+    "source_time_basis": "America/New_York+07:00",
+    "telegram_alerts_enabled": true,
+    "signal_outcomes_enabled": true,
+    "telegram_reports_enabled": true,
+    "strategy_bank_enabled": true
+  },
+  "strategy_bank_telegram_enabled": true,
+  "uptime_started": "2026-10-19T21:44:24.868848+00:00",
+  "source_files_preserved": true,
+  "telegram_mode": "DRY_RUN",
+  "outbound_approval": false,
+  "new_models": [
+    {
+      "key": "range_sweep_reversion",
+      "version": "0.1.0",
+      "status": "EXPERIMENTAL",
+      "scan_enabled": 1,
+      "alert_enabled": 0,
+      "sha": "a98503aa2235fccdeb89a378019c01770fb15d94290a640001c168228a94809c",
+      "name": "Range Sweep Reversion",
+      "classification": "EXPERIMENTAL",
+      "authorship": {
+        "lab": "codex",
+        "session_reference": "Actual Codex task 01a155be-ad08-7922-bb69-2762009efd16; CEO next development phase",
+        "statement": "Independently authored by this Codex session; six declared exit variants plus one range model. No Claude/Kimi authorship."
+      }
+    },
+    {
+      "key": "trend_reclaim_r2",
+      "version": "0.1.0",
+      "status": "EXPERIMENTAL",
+      "scan_enabled": 1,
+      "alert_enabled": 0,
+      "sha": "4ee1a3da7d17b11b2dcddd9b7caddec5eb64e5a3ba0fa830ca043454221de165",
+      "name": "Trend Reclaim R2",
+      "classification": "EXPERIMENTAL",
+      "authorship": {
+        "lab": "codex",
+        "session_reference": "Actual Codex task 01a155be-ad08-7922-bb69-2762009efd16; CEO next development phase",
+        "statement": "Independently authored by this Codex session; six declared exit variants plus one range model. No Claude/Kimi authorship."
+      }
+    },
+    {
+      "key": "trend_reclaim_r3",
+      "version": "0.1.0",
+      "status": "EXPERIMENTAL",
+      "scan_enabled": 1,
+      "alert_enabled": 0,
+      "sha": "d8e5ff85cc2d76ca9855794d7b38d4a7f9393df233a1c27d2fce97cf88fa9f93",
+      "name": "Trend Reclaim R3",
+      "classification": "EXPERIMENTAL",
+      "authorship": {
+        "lab": "codex",
+        "session_reference": "Actual Codex task 01a155be-ad08-7922-bb69-2762009efd16; CEO next development phase",
+        "statement": "Independently authored by this Codex session; six declared exit variants plus one range model. No Claude/Kimi authorship."
+      }
+    },
+    {
+      "key": "trend_reclaim_r4",
+      "version": "0.1.0",
+      "status": "EXPERIMENTAL",
+      "scan_enabled": 1,
+      "alert_enabled": 0,
+      "sha": "2d1dc3166601a34b37af6264b6cf1570d2a7715217c69280448c3790663b1195",
+      "name": "Trend Reclaim R4",
+      "classification": "EXPERIMENTAL",
+      "authorship": {
+        "lab": "codex",
+        "session_reference": "Actual Codex task 01a155be-ad08-7922-bb69-2762009efd16; CEO next development phase",
+        "statement": "Independently authored by this Codex session; six declared exit variants plus one range model. No Claude/Kimi authorship."
+      }
+    },
+    {
+      "key": "trend_reclaim_r5",
+      "version": "0.1.0",
+      "status": "EXPERIMENTAL",
+      "scan_enabled": 1,
+      "alert_enabled": 0,
+      "sha": "053fcadbc08a100c4e4b951da873bc33853c647713ba4c2043bfb5b2e13ef48f",
+      "name": "Trend Reclaim R5",
+      "classification": "EXPERIMENTAL",
+      "authorship": {
+        "lab": "codex",
+        "session_reference": "Actual Codex task 01a155be-ad08-7922-bb69-2762009efd16; CEO next development phase",
+        "statement": "Independently authored by this Codex session; six declared exit variants plus one range model. No Claude/Kimi authorship."
+      }
+    },
+    {
+      "key": "trend_reclaim_r7",
+      "version": "0.1.0",
+      "status": "EXPERIMENTAL",
+      "scan_enabled": 1,
+      "alert_enabled": 0,
+      "sha": "7407e6466adcd1d44ae2d6a6cd5644ff37fed505bd557df4bdbc61559e2e667e",
+      "name": "Trend Reclaim R7",
+      "classification": "EXPERIMENTAL",
+      "authorship": {
+        "lab": "codex",
+        "session_reference": "Actual Codex task 01a155be-ad08-7922-bb69-2762009efd16; CEO next development phase",
+        "statement": "Independently authored by this Codex session; six declared exit variants plus one range model. No Claude/Kimi authorship."
+      }
+    },
+    {
+      "key": "trend_reclaim_r9",
+      "version": "0.1.0",
+      "status": "EXPERIMENTAL",
+      "scan_enabled": 1,
+      "alert_enabled": 0,
+      "sha": "182f3823d0a8e977436a02d556a73f3900013ec623dbc7a590bee303eff9f5ca",
+      "name": "Trend Reclaim R9",
+      "classification": "EXPERIMENTAL",
+      "authorship": {
+        "lab": "codex",
+        "session_reference": "Actual Codex task 01a155be-ad08-7922-bb69-2762009efd16; CEO next development phase",
+        "statement": "Independently authored by this Codex session; six declared exit variants plus one range model. No Claude/Kimi authorship."
+      }
+    }
+  ],
+  "latest_inputs": {
+    "EURUSD": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "asof": 1792714051.75228,
+      "quote": {
+        "bid": 1.1222,
+        "ask": 1.12221,
+        "tick_at": 1792714052.644
+      },
+      "metadata": {
+        "point": 1e-05,
+        "tick_size": 1e-05,
+        "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+        "tradable_long": true,
+        "tradable_short": true,
+        "commission_price": 7e-05,
+        "cost_basis": "assumed research schedule; account charges unverified",
+        "swap_mode": 1,
+        "swap_long": -8.045,
+        "swap_short": 1.355,
+        "swap_rollover3days": 3
+      },
+      "frames": {
+        "M15": {
+          "closed_count": 1199,
+          "last_closed_bar": {
+            "open": 1.12202,
+            "high": 1.12214,
+            "low": 1.12189,
+            "close": 1.1221,
+            "utc": 1792712700.0,
+            "spread": 0.0,
+            "tick_volume": 318
+          },
+          "last_close_at": 1792713600.0
+        },
+        "H1": {
+          "closed_count": 599,
+          "last_closed_bar": {
+            "open": 1.12196,
+            "high": 1.12224,
+            "low": 1.12189,
+            "close": 1.1221,
+            "utc": 1792710000.0,
+            "spread": 0.0,
+            "tick_volume": 1113
+          },
+          "last_close_at": 1792713600.0
+        },
+        "H4": {
+          "closed_count": 199,
+          "last_closed_bar": {
+            "open": 1.1224,
+            "high": 1.12315,
+            "low": 1.12123,
+            "close": 1.12161,
+            "utc": 1792688400.0,
+            "spread": 0.0,
+            "tick_volume": 7194
+          },
+          "last_close_at": 1792702800.0
+        },
+        "D1": {
+          "closed_count": 199,
+          "last_closed_bar": {
+            "open": 1.12231,
+            "high": 1.12559,
+            "low": 1.11885,
+            "close": 1.12161,
+            "utc": 1792616400.0,
+            "spread": 0.0,
+            "tick_volume": 53876
+          },
+          "last_close_at": 1792702800.0
+        },
+        "M1": {
+          "closed_count": 119,
+          "last_closed_bar": {
+            "open": 1.12223,
+            "high": 1.12238,
+            "low": 1.1222,
+            "close": 1.12233,
+            "utc": 1792713960.0,
+            "spread": 0.0,
+            "tick_volume": 44
+          },
+          "last_close_at": 1792714020.0
+        }
+      },
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": 1792713988.156628
+    },
+    "XAUUSD": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "asof": 1792714051.68348,
+      "quote": {
+        "bid": 4022.27,
+        "ask": 4022.39,
+        "tick_at": 1792714052.425
+      },
+      "metadata": {
+        "point": 0.01,
+        "tick_size": 0.01,
+        "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+        "tradable_long": true,
+        "tradable_short": true,
+        "commission_price": 0.07,
+        "cost_basis": "assumed research schedule; account charges unverified",
+        "swap_mode": 1,
+        "swap_long": -53.642,
+        "swap_short": 37.56,
+        "swap_rollover3days": 3
+      },
+      "frames": {
+        "M15": {
+          "closed_count": 1199,
+          "last_closed_bar": {
+            "open": 4025.18,
+            "high": 4025.42,
+            "low": 4021.41,
+            "close": 4023.69,
+            "utc": 1792712700.0,
+            "spread": 0.05,
+            "tick_volume": 4300
+          },
+          "last_close_at": 1792713600.0
+        },
+        "H1": {
+          "closed_count": 599,
+          "last_closed_bar": {
+            "open": 4027.68,
+            "high": 4029.15,
+            "low": 4021.41,
+            "close": 4023.69,
+            "utc": 1792710000.0,
+            "spread": 0.05,
+            "tick_volume": 12731
+          },
+          "last_close_at": 1792713600.0
+        },
+        "H4": {
+          "closed_count": 199,
+          "last_closed_bar": {
+            "open": 4037.94,
+            "high": 4048.3,
+            "low": 4021.13,
+            "close": 4024.32,
+            "utc": 1792688400.0,
+            "spread": 0.05,
+            "tick_volume": 124388
+          },
+          "last_close_at": 1792702800.0
+        },
+        "D1": {
+          "closed_count": 199,
+          "last_closed_bar": {
+            "open": 4140.57,
+            "high": 4140.72,
+            "low": 4021.13,
+            "close": 4024.32,
+            "utc": 1792616400.0,
+            "spread": 0.05,
+            "tick_volume": 755967
+          },
+          "last_close_at": 1792702800.0
+        },
+        "M1": {
+          "closed_count": 119,
+          "last_closed_bar": {
+            "open": 4022.08,
+            "high": 4022.29,
+            "low": 4020.74,
+            "close": 4022.18,
+            "utc": 1792713960.0,
+            "spread": 0.1,
+            "tick_volume": 581
+          },
+          "last_close_at": 1792714020.0
+        }
+      },
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": 1792713988.087726
+    },
+    "BTCUSD": {
+      "source": "MT5_SHARED_COLLECTOR",
+      "asof": 1792714051.705032,
+      "quote": {
+        "bid": 81211.36,
+        "ask": 81216.36,
+        "tick_at": 1792714052.534
+      },
+      "metadata": {
+        "point": 0.01,
+        "tick_size": 0.01,
+        "tick_size_source": "MT5_SYMBOL_INFO_TRADE_TICK_SIZE",
+        "tradable_long": true,
+        "tradable_short": true,
+        "commission_price": 0.0,
+        "cost_basis": "assumed research schedule; account charges unverified",
+        "swap_mode": 5,
+        "swap_long": -20.0,
+        "swap_short": 0.0,
+        "swap_rollover3days": 7
+      },
+      "frames": {
+        "M15": {
+          "closed_count": 1199,
+          "last_closed_bar": {
+            "open": 81252.59,
+            "high": 81332.61,
+            "low": 81250.36,
+            "close": 81320.79,
+            "utc": 1792712700.0,
+            "spread": 5.0,
+            "tick_volume": 5804
+          },
+          "last_close_at": 1792713600.0
+        },
+        "H1": {
+          "closed_count": 599,
+          "last_closed_bar": {
+            "open": 81247.19,
+            "high": 81332.61,
+            "low": 81159.2,
+            "close": 81320.79,
+            "utc": 1792710000.0,
+            "spread": 5.0,
+            "tick_volume": 27539
+          },
+          "last_close_at": 1792713600.0
+        },
+        "H4": {
+          "closed_count": 199,
+          "last_closed_bar": {
+            "open": 81174.66,
+            "high": 81452.3,
+            "low": 80922.34,
+            "close": 81176.15,
+            "utc": 1792688400.0,
+            "spread": 5.0,
+            "tick_volume": 249451
+          },
+          "last_close_at": 1792702800.0
+        },
+        "D1": {
+          "closed_count": 199,
+          "last_closed_bar": {
+            "open": 84619.04,
+            "high": 84787.57,
+            "low": 80818.96,
+            "close": 81176.15,
+            "utc": 1792616400.0,
+            "spread": 5.0,
+            "tick_volume": 1441927
+          },
+          "last_close_at": 1792702800.0
+        },
+        "M1": {
+          "closed_count": 119,
+          "last_closed_bar": {
+            "open": 81248.46,
+            "high": 81249.11,
+            "low": 81198.67,
+            "close": 81230.54,
+            "utc": 1792713960.0,
+            "spread": 5.0,
+            "tick_volume": 1047
+          },
+          "last_close_at": 1792714020.0
+        }
+      },
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": 1792713988.109388
+    }
+  }
+}

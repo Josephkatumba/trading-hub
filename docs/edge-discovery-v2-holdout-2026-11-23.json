@@ -1,0 +1,151 @@
+{
+ "survivors": [
+  "H7_news_momentum"
+ ],
+ "vol_edges_from_development": [
+  0.013536236297626363,
+  0.02165425124415008
+ ],
+ "results": {
+  "H7_news_momentum": {
+   "params": {
+    "shock_atr": 2.0,
+    "confirm_bars": 1,
+    "exit": "time_4h"
+   },
+   "holdout_early": {
+    "trades": 190,
+    "expectancy_r": -0.0518,
+    "median_r": -1.019,
+    "win_rate": 30.5,
+    "profit_factor": 0.917,
+    "total_r": -9.83,
+    "max_dd_r": 34.21,
+    "max_dd_pct_at_0p5": 17.11,
+    "trades_per_month": 8.11,
+    "t": -0.43,
+    "p_one_sided": 0.6655,
+    "ci95": [
+     -0.2748,
+     0.2011
+    ]
+   },
+   "holdout_recent": {
+    "trades": 23,
+    "expectancy_r": -0.4578,
+    "median_r": -1.01,
+    "win_rate": 21.7,
+    "profit_factor": 0.32,
+    "total_r": -10.53,
+    "max_dd_r": 12.01,
+    "max_dd_pct_at_0p5": 6.0,
+    "trades_per_month": 5.47,
+    "t": -2.61,
+    "p_one_sided": 0.9919,
+    "ci95": [
+     -0.7747,
+     -0.1018
+    ]
+   },
+   "combined": {
+    "trades": 213,
+    "expectancy_r": -0.0956,
+    "median_r": -1.018,
+    "win_rate": 29.6,
+    "profit_factor": 0.848,
+    "total_r": -20.36,
+    "max_dd_r": 41.59,
+    "max_dd_pct_at_0p5": 20.8,
+    "trades_per_month": 4.24,
+    "t": -0.87,
+    "p_one_sided": 0.8077,
+    "ci95": [
+     -0.3034,
+     0.1313
+    ]
+   },
+   "stress_2x": {
+    "trades": 214,
+    "expectancy_r": -0.1658,
+    "median_r": -1.037,
+    "win_rate": 28.5,
+    "profit_factor": 0.75,
+    "total_r": -35.48,
+    "max_dd_r": 50.92,
+    "max_dd_pct_at_0p5": 25.46,
+    "trades_per_month": 4.26,
+    "t": -1.56,
+    "p_one_sided": 0.9402,
+    "ci95": [
+     -0.3694,
+     0.0525
+    ]
+   },
+   "by_vol_regime": {
+    "high": {
+     "trades": 11,
+     "expectancy_r": -0.7267,
+     "win_rate": 9.1,
+     "profit_factor": 0.07,
+     "p_one_sided": 0.9988
+    },
+    "low": {
+     "trades": 117,
+     "expectancy_r": -0.0011,
+     "win_rate": 31.6,
+     "profit_factor": 0.998,
+     "p_one_sided": 0.5029
+    },
+    "mid": {
+     "trades": 85,
+     "expectancy_r": -0.144,
+     "win_rate": 29.4,
+     "profit_factor": 0.764,
+     "p_one_sided": 0.7994
+    }
+   },
+   "by_trend_regime": {
+    "down": {
+     "trades": 71,
+     "expectancy_r": -0.2827,
+     "win_rate": 28.2,
+     "profit_factor": 0.545,
+     "p_one_sided": 0.9818
+    },
+    "up": {
+     "trades": 142,
+     "expectancy_r": -0.0021,
+     "win_rate": 30.3,
+     "profit_factor": 0.997,
+     "p_one_sided": 0.5054
+    }
+   },
+   "by_session": {
+    "newyork": {
+     "trades": 9,
+     "expectancy_r": -0.1021,
+     "win_rate": 44.4,
+     "profit_factor": 0.825,
+     "p_one_sided": 0.5965
+    },
+    "overlap": {
+     "trades": 204,
+     "expectancy_r": -0.0953,
+     "win_rate": 28.9,
+     "profit_factor": 0.849,
+     "p_one_sided": 0.7994
+    }
+   },
+   "checks": {
+    "each_holdout_positive": false,
+    "combined_ci95_lower_gt_0": false,
+    "stress_costs_positive": false,
+    "vol_regimes_positive": false,
+    "both_trend_regimes_positive": false,
+    "holm": false
+   },
+   "holm_p": 0.8077,
+   "verdict": "REJECTED_AT_HOLDOUT"
+  }
+ }
+}

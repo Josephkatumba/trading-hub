@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TradeDen Research</title>
+<link rel="stylesheet" href="./src/scalper/scalper.css">
+<link rel="stylesheet" href="./src/research/research.css">
+</head>
+<body>
+<main class="sc" id="rs">
+  <header class="sc-head">
+    <div>
+      <h1>TradeDen Research</h1>
+      <p class="sc-sub">Every program, every verdict, from archived evidence. Read-only.</p>
+    </div>
+    <div class="sc-head-actions"><span id="rs-verdict" class="sc-pill">Loading…</span><span id="rs-lock" class="sc-pill"></span></div>
+  </header>
+  <div id="rs-banner" class="sc-banner" role="status"></div>
+  <section class="sc-kpis" id="rs-kpis" aria-label="Key figures"></section>
+
+  <article class="sc-card sc-full rs-gap"><h2>Research programs</h2><div id="rs-programs"></div></article>
+
+  <article class="sc-card sc-full rs-gap">
+    <h2>V3 hypotheses: development out-of-sample mean R with 95% CI</h2>
+    <p class="sc-sub">Walk-forward test years only, after costs. A dot right of zero with its whole interval right of zero would be evidence; gate 1 also requires beating random-direction controls and a benchmark.</p>
+    <div id="rs-forest" class="rs-forest"></div>
+    <details><summary>Table view</summary><div id="rs-forest-table"></div></details>
+  </article>
+
+  <section class="sc-grid rs-gap">
+    <article class="sc-card sc-full"><h2>Project A: macro gold intelligence</h2><div id="rs-A"></div></article>
+    <article class="sc-card sc-full"><h2>Project B: positioning and flow</h2><div id="rs-B"></div></article>
+    <article class="sc-card sc-full"><h2>Project C: market regime intelligence</h2><div id="rs-C"></div></article>
+    <article class="sc-card sc-wide"><h2>Descriptive vs predictive (development data only)</h2><div id="rs-diag"></div></article>
+    <article class="sc-card"><h2>Sealed holdout (2021 → 2026)</h2><div id="rs-holdout"></div></article>
+    <article class="sc-card sc-full"><h2>Earlier programs</h2><div id="rs-earlier"></div></article>
+  </section>
+  <p class="sc-foot">Historical research simulated on IC Markets MT5 data and public macro/COT data, net of spread, slippage, commission and financing. Not live results. The cTrader cBot cannot trade while its execution lock is on.</p>
+</main>
+<script type="module" src="./src/research/researchDashboard.mjs"></script>
+</body>
+</html>

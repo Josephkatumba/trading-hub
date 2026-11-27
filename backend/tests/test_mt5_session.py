@@ -47,14 +47,20 @@ class CountingMT5:
 
 class MT5SessionTests(unittest.TestCase):
     def setUp(self):
-        main._MT5_SESSION.update(initialized=False, initializations=0)
+        main._MT5_SESSION.update(initialized=False, initializations=0, retry_at=0)
+        self.intent = mock.patch.object(main, 'read_state', return_value={'state': 'RUNNING'})
+        self.intent.start()
+        self.addCleanup(self.intent.stop)
+        self.state = mock.patch.object(main, 'set_state')
+        self.state_mock = self.state.start()
+        self.addCleanup(self.state.stop)
         self.fake = CountingMT5()
         self.patch = mock.patch.object(main, "mt5", self.fake)
         self.patch.start()
 
     def tearDown(self):
         self.patch.stop()
-        main._MT5_SESSION.update(initialized=False, initializations=0)
+        main._MT5_SESSION.update(initialized=False, initializations=0, retry_at=0)
 
     def test_repeated_health_checks_initialize_once_and_never_shut_down(self):
         for _ in range(5):
@@ -75,19 +81,21 @@ class MT5SessionTests(unittest.TestCase):
         self.assertEqual(self.fake.initialize_calls, 1)
         self.assertEqual(self.fake.shutdown_calls, 0)
 
-    def test_lost_terminal_is_reinitialized(self):
+    def test_lost_terminal_pauses_without_reinitializing(self):
         self.assertEqual(main.ensure_mt5(), (True, None))
         self.fake.terminal_alive = False
-        self.assertEqual(main.ensure_mt5(), (True, None))
-        self.assertEqual(self.fake.initialize_calls, 2)
+        self.assertFalse(main.ensure_mt5()[0])
+        self.assertEqual(self.fake.initialize_calls, 1)
+        self.state_mock.assert_called_once_with('PAUSED', 'MT5 disappeared; explicit resume required', expected='RUNNING')
         self.assertEqual(self.fake.shutdown_calls, 1)
 
-    def test_present_but_disconnected_terminal_is_reconnected(self):
+    def test_disconnected_terminal_does_not_reinitialize_or_launch(self):
         self.assertEqual(main.ensure_mt5(), (True, None))
         with mock.patch.object(self.fake, "terminal_info", return_value=SimpleNamespace(connected=False)):
-            self.assertEqual(main.ensure_mt5(), (True, None))
-        self.assertEqual(self.fake.initialize_calls, 2)
-        self.assertEqual(self.fake.shutdown_calls, 1)
+            self.assertFalse(main.ensure_mt5()[0])
+        self.assertEqual(main.ensure_mt5(), (True, None))
+        self.assertEqual(self.fake.initialize_calls, 1)
+        self.assertEqual(self.fake.shutdown_calls, 0)
 
     def test_offline_terminal_reports_error_and_retries_next_time(self):
         self.fake.initialize_ok = False
@@ -96,6 +104,7 @@ class MT5SessionTests(unittest.TestCase):
         self.assertIn("IPC", error)
         self.assertEqual(main.health()["mt5_status"], "OFFLINE")
         self.fake.initialize_ok = True
+        main._MT5_SESSION['retry_at'] = 0
         self.assertEqual(main.ensure_mt5(), (True, None))
 
     def test_engine_shutdown_closes_the_connection_once(self):
@@ -105,9 +114,26 @@ class MT5SessionTests(unittest.TestCase):
             async with main.lifespan(main.app):
                 pass
 
-        asyncio.run(run_lifespan())
+        with mock.patch.object(main.threading, 'Thread'),              mock.patch.object(main.telegram_notifier, 'start_notifier'),              mock.patch.object(main.quant_live_service, 'start'),              mock.patch('market_intel.briefings.start'):
+            asyncio.run(run_lifespan())
         self.assertEqual(self.fake.shutdown_calls, 1)
         self.assertFalse(main._MT5_SESSION["initialized"])
+
+    def test_closed_terminal_stays_closed_with_persisted_pause(self):
+        import tempfile
+        from ops import control
+        with tempfile.TemporaryDirectory() as directory, \
+             mock.patch.object(control, 'STATE_FILE', Path(directory) / 'control.json'), \
+             mock.patch.object(main, 'read_state', side_effect=control.read_state), \
+             mock.patch.object(main, 'set_state', side_effect=control.set_state):
+            control.set_state('RUNNING')
+            self.assertTrue(main.ensure_mt5()[0])
+            self.fake.terminal_alive = False
+            self.assertFalse(main.ensure_mt5()[0])
+            self.assertEqual(control.read_state()['state'], 'PAUSED')
+            for _ in range(10):
+                self.assertFalse(main.ensure_mt5()[0])
+            self.assertEqual(self.fake.initialize_calls, 1)
 
     def test_missing_package_is_unavailable(self):
         with mock.patch.object(main, "mt5", None):

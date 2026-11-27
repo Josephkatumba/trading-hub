@@ -1,0 +1,575 @@
+{
+ "lsr_v010_full": {
+  "BTCUSD": {
+   "train": {
+    "n": 5,
+    "R": -5.06,
+    "stressR": -5.17
+   },
+   "validation": {
+    "n": 5,
+    "R": -0.93,
+    "stressR": -1.07
+   },
+   "test": {
+    "n": 8,
+    "R": -8.26,
+    "stressR": -8.69
+   }
+  },
+  "EURUSD": {
+   "train": {
+    "n": 22,
+    "R": -3.64,
+    "stressR": -6.11
+   },
+   "validation": {
+    "n": 11,
+    "R": 2.74,
+    "stressR": 1.26
+   },
+   "test": {
+    "n": 9,
+    "R": -3.31,
+    "stressR": -4.56
+   }
+  },
+  "GBPJPY": {
+   "train": {
+    "n": 20,
+    "R": 6.99,
+    "stressR": 5.98
+   },
+   "validation": {
+    "n": 10,
+    "R": -4.85,
+    "stressR": -5.74
+   },
+   "test": {
+    "n": 8,
+    "R": -7.01,
+    "stressR": -7.64
+   }
+  },
+  "GBPUSD": {
+   "train": {
+    "n": 20,
+    "R": -3.42,
+    "stressR": -5.69
+   },
+   "validation": {
+    "n": 6,
+    "R": 0.32,
+    "stressR": -0.26
+   },
+   "test": {
+    "n": 7,
+    "R": -0.67,
+    "stressR": -1.77
+   }
+  },
+  "XAUUSD": {
+   "train": {
+    "n": 6,
+    "R": -2.34,
+    "stressR": -2.64
+   },
+   "validation": {
+    "n": 4,
+    "R": -0.92,
+    "stressR": -0.95
+   },
+   "test": {
+    "n": 1,
+    "R": -1.01,
+    "stressR": -1.02
+   }
+  }
+ },
+ "ord_v010_full": {
+  "BTCUSD": {
+   "train": {
+    "n": 22,
+    "R": 4.6,
+    "stressR": 4.18
+   },
+   "validation": {
+    "n": 13,
+    "R": -2.45,
+    "stressR": -2.63
+   },
+   "test": {
+    "n": 15,
+    "R": 0.73,
+    "stressR": -0.15
+   }
+  },
+  "ETHUSD": {
+   "train": {
+    "n": 1,
+    "R": 1.05,
+    "stressR": 0.94
+   },
+   "validation": {
+    "n": 4,
+    "R": -2.89,
+    "stressR": -3.31
+   },
+   "test": {
+    "n": 1,
+    "R": 0.23,
+    "stressR": 0.09
+   }
+  },
+  "EURUSD": {
+   "train": {
+    "n": 42,
+    "R": -4.98,
+    "stressR": -7.41
+   },
+   "validation": {
+    "n": 27,
+    "R": -0.37,
+    "stressR": -2.51
+   },
+   "test": {
+    "n": 23,
+    "R": -6.54,
+    "stressR": -8.92
+   }
+  },
+  "GBPJPY": {
+   "train": {
+    "n": 44,
+    "R": 0.3,
+    "stressR": -1.4
+   },
+   "validation": {
+    "n": 29,
+    "R": 7.01,
+    "stressR": 5.55
+   },
+   "test": {
+    "n": 17,
+    "R": 4.27,
+    "stressR": 3.34
+   }
+  },
+  "GBPUSD": {
+   "train": {
+    "n": 43,
+    "R": -1.17,
+    "stressR": -3.74
+   },
+   "validation": {
+    "n": 32,
+    "R": -7.58,
+    "stressR": -9.58
+   },
+   "test": {
+    "n": 23,
+    "R": -2.52,
+    "stressR": -4.22
+   }
+  },
+  "XAUUSD": {
+   "train": {
+    "n": 30,
+    "R": -6.3,
+    "stressR": -7.06
+   },
+   "validation": {
+    "n": 2,
+    "R": -1.31,
+    "stressR": -1.32
+   },
+   "test": {
+    "n": 12,
+    "R": -0.25,
+    "stressR": -0.37
+   }
+  }
+ },
+ "vef_v010_full": {
+  "BTCUSD": {
+   "train": {
+    "n": 15,
+    "R": -6.95,
+    "stressR": -7.06
+   },
+   "validation": {
+    "n": 12,
+    "R": -8.64,
+    "stressR": -9.15
+   },
+   "test": {
+    "n": 9,
+    "R": 3.25,
+    "stressR": 2.84
+   }
+  },
+  "ETHUSD": {
+   "train": {
+    "n": 1,
+    "R": -1.0,
+    "stressR": -1.0
+   },
+   "validation": {
+    "n": 0,
+    "R": 0,
+    "stressR": 0
+   },
+   "test": {
+    "n": 0,
+    "R": 0,
+    "stressR": 0
+   }
+  },
+  "EURUSD": {
+   "train": {
+    "n": 18,
+    "R": 14.53,
+    "stressR": 12.21
+   },
+   "validation": {
+    "n": 4,
+    "R": -0.8,
+    "stressR": -1.45
+   },
+   "test": {
+    "n": 6,
+    "R": 10.08,
+    "stressR": 9.08
+   }
+  },
+  "GBPJPY": {
+   "train": {
+    "n": 17,
+    "R": -1.1,
+    "stressR": -2.41
+   },
+   "validation": {
+    "n": 3,
+    "R": 7.93,
+    "stressR": 7.63
+   },
+   "test": {
+    "n": 8,
+    "R": -8.65,
+    "stressR": -9.47
+   }
+  },
+  "GBPUSD": {
+   "train": {
+    "n": 18,
+    "R": -5.29,
+    "stressR": -8.0
+   },
+   "validation": {
+    "n": 11,
+    "R": 8.82,
+    "stressR": 7.49
+   },
+   "test": {
+    "n": 10,
+    "R": -7.61,
+    "stressR": -9.23
+   }
+  },
+  "XAUUSD": {
+   "train": {
+    "n": 13,
+    "R": 16.08,
+    "stressR": 15.35
+   },
+   "validation": {
+    "n": 11,
+    "R": -11.15,
+    "stressR": -11.32
+   },
+   "test": {
+    "n": 8,
+    "R": -3.45,
+    "stressR": -3.58
+   }
+  }
+ },
+ "lsr_v020_full": {
+  "BTCUSD": {
+   "train": {
+    "n": 1,
+    "R": -1.0,
+    "stressR": -1.0
+   },
+   "validation": {
+    "n": 0,
+    "R": 0,
+    "stressR": 0
+   },
+   "test": {
+    "n": 4,
+    "R": -4.15,
+    "stressR": -4.5
+   }
+  },
+  "EURUSD": {
+   "train": {
+    "n": 10,
+    "R": 2.28,
+    "stressR": 1.21
+   },
+   "validation": {
+    "n": 3,
+    "R": -0.2,
+    "stressR": -0.52
+   },
+   "test": {
+    "n": 4,
+    "R": -0.9,
+    "stressR": -1.43
+   }
+  },
+  "GBPJPY": {
+   "train": {
+    "n": 6,
+    "R": 0.5,
+    "stressR": 0.2
+   },
+   "validation": {
+    "n": 2,
+    "R": -2.21,
+    "stressR": -2.47
+   },
+   "test": {
+    "n": 2,
+    "R": 2.81,
+    "stressR": 2.59
+   }
+  },
+  "GBPUSD": {
+   "train": {
+    "n": 6,
+    "R": -2.78,
+    "stressR": -3.43
+   },
+   "validation": {
+    "n": 3,
+    "R": 0.19,
+    "stressR": -0.17
+   },
+   "test": {
+    "n": 3,
+    "R": -3.41,
+    "stressR": -3.84
+   }
+  },
+  "XAUUSD": {
+   "train": {
+    "n": 3,
+    "R": -3.15,
+    "stressR": -3.34
+   },
+   "validation": {
+    "n": 1,
+    "R": -1.0,
+    "stressR": -1.01
+   },
+   "test": {
+    "n": 0,
+    "R": 0,
+    "stressR": 0
+   }
+  }
+ },
+ "ord_v020_full": {
+  "BTCUSD": {
+   "train": {
+    "n": 6,
+    "R": 5.0,
+    "stressR": 4.91
+   },
+   "validation": {
+    "n": 5,
+    "R": 1.94,
+    "stressR": 1.92
+   },
+   "test": {
+    "n": 3,
+    "R": 0.43,
+    "stressR": 0.34
+   }
+  },
+  "ETHUSD": {
+   "train": {
+    "n": 1,
+    "R": 1.05,
+    "stressR": 0.94
+   },
+   "validation": {
+    "n": 3,
+    "R": -3.15,
+    "stressR": -3.43
+   },
+   "test": {
+    "n": 1,
+    "R": -1.07,
+    "stressR": -1.22
+   }
+  },
+  "EURUSD": {
+   "train": {
+    "n": 27,
+    "R": -5.58,
+    "stressR": -7.15
+   },
+   "validation": {
+    "n": 13,
+    "R": 3.25,
+    "stressR": 2.16
+   },
+   "test": {
+    "n": 11,
+    "R": -1.2,
+    "stressR": -2.52
+   }
+  },
+  "GBPJPY": {
+   "train": {
+    "n": 25,
+    "R": -0.52,
+    "stressR": -1.41
+   },
+   "validation": {
+    "n": 10,
+    "R": -0.09,
+    "stressR": -0.57
+   },
+   "test": {
+    "n": 4,
+    "R": -0.57,
+    "stressR": -0.7
+   }
+  },
+  "GBPUSD": {
+   "train": {
+    "n": 20,
+    "R": -1.91,
+    "stressR": -3.22
+   },
+   "validation": {
+    "n": 17,
+    "R": -7.65,
+    "stressR": -8.79
+   },
+   "test": {
+    "n": 9,
+    "R": 0.65,
+    "stressR": -0.18
+   }
+  },
+  "XAUUSD": {
+   "train": {
+    "n": 6,
+    "R": -2.65,
+    "stressR": -2.78
+   },
+   "validation": {
+    "n": 0,
+    "R": 0,
+    "stressR": 0
+   },
+   "test": {
+    "n": 2,
+    "R": -2.01,
+    "stressR": -2.04
+   }
+  }
+ },
+ "vef_v020_full": {
+  "BTCUSD": {
+   "train": {
+    "n": 7,
+    "R": 1.1,
+    "stressR": 1.06
+   },
+   "validation": {
+    "n": 5,
+    "R": -5.12,
+    "stressR": -5.33
+   },
+   "test": {
+    "n": 8,
+    "R": 0.54,
+    "stressR": 0.16
+   }
+  },
+  "EURUSD": {
+   "train": {
+    "n": 14,
+    "R": 8.75,
+    "stressR": 6.9
+   },
+   "validation": {
+    "n": 4,
+    "R": -0.8,
+    "stressR": -1.45
+   },
+   "test": {
+    "n": 5,
+    "R": 4.8,
+    "stressR": 3.93
+   }
+  },
+  "GBPJPY": {
+   "train": {
+    "n": 11,
+    "R": -1.29,
+    "stressR": -2.29
+   },
+   "validation": {
+    "n": 2,
+    "R": 3.96,
+    "stressR": 3.71
+   },
+   "test": {
+    "n": 6,
+    "R": -6.57,
+    "stressR": -7.21
+   }
+  },
+  "GBPUSD": {
+   "train": {
+    "n": 15,
+    "R": -1.93,
+    "stressR": -4.28
+   },
+   "validation": {
+    "n": 8,
+    "R": 7.15,
+    "stressR": 6.29
+   },
+   "test": {
+    "n": 6,
+    "R": -6.89,
+    "stressR": -7.8
+   }
+  },
+  "XAUUSD": {
+   "train": {
+    "n": 6,
+    "R": 10.34,
+    "stressR": 10.07
+   },
+   "validation": {
+    "n": 6,
+    "R": -6.09,
+    "stressR": -6.19
+   },
+   "test": {
+    "n": 8,
+    "R": -3.45,
+    "stressR": -3.58
+   }
+  }
+ }
+}

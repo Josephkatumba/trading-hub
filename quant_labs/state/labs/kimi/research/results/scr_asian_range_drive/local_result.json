@@ -1,0 +1,6715 @@
+{
+ "status": "COMPLETE",
+ "periods": {
+  "train": {
+   "normal": {
+    "attempted": 110,
+    "resolved": 110,
+    "unknown": 0,
+    "statuses": {
+     "SL": 81,
+     "TP": 28,
+     "TIME_EXIT": 1
+    },
+    "win_rate": 0.2636363636363636,
+    "net_expectancy_r": -0.308538176395414,
+    "total_r": -33.939199403495536,
+    "profit_factor": 0.6118535632804332,
+    "max_realized_drawdown_r": 33.93919940349555,
+    "longest_losing_streak": 11,
+    "planned_rr_mean": 1.9830706006239163,
+    "planned_rr_bands": {
+     "<2": 90,
+     "2\u20133": 20
+    },
+    "realized_win_loss_ratio": 1.7089702974384513,
+    "opportunities_per_month": 9.538817663817664,
+    "data_complete_fraction": 1.0,
+    "weekly_bootstrap_expectancy_ci95": [
+     -0.5411763510512068,
+     -0.05953011992066119
+    ],
+    "weekly_sign_flip_p": 0.9835,
+    "independent_entry_weeks": 44,
+    "floating_and_unknown_risk_included_in_drawdown": false
+   },
+   "stress": {
+    "attempted": 110,
+    "resolved": 110,
+    "unknown": 0,
+    "statuses": {
+     "SL": 81,
+     "TP": 28,
+     "TIME_EXIT": 1
+    },
+    "win_rate": 0.2636363636363636,
+    "net_expectancy_r": -0.3940672192201684,
+    "total_r": -43.347394114218524,
+    "profit_factor": 0.5395925816071777,
+    "max_realized_drawdown_r": 43.34739411421854,
+    "longest_losing_streak": 11,
+    "planned_rr_mean": 1.9830706006239163,
+    "planned_rr_bands": {
+     "<2": 90,
+     "2\u20133": 20
+    },
+    "realized_win_loss_ratio": 1.5071379003510825,
+    "opportunities_per_month": 9.538817663817664,
+    "data_complete_fraction": 1.0,
+    "weekly_bootstrap_expectancy_ci95": [
+     -0.6258098173552551,
+     -0.14443153130055975
+    ],
+    "weekly_sign_flip_p": 0.997,
+    "independent_entry_weeks": 44,
+    "floating_and_unknown_risk_included_in_drawdown": false
+   }
+  },
+  "validation": {
+   "normal": {
+    "attempted": 51,
+    "resolved": 51,
+    "unknown": 0,
+    "statuses": {
+     "TP": 18,
+     "SL": 33
+    },
+    "win_rate": 0.35294117647058826,
+    "net_expectancy_r": -0.02082521786873408,
+    "total_r": -1.062086111305438,
+    "profit_factor": 0.970536270708139,
+    "max_realized_drawdown_r": 9.650432018727862,
+    "longest_losing_streak": 7,
+    "planned_rr_mean": 1.982883854471852,
+    "planned_rr_bands": {
+     "<2": 43,
+     "2\u20133": 7,
+     "3\u20134": 1
+    },
+    "realized_win_loss_ratio": 1.7793164962982546,
+    "opportunities_per_month": 8.52918956043956,
+    "data_complete_fraction": 1.0,
+    "weekly_bootstrap_expectancy_ci95": [
+     -0.37346200285873815,
+     0.34679905558125834
+    ],
+    "weekly_sign_flip_p": 0.54,
+    "independent_entry_weeks": 26,
+    "floating_and_unknown_risk_included_in_drawdown": false
+   },
+   "stress": {
+    "attempted": 51,
+    "resolved": 51,
+    "unknown": 0,
+    "statuses": {
+     "TP": 18,
+     "SL": 33
+    },
+    "win_rate": 0.35294117647058826,
+    "net_expectancy_r": -0.12019191141886346,
+    "total_r": -6.129787482362036,
+    "profit_factor": 0.8444656145503531,
+    "max_realized_drawdown_r": 13.595926354270059,
+    "longest_losing_streak": 7,
+    "planned_rr_mean": 1.982883854471852,
+    "planned_rr_bands": {
+     "<2": 43,
+     "2\u20133": 7,
+     "3\u20134": 1
+    },
+    "realized_win_loss_ratio": 1.5481869600089808,
+    "opportunities_per_month": 8.52918956043956,
+    "data_complete_fraction": 1.0,
+    "weekly_bootstrap_expectancy_ci95": [
+     -0.47843312583764835,
+     0.2503341470546586
+    ],
+    "weekly_sign_flip_p": 0.725,
+    "independent_entry_weeks": 26,
+    "floating_and_unknown_risk_included_in_drawdown": false
+   }
+  },
+  "test": {
+   "normal": {
+    "attempted": 0,
+    "resolved": 0,
+    "unknown": 0,
+    "statuses": {},
+    "win_rate": null,
+    "net_expectancy_r": null,
+    "total_r": null,
+    "profit_factor": null,
+    "max_realized_drawdown_r": null,
+    "longest_losing_streak": null,
+    "planned_rr_mean": null,
+    "planned_rr_bands": {},
+    "realized_win_loss_ratio": null,
+    "opportunities_per_month": 0.0,
+    "data_complete_fraction": null,
+    "weekly_bootstrap_expectancy_ci95": null,
+    "weekly_sign_flip_p": 1.0,
+    "independent_entry_weeks": 0,
+    "floating_and_unknown_risk_included_in_drawdown": false
+   },
+   "stress": {
+    "attempted": 0,
+    "resolved": 0,
+    "unknown": 0,
+    "statuses": {},
+    "win_rate": null,
+    "net_expectancy_r": null,
+    "total_r": null,
+    "profit_factor": null,
+    "max_realized_drawdown_r": null,
+    "longest_losing_streak": null,
+    "planned_rr_mean": null,
+    "planned_rr_bands": {},
+    "realized_win_loss_ratio": null,
+    "opportunities_per_month": 0.0,
+    "data_complete_fraction": null,
+    "weekly_bootstrap_expectancy_ci95": null,
+    "weekly_sign_flip_p": 1.0,
+    "independent_entry_weeks": 0,
+    "floating_and_unknown_risk_included_in_drawdown": false
+   }
+  }
+ },
+ "trades": [
+  {
+   "intent_index": 0,
+   "plan": {
+    "signal_id": "0",
+    "symbol": "BTCUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1733218200.0,
+    "entry_at": 1733218200.0,
+    "entry": 95272.93,
+    "stop_loss": 95457.06,
+    "take_profit": 94904.68,
+    "deadline": 1733283000.0,
+    "risk": 184.13000000000466,
+    "entry_spread": 3.95
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0197279096291039,
+    "exit_at": 1733222700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 95459.705,
+    "entry_price": 95271.94249999999,
+    "financing_price": 0.0,
+    "commission_price": 0
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0718785640580037,
+    "exit_at": 1733221800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 95468.31999999999,
+    "entry_price": 95270.95499999999,
+    "financing_price": 0.0,
+    "commission_price": 0
+   }
+  },
+  {
+   "intent_index": 1,
+   "plan": {
+    "signal_id": "1",
+    "symbol": "BTCUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1736064900.0,
+    "entry_at": 1736064900.0,
+    "entry": 97922.12,
+    "stop_loss": 98028.32,
+    "take_profit": 97709.74,
+    "deadline": 1736129700.0,
+    "risk": 106.20000000001164,
+    "entry_spread": 0.78
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.9979755178903942,
+    "exit_at": 1736071200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 97709.74,
+    "entry_price": 97921.92499999999,
+    "financing_price": 0.0,
+    "commission_price": 0
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.9961393596983752,
+    "exit_at": 1736071200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 97709.74,
+    "entry_price": 97921.73,
+    "financing_price": 0.0,
+    "commission_price": 0
+   }
+  },
+  {
+   "intent_index": 2,
+   "plan": {
+    "signal_id": "2",
+    "symbol": "BTCUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1737531900.0,
+    "entry_at": 1737531900.0,
+    "entry": 105092.7,
+    "stop_loss": 105294.32,
+    "take_profit": 104657.98,
+    "deadline": 1737596700.0,
+    "risk": 201.6200000000099,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0,
+    "exit_at": 1737536400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 105294.32,
+    "entry_price": 105092.7,
+    "financing_price": 0.0,
+    "commission_price": 0
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0,
+    "exit_at": 1737536400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 105294.32,
+    "entry_price": 105092.7,
+    "financing_price": 0.0,
+    "commission_price": 0
+   }
+  },
+  {
+   "intent_index": 3,
+   "plan": {
+    "signal_id": "3",
+    "symbol": "BTCUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1747213200.0,
+    "entry_at": 1747213200.0,
+    "entry": 103219.92,
+    "stop_loss": 103480.89,
+    "take_profit": 102687.14,
+    "deadline": 1747278000.0,
+    "risk": 260.97000000000116,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0153465915622664,
+    "exit_at": 1747216800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 103484.895,
+    "entry_price": 103219.92,
+    "financing_price": 0.0,
+    "commission_price": 0
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0306931831244768,
+    "exit_at": 1747216800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 103488.9,
+    "entry_price": 103219.92,
+    "financing_price": 0.0,
+    "commission_price": 0
+   }
+  },
+  {
+   "intent_index": 4,
+   "plan": {
+    "signal_id": "4",
+    "symbol": "BTCUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1748166300.0,
+    "entry_at": 1748166300.0,
+    "entry": 106933.55,
+    "stop_loss": 107245.59,
+    "take_profit": 106319.89,
+    "deadline": 1748231100.0,
+    "risk": 312.0399999999936,
+    "entry_spread": 4.95
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.003965837713123,
+    "exit_at": 1748168100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 107245.59,
+    "entry_price": 106932.3125,
+    "financing_price": 0.0,
+    "commission_price": 0
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0079316754262462,
+    "exit_at": 1748168100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 107245.59,
+    "entry_price": 106931.075,
+    "financing_price": 0.0,
+    "commission_price": 0
+   }
+  },
+  {
+   "intent_index": 5,
+   "plan": {
+    "signal_id": "5",
+    "symbol": "BTCUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1759307400.0,
+    "entry_at": 1759307400.0,
+    "entry": 115131.0,
+    "stop_loss": 114732.71,
+    "take_profit": 115902.07,
+    "deadline": 1759372200.0,
+    "risk": 398.2899999999936,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.93595119134304,
+    "exit_at": 1759309200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 115902.07,
+    "entry_price": 115131.0,
+    "financing_price": 0.0,
+    "commission_price": 0
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.93595119134304,
+    "exit_at": 1759309200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 115902.07,
+    "entry_price": 115131.0,
+    "financing_price": 0.0,
+    "commission_price": 0
+   }
+  },
+  {
+   "intent_index": 6,
+   "plan": {
+    "signal_id": "6",
+    "symbol": "BTCUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1759913100.0,
+    "entry_at": 1759913100.0,
+    "entry": 122882.0,
+    "stop_loss": 122260.06,
+    "take_profit": 124128.86,
+    "deadline": 1759977900.0,
+    "risk": 621.9400000000023,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0,
+    "exit_at": 1759931100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 122260.06,
+    "entry_price": 122882.0,
+    "financing_price": 0.0,
+    "commission_price": 0
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0,
+    "exit_at": 1759931100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 122260.06,
+    "entry_price": 122882.0,
+    "financing_price": 0.0,
+    "commission_price": 0
+   }
+  },
+  {
+   "intent_index": 7,
+   "plan": {
+    "signal_id": "7",
+    "symbol": "BTCUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1767684600.0,
+    "entry_at": 1767684600.0,
+    "entry": 93379.5,
+    "stop_loss": 93536.85,
+    "take_profit": 93064.82,
+    "deadline": 1767749400.0,
+    "risk": 157.35000000000582,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0,
+    "exit_at": 1767691800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 93536.85,
+    "entry_price": 93379.5,
+    "financing_price": 0.0,
+    "commission_price": 0
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0,
+    "exit_at": 1767691800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 93536.85,
+    "entry_price": 93379.5,
+    "financing_price": 0.0,
+    "commission_price": 0
+   }
+  },
+  {
+   "intent_index": 8,
+   "plan": {
+    "signal_id": "8",
+    "symbol": "BTCUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1770539400.0,
+    "entry_at": 1770539400.0,
+    "entry": 70154.23,
+    "stop_loss": 69620.63,
+    "take_profit": 71185.5,
+    "deadline": 1770604200.0,
+    "risk": 533.5999999999913,
+    "entry_spread": 12.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.921420539730174,
+    "exit_at": 1770555600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 71182.5,
+    "entry_price": 70157.23,
+    "financing_price": 0.0,
+    "commission_price": 0
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.88768740629689,
+    "exit_at": 1770555600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 71179.5,
+    "entry_price": 70172.23,
+    "financing_price": 0.0,
+    "commission_price": 0
+   }
+  },
+  {
+   "intent_index": 9,
+   "plan": {
+    "signal_id": "9",
+    "symbol": "ETHUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1756713600.0,
+    "entry_at": 1756713600.0,
+    "entry": 4465.339999999999,
+    "stop_loss": 4427.87,
+    "take_profit": 4531.96,
+    "deadline": 1756778400.0,
+    "risk": 37.469999999999345,
+    "entry_spread": 2.9
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0353616226314586,
+    "exit_at": 1756721700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 4427.2699999999995,
+    "entry_price": 4466.065,
+    "financing_price": 0.0,
+    "commission_price": 0
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1481184947958198,
+    "exit_at": 1756721700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 4426.67,
+    "entry_price": 4469.689999999999,
+    "financing_price": 0.0,
+    "commission_price": 0
+   }
+  },
+  {
+   "intent_index": 10,
+   "plan": {
+    "signal_id": "10",
+    "symbol": "ETHUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1760517000.0,
+    "entry_at": 1760517000.0,
+    "entry": 4176.879999999999,
+    "stop_loss": 4143.62,
+    "take_profit": 4236.9,
+    "deadline": 1760581800.0,
+    "risk": 33.25999999999931,
+    "entry_spread": 2.9
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0653938665063207,
+    "exit_at": 1760521500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 4142.17,
+    "entry_price": 4177.605,
+    "financing_price": 0.0,
+    "commission_price": 0
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2179795550210235,
+    "exit_at": 1760521500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 4140.72,
+    "entry_price": 4181.229999999999,
+    "financing_price": 0.0,
+    "commission_price": 0
+   }
+  },
+  {
+   "intent_index": 11,
+   "plan": {
+    "signal_id": "11",
+    "symbol": "ETHUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1767082500.0,
+    "entry_at": 1767082500.0,
+    "entry": 2987.35,
+    "stop_loss": 2952.66,
+    "take_profit": 3052.45,
+    "deadline": 1767147300.0,
+    "risk": 34.690000000000055,
+    "entry_spread": 2.9
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0626981839146648,
+    "exit_at": 1767105900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2951.21,
+    "entry_price": 2988.075,
+    "financing_price": 0.0,
+    "commission_price": 0
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2089939463822423,
+    "exit_at": 1767105900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2949.7599999999998,
+    "entry_price": 2991.7,
+    "financing_price": 0.0,
+    "commission_price": 0
+   }
+  },
+  {
+   "intent_index": 12,
+   "plan": {
+    "signal_id": "12",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1729667700.0,
+    "entry_at": 1729667700.0,
+    "entry": 1.07869,
+    "stop_loss": 1.07928,
+    "take_profit": 1.07753,
+    "deadline": 1729732500.0,
+    "risk": 0.0005900000000000905,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.8474576271180692,
+    "exit_at": 1729683900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.07753,
+    "entry_price": 1.07869,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.728813559321477,
+    "exit_at": 1729683900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.07753,
+    "entry_price": 1.07869,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 13,
+   "plan": {
+    "signal_id": "13",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1729755000.0,
+    "entry_at": 1729755000.0,
+    "entry": 1.07728,
+    "stop_loss": 1.07806,
+    "take_profit": 1.07579,
+    "deadline": 1729819800.0,
+    "risk": 0.0007800000000000029,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0897435897435894,
+    "exit_at": 1729755900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.07806,
+    "entry_price": 1.07728,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1794871794871786,
+    "exit_at": 1729755900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.07806,
+    "entry_price": 1.07728,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 14,
+   "plan": {
+    "signal_id": "14",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1730193300.0,
+    "entry_at": 1730193300.0,
+    "entry": 1.08222,
+    "stop_loss": 1.08186,
+    "take_profit": 1.08293,
+    "deadline": 1730258100.0,
+    "risk": 0.00035999999999991594,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1944444444444897,
+    "exit_at": 1730196000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.08186,
+    "entry_price": 1.08222,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.3888888888889794,
+    "exit_at": 1730196000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.08186,
+    "entry_price": 1.08222,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 15,
+   "plan": {
+    "signal_id": "15",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1730276100.0,
+    "entry_at": 1730276100.0,
+    "entry": 1.08381,
+    "stop_loss": 1.08254,
+    "take_profit": 1.08634,
+    "deadline": 1730340900.0,
+    "risk": 0.0012699999999998823,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0551181102362255,
+    "exit_at": 1730289600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.08254,
+    "entry_price": 1.08381,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1102362204724512,
+    "exit_at": 1730289600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.08254,
+    "entry_price": 1.08381,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 16,
+   "plan": {
+    "signal_id": "16",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1730360700.0,
+    "entry_at": 1730360700.0,
+    "entry": 1.08633,
+    "stop_loss": 1.08587,
+    "take_profit": 1.08724,
+    "deadline": 1730425500.0,
+    "risk": 0.000460000000000127,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.152173913043436,
+    "exit_at": 1730361600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.08587,
+    "entry_price": 1.08633,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.3043478260868724,
+    "exit_at": 1730361600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.08587,
+    "entry_price": 1.08633,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 17,
+   "plan": {
+    "signal_id": "17",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1731311100.0,
+    "entry_at": 1731311100.0,
+    "entry": 1.06975,
+    "stop_loss": 1.07088,
+    "take_profit": 1.06751,
+    "deadline": 1731375900.0,
+    "risk": 0.0011300000000000754,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.9203539823007743,
+    "exit_at": 1731317400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.06751,
+    "entry_price": 1.06975,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.8584070796459113,
+    "exit_at": 1731317400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.06751,
+    "entry_price": 1.06975,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 18,
+   "plan": {
+    "signal_id": "18",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1732000500.0,
+    "entry_at": 1732000500.0,
+    "entry": 1.05752,
+    "stop_loss": 1.05836,
+    "take_profit": 1.05586,
+    "deadline": 1732065300.0,
+    "risk": 0.0008399999999999519,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0833333333333381,
+    "exit_at": 1732002300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.05836,
+    "entry_price": 1.05752,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.166666666666676,
+    "exit_at": 1732002300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.05836,
+    "entry_price": 1.05752,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 19,
+   "plan": {
+    "signal_id": "19",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1732173300.0,
+    "entry_at": 1732173300.0,
+    "entry": 1.05362,
+    "stop_loss": 1.0543,
+    "take_profit": 1.05227,
+    "deadline": 1732238100.0,
+    "risk": 0.0006800000000000139,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.102941176470586,
+    "exit_at": 1732179600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.0543,
+    "entry_price": 1.05362,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2058823529411722,
+    "exit_at": 1732179600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.0543,
+    "entry_price": 1.05362,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 20,
+   "plan": {
+    "signal_id": "20",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1732519800.0,
+    "entry_at": 1732519800.0,
+    "entry": 1.04707,
+    "stop_loss": 1.04746,
+    "take_profit": 1.04631,
+    "deadline": 1732584600.0,
+    "risk": 0.0003900000000001125,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.7692307692299305,
+    "exit_at": 1732521600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.04631,
+    "entry_price": 1.04707,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.589743589742803,
+    "exit_at": 1732521600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.04631,
+    "entry_price": 1.04707,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 21,
+   "plan": {
+    "signal_id": "21",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1733125500.0,
+    "entry_at": 1733125500.0,
+    "entry": 1.05061,
+    "stop_loss": 1.05165,
+    "take_profit": 1.04851,
+    "deadline": 1733190300.0,
+    "risk": 0.0010399999999999299,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0673076923076967,
+    "exit_at": 1733130900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.05165,
+    "entry_price": 1.05061,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1346153846153937,
+    "exit_at": 1733130900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.05165,
+    "entry_price": 1.05061,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 22,
+   "plan": {
+    "signal_id": "22",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1733901300.0,
+    "entry_at": 1733901300.0,
+    "entry": 1.05157,
+    "stop_loss": 1.05213,
+    "take_profit": 1.05047,
+    "deadline": 1733966100.0,
+    "risk": 0.000560000000000116,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.8392857142851171,
+    "exit_at": 1733903100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.05047,
+    "entry_price": 1.05157,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.714285714285143,
+    "exit_at": 1733903100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.05047,
+    "entry_price": 1.05157,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 23,
+   "plan": {
+    "signal_id": "23",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1734336000.0,
+    "entry_at": 1734336000.0,
+    "entry": 1.05049,
+    "stop_loss": 1.05102,
+    "take_profit": 1.04945,
+    "deadline": 1734400800.0,
+    "risk": 0.0005300000000001415,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1320754716980779,
+    "exit_at": 1734336900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.05102,
+    "entry_price": 1.05049,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2641509433961557,
+    "exit_at": 1734336900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.05102,
+    "entry_price": 1.05049,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 24,
+   "plan": {
+    "signal_id": "24",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1735635600.0,
+    "entry_at": 1735635600.0,
+    "entry": 1.04184,
+    "stop_loss": 1.04142,
+    "take_profit": 1.04264,
+    "deadline": 1735700400.0,
+    "risk": 0.00042000000000008697,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.166666666666632,
+    "exit_at": 1735636500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.04142,
+    "entry_price": 1.04184,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.3333333333332642,
+    "exit_at": 1735636500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.04142,
+    "entry_price": 1.04184,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 25,
+   "plan": {
+    "signal_id": "25",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1736760600.0,
+    "entry_at": 1736760600.0,
+    "entry": 1.0187,
+    "stop_loss": 1.02095,
+    "take_profit": 1.01422,
+    "deadline": 1736825400.0,
+    "risk": 0.0022500000000000853,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.03111111111111,
+    "exit_at": 1736775000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.02095,
+    "entry_price": 1.0187,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0622222222222197,
+    "exit_at": 1736775000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.02095,
+    "entry_price": 1.0187,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 26,
+   "plan": {
+    "signal_id": "26",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1736928900.0,
+    "entry_at": 1736928900.0,
+    "entry": 1.03129,
+    "stop_loss": 1.03052,
+    "take_profit": 1.03282,
+    "deadline": 1736993700.0,
+    "risk": 0.0007699999999999374,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0909090909090982,
+    "exit_at": 1736929800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.03052,
+    "entry_price": 1.03129,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1818181818181965,
+    "exit_at": 1736929800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.03052,
+    "entry_price": 1.03129,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 27,
+   "plan": {
+    "signal_id": "27",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1737968400.0,
+    "entry_at": 1737968400.0,
+    "entry": 1.04878,
+    "stop_loss": 1.04775,
+    "take_profit": 1.05085,
+    "deadline": 1738033200.0,
+    "risk": 0.0010300000000000864,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0679611650485379,
+    "exit_at": 1737971100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.04775,
+    "entry_price": 1.04878,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.135922330097076,
+    "exit_at": 1737971100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.04775,
+    "entry_price": 1.04878,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 28,
+   "plan": {
+    "signal_id": "28",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1738135800.0,
+    "entry_at": 1738135800.0,
+    "entry": 1.04217,
+    "stop_loss": 1.04267,
+    "take_profit": 1.04119,
+    "deadline": 1738200600.0,
+    "risk": 0.0004999999999999449,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1400000000000154,
+    "exit_at": 1738138500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.04267,
+    "entry_price": 1.04217,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2800000000000307,
+    "exit_at": 1738138500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.04267,
+    "entry_price": 1.04217,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 29,
+   "plan": {
+    "signal_id": "29",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1739178900.0,
+    "entry_at": 1739178900.0,
+    "entry": 1.03322,
+    "stop_loss": 1.03207,
+    "take_profit": 1.03551,
+    "deadline": 1739243700.0,
+    "risk": 0.0011499999999999844,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.060869565217392,
+    "exit_at": 1739188800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.03207,
+    "entry_price": 1.03322,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1217391304347841,
+    "exit_at": 1739188800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.03207,
+    "entry_price": 1.03322,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 30,
+   "plan": {
+    "signal_id": "30",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1739347200.0,
+    "entry_at": 1739347200.0,
+    "entry": 1.03759,
+    "stop_loss": 1.03672,
+    "take_profit": 1.03925,
+    "deadline": 1739412000.0,
+    "risk": 0.0008699999999999264,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0804597701149492,
+    "exit_at": 1739351700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.03672,
+    "entry_price": 1.03759,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1609195402298986,
+    "exit_at": 1739351700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.03672,
+    "entry_price": 1.03759,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 31,
+   "plan": {
+    "signal_id": "31",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1740039300.0,
+    "entry_at": 1740039300.0,
+    "entry": 1.04402,
+    "stop_loss": 1.04368,
+    "take_profit": 1.04468,
+    "deadline": 1740104100.0,
+    "risk": 0.00034000000000000696,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.2058823529411722,
+    "exit_at": 1740040200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.04368,
+    "entry_price": 1.04402,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.4117647058823444,
+    "exit_at": 1740040200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.04368,
+    "entry_price": 1.04402,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 32,
+   "plan": {
+    "signal_id": "32",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1740990600.0,
+    "entry_at": 1740990600.0,
+    "entry": 1.03964,
+    "stop_loss": 1.04033,
+    "take_profit": 1.03827,
+    "deadline": 1741055400.0,
+    "risk": 0.0006900000000000794,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.101449275362307,
+    "exit_at": 1740993300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.04033,
+    "entry_price": 1.03964,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2028985507246142,
+    "exit_at": 1740993300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.04033,
+    "entry_price": 1.03964,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 33,
+   "plan": {
+    "signal_id": "33",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1741077000.0,
+    "entry_at": 1741077000.0,
+    "entry": 1.05172,
+    "stop_loss": 1.04946,
+    "take_profit": 1.05623,
+    "deadline": 1741141800.0,
+    "risk": 0.0022599999999999287,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.9646017699115728,
+    "exit_at": 1741112100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.05623,
+    "entry_price": 1.05172,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.9336283185841379,
+    "exit_at": 1741112100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.05623,
+    "entry_price": 1.05172,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 34,
+   "plan": {
+    "signal_id": "34",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1743578100.0,
+    "entry_at": 1743578100.0,
+    "entry": 1.07836,
+    "stop_loss": 1.07869,
+    "take_profit": 1.07771,
+    "deadline": 1743642900.0,
+    "risk": 0.00032999999999994145,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.2121212121212497,
+    "exit_at": 1743579000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.07869,
+    "entry_price": 1.07836,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.4242424242424996,
+    "exit_at": 1743579000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.07869,
+    "entry_price": 1.07836,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 35,
+   "plan": {
+    "signal_id": "35",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1744271100.0,
+    "entry_at": 1744271100.0,
+    "entry": 1.10116,
+    "stop_loss": 1.09932,
+    "take_profit": 1.10482,
+    "deadline": 1744335900.0,
+    "risk": 0.0018399999999998418,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.951086956521905,
+    "exit_at": 1744277400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.10482,
+    "entry_price": 1.10116,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.9130434782610322,
+    "exit_at": 1744277400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.10482,
+    "entry_price": 1.10116,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 36,
+   "plan": {
+    "signal_id": "36",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1747034100.0,
+    "entry_at": 1747034100.0,
+    "entry": 1.11591,
+    "stop_loss": 1.12156,
+    "take_profit": 1.10463,
+    "deadline": 1747098900.0,
+    "risk": 0.005649999999999933,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TIME_EXIT",
+    "r": 0.9740955752212521,
+    "exit_at": 1747098900.0,
+    "method": "M15",
+    "reason": null,
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.11035,
+    "entry_price": 1.11591,
+    "financing_price": -1.3640000000000002e-05,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TIME_EXIT",
+    "r": 0.959292035398243,
+    "exit_at": 1747098900.0,
+    "method": "M15",
+    "reason": null,
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.11035,
+    "entry_price": 1.11591,
+    "financing_price": 0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 37,
+   "plan": {
+    "signal_id": "37",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1747290600.0,
+    "entry_at": 1747290600.0,
+    "entry": 1.12082,
+    "stop_loss": 1.12003,
+    "take_profit": 1.12239,
+    "deadline": 1747355400.0,
+    "risk": 0.0007899999999998464,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.8987341772156494,
+    "exit_at": 1747292400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.12239,
+    "entry_price": 1.12082,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.8101265822789234,
+    "exit_at": 1747292400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.12239,
+    "entry_price": 1.12082,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 38,
+   "plan": {
+    "signal_id": "38",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1750670100.0,
+    "entry_at": 1750670100.0,
+    "entry": 1.14659,
+    "stop_loss": 1.14741,
+    "take_profit": 1.14497,
+    "deadline": 1750734900.0,
+    "risk": 0.0008200000000000429,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.085365853658532,
+    "exit_at": 1750672800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.14741,
+    "entry_price": 1.14659,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1707317073170642,
+    "exit_at": 1750672800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.14741,
+    "entry_price": 1.14659,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 39,
+   "plan": {
+    "signal_id": "39",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1751362200.0,
+    "entry_at": 1751362200.0,
+    "entry": 1.18149,
+    "stop_loss": 1.18059,
+    "take_profit": 1.18328,
+    "deadline": 1751427000.0,
+    "risk": 0.0008999999999999009,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0777777777777864,
+    "exit_at": 1751369400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.18059,
+    "entry_price": 1.18149,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1555555555555725,
+    "exit_at": 1751369400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.18059,
+    "entry_price": 1.18149,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 40,
+   "plan": {
+    "signal_id": "40",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1751958900.0,
+    "entry_at": 1751958900.0,
+    "entry": 1.17538,
+    "stop_loss": 1.1749,
+    "take_profit": 1.17632,
+    "deadline": 1752023700.0,
+    "risk": 0.00048000000000003595,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.812499999999741,
+    "exit_at": 1751961600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.17632,
+    "entry_price": 1.17538,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.6666666666664187,
+    "exit_at": 1751961600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.17632,
+    "entry_price": 1.17538,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 41,
+   "plan": {
+    "signal_id": "41",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1753173900.0,
+    "entry_at": 1753173900.0,
+    "entry": 1.1699,
+    "stop_loss": 1.16948,
+    "take_profit": 1.17073,
+    "deadline": 1753238700.0,
+    "risk": 0.0004199999999998649,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1666666666667203,
+    "exit_at": 1753177500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.16948,
+    "entry_price": 1.1699,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.3333333333334403,
+    "exit_at": 1753177500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.16948,
+    "entry_price": 1.1699,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 42,
+   "plan": {
+    "signal_id": "42",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1755504000.0,
+    "entry_at": 1755504000.0,
+    "entry": 1.16815,
+    "stop_loss": 1.16945,
+    "take_profit": 1.16556,
+    "deadline": 1755568800.0,
+    "risk": 0.0013000000000000789,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.9297230769230755,
+    "exit_at": 1755551700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.1655849999999999,
+    "entry_price": 1.16815,
+    "financing_price": -1.3640000000000002e-05,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.846153846153724,
+    "exit_at": 1755551700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.16561,
+    "entry_price": 1.16815,
+    "financing_price": 0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 43,
+   "plan": {
+    "signal_id": "43",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1755757800.0,
+    "entry_at": 1755757800.0,
+    "entry": 1.16345,
+    "stop_loss": 1.16418,
+    "take_profit": 1.162,
+    "deadline": 1755822600.0,
+    "risk": 0.0007299999999998974,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0958904109589176,
+    "exit_at": 1755761400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.16418,
+    "entry_price": 1.16345,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1917808219178352,
+    "exit_at": 1755761400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.16418,
+    "entry_price": 1.16345,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 44,
+   "plan": {
+    "signal_id": "44",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1756102500.0,
+    "entry_at": 1756102500.0,
+    "entry": 1.1712799999999999,
+    "stop_loss": 1.17075,
+    "take_profit": 1.17232,
+    "deadline": 1756167300.0,
+    "risk": 0.0005299999999999194,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1320754716981332,
+    "exit_at": 1756107900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.17075,
+    "entry_price": 1.1712799999999999,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2641509433962665,
+    "exit_at": 1756107900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.17075,
+    "entry_price": 1.1712799999999999,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 45,
+   "plan": {
+    "signal_id": "45",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1757403900.0,
+    "entry_at": 1757403900.0,
+    "entry": 1.17539,
+    "stop_loss": 1.17643,
+    "take_profit": 1.17329,
+    "deadline": 1757468700.0,
+    "risk": 0.001040000000000152,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0673076923076825,
+    "exit_at": 1757409300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.17643,
+    "entry_price": 1.17539,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1346153846153648,
+    "exit_at": 1757409300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.17643,
+    "entry_price": 1.17539,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 46,
+   "plan": {
+    "signal_id": "46",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1757571300.0,
+    "entry_at": 1757571300.0,
+    "entry": 1.16867,
+    "stop_loss": 1.16896,
+    "take_profit": 1.1681,
+    "deadline": 1757636100.0,
+    "risk": 0.00028999999999990145,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.2413793103449096,
+    "exit_at": 1757572200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.16896,
+    "entry_price": 1.16867,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.4827586206898191,
+    "exit_at": 1757572200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.16896,
+    "entry_price": 1.16867,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 47,
+   "plan": {
+    "signal_id": "47",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1758522600.0,
+    "entry_at": 1758522600.0,
+    "entry": 1.1743000000000001,
+    "stop_loss": 1.17402,
+    "take_profit": 1.17502,
+    "deadline": 1758587400.0,
+    "risk": 0.000280000000000058,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.249999999999948,
+    "exit_at": 1758523500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.17402,
+    "entry_price": 1.1743000000000001,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.4999999999998965,
+    "exit_at": 1758523500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.17402,
+    "entry_price": 1.1743000000000001,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 48,
+   "plan": {
+    "signal_id": "48",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1758787200.0,
+    "entry_at": 1758787200.0,
+    "entry": 1.1733500000000001,
+    "stop_loss": 1.17414,
+    "take_profit": 1.17173,
+    "deadline": 1758852000.0,
+    "risk": 0.0007899999999998464,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.088607594936726,
+    "exit_at": 1758789000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.17414,
+    "entry_price": 1.1733500000000001,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1772151898734522,
+    "exit_at": 1758789000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.17414,
+    "entry_price": 1.1733500000000001,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 49,
+   "plan": {
+    "signal_id": "49",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1759731300.0,
+    "entry_at": 1759731300.0,
+    "entry": 1.17072,
+    "stop_loss": 1.17109,
+    "take_profit": 1.17,
+    "deadline": 1759796100.0,
+    "risk": 0.00036999999999998145,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1891891891891986,
+    "exit_at": 1759732200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.17109,
+    "entry_price": 1.17072,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.3783783783783972,
+    "exit_at": 1759732200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.17109,
+    "entry_price": 1.17072,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 50,
+   "plan": {
+    "signal_id": "50",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1761120900.0,
+    "entry_at": 1761120900.0,
+    "entry": 1.15916,
+    "stop_loss": 1.16005,
+    "take_profit": 1.1574,
+    "deadline": 1761185700.0,
+    "risk": 0.0008900000000000574,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0786516853932533,
+    "exit_at": 1761124500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.16005,
+    "entry_price": 1.15916,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1573033707865066,
+    "exit_at": 1761124500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.16005,
+    "entry_price": 1.15916,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 51,
+   "plan": {
+    "signal_id": "51",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1763019900.0,
+    "entry_at": 1763019900.0,
+    "entry": 1.16029,
+    "stop_loss": 1.15925,
+    "take_profit": 1.16238,
+    "deadline": 1763084700.0,
+    "risk": 0.001040000000000152,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.9423076923073366,
+    "exit_at": 1763024400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.16238,
+    "entry_price": 1.16029,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.8749999999996543,
+    "exit_at": 1763024400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.16238,
+    "entry_price": 1.16029,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 52,
+   "plan": {
+    "signal_id": "52",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1764837000.0,
+    "entry_at": 1764837000.0,
+    "entry": 1.1676199999999999,
+    "stop_loss": 1.16666,
+    "take_profit": 1.16953,
+    "deadline": 1764901800.0,
+    "risk": 0.0009599999999998499,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.072916666666678,
+    "exit_at": 1764845100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.16666,
+    "entry_price": 1.1676199999999999,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1458333333333561,
+    "exit_at": 1764845100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.16666,
+    "entry_price": 1.1676199999999999,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 53,
+   "plan": {
+    "signal_id": "53",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1765273500.0,
+    "entry_at": 1765273500.0,
+    "entry": 1.16544,
+    "stop_loss": 1.16493,
+    "take_profit": 1.16644,
+    "deadline": 1765338300.0,
+    "risk": 0.0005100000000000104,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1372549019607814,
+    "exit_at": 1765275300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.16493,
+    "entry_price": 1.16544,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2745098039215628,
+    "exit_at": 1765275300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.16493,
+    "entry_price": 1.16544,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 54,
+   "plan": {
+    "signal_id": "54",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1769414400.0,
+    "entry_at": 1769414400.0,
+    "entry": 1.1838899999999999,
+    "stop_loss": 1.18459,
+    "take_profit": 1.18251,
+    "deadline": 1769479200.0,
+    "risk": 0.000700000000000145,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0999999999999792,
+    "exit_at": 1769415300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.18459,
+    "entry_price": 1.1838899999999999,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1999999999999584,
+    "exit_at": 1769415300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.18459,
+    "entry_price": 1.1838899999999999,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 55,
+   "plan": {
+    "signal_id": "55",
+    "symbol": "EURUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1770102900.0,
+    "entry_at": 1770102900.0,
+    "entry": 1.18192,
+    "stop_loss": 1.18158,
+    "take_profit": 1.18265,
+    "deadline": 1770167700.0,
+    "risk": 0.00034000000000000696,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.2058823529411722,
+    "exit_at": 1770103800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.18158,
+    "entry_price": 1.18192,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.4117647058823444,
+    "exit_at": 1770103800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.18158,
+    "entry_price": 1.18192,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 56,
+   "plan": {
+    "signal_id": "56",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1771836300.0,
+    "entry_at": 1771836300.0,
+    "entry": 1.18108,
+    "stop_loss": 1.18161,
+    "take_profit": 1.18004,
+    "deadline": 1771901100.0,
+    "risk": 0.0005300000000001415,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.8301886792446622,
+    "exit_at": 1771840800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.18004,
+    "entry_price": 1.18108,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.6981132075465843,
+    "exit_at": 1771840800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.18004,
+    "entry_price": 1.18108,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 57,
+   "plan": {
+    "signal_id": "57",
+    "symbol": "EURUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1772093700.0,
+    "entry_at": 1772093700.0,
+    "entry": 1.18068,
+    "stop_loss": 1.18128,
+    "take_profit": 1.1795,
+    "deadline": 1772158500.0,
+    "risk": 0.000600000000000156,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.8499999999994505,
+    "exit_at": 1772102700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.1795,
+    "entry_price": 1.18068,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.7333333333328143,
+    "exit_at": 1772102700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.1795,
+    "entry_price": 1.18068,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 58,
+   "plan": {
+    "signal_id": "58",
+    "symbol": "GBPJPY",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1729059300.0,
+    "entry_at": 1729059300.0,
+    "entry": 194.131,
+    "stop_loss": 194.6,
+    "take_profit": 193.192,
+    "deadline": 1729124100.0,
+    "risk": 0.4689999999999941,
+    "entry_spread": 0.001
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.016524520255826,
+    "exit_at": 1729083600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 194.60049999999998,
+    "entry_price": 194.13075,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0330490405117125,
+    "exit_at": 1729083600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 194.601,
+    "entry_price": 194.1305,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 59,
+   "plan": {
+    "signal_id": "59",
+    "symbol": "GBPJPY",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1730278800.0,
+    "entry_at": 1730278800.0,
+    "entry": 198.981,
+    "stop_loss": 199.152,
+    "take_profit": 198.64,
+    "deadline": 1730343600.0,
+    "risk": 0.17099999999999227,
+    "entry_spread": 0.002
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0497076023391423,
+    "exit_at": 1730279700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 199.153,
+    "entry_price": 198.9805,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0994152046784509,
+    "exit_at": 1730279700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 199.154,
+    "entry_price": 198.98,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 60,
+   "plan": {
+    "signal_id": "60",
+    "symbol": "GBPJPY",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1732005900.0,
+    "entry_at": 1732005900.0,
+    "entry": 194.349,
+    "stop_loss": 195.258,
+    "take_profit": 192.527,
+    "deadline": 1732070700.0,
+    "risk": 0.9090000000000202,
+    "entry_spread": 0.001
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0085258525852387,
+    "exit_at": 1732032900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 195.2585,
+    "entry_price": 194.34875,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.017051705170509,
+    "exit_at": 1732032900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 195.25900000000001,
+    "entry_price": 194.3485,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 61,
+   "plan": {
+    "signal_id": "61",
+    "symbol": "GBPJPY",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1739265300.0,
+    "entry_at": 1739265300.0,
+    "entry": 188.023,
+    "stop_loss": 187.886,
+    "take_profit": 188.292,
+    "deadline": 1739330100.0,
+    "risk": 0.13700000000000045,
+    "entry_spread": 0.002
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0620437956203863,
+    "exit_at": 1739267100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 187.885,
+    "entry_price": 188.02349999999998,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1386861313870351,
+    "exit_at": 1739267100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 187.884,
+    "entry_price": 188.026,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 62,
+   "plan": {
+    "signal_id": "62",
+    "symbol": "GBPJPY",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1741594500.0,
+    "entry_at": 1741594500.0,
+    "entry": 189.92,
+    "stop_loss": 190.334,
+    "take_profit": 189.063,
+    "deadline": 1741659300.0,
+    "risk": 0.4140000000000157,
+    "entry_spread": 0.002
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0205314009661657,
+    "exit_at": 1741614300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 190.335,
+    "entry_price": 189.9195,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0410628019324002,
+    "exit_at": 1741614300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 190.336,
+    "entry_price": 189.91899999999998,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 63,
+   "plan": {
+    "signal_id": "63",
+    "symbol": "GBPJPY",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1741765500.0,
+    "entry_at": 1741765500.0,
+    "entry": 191.901,
+    "stop_loss": 191.723,
+    "take_profit": 192.249,
+    "deadline": 1741830300.0,
+    "risk": 0.17799999999999727,
+    "entry_spread": 0.002
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0505617977527038,
+    "exit_at": 1741769100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 191.72150000000002,
+    "entry_price": 191.9015,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.112359550561801,
+    "exit_at": 1741769100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 191.72000000000003,
+    "entry_price": 191.90400000000002,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 64,
+   "plan": {
+    "signal_id": "64",
+    "symbol": "GBPJPY",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1742800500.0,
+    "entry_at": 1742800500.0,
+    "entry": 193.929,
+    "stop_loss": 193.765,
+    "take_profit": 194.249,
+    "deadline": 1742865300.0,
+    "risk": 0.1640000000000157,
+    "entry_spread": 0.002
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0518292682926351,
+    "exit_at": 1742802300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 193.76399999999998,
+    "entry_price": 193.9295,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.11585365853672,
+    "exit_at": 1742802300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 193.76299999999998,
+    "entry_price": 193.93200000000002,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 65,
+   "plan": {
+    "signal_id": "65",
+    "symbol": "GBPJPY",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1743493500.0,
+    "entry_at": 1743493500.0,
+    "entry": 193.124,
+    "stop_loss": 193.413,
+    "take_profit": 192.545,
+    "deadline": 1743558300.0,
+    "risk": 0.2890000000000157,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.024221453287196,
+    "exit_at": 1743497100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 193.413,
+    "entry_price": 193.124,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0484429065743919,
+    "exit_at": 1743497100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 193.413,
+    "entry_price": 193.124,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 66,
+   "plan": {
+    "signal_id": "66",
+    "symbol": "GBPJPY",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1743578100.0,
+    "entry_at": 1743578100.0,
+    "entry": 193.202,
+    "stop_loss": 193.375,
+    "take_profit": 192.858,
+    "deadline": 1743642900.0,
+    "risk": 0.17300000000000182,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0404624277456644,
+    "exit_at": 1743583500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 193.375,
+    "entry_price": 193.202,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0809248554913287,
+    "exit_at": 1743583500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 193.375,
+    "entry_price": 193.202,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 67,
+   "plan": {
+    "signal_id": "67",
+    "symbol": "GBPJPY",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1746517500.0,
+    "entry_at": 1746517500.0,
+    "entry": 190.852,
+    "stop_loss": 190.946,
+    "take_profit": 190.666,
+    "deadline": 1746582300.0,
+    "risk": 0.09399999999999409,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0744680851063877,
+    "exit_at": 1746518400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 190.946,
+    "entry_price": 190.852,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1489361702127754,
+    "exit_at": 1746518400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 190.946,
+    "entry_price": 190.852,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 68,
+   "plan": {
+    "signal_id": "68",
+    "symbol": "GBPJPY",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1746605700.0,
+    "entry_at": 1746605700.0,
+    "entry": 191.368,
+    "stop_loss": 191.204,
+    "take_profit": 191.694,
+    "deadline": 1746670500.0,
+    "risk": 0.16399999999998727,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0426829268292717,
+    "exit_at": 1746608400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 191.204,
+    "entry_price": 191.368,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0853658536585433,
+    "exit_at": 1746608400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 191.204,
+    "entry_price": 191.368,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 69,
+   "plan": {
+    "signal_id": "69",
+    "symbol": "GBPJPY",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1755501300.0,
+    "entry_at": 1755501300.0,
+    "entry": 199.385,
+    "stop_loss": 199.593,
+    "take_profit": 198.998,
+    "deadline": 1755566100.0,
+    "risk": 0.2079999999999984,
+    "entry_spread": 0.002
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.040865384615351,
+    "exit_at": 1755504000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 199.594,
+    "entry_price": 199.3845,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0817307692308389,
+    "exit_at": 1755504000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 199.595,
+    "entry_price": 199.384,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 70,
+   "plan": {
+    "signal_id": "70",
+    "symbol": "GBPJPY",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1755676800.0,
+    "entry_at": 1755676800.0,
+    "entry": 199.43099999999998,
+    "stop_loss": 199.216,
+    "take_profit": 199.847,
+    "deadline": 1755741600.0,
+    "risk": 0.214999999999975,
+    "entry_spread": 0.004
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0465116279070488,
+    "exit_at": 1755677700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 199.214,
+    "entry_price": 199.432,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.111627906976715,
+    "exit_at": 1755677700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 199.21200000000002,
+    "entry_price": 199.43699999999998,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 71,
+   "plan": {
+    "signal_id": "71",
+    "symbol": "GBPJPY",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1755763200.0,
+    "entry_at": 1755763200.0,
+    "entry": 198.583,
+    "stop_loss": 198.431,
+    "take_profit": 198.882,
+    "deadline": 1755828000.0,
+    "risk": 0.1519999999999868,
+    "entry_spread": 0.004
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.9078947368422514,
+    "exit_at": 1755769500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 198.881,
+    "entry_price": 198.584,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.8223684210527686,
+    "exit_at": 1755769500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 198.88,
+    "entry_price": 198.589,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 72,
+   "plan": {
+    "signal_id": "72",
+    "symbol": "GBPJPY",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1757406600.0,
+    "entry_at": 1757406600.0,
+    "entry": 199.071,
+    "stop_loss": 199.426,
+    "take_profit": 198.374,
+    "deadline": 1757471400.0,
+    "risk": 0.35499999999998977,
+    "entry_spread": 0.003
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.02605633802818,
+    "exit_at": 1757437200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 199.42749999999998,
+    "entry_price": 199.07025,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.05211267605628,
+    "exit_at": 1757437200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 199.42899999999997,
+    "entry_price": 199.0695,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 73,
+   "plan": {
+    "signal_id": "73",
+    "symbol": "GBPJPY",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1757571300.0,
+    "entry_at": 1757571300.0,
+    "entry": 199.61599999999999,
+    "stop_loss": 199.513,
+    "take_profit": 199.815,
+    "deadline": 1757636100.0,
+    "risk": 0.10299999999998022,
+    "entry_spread": 0.003
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.8470873786411004,
+    "exit_at": 1757579400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 199.814,
+    "entry_price": 199.61675,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.7330097087384286,
+    "exit_at": 1757579400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 199.813,
+    "entry_price": 199.62049999999996,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 74,
+   "plan": {
+    "signal_id": "74",
+    "symbol": "GBPJPY",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1757920500.0,
+    "entry_at": 1757920500.0,
+    "entry": 200.232,
+    "stop_loss": 200.138,
+    "take_profit": 200.412,
+    "deadline": 1757985300.0,
+    "risk": 0.09399999999999409,
+    "entry_spread": 0.003
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.8244680851063428,
+    "exit_at": 1757925000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 200.41125,
+    "entry_price": 200.23275,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.7021276595749475,
+    "exit_at": 1757925000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 200.4105,
+    "entry_price": 200.23649999999998,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 75,
+   "plan": {
+    "signal_id": "75",
+    "symbol": "GBPJPY",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1758176100.0,
+    "entry_at": 1758176100.0,
+    "entry": 200.44899999999998,
+    "stop_loss": 200.359,
+    "take_profit": 200.607,
+    "deadline": 1758240900.0,
+    "risk": 0.08999999999997499,
+    "entry_spread": 0.003
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.6611111111115069,
+    "exit_at": 1758182400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 200.60625,
+    "entry_price": 200.44975,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.5333333333342443,
+    "exit_at": 1758182400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 200.6055,
+    "entry_price": 200.45349999999996,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 76,
+   "plan": {
+    "signal_id": "76",
+    "symbol": "GBPJPY",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1758617100.0,
+    "entry_at": 1758617100.0,
+    "entry": 199.249,
+    "stop_loss": 199.572,
+    "take_profit": 198.605,
+    "deadline": 1758681900.0,
+    "risk": 0.3230000000000075,
+    "entry_spread": 0.003
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0286377708978434,
+    "exit_at": 1758625200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 199.5735,
+    "entry_price": 199.24824999999998,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0572755417955988,
+    "exit_at": 1758625200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 199.575,
+    "entry_price": 199.2475,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 77,
+   "plan": {
+    "signal_id": "77",
+    "symbol": "GBPJPY",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1759910400.0,
+    "entry_at": 1759910400.0,
+    "entry": 204.676,
+    "stop_loss": 204.455,
+    "take_profit": 205.092,
+    "deadline": 1759975200.0,
+    "risk": 0.22099999999997522,
+    "entry_spread": 0.004
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.842760180995726,
+    "exit_at": 1759916700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 205.09125,
+    "entry_price": 204.677,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.7850678733035126,
+    "exit_at": 1759916700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 205.09050000000002,
+    "entry_price": 204.682,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 78,
+   "plan": {
+    "signal_id": "78",
+    "symbol": "GBPJPY",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1763019900.0,
+    "entry_at": 1763019900.0,
+    "entry": 203.435,
+    "stop_loss": 203.311,
+    "take_profit": 203.669,
+    "deadline": 1763084700.0,
+    "risk": 0.12399999999999523,
+    "entry_spread": 0.004
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0806451612904413,
+    "exit_at": 1763020800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 203.309,
+    "entry_price": 203.436,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1935483870967083,
+    "exit_at": 1763020800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 203.30700000000002,
+    "entry_price": 203.441,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 79,
+   "plan": {
+    "signal_id": "79",
+    "symbol": "GBPJPY",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1764061200.0,
+    "entry_at": 1764061200.0,
+    "entry": 205.157,
+    "stop_loss": 205.263,
+    "take_profit": 204.947,
+    "deadline": 1764126000.0,
+    "risk": 0.10599999999999454,
+    "entry_spread": 0.004
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0943396226416495,
+    "exit_at": 1764064800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 205.26500000000001,
+    "entry_price": 205.156,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1886792452830308,
+    "exit_at": 1764064800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 205.267,
+    "entry_price": 205.155,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 80,
+   "plan": {
+    "signal_id": "80",
+    "symbol": "GBPJPY",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1764747000.0,
+    "entry_at": 1764747000.0,
+    "entry": 206.16099999999997,
+    "stop_loss": 206.092,
+    "take_profit": 206.267,
+    "deadline": 1764811800.0,
+    "risk": 0.06899999999995998,
+    "entry_spread": 0.003
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1340579710146232,
+    "exit_at": 1764747900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 206.09050000000002,
+    "entry_price": 206.16174999999998,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.3115942028982206,
+    "exit_at": 1764747900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 206.08900000000003,
+    "entry_price": 206.16549999999995,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 81,
+   "plan": {
+    "signal_id": "81",
+    "symbol": "GBPJPY",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1764836100.0,
+    "entry_at": 1764836100.0,
+    "entry": 206.717,
+    "stop_loss": 206.9,
+    "take_profit": 206.344,
+    "deadline": 1764900900.0,
+    "risk": 0.18299999999999272,
+    "entry_spread": 0.004
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0546448087432498,
+    "exit_at": 1764837900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 206.90200000000002,
+    "entry_price": 206.716,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1092896174863445,
+    "exit_at": 1764837900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 206.904,
+    "entry_price": 206.715,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 82,
+   "plan": {
+    "signal_id": "82",
+    "symbol": "GBPJPY",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1766389500.0,
+    "entry_at": 1766389500.0,
+    "entry": 211.13199999999998,
+    "stop_loss": 211.015,
+    "take_profit": 211.356,
+    "deadline": 1766454300.0,
+    "risk": 0.11699999999999022,
+    "entry_spread": 0.003
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.8418803418804666,
+    "exit_at": 1766390400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 211.35524999999998,
+    "entry_price": 211.13275,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.7435897435902836,
+    "exit_at": 1766390400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 211.3545,
+    "entry_price": 211.13649999999996,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 83,
+   "plan": {
+    "signal_id": "83",
+    "symbol": "GBPJPY",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1768983300.0,
+    "entry_at": 1768983300.0,
+    "entry": 212.197,
+    "stop_loss": 212.291,
+    "take_profit": 212.011,
+    "deadline": 1769048100.0,
+    "risk": 0.09399999999999409,
+    "entry_spread": 0.003
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.098404255319194,
+    "exit_at": 1768984200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 212.2925,
+    "entry_price": 212.19625,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1968085106380852,
+    "exit_at": 1768984200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 212.29399999999998,
+    "entry_price": 212.1955,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 84,
+   "plan": {
+    "signal_id": "84",
+    "symbol": "GBPJPY",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1772095500.0,
+    "entry_at": 1772095500.0,
+    "entry": 210.963,
+    "stop_loss": 211.183,
+    "take_profit": 210.53,
+    "deadline": 1772160300.0,
+    "risk": 0.21999999999999886,
+    "entry_spread": 0.003
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0420454545454714,
+    "exit_at": 1772101800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 211.18449999999999,
+    "entry_price": 210.96224999999998,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0840909090908135,
+    "exit_at": 1772101800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 211.18599999999998,
+    "entry_price": 210.9615,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 85,
+   "plan": {
+    "signal_id": "85",
+    "symbol": "GBPJPY",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1773819900.0,
+    "entry_at": 1773819900.0,
+    "entry": 212.035,
+    "stop_loss": 212.119,
+    "take_profit": 211.868,
+    "deadline": 1773884700.0,
+    "risk": 0.08400000000000318,
+    "entry_spread": 0.003
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1101190476190868,
+    "exit_at": 1773821700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 212.1205,
+    "entry_price": 212.03425,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.220238095237835,
+    "exit_at": 1773821700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 212.12199999999999,
+    "entry_price": 212.0335,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 86,
+   "plan": {
+    "signal_id": "86",
+    "symbol": "GBPJPY",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1774336500.0,
+    "entry_at": 1774336500.0,
+    "entry": 212.951,
+    "stop_loss": 212.795,
+    "take_profit": 213.256,
+    "deadline": 1774401300.0,
+    "risk": 0.1560000000000059,
+    "entry_spread": 0.004
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.060897435897419,
+    "exit_at": 1774338300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 212.7935,
+    "entry_price": 212.952,
+    "financing_price": 0.0,
+    "commission_price": 0.007
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.147435897435803,
+    "exit_at": 1774338300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 212.792,
+    "entry_price": 212.957,
+    "financing_price": 0.0,
+    "commission_price": 0.014
+   }
+  },
+  {
+   "intent_index": 87,
+   "plan": {
+    "signal_id": "87",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1728979200.0,
+    "entry_at": 1728979200.0,
+    "entry": 1.30736,
+    "stop_loss": 1.30679,
+    "take_profit": 1.30849,
+    "deadline": 1729044000.0,
+    "risk": 0.0005700000000001815,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1228070175438205,
+    "exit_at": 1728980100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.30679,
+    "entry_price": 1.30736,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.245614035087641,
+    "exit_at": 1728980100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.30679,
+    "entry_price": 1.30736,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 88,
+   "plan": {
+    "signal_id": "88",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1732086900.0,
+    "entry_at": 1732086900.0,
+    "entry": 1.27094,
+    "stop_loss": 1.26943,
+    "take_profit": 1.27392,
+    "deadline": 1732151700.0,
+    "risk": 0.0015099999999999003,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0513245033112206,
+    "exit_at": 1732089600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.269425,
+    "entry_price": 1.2709424999999999,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1092715231789236,
+    "exit_at": 1732089600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.26942,
+    "entry_price": 1.270955,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 89,
+   "plan": {
+    "signal_id": "89",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1732173300.0,
+    "entry_at": 1732173300.0,
+    "entry": 1.26424,
+    "stop_loss": 1.26502,
+    "take_profit": 1.2626,
+    "deadline": 1732238100.0,
+    "risk": 0.0007800000000000029,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0993589743588945,
+    "exit_at": 1732176000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.265025,
+    "entry_price": 1.2642375000000001,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.198717948718074,
+    "exit_at": 1732176000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.26503,
+    "entry_price": 1.264235,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 90,
+   "plan": {
+    "signal_id": "90",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1732520700.0,
+    "entry_at": 1732520700.0,
+    "entry": 1.25821,
+    "stop_loss": 1.25885,
+    "take_profit": 1.25694,
+    "deadline": 1732585500.0,
+    "risk": 0.0006399999999999739,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.867187500000535,
+    "exit_at": 1732522500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.2569424999999999,
+    "entry_price": 1.2582075000000001,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.7500000000001321,
+    "exit_at": 1732522500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.256945,
+    "entry_price": 1.258205,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 91,
+   "plan": {
+    "signal_id": "91",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1732692600.0,
+    "entry_at": 1732692600.0,
+    "entry": 1.25872,
+    "stop_loss": 1.25792,
+    "take_profit": 1.2603,
+    "deadline": 1732757400.0,
+    "risk": 0.0008000000000001339,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.8812499999998151,
+    "exit_at": 1732695300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.2602975,
+    "entry_price": 1.2587225,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.7749999999994326,
+    "exit_at": 1732695300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.260295,
+    "entry_price": 1.2587350000000002,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 92,
+   "plan": {
+    "signal_id": "92",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1733211000.0,
+    "entry_at": 1733211000.0,
+    "entry": 1.26638,
+    "stop_loss": 1.26593,
+    "take_profit": 1.26715,
+    "deadline": 1733275800.0,
+    "risk": 0.00045000000000006146,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.5444444444445151,
+    "exit_at": 1733211900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.2671475,
+    "entry_price": 1.2663825,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.3555555555549403,
+    "exit_at": 1733211900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.267145,
+    "entry_price": 1.2663950000000002,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 93,
+   "plan": {
+    "signal_id": "93",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1733901300.0,
+    "entry_at": 1733901300.0,
+    "entry": 1.27548,
+    "stop_loss": 1.27636,
+    "take_profit": 1.27373,
+    "deadline": 1733966100.0,
+    "risk": 0.0008799999999999919,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.9034090909092307,
+    "exit_at": 1733903100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.2737325,
+    "entry_price": 1.2754775,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.8181818181816678,
+    "exit_at": 1733903100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.273735,
+    "entry_price": 1.275475,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 94,
+   "plan": {
+    "signal_id": "94",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1733987700.0,
+    "entry_at": 1733987700.0,
+    "entry": 1.2782300000000002,
+    "stop_loss": 1.2771,
+    "take_profit": 1.28045,
+    "deadline": 1734052500.0,
+    "risk": 0.0011300000000002974,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0685840707963874,
+    "exit_at": 1733990400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.2770949999999999,
+    "entry_price": 1.2782325,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1460176991151507,
+    "exit_at": 1733990400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.2770899999999998,
+    "entry_price": 1.2782450000000003,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 95,
+   "plan": {
+    "signal_id": "95",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1734507900.0,
+    "entry_at": 1734507900.0,
+    "entry": 1.26898,
+    "stop_loss": 1.26961,
+    "take_profit": 1.26774,
+    "deadline": 1734572700.0,
+    "risk": 0.0006299999999999084,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1230158730157926,
+    "exit_at": 1734517800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.269615,
+    "entry_price": 1.2689775,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2460317460319377,
+    "exit_at": 1734517800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.26962,
+    "entry_price": 1.268975,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 96,
+   "plan": {
+    "signal_id": "96",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1735197300.0,
+    "entry_at": 1735197300.0,
+    "entry": 1.25354,
+    "stop_loss": 1.25382,
+    "take_profit": 1.25294,
+    "deadline": 1735262100.0,
+    "risk": 0.00027999999999983594,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.875000000002332,
+    "exit_at": 1735198200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.2529424999999998,
+    "entry_price": 1.2535375000000002,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.607142857144122,
+    "exit_at": 1735198200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.252945,
+    "entry_price": 1.253535,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 97,
+   "plan": {
+    "signal_id": "97",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1737366300.0,
+    "entry_at": 1737366300.0,
+    "entry": 1.21684,
+    "stop_loss": 1.21768,
+    "take_profit": 1.21518,
+    "deadline": 1737431100.0,
+    "risk": 0.0008400000000001739,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0922619047618118,
+    "exit_at": 1737367200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.2176850000000001,
+    "entry_price": 1.2168375,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1845238095238881,
+    "exit_at": 1737367200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.2176900000000002,
+    "entry_price": 1.2168349999999999,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 98,
+   "plan": {
+    "signal_id": "98",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1737964800.0,
+    "entry_at": 1737964800.0,
+    "entry": 1.24292,
+    "stop_loss": 1.24435,
+    "take_profit": 1.24007,
+    "deadline": 1738029600.0,
+    "risk": 0.0014300000000000423,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0541958041957593,
+    "exit_at": 1737965700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.244355,
+    "entry_price": 1.2429175000000001,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1083916083916738,
+    "exit_at": 1737965700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.2443600000000001,
+    "entry_price": 1.242915,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 99,
+   "plan": {
+    "signal_id": "99",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1738740600.0,
+    "entry_at": 1738740600.0,
+    "entry": 1.25045,
+    "stop_loss": 1.24887,
+    "take_profit": 1.25354,
+    "deadline": 1738805400.0,
+    "risk": 0.0015800000000001369,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.049050632911349,
+    "exit_at": 1738745100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.248865,
+    "entry_price": 1.2504525,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.10443037974693,
+    "exit_at": 1738745100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.2488599999999999,
+    "entry_price": 1.2504650000000002,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 100,
+   "plan": {
+    "signal_id": "100",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1739260800.0,
+    "entry_at": 1739260800.0,
+    "entry": 1.23397,
+    "stop_loss": 1.23461,
+    "take_profit": 1.23267,
+    "deadline": 1739325600.0,
+    "risk": 0.0006399999999999739,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.121093749999908,
+    "exit_at": 1739261700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.234615,
+    "entry_price": 1.2339675,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2421875000001632,
+    "exit_at": 1739261700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.23462,
+    "entry_price": 1.233965,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 101,
+   "plan": {
+    "signal_id": "101",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1739348100.0,
+    "entry_at": 1739348100.0,
+    "entry": 1.24625,
+    "stop_loss": 1.24577,
+    "take_profit": 1.2472,
+    "deadline": 1739412900.0,
+    "risk": 0.00048000000000003595,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1614583333331923,
+    "exit_at": 1739349000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.245765,
+    "entry_price": 1.2462525,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.3437500000003153,
+    "exit_at": 1739349000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.24576,
+    "entry_price": 1.2462650000000002,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 102,
+   "plan": {
+    "signal_id": "102",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1740039300.0,
+    "entry_at": 1740039300.0,
+    "entry": 1.26105,
+    "stop_loss": 1.25984,
+    "take_profit": 1.26342,
+    "deadline": 1740104100.0,
+    "risk": 0.0012099999999999334,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0640495867768118,
+    "exit_at": 1740056400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.259835,
+    "entry_price": 1.2610525,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1363636363637792,
+    "exit_at": 1740056400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.25983,
+    "entry_price": 1.261065,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 103,
+   "plan": {
+    "signal_id": "103",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1740470400.0,
+    "entry_at": 1740470400.0,
+    "entry": 1.26128,
+    "stop_loss": 1.26179,
+    "take_profit": 1.26025,
+    "deadline": 1740535200.0,
+    "risk": 0.0005100000000000104,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.151960784313601,
+    "exit_at": 1740471300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.261795,
+    "entry_price": 1.2612775,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.3039215686276373,
+    "exit_at": 1740471300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.2618,
+    "entry_price": 1.261275,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 104,
+   "plan": {
+    "signal_id": "104",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1741077000.0,
+    "entry_at": 1741077000.0,
+    "entry": 1.27189,
+    "stop_loss": 1.2707,
+    "take_profit": 1.27422,
+    "deadline": 1741141800.0,
+    "risk": 0.0011900000000000244,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0651260504201148,
+    "exit_at": 1741084200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.270695,
+    "entry_price": 1.2718924999999999,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1386554621850087,
+    "exit_at": 1741084200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.2706899999999999,
+    "entry_price": 1.271905,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 105,
+   "plan": {
+    "signal_id": "105",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1741677300.0,
+    "entry_at": 1741677300.0,
+    "entry": 1.29045,
+    "stop_loss": 1.28967,
+    "take_profit": 1.29197,
+    "deadline": 1741742100.0,
+    "risk": 0.0007800000000000029,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.8525641025642945,
+    "exit_at": 1741680900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.2919675000000002,
+    "entry_price": 1.2904525,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.7435897435895253,
+    "exit_at": 1741680900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.291965,
+    "entry_price": 1.2904650000000002,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 106,
+   "plan": {
+    "signal_id": "106",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1744875900.0,
+    "entry_at": 1744875900.0,
+    "entry": 1.32415,
+    "stop_loss": 1.32321,
+    "take_profit": 1.32599,
+    "deadline": 1744940700.0,
+    "risk": 0.0009399999999999409,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0824468085105776,
+    "exit_at": 1744885800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.323205,
+    "entry_price": 1.3241524999999998,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1755319148938022,
+    "exit_at": 1744885800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3232,
+    "entry_price": 1.324165,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 107,
+   "plan": {
+    "signal_id": "107",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1746001800.0,
+    "entry_at": 1746001800.0,
+    "entry": 1.33679,
+    "stop_loss": 1.33839,
+    "take_profit": 1.3336,
+    "deadline": 1746066600.0,
+    "risk": 0.0016000000000000458,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.9499999999999604,
+    "exit_at": 1746019800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3336,
+    "entry_price": 1.33679,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.9062499999999618,
+    "exit_at": 1746019800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3336,
+    "entry_price": 1.33679,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 108,
+   "plan": {
+    "signal_id": "108",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1747209600.0,
+    "entry_at": 1747209600.0,
+    "entry": 1.33289,
+    "stop_loss": 1.33184,
+    "take_profit": 1.33498,
+    "deadline": 1747274400.0,
+    "risk": 0.0010499999999999954,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.9238095238096724,
+    "exit_at": 1747210500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.33498,
+    "entry_price": 1.33289,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.8571428571430058,
+    "exit_at": 1747210500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.33498,
+    "entry_price": 1.33289,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 109,
+   "plan": {
+    "signal_id": "109",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1747290600.0,
+    "entry_at": 1747290600.0,
+    "entry": 1.32922,
+    "stop_loss": 1.32856,
+    "take_profit": 1.33065,
+    "deadline": 1747355400.0,
+    "risk": 0.000660000000000105,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.106060606060589,
+    "exit_at": 1747294200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.32856,
+    "entry_price": 1.32922,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2121212121211782,
+    "exit_at": 1747294200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.32856,
+    "entry_price": 1.32922,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 110,
+   "plan": {
+    "signal_id": "110",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1747637100.0,
+    "entry_at": 1747637100.0,
+    "entry": 1.33201,
+    "stop_loss": 1.33129,
+    "take_profit": 1.33343,
+    "deadline": 1747701900.0,
+    "risk": 0.0007199999999998319,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.8750000000004057,
+    "exit_at": 1747638900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.33343,
+    "entry_price": 1.33201,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.7777777777781607,
+    "exit_at": 1747638900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.33343,
+    "entry_price": 1.33201,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 111,
+   "plan": {
+    "signal_id": "111",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1748500200.0,
+    "entry_at": 1748500200.0,
+    "entry": 1.3455599999999999,
+    "stop_loss": 1.34454,
+    "take_profit": 1.34758,
+    "deadline": 1748565000.0,
+    "risk": 0.0010199999999997988,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.9117647058828602,
+    "exit_at": 1748511900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.34758,
+    "entry_price": 1.3455599999999999,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.8431372549024545,
+    "exit_at": 1748511900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.34758,
+    "entry_price": 1.3455599999999999,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 112,
+   "plan": {
+    "signal_id": "112",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1749108600.0,
+    "entry_at": 1749108600.0,
+    "entry": 1.35714,
+    "stop_loss": 1.35647,
+    "take_profit": 1.35847,
+    "deadline": 1749173400.0,
+    "risk": 0.0006699999999999484,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1044776119403066,
+    "exit_at": 1749109500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.35647,
+    "entry_price": 1.35714,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.208955223880613,
+    "exit_at": 1749109500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.35647,
+    "entry_price": 1.35714,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 113,
+   "plan": {
+    "signal_id": "113",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1750227300.0,
+    "entry_at": 1750227300.0,
+    "entry": 1.34592,
+    "stop_loss": 1.34483,
+    "take_profit": 1.34806,
+    "deadline": 1750292100.0,
+    "risk": 0.0010900000000000354,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0711009174311334,
+    "exit_at": 1750244400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.344825,
+    "entry_price": 1.3459225,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1513761467891361,
+    "exit_at": 1750244400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.34482,
+    "entry_price": 1.345935,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 114,
+   "plan": {
+    "signal_id": "114",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1751270400.0,
+    "entry_at": 1751270400.0,
+    "entry": 1.37027,
+    "stop_loss": 1.37092,
+    "take_profit": 1.36898,
+    "deadline": 1751335200.0,
+    "risk": 0.0006499999999998174,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1192307692307075,
+    "exit_at": 1751283000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.370925,
+    "entry_price": 1.3702675000000002,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2384615384617566,
+    "exit_at": 1751283000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.37093,
+    "entry_price": 1.370265,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 115,
+   "plan": {
+    "signal_id": "115",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1751438700.0,
+    "entry_at": 1751438700.0,
+    "entry": 1.3726099999999999,
+    "stop_loss": 1.37331,
+    "take_profit": 1.37123,
+    "deadline": 1751503500.0,
+    "risk": 0.000700000000000145,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.8642857142855085,
+    "exit_at": 1751443200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3712324999999999,
+    "entry_price": 1.3726075,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.7571428571423096,
+    "exit_at": 1751443200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.371235,
+    "entry_price": 1.3726049999999999,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 116,
+   "plan": {
+    "signal_id": "116",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1752733800.0,
+    "entry_at": 1752733800.0,
+    "entry": 1.3378,
+    "stop_loss": 1.33853,
+    "take_profit": 1.33635,
+    "deadline": 1752798600.0,
+    "risk": 0.0007299999999998974,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.106164383561574,
+    "exit_at": 1752734700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.338535,
+    "entry_price": 1.3377975000000002,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.212328767123452,
+    "exit_at": 1752734700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.33854,
+    "entry_price": 1.337795,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 117,
+   "plan": {
+    "signal_id": "117",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1753772400.0,
+    "entry_at": 1753772400.0,
+    "entry": 1.3326799999999999,
+    "stop_loss": 1.3338,
+    "take_profit": 1.33042,
+    "deadline": 1753837200.0,
+    "risk": 0.001120000000000232,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0691964285713589,
+    "exit_at": 1753776900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3338050000000001,
+    "entry_price": 1.3326775,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1383928571429163,
+    "exit_at": 1753776900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3338100000000002,
+    "entry_price": 1.3326749999999998,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 118,
+   "plan": {
+    "signal_id": "118",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1755498600.0,
+    "entry_at": 1755498600.0,
+    "entry": 1.35426,
+    "stop_loss": 1.35496,
+    "take_profit": 1.35287,
+    "deadline": 1755563400.0,
+    "risk": 0.0006999999999999229,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1107142857142094,
+    "exit_at": 1755501300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.354965,
+    "entry_price": 1.3542575000000001,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.221428571428736,
+    "exit_at": 1755501300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.35497,
+    "entry_price": 1.354255,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 119,
+   "plan": {
+    "signal_id": "119",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1757575800.0,
+    "entry_at": 1757575800.0,
+    "entry": 1.3506,
+    "stop_loss": 1.35158,
+    "take_profit": 1.34872,
+    "deadline": 1757640600.0,
+    "risk": 0.0009799999999999809,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0790816326529995,
+    "exit_at": 1757576700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.351585,
+    "entry_price": 1.3505975000000001,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1581632653062257,
+    "exit_at": 1757576700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.35159,
+    "entry_price": 1.350595,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 120,
+   "plan": {
+    "signal_id": "120",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1758617100.0,
+    "entry_at": 1758617100.0,
+    "entry": 1.34975,
+    "stop_loss": 1.35045,
+    "take_profit": 1.34836,
+    "deadline": 1758681900.0,
+    "risk": 0.0006999999999999229,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1107142857142094,
+    "exit_at": 1758618000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.350455,
+    "entry_price": 1.3497475,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.221428571428736,
+    "exit_at": 1758618000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.35046,
+    "entry_price": 1.349745,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 121,
+   "plan": {
+    "signal_id": "121",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1758787200.0,
+    "entry_at": 1758787200.0,
+    "entry": 1.34378,
+    "stop_loss": 1.34498,
+    "take_profit": 1.34136,
+    "deadline": 1758852000.0,
+    "risk": 0.0012000000000000899,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0645833333332768,
+    "exit_at": 1758788100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.344985,
+    "entry_price": 1.3437775,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1291666666667388,
+    "exit_at": 1758788100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3449900000000001,
+    "entry_price": 1.343775,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 122,
+   "plan": {
+    "signal_id": "122",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1759990500.0,
+    "entry_at": 1759990500.0,
+    "entry": 1.33927,
+    "stop_loss": 1.34002,
+    "take_profit": 1.33779,
+    "deadline": 1760055300.0,
+    "risk": 0.0007500000000000284,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.873333333333416,
+    "exit_at": 1759991400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3377925,
+    "entry_price": 1.3392675,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.7733333333330799,
+    "exit_at": 1759991400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.337795,
+    "entry_price": 1.339265,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 123,
+   "plan": {
+    "signal_id": "123",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1760422500.0,
+    "entry_at": 1760422500.0,
+    "entry": 1.3307,
+    "stop_loss": 1.33269,
+    "take_profit": 1.32674,
+    "deadline": 1760487300.0,
+    "risk": 0.0019899999999999363,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.9547738693467778,
+    "exit_at": 1760427000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.32674,
+    "entry_price": 1.3307,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.919597989949792,
+    "exit_at": 1760427000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.32674,
+    "entry_price": 1.3307,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 124,
+   "plan": {
+    "signal_id": "124",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1760943600.0,
+    "entry_at": 1760943600.0,
+    "entry": 1.34171,
+    "stop_loss": 1.34228,
+    "take_profit": 1.34058,
+    "deadline": 1761008400.0,
+    "risk": 0.0005699999999999594,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.8596491228068928,
+    "exit_at": 1760944500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.34058,
+    "entry_price": 1.34171,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.7368421052630243,
+    "exit_at": 1760944500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.34058,
+    "entry_price": 1.34171,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 125,
+   "plan": {
+    "signal_id": "125",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1761113700.0,
+    "entry_at": 1761113700.0,
+    "entry": 1.33444,
+    "stop_loss": 1.33651,
+    "take_profit": 1.33031,
+    "deadline": 1761178500.0,
+    "risk": 0.0020700000000000163,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0338164251207729,
+    "exit_at": 1761146100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.33651,
+    "entry_price": 1.33444,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0676328502415453,
+    "exit_at": 1761146100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.33651,
+    "entry_price": 1.33444,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 126,
+   "plan": {
+    "signal_id": "126",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1762241400.0,
+    "entry_at": 1762241400.0,
+    "entry": 1.3137699999999999,
+    "stop_loss": 1.31338,
+    "take_profit": 1.31454,
+    "deadline": 1762306200.0,
+    "risk": 0.00038999999999989043,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.17948717948723,
+    "exit_at": 1762242300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.31338,
+    "entry_price": 1.3137699999999999,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.3589743589744596,
+    "exit_at": 1762242300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.31338,
+    "entry_price": 1.3137699999999999,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 127,
+   "plan": {
+    "signal_id": "127",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1762330500.0,
+    "entry_at": 1762330500.0,
+    "entry": 1.30433,
+    "stop_loss": 1.30293,
+    "take_profit": 1.30703,
+    "deadline": 1762395300.0,
+    "risk": 0.0014000000000000679,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0499999999999976,
+    "exit_at": 1762337700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.30293,
+    "entry_price": 1.30433,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0999999999999952,
+    "exit_at": 1762337700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.30293,
+    "entry_price": 1.30433,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 128,
+   "plan": {
+    "signal_id": "128",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1762414200.0,
+    "entry_at": 1762414200.0,
+    "entry": 1.3070599999999999,
+    "stop_loss": 1.30652,
+    "take_profit": 1.30813,
+    "deadline": 1762479000.0,
+    "risk": 0.0005399999999999849,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.129629629629633,
+    "exit_at": 1762415100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.30652,
+    "entry_price": 1.3070599999999999,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2592592592592664,
+    "exit_at": 1762415100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.30652,
+    "entry_price": 1.3070599999999999,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 129,
+   "plan": {
+    "signal_id": "129",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1762760700.0,
+    "entry_at": 1762760700.0,
+    "entry": 1.31653,
+    "stop_loss": 1.31591,
+    "take_profit": 1.31775,
+    "deadline": 1762825500.0,
+    "risk": 0.0006200000000000649,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1129032258064397,
+    "exit_at": 1762761600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.31591,
+    "entry_price": 1.31653,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2258064516128795,
+    "exit_at": 1762761600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.31591,
+    "entry_price": 1.31653,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 130,
+   "plan": {
+    "signal_id": "130",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1762844400.0,
+    "entry_at": 1762844400.0,
+    "entry": 1.3155700000000001,
+    "stop_loss": 1.31585,
+    "take_profit": 1.31457,
+    "deadline": 1762909200.0,
+    "risk": 0.00027999999999983594,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "TP",
+    "r": 3.30357142857444,
+    "exit_at": 1762845300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3145725,
+    "entry_price": 1.3155675000000002,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 3.0357142857162303,
+    "exit_at": 1762845300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.314575,
+    "entry_price": 1.315565,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 131,
+   "plan": {
+    "signal_id": "131",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1762938000.0,
+    "entry_at": 1762938000.0,
+    "entry": 1.3117,
+    "stop_loss": 1.313,
+    "take_profit": 1.30915,
+    "deadline": 1763002800.0,
+    "risk": 0.0012999999999998568,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0538461538461597,
+    "exit_at": 1762938900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.313,
+    "entry_price": 1.3117,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1076923076923195,
+    "exit_at": 1762938900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.313,
+    "entry_price": 1.3117,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 132,
+   "plan": {
+    "signal_id": "132",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1763019900.0,
+    "entry_at": 1763019900.0,
+    "entry": 1.31378,
+    "stop_loss": 1.31277,
+    "take_profit": 1.31579,
+    "deadline": 1763084700.0,
+    "risk": 0.0010099999999999554,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.9207920792080724,
+    "exit_at": 1763024400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.31579,
+    "entry_price": 1.31378,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.851485148515,
+    "exit_at": 1763024400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.31579,
+    "entry_price": 1.31378,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 133,
+   "plan": {
+    "signal_id": "133",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1763453700.0,
+    "entry_at": 1763453700.0,
+    "entry": 1.31739,
+    "stop_loss": 1.31629,
+    "take_profit": 1.31957,
+    "deadline": 1763518500.0,
+    "risk": 0.001100000000000101,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0636363636363577,
+    "exit_at": 1763455500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.31629,
+    "entry_price": 1.31739,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1272727272727154,
+    "exit_at": 1763455500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.31629,
+    "entry_price": 1.31739,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 134,
+   "plan": {
+    "signal_id": "134",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1764670500.0,
+    "entry_at": 1764670500.0,
+    "entry": 1.3195700000000001,
+    "stop_loss": 1.32045,
+    "take_profit": 1.31783,
+    "deadline": 1764735300.0,
+    "risk": 0.0008799999999997699,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0880681818181346,
+    "exit_at": 1764678600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.320455,
+    "entry_price": 1.3195675000000002,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1761363636365212,
+    "exit_at": 1764678600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.32046,
+    "entry_price": 1.319565,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 135,
+   "plan": {
+    "signal_id": "135",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1764837000.0,
+    "entry_at": 1764837000.0,
+    "entry": 1.33569,
+    "stop_loss": 1.33468,
+    "take_profit": 1.33766,
+    "deadline": 1764901800.0,
+    "risk": 0.0010099999999999554,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0767326732672688,
+    "exit_at": 1764838800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.334675,
+    "entry_price": 1.3356925,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1633663366338327,
+    "exit_at": 1764838800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.33467,
+    "entry_price": 1.3357050000000001,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 136,
+   "plan": {
+    "signal_id": "136",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1765269900.0,
+    "entry_at": 1765269900.0,
+    "entry": 1.3341800000000001,
+    "stop_loss": 1.33362,
+    "take_profit": 1.33525,
+    "deadline": 1765334700.0,
+    "risk": 0.000560000000000116,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.7767857142855137,
+    "exit_at": 1765272600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3352475000000001,
+    "entry_price": 1.3341825,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.6249999999992588,
+    "exit_at": 1765272600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.335245,
+    "entry_price": 1.3341950000000002,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 137,
+   "plan": {
+    "signal_id": "137",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1765350000.0,
+    "entry_at": 1765350000.0,
+    "entry": 1.3314000000000001,
+    "stop_loss": 1.33093,
+    "take_profit": 1.3322,
+    "deadline": 1765414800.0,
+    "risk": 0.0004700000000001925,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.5425531914889452,
+    "exit_at": 1765351800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3321975000000001,
+    "entry_price": 1.3314025,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.3617021276585506,
+    "exit_at": 1765351800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.332195,
+    "entry_price": 1.3314150000000002,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 138,
+   "plan": {
+    "signal_id": "138",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1765790100.0,
+    "entry_at": 1765790100.0,
+    "entry": 1.33813,
+    "stop_loss": 1.33733,
+    "take_profit": 1.33962,
+    "deadline": 1765854900.0,
+    "risk": 0.0008000000000001339,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.7687499999999297,
+    "exit_at": 1765807200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3396175000000001,
+    "entry_price": 1.3381325,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.6624999999995471,
+    "exit_at": 1765807200.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.339615,
+    "entry_price": 1.3381450000000001,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 139,
+   "plan": {
+    "signal_id": "139",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1767772800.0,
+    "entry_at": 1767772800.0,
+    "entry": 1.34924,
+    "stop_loss": 1.34987,
+    "take_profit": 1.34805,
+    "deadline": 1767837600.0,
+    "risk": 0.0006299999999999084,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1230158730157926,
+    "exit_at": 1767780900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.349875,
+    "entry_price": 1.3492375,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2460317460319377,
+    "exit_at": 1767780900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.34988,
+    "entry_price": 1.349235,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 140,
+   "plan": {
+    "signal_id": "140",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1767859200.0,
+    "entry_at": 1767859200.0,
+    "entry": 1.34457,
+    "stop_loss": 1.34517,
+    "take_profit": 1.34336,
+    "deadline": 1767924000.0,
+    "risk": 0.0005999999999999339,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.8916666666670794,
+    "exit_at": 1767866400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3433625,
+    "entry_price": 1.3445675000000001,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.766666666666641,
+    "exit_at": 1767866400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3433650000000001,
+    "entry_price": 1.344565,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 141,
+   "plan": {
+    "signal_id": "141",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1769071500.0,
+    "entry_at": 1769071500.0,
+    "entry": 1.34135,
+    "stop_loss": 1.34179,
+    "take_profit": 1.34045,
+    "deadline": 1769136300.0,
+    "risk": 0.00043999999999999595,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1761363636362245,
+    "exit_at": 1769072400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.341795,
+    "entry_price": 1.3413475000000001,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.3522727272729538,
+    "exit_at": 1769072400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3418,
+    "entry_price": 1.341345,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 142,
+   "plan": {
+    "signal_id": "142",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1771231500.0,
+    "entry_at": 1771231500.0,
+    "entry": 1.3653600000000001,
+    "stop_loss": 1.36472,
+    "take_profit": 1.3666,
+    "deadline": 1771296300.0,
+    "risk": 0.000640000000000196,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.121093749999866,
+    "exit_at": 1771236000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.364715,
+    "entry_price": 1.3653625,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.257812500000177,
+    "exit_at": 1771236000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3647099999999999,
+    "entry_price": 1.3653750000000002,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 143,
+   "plan": {
+    "signal_id": "143",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1771406100.0,
+    "entry_at": 1771406100.0,
+    "entry": 1.3573,
+    "stop_loss": 1.35649,
+    "take_profit": 1.3589,
+    "deadline": 1771470900.0,
+    "risk": 0.0008099999999999774,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0956790123456053,
+    "exit_at": 1771422300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.356485,
+    "entry_price": 1.3573024999999999,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2037037037039116,
+    "exit_at": 1771422300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.35648,
+    "entry_price": 1.357315,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 144,
+   "plan": {
+    "signal_id": "144",
+    "symbol": "GBPUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1774336500.0,
+    "entry_at": 1774336500.0,
+    "entry": 1.34403,
+    "stop_loss": 1.34252,
+    "take_profit": 1.34706,
+    "deadline": 1774401300.0,
+    "risk": 0.0015100000000001224,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.051324503311213,
+    "exit_at": 1774338300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.342515,
+    "entry_price": 1.3440325,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.1092715231789074,
+    "exit_at": 1774338300.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.3425099999999999,
+    "entry_price": 1.3440450000000002,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 145,
+   "plan": {
+    "signal_id": "145",
+    "symbol": "GBPUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1774512900.0,
+    "entry_at": 1774512900.0,
+    "entry": 1.33425,
+    "stop_loss": 1.33499,
+    "take_profit": 1.33278,
+    "deadline": 1774577700.0,
+    "risk": 0.0007399999999999629,
+    "entry_spread": 1e-05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.1047297297296512,
+    "exit_at": 1774513800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.334995,
+    "entry_price": 1.3342475,
+    "financing_price": 0.0,
+    "commission_price": 7e-05
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.2094594594596026,
+    "exit_at": 1774513800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 1.335,
+    "entry_price": 1.334245,
+    "financing_price": 0.0,
+    "commission_price": 0.00014
+   }
+  },
+  {
+   "intent_index": 146,
+   "plan": {
+    "signal_id": "146",
+    "symbol": "XAUUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1730358000.0,
+    "entry_at": 1730358000.0,
+    "entry": 2779.84,
+    "stop_loss": 2782.49,
+    "take_profit": 2774.61,
+    "deadline": 1730422800.0,
+    "risk": 2.649999999999636,
+    "entry_spread": 0.05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0405660377358203,
+    "exit_at": 1730360700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2782.515,
+    "entry_price": 2779.8275000000003,
+    "financing_price": 0.0,
+    "commission_price": 0.07
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0811320754718123,
+    "exit_at": 1730359800.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2782.54,
+    "entry_price": 2779.815,
+    "financing_price": 0.0,
+    "commission_price": 0.14
+   }
+  },
+  {
+   "intent_index": 147,
+   "plan": {
+    "signal_id": "147",
+    "symbol": "XAUUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1737624600.0,
+    "entry_at": 1737624600.0,
+    "entry": 2743.78,
+    "stop_loss": 2749.92,
+    "take_profit": 2731.58,
+    "deadline": 1737689400.0,
+    "risk": 6.139999999999873,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0154723127035983,
+    "exit_at": 1737629100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2749.945,
+    "entry_price": 2743.78,
+    "financing_price": 0.0,
+    "commission_price": 0.07
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0309446254071963,
+    "exit_at": 1737629100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2749.9700000000003,
+    "entry_price": 2743.78,
+    "financing_price": 0.0,
+    "commission_price": 0.14
+   }
+  },
+  {
+   "intent_index": 148,
+   "plan": {
+    "signal_id": "148",
+    "symbol": "XAUUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1738053000.0,
+    "entry_at": 1738053000.0,
+    "entry": 2736.74,
+    "stop_loss": 2738.2,
+    "take_profit": 2733.84,
+    "deadline": 1738117800.0,
+    "risk": 1.4600000000000364,
+    "entry_spread": 0.0
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.047945205479451,
+    "exit_at": 1738053900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2738.2,
+    "entry_price": 2736.74,
+    "financing_price": 0.0,
+    "commission_price": 0.07
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0958904109589018,
+    "exit_at": 1738053900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2738.2,
+    "entry_price": 2736.74,
+    "financing_price": 0.0,
+    "commission_price": 0.14
+   }
+  },
+  {
+   "intent_index": 149,
+   "plan": {
+    "signal_id": "149",
+    "symbol": "XAUUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1738220400.0,
+    "entry_at": 1738220400.0,
+    "entry": 2765.63,
+    "stop_loss": 2763.11,
+    "take_profit": 2770.47,
+    "deadline": 1738285200.0,
+    "risk": 2.519999999999982,
+    "entry_spread": 0.06
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.8799603174602877,
+    "exit_at": 1738224900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2770.4525,
+    "entry_price": 2765.645,
+    "financing_price": 0.0,
+    "commission_price": 0.07
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.815476190476081,
+    "exit_at": 1738224900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2770.435,
+    "entry_price": 2765.7200000000003,
+    "financing_price": 0.0,
+    "commission_price": 0.14
+   }
+  },
+  {
+   "intent_index": 150,
+   "plan": {
+    "signal_id": "150",
+    "symbol": "XAUUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1738825200.0,
+    "entry_at": 1738825200.0,
+    "entry": 2859.39,
+    "stop_loss": 2864.11,
+    "take_profit": 2849.84,
+    "deadline": 1738890000.0,
+    "risk": 4.720000000000255,
+    "entry_spread": 0.07
+   },
+   "normal": {
+    "status": "TP",
+    "r": 2.004766949152392,
+    "exit_at": 1738830600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2849.84,
+    "entry_price": 2859.3725,
+    "financing_price": 0.0,
+    "commission_price": 0.07
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.9862288135591877,
+    "exit_at": 1738830600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2849.84,
+    "entry_price": 2859.355,
+    "financing_price": 0.0,
+    "commission_price": 0.14
+   }
+  },
+  {
+   "intent_index": 151,
+   "plan": {
+    "signal_id": "151",
+    "symbol": "XAUUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1739357100.0,
+    "entry_at": 1739357100.0,
+    "entry": 2881.13,
+    "stop_loss": 2884.17,
+    "take_profit": 2875.07,
+    "deadline": 1739421900.0,
+    "risk": 3.0399999999999636,
+    "entry_spread": 0.06
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0378289473684454,
+    "exit_at": 1739358000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2884.2000000000003,
+    "entry_price": 2881.1150000000002,
+    "financing_price": 0.0,
+    "commission_price": 0.07
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0756578947368909,
+    "exit_at": 1739358000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2884.23,
+    "entry_price": 2881.1,
+    "financing_price": 0.0,
+    "commission_price": 0.14
+   }
+  },
+  {
+   "intent_index": 152,
+   "plan": {
+    "signal_id": "152",
+    "symbol": "XAUUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1741248000.0,
+    "entry_at": 1741248000.0,
+    "entry": 2910.11,
+    "stop_loss": 2915.25,
+    "take_profit": 2899.63,
+    "deadline": 1741312800.0,
+    "risk": 5.139999999999873,
+    "entry_spread": 0.05
+   },
+   "normal": {
+    "status": "TP",
+    "r": 2.020914396887206,
+    "exit_at": 1741253400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2899.6400000000003,
+    "entry_price": 2910.0975000000003,
+    "financing_price": 0.0,
+    "commission_price": 0.07
+   },
+   "stress": {
+    "status": "TP",
+    "r": 2.0029182879377823,
+    "exit_at": 1741253400.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2899.65,
+    "entry_price": 2910.085,
+    "financing_price": 0.0,
+    "commission_price": 0.14
+   }
+  },
+  {
+   "intent_index": 153,
+   "plan": {
+    "signal_id": "153",
+    "symbol": "XAUUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1741595400.0,
+    "entry_at": 1741595400.0,
+    "entry": 2903.74,
+    "stop_loss": 2907.55,
+    "take_profit": 2896.35,
+    "deadline": 1741660200.0,
+    "risk": 3.8100000000004,
+    "entry_spread": 0.05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.028215223097086,
+    "exit_at": 1741598100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2907.5750000000003,
+    "entry_price": 2903.7275,
+    "financing_price": 0.0,
+    "commission_price": 0.07
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0564304461942913,
+    "exit_at": 1741598100.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2907.6000000000004,
+    "entry_price": 2903.7149999999997,
+    "financing_price": 0.0,
+    "commission_price": 0.14
+   }
+  },
+  {
+   "intent_index": 154,
+   "plan": {
+    "signal_id": "154",
+    "symbol": "XAUUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1741770000.0,
+    "entry_at": 1741770000.0,
+    "entry": 2922.17,
+    "stop_loss": 2919.54,
+    "take_profit": 2927.26,
+    "deadline": 1741834800.0,
+    "risk": 2.630000000000109,
+    "entry_spread": 0.05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0408745247147926,
+    "exit_at": 1741770900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2919.515,
+    "entry_price": 2922.1825,
+    "financing_price": 0.0,
+    "commission_price": 0.07
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.100760456273933,
+    "exit_at": 1741770900.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 2919.49,
+    "entry_price": 2922.2450000000003,
+    "financing_price": 0.0,
+    "commission_price": 0.14
+   }
+  },
+  {
+   "intent_index": 155,
+   "plan": {
+    "signal_id": "155",
+    "symbol": "XAUUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1742457600.0,
+    "entry_at": 1742457600.0,
+    "entry": 3042.28,
+    "stop_loss": 3045.46,
+    "take_profit": 3035.93,
+    "deadline": 1742522400.0,
+    "risk": 3.1799999999998363,
+    "entry_spread": 0.05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.033805031446514,
+    "exit_at": 1742463000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 3045.485,
+    "entry_price": 3042.2675000000004,
+    "financing_price": 0.0,
+    "commission_price": 0.07
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.067610062893171,
+    "exit_at": 1742463000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 3045.51,
+    "entry_price": 3042.255,
+    "financing_price": 0.0,
+    "commission_price": 0.14
+   }
+  },
+  {
+   "intent_index": 156,
+   "plan": {
+    "signal_id": "156",
+    "symbol": "XAUUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1749714300.0,
+    "entry_at": 1749714300.0,
+    "entry": 3342.26,
+    "stop_loss": 3363.11,
+    "take_profit": 3300.57,
+    "deadline": 1749779100.0,
+    "risk": 20.84999999999991,
+    "entry_spread": 0.05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0051558752997558,
+    "exit_at": 1749719700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 3363.135,
+    "entry_price": 3342.2475000000004,
+    "financing_price": 0.0,
+    "commission_price": 0.07
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0103117505995336,
+    "exit_at": 1749719700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 3363.1600000000003,
+    "entry_price": 3342.235,
+    "financing_price": 0.0,
+    "commission_price": 0.14
+   }
+  },
+  {
+   "intent_index": 157,
+   "plan": {
+    "signal_id": "157",
+    "symbol": "XAUUSD",
+    "direction": "SHORT",
+    "signal_bar_closed_at": 1752732900.0,
+    "entry_at": 1752732900.0,
+    "entry": 3333.12,
+    "stop_loss": 3336.35,
+    "take_profit": 3326.67,
+    "deadline": 1752797700.0,
+    "risk": 3.230000000000018,
+    "entry_spread": 0.03
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.0317337461301095,
+    "exit_at": 1752735600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 3336.375,
+    "entry_price": 3333.1124999999997,
+    "financing_price": 0.0,
+    "commission_price": 0.07
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0634674922600784,
+    "exit_at": 1752735600.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 3336.4,
+    "entry_price": 3333.105,
+    "financing_price": 0.0,
+    "commission_price": 0.14
+   }
+  },
+  {
+   "intent_index": 158,
+   "plan": {
+    "signal_id": "158",
+    "symbol": "XAUUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1753776900.0,
+    "entry_at": 1753776900.0,
+    "entry": 3327.25,
+    "stop_loss": 3320.28,
+    "take_profit": 3341.0,
+    "deadline": 1753841700.0,
+    "risk": 6.9699999999998,
+    "entry_spread": 0.05
+   },
+   "normal": {
+    "status": "SL",
+    "r": -1.011836441893805,
+    "exit_at": 1753787700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 3320.28,
+    "entry_price": 3327.2625,
+    "financing_price": 0.0,
+    "commission_price": 0.07
+   },
+   "stress": {
+    "status": "SL",
+    "r": -1.0308464849354775,
+    "exit_at": 1753787700.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 3320.28,
+    "entry_price": 3327.3250000000003,
+    "financing_price": 0.0,
+    "commission_price": 0.14
+   }
+  },
+  {
+   "intent_index": 159,
+   "plan": {
+    "signal_id": "159",
+    "symbol": "XAUUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1759305600.0,
+    "entry_at": 1759305600.0,
+    "entry": 3879.27,
+    "stop_loss": 3874.4,
+    "take_profit": 3888.82,
+    "deadline": 1759370400.0,
+    "risk": 4.869999999999891,
+    "entry_spread": 0.05
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.941478439425207,
+    "exit_at": 1759306500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 3888.8075000000003,
+    "entry_price": 3879.2825,
+    "financing_price": 0.0,
+    "commission_price": 0.07
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.911704312114995,
+    "exit_at": 1759306500.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 3888.795,
+    "entry_price": 3879.3450000000003,
+    "financing_price": 0.0,
+    "commission_price": 0.14
+   }
+  },
+  {
+   "intent_index": 160,
+   "plan": {
+    "signal_id": "160",
+    "symbol": "XAUUSD",
+    "direction": "LONG",
+    "signal_bar_closed_at": 1761722100.0,
+    "entry_at": 1761722100.0,
+    "entry": 3995.21,
+    "stop_loss": 3980.85,
+    "take_profit": 4023.83,
+    "deadline": 1761786900.0,
+    "risk": 14.360000000000127,
+    "entry_spread": 0.05
+   },
+   "normal": {
+    "status": "TP",
+    "r": 1.9872910863509623,
+    "exit_at": 1761732000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 4023.83,
+    "entry_price": 3995.2225,
+    "financing_price": 0.0,
+    "commission_price": 0.07
+   },
+   "stress": {
+    "status": "TP",
+    "r": 1.9780640668523235,
+    "exit_at": 1761732000.0,
+    "method": "M15",
+    "reason": "one barrier; timestamp upper bound",
+    "resolver_version": "independent-execution-1.0.1",
+    "exit_price": 4023.83,
+    "entry_price": 3995.2850000000003,
+    "financing_price": 0.0,
+    "commission_price": 0.14
+   }
+  }
+ ],
+ "intent_count": 161,
+ "rejections": {},
+ "data_quality": {
+  "BTCUSD:M1": {
+   "kept": 73907,
+   "excluded": {
+    "forming": 1,
+    "future": 26091
+   }
+  },
+  "BTCUSD:M15": {
+   "kept": 74083,
+   "excluded": {
+    "forming": 1,
+    "future": 1743
+   }
+  },
+  "ETHUSD:M1": {
+   "kept": 73908,
+   "excluded": {
+    "forming": 1,
+    "future": 26090
+   }
+  },
+  "ETHUSD:M15": {
+   "kept": 74068,
+   "excluded": {
+    "forming": 1,
+    "future": 1743
+   }
+  },
+  "EURUSD:M1": {
+   "kept": 82357,
+   "excluded": {
+    "forming": 1,
+    "future": 17643
+   }
+  },
+  "EURUSD:M15": {
+   "kept": 52912,
+   "excluded": {
+    "forming": 1,
+    "future": 1176
+   }
+  },
+  "GBPJPY:M1": {
+   "kept": 82360,
+   "excluded": {
+    "forming": 1,
+    "future": 17638
+   }
+  },
+  "GBPJPY:M15": {
+   "kept": 52900,
+   "excluded": {
+    "forming": 1,
+    "future": 1176
+   }
+  },
+  "GBPUSD:M1": {
+   "kept": 82355,
+   "excluded": {
+    "forming": 1,
+    "future": 17643
+   }
+  },
+  "GBPUSD:M15": {
+   "kept": 52900,
+   "excluded": {
+    "forming": 1,
+    "future": 1176
+   }
+  },
+  "XAUUSD:M1": {
+   "kept": 83099,
+   "excluded": {
+    "forming": 1,
+    "future": 16899
+   }
+  },
+  "XAUUSD:M15": {
+   "kept": 50301,
+   "excluded": {
+    "forming": 1,
+    "future": 1128
+   }
+  }
+ },
+ "forward_test": {
+  "status": "NOT_STARTED",
+  "verified_performance": null
+ },
+ "profitability_certified": false,
+ "causal_strategy_code_review": "REQUIRED; supplied historical intents alone cannot establish absence of look-ahead",
+ "purpose": "RESEARCH",
+ "evaluator_version": "tradeden-shared-eval-1.0.0"
+}

@@ -1,0 +1,32 @@
+............
+  closed=  2000  first scan (index build)    102.3 ms  steady scan median   8.17 ms  rows loaded/scan [10, 10, 10, 10, 10, 10, 10]
+
+  closed= 20000  first scan (index build)    720.3 ms  steady scan median   8.74 ms  rows loaded/scan [10, 10, 10, 10, 10, 10, 10]
+...................................................................Ignoring unusable index sidecar C:\Users\katjo\AppData\Local\Temp\tmpubokfswl\.index\obs.jsonl.idx.json (Expecting property name enclosed in double quotes: line 1 column 2 (char 1)); rebuilding from JSONL
+Ignoring unusable index sidecar C:\Users\katjo\AppData\Local\Temp\tmpubokfswl\.index\obs.jsonl.idx.json (checksum mismatch); rebuilding from JSONL
+Ignoring unusable index sidecar C:\Users\katjo\AppData\Local\Temp\tmpubokfswl\.index\obs.jsonl.idx.json (Expecting value: line 1 column 1 (char 0)); rebuilding from JSONL
+.Terminated an incomplete trailing line in C:\Users\katjo\AppData\Local\Temp\tmpsfp38qp_\obs.jsonl before appending
+......C:\Users\katjo\AppData\Local\Temp\tmpiu0r0d5e\obs.jsonl changed before the indexed offset; rebuilding index
+C:\Users\katjo\AppData\Local\Temp\tmpiu0r0d5e\obs.jsonl shrank below the indexed offset; rebuilding index
+.Ignoring unusable index sidecar C:\Users\katjo\AppData\Local\Temp\tmpo66sz4nt\.index\obs.jsonl.idx.json (version/schema mismatch); rebuilding from JSONL
+..Could not persist index sidecar C:\Users\katjo\AppData\Local\Temp\tmp839lv6gy\.index\obs.jsonl.idx.json (index stays in memory)
+Traceback (most recent call last):
+  File "C:\Users\katjo\OneDrive\Documents\GitHub\trading-hub\backend\jsonl_index.py", line 214, in _maybe_persist
+    os.replace(temporary, target)  # atomic: readers see old or new, never half
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\katjo\\AppData\\Local\\Temp\\tmp839lv6gy\\.index\\obs.jsonl.idx.json.40668.tmp' -> 'C:\\Users\\katjo\\AppData\\Local\\Temp\\tmp839lv6gy\\.index\\obs.jsonl.idx.json'
+Ignoring unusable index sidecar C:\Users\katjo\AppData\Local\Temp\tmp839lv6gy\.index\obs.jsonl.idx.json (checksum mismatch); rebuilding from JSONL
+...C:\Users\katjo\AppData\Local\Temp\tmp1muz5xa0\snapshots.jsonl changed before the indexed offset; rebuilding index
+.................................................................................................................................................................................................................................................................................C:\Users\katjo\AppData\Local\Temp\tmpabbes01v\setup_observations.jsonl changed before the indexed offset; rebuilding index
+...............................................................Strategy mutating failed for XAUUSD: TypeError("'mappingproxy' object does not support item assignment")
+...........................................Telegram delivery of signal:stp_p failed permanently: chat not found
+.Telegram delivery of signal:stp_1 failed (Too Many Requests: retry after 30); retry in 30s
+.Telegram delivery of signal:stp_r failed (HTTP 500); retry in 2s
+Telegram delivery of signal:stp_r failed (network error (ConnectError)); retry in 4s
+.Telegram delivery of signal:stp_e failed (HTTP 503); retry in 2s
+..........TRADING_HUB_MT5_SOURCE_TIMEZONE is not set: trendline London session range unavailable
+.................................................................................................................................................
+----------------------------------------------------------------------
+Ran 629 tests in 93.036s
+
+OK

@@ -1,0 +1,116 @@
+"""Claude-authored experimental model (pre-registered 2026-10-23, commit 34bd776): @@NAME@@.
+
+MODE 'pullback' (H7): D1 trend (T1) + H4 pullback below EMA20 within 6 candles + H4 close above the
+previous high (mirror for down) -> follow; stop beyond the 6-candle extreme +/- 0.5 ATR(H4); 2.5R.
+MODE 'vol' (H8): ATR(H1,24) in the lowest 20% of the prior 20 days + H4 close beyond the previous 18-candle
+range -> follow; stop at the opposite side of that range, capped at 3 ATR(H4); 2.5R.
+MODE 'extreme' (H9): 24h move >= 3 x mean daily range (14 days) + first H4 counter-close -> fade;
+stop beyond the 24h extreme + 0.25 ATR(H4); 2.0R.
+Exit by min(72h, Friday 20:45 UTC); no entry with < 24h to that gap. BASELINE=True: same decision times
+and risk, always LONG. Pure functions only.
+"""
+
+MODE = '@@MODE@@'
+BASELINE = False
+SYMBOLS = {'BTCUSD', 'ETHUSD'}
+HORIZON = 72 * 3600
+MIN_TO_GAP = 24 * 3600
+
+@@HELPERS@@
+
+def ema_series(values, n):
+    k, e, out = 2.0 / (n + 1), values[0], []
+    for v in values:
+        e = e + k * (v - e)
+        out.append(e)
+    return out
+
+
+def d1_trend(d1):
+    c = [b['close'] for b in d1]
+    if len(c) < 60:
+        return 0
+    e20, e50 = ema_series(c, 20), ema_series(c, 50)
+    if c[-1] > e50[-1] and e20[-1] > e50[-1] and e50[-1] > e50[-6]:
+        return 1
+    if c[-1] < e50[-1] and e20[-1] < e50[-1] and e50[-1] < e50[-6]:
+        return -1
+    return 0
+
+
+def decide(h4, h1, d1, atr4):
+    last, prev = h4[-1], h4[-2]
+    if MODE == 'pullback':
+        side = d1_trend(d1)
+        if side == 0:
+            return None
+        ema = ema_series([b['close'] for b in h4[-80:]], 20)
+        recent, ema_recent = h4[-7:-1], ema[-7:-1]
+        if side > 0 and any(b['close'] < e for b, e in zip(recent, ema_recent)) and last['close'] > prev['high']:
+            return 1, min(b['low'] for b in h4[-6:]) - 0.5 * atr4, 2.5
+        if side < 0 and any(b['close'] > e for b, e in zip(recent, ema_recent)) and last['close'] < prev['low']:
+            return -1, max(b['high'] for b in h4[-6:]) + 0.5 * atr4, 2.5
+        return None
+    if MODE == 'vol':
+        if len(h1) < 24 * 21 + 2:
+            return None
+        now_atr = atr_of(h1, 24)
+        hist = [atr_of(h1[:k], 24) for k in range(len(h1) - 24 * 20, len(h1), 6)]
+        if sum(1 for h in hist if h < now_atr) / len(hist) >= 0.2:
+            return None
+        rng = h4[-19:-1]
+        hi, lo = max(b['high'] for b in rng), min(b['low'] for b in rng)
+        if last['close'] > hi:
+            return 1, max(lo, last['close'] - 3 * atr4), 2.5
+        if last['close'] < lo:
+            return -1, min(hi, last['close'] + 3 * atr4), 2.5
+        return None
+    if MODE == 'extreme':
+        days = [d for d in d1[-15:-1]]
+        if len(days) < 14:
+            return None
+        adr = sum(d['high'] - d['low'] for d in days) / len(days)
+        window = h4[-7:-1]
+        move = window[-1]['close'] - window[0]['open']
+        if abs(move) < 3 * adr:
+            return None
+        if move > 0 and last['close'] < last['open']:
+            return -1, max(b['high'] for b in h4[-7:]) + 0.25 * atr4, 2.0
+        if move < 0 and last['close'] > last['open']:
+            return 1, min(b['low'] for b in h4[-7:]) - 0.25 * atr4, 2.0
+        return None
+    return None
+
+
+def detect(snapshot):
+    if snapshot['symbol'] not in SYMBOLS:
+        return []
+    h4 = snapshot['frames'].get('H4', ())
+    h1 = snapshot['frames'].get('H1', ())
+    d1 = snapshot['frames'].get('D1', ())
+    if len(h4) < 80:
+        return []
+    atr4 = atr_of(h4, 14)
+    if atr4 <= 0:
+        return []
+    found = decide(h4, h1, d1, atr4)
+    if found is None:
+        return []
+    side, stop, target_r = found
+    now = h4[-1]['utc'] + 14400
+    to_gap = seconds_to_cutoff(snapshot['symbol'], now)
+    if to_gap < MIN_TO_GAP:
+        return []
+    if BASELINE:
+        risk_dist = abs(h4[-1]['close'] - stop)
+        side, stop = 1, h4[-1]['close'] - risk_dist
+    quote = snapshot['quote']
+    long = side > 0
+    entry = quote['ask'] if long else quote['bid']
+    risk = entry - stop if long else stop - entry
+    if risk <= 0:
+        return []
+    target = entry + target_r * risk if long else entry - target_r * risk
+    why = ('Baseline: always long at the same decision time and risk. ' if BASELINE else '') + '@@WHY@@'
+    return [{'direction': 'LONG' if long else 'SHORT', 'stop_loss': stop, 'take_profit': target, 'horizon_seconds': min(HORIZON, to_gap),
+             'atr': atr4, 'rationale': why}]

@@ -1,0 +1,111 @@
+{
+ "model": "gold_compression_acceptance_baseline_long",
+ "version": "0.1.0",
+ "source_sha256": "81c39c29c4ff47df44a7b375aa0fc4b5e0d81893bf8d75bdfe7f847e6e377b7d",
+ "dataset": "bf130602dca4f955f64160bc9b85f0bc4246195f9685afbde91d1856c2c62cd3",
+ "evaluator_version": "tradeden-shared-eval-1.0.0",
+ "symbols": [
+  "XAUUSD"
+ ],
+ "splits_examined": [
+  "test"
+ ],
+ "intents": 5,
+ "replay": {
+  "raw_decisions": 9,
+  "live_gate_rejections": {
+   "UNREALISTIC_STOP_DISTANCE": 4
+  }
+ },
+ "evaluator_rejections": {},
+ "periods": {
+  "test": {
+   "normal": {
+    "attempted": 5,
+    "resolved": 5,
+    "unknown": 0,
+    "statuses": {
+     "SL": 3,
+     "TIME_EXIT": 2
+    },
+    "win_rate": 0.2,
+    "net_expectancy_r": -0.6499545839574947,
+    "total_r": -3.2497729197874734,
+    "profit_factor": 0.13347082559453297,
+    "max_realized_drawdown_r": 3.249772919787474,
+    "longest_losing_streak": 2,
+    "planned_rr_mean": 2.1995646942939446,
+    "realized_win_loss_ratio": 0.5338833023781319,
+    "opportunities_per_month": 0.8316256830601092,
+    "weekly_bootstrap_expectancy_ci95": [
+     -1.003024188132851,
+     -0.04870802807055454
+    ],
+    "weekly_sign_flip_p": 0.9715
+   },
+   "stress": {
+    "attempted": 5,
+    "resolved": 5,
+    "unknown": 0,
+    "statuses": {
+     "SL": 3,
+     "TIME_EXIT": 2
+    },
+    "win_rate": 0.2,
+    "net_expectancy_r": -0.6539896812692193,
+    "total_r": -3.2699484063460966,
+    "profit_factor": 0.13200888630646193,
+    "max_realized_drawdown_r": 3.2699484063460966,
+    "longest_losing_streak": 2,
+    "planned_rr_mean": 2.1995646942939446,
+    "realized_win_loss_ratio": 0.5280355452258477,
+    "opportunities_per_month": 0.8316256830601092,
+    "weekly_bootstrap_expectancy_ci95": [
+     -1.0075870539913272,
+     -0.05241509821767907
+    ],
+    "weekly_sign_flip_p": 0.9715
+   }
+  }
+ },
+ "by_symbol": {
+  "XAUUSD": {
+   "train": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   },
+   "validation": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   },
+   "test": {
+    "n": 5,
+    "unknown": 0,
+    "win": 0.2,
+    "exp": -0.6499545839574947,
+    "stress_exp": -0.6539896812692193,
+    "pf": 0.13347082559453297,
+    "dd": 3.249772919787474
+   }
+  }
+ },
+ "frequency": {
+  "weekdays": 131,
+  "qualified_intents_per_weekday": 0.038,
+  "evaluated_trades_per_weekday": 0.038
+ },
+ "seconds": {
+  "replay": 2.0,
+  "evaluate": 0.7
+ }
+}

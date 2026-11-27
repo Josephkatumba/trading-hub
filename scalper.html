@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TradeDen Scalper</title>
+<link rel="stylesheet" href="./src/scalper/scalper.css">
+</head>
+<body>
+<main class="sc" id="sc">
+  <header class="sc-head">
+    <div>
+      <h1>TradeDen Scalper</h1>
+      <p class="sc-sub">cTrader demo execution · live journal · walk-forward evidence</p>
+    </div>
+    <div class="sc-head-actions">
+      <span id="sc-status" class="sc-pill">Loading…</span>
+      <button id="sc-notify" type="button">Enable notifications</button>
+    </div>
+  </header>
+  <div id="sc-banner" class="sc-banner" role="status"></div>
+  <section class="sc-kpis" id="sc-kpis" aria-label="Key figures"></section>
+  <section class="sc-grid">
+    <article class="sc-card sc-wide"><h2>Balance after each closed trade</h2><div id="sc-equity" class="sc-chart"></div></article>
+    <article class="sc-card"><h2>Risk exposure</h2><dl id="sc-risk" class="sc-dl"></dl></article>
+    <article class="sc-card sc-wide"><h2>Daily P&amp;L (UTC)</h2><div id="sc-daily" class="sc-chart"></div></article>
+    <article class="sc-card"><h2>Open positions</h2><div id="sc-open"></div></article>
+    <article class="sc-card sc-wide"><h2>Performance by group</h2><div id="sc-groups"></div></article>
+    <article class="sc-card"><h2>Signals and missed opportunities</h2><div id="sc-signals"></div></article>
+    <article class="sc-card sc-wide"><h2>Backtest evidence (walk-forward, out-of-sample)</h2><div id="sc-backtest"></div></article>
+    <article class="sc-card"><h2>Execution feed</h2><ol id="sc-feed" class="sc-feed"></ol></article>
+    <article class="sc-card sc-full"><h2>End-of-day report</h2>
+      <div class="sc-row"><label>Date (UTC) <input type="date" id="sc-day"></label><button id="sc-day-dl" type="button">Download .md</button></div>
+      <pre id="sc-report" class="sc-report"></pre></article>
+  </section>
+  <p class="sc-foot">Read-only. This page cannot place, change or close orders. Figures come from the cBot's journal of cTrader position history.</p>
+</main>
+<div id="sc-toasts" class="sc-toasts" aria-live="polite"></div>
+<script type="module" src="./src/scalper/scalperDashboard.mjs"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+ "btc_trades": {
+  "crypto_trend_breakout_0.3.0": 38,
+  "trend_reclaim_r4": 81
+ },
+ "share_of_breakout_trades_overlapping_same_direction_reclaim": 0.3157894736842105,
+ "share_of_reclaim_trades_overlapping_same_direction_breakout": 0.30864197530864196,
+ "weeks_with_trades": 54,
+ "weeks_both_traded": 14,
+ "weekly_net_r_correlation": 0.22451525481447046,
+ "breakout_btc_mean_r": 0.1371131834119943,
+ "reclaim_btc_mean_r": 0.25148778241050884
+}

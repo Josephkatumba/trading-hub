@@ -1,0 +1,32 @@
+{
+ "lab": "kimi",
+ "key": "london_sweep_reversal",
+ "version": "0.2.0",
+ "name": "London Sweep Reversal",
+ "timeframe": "M15",
+ "requirements": {
+  "M15": 1200,
+  "H1": 350,
+  "M1": 90
+ },
+ "instruments": [
+  "EURUSD",
+  "GBPUSD",
+  "GBPJPY",
+  "XAUUSD",
+  "BTCUSD",
+  "ETHUSD"
+ ],
+ "classification": "EXPERIMENTAL",
+ "entry_type": "MARKET_PAPER_QUOTE",
+ "hypothesis": "London open liquidity sweeps of the Asian range that close back inside tend to revert toward the opposite Asian boundary; the sweep extreme is structural invalidation.",
+ "risk_model": "One planned risk unit; stop at sweep extreme plus 0.15 M15 ATR buffer; risk constrained to 0.6-5 ATR; no broker execution",
+ "planned_rr": "Structural target at opposite Asian boundary, admitted only at planned RR >= 2 (net gate intent)",
+ "known_limitations": "No verified positive edge; session windows are UTC-fixed and ignore DST; CFD spread proxies; one opportunity per day; missing histories remain unresolved; tick volume is not centralized volume. Version history: 0.2.0: DST-aware London window (0.1.0 fixed UTC, one hour late in summer); sweep depth 0.05->0.10 ATR; rejection-wick confirmation added; Asian range cap 4.0->3.5 ATR.",
+ "authorship": {
+  "lab": "kimi",
+  "session_reference": "Kimi Code session 2026-10-20 on Windows host katjo under the TradeDen CEO directive of 20 Oct 2026",
+  "statement": "Authored by this actual Kimi Code session; not attributed to Codex or Claude."
+ },
+ "declared_trials_in_phase": 2
+}

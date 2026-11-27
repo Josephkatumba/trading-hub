@@ -1,0 +1,290 @@
+[
+ {
+  "symbol": "BTCUSD",
+  "regime": "range-bound/high-vol",
+  "train": {
+   "n": 19,
+   "exp": -0.5781010366278186
+  },
+  "validation": {
+   "n": 4,
+   "exp": -1.0090561059420455
+  },
+  "test": {
+   "n": 1,
+   "exp": -1.0145772594752187
+  }
+ },
+ {
+  "symbol": "BTCUSD",
+  "regime": "range-bound/low-vol",
+  "train": {
+   "n": 21,
+   "exp": 0.0012901290494494652
+  },
+  "validation": {
+   "n": 7,
+   "exp": -0.5101706088011639
+  },
+  "test": {
+   "n": 5,
+   "exp": 0.10799307911274796
+  }
+ },
+ {
+  "symbol": "BTCUSD",
+  "regime": "range-bound/mid-vol",
+  "train": {
+   "n": 17,
+   "exp": -0.07227172085381345
+  },
+  "validation": {
+   "n": 4,
+   "exp": -0.8165354399685548
+  },
+  "test": {
+   "n": 12,
+   "exp": 0.4842799451971196
+  }
+ },
+ {
+  "symbol": "BTCUSD",
+  "regime": "trending/high-vol",
+  "train": {
+   "n": 3,
+   "exp": -0.8559997743285267
+  },
+  "validation": {
+   "n": 1,
+   "exp": 5.207561634500727
+  },
+  "test": {
+   "n": 1,
+   "exp": 3.132012755377692
+  }
+ },
+ {
+  "symbol": "BTCUSD",
+  "regime": "trending/low-vol",
+  "train": {
+   "n": 3,
+   "exp": 2.604616122359784
+  },
+  "validation": {
+   "n": 2,
+   "exp": 2.392633858678744
+  },
+  "test": {
+   "n": 0,
+   "exp": null
+  }
+ },
+ {
+  "symbol": "BTCUSD",
+  "regime": "trending/mid-vol",
+  "train": {
+   "n": 2,
+   "exp": 0.44917722920292946
+  },
+  "validation": {
+   "n": 2,
+   "exp": -1.0205289999135618
+  },
+  "test": {
+   "n": 1,
+   "exp": -1.044995500449954
+  }
+ },
+ {
+  "symbol": "EURUSD",
+  "regime": "range-bound/high-vol",
+  "train": {
+   "n": 9,
+   "exp": -0.4239098290383824
+  },
+  "validation": {
+   "n": 12,
+   "exp": -0.5540118240776013
+  },
+  "test": {
+   "n": 2,
+   "exp": -1.118677400119242
+  }
+ },
+ {
+  "symbol": "EURUSD",
+  "regime": "range-bound/low-vol",
+  "train": {
+   "n": 4,
+   "exp": -0.4963150326797364
+  },
+  "validation": {
+   "n": 4,
+   "exp": 0.20726875170445275
+  },
+  "test": {
+   "n": 9,
+   "exp": 0.6051750458003413
+  }
+ },
+ {
+  "symbol": "EURUSD",
+  "regime": "range-bound/mid-vol",
+  "train": {
+   "n": 11,
+   "exp": 0.21528846488734354
+  },
+  "validation": {
+   "n": 10,
+   "exp": -0.2860952764294454
+  },
+  "test": {
+   "n": 5,
+   "exp": 0.48825108464269
+  }
+ },
+ {
+  "symbol": "EURUSD",
+  "regime": "trending/high-vol",
+  "train": {
+   "n": 0,
+   "exp": null
+  },
+  "validation": {
+   "n": 1,
+   "exp": -1.069999999999992
+  },
+  "test": {
+   "n": 0,
+   "exp": null
+  }
+ },
+ {
+  "symbol": "EURUSD",
+  "regime": "trending/low-vol",
+  "train": {
+   "n": 1,
+   "exp": -1.0603448275862042
+  },
+  "validation": {
+   "n": 1,
+   "exp": -1.1372549019607814
+  },
+  "test": {
+   "n": 3,
+   "exp": 2.7601038863851914
+  }
+ },
+ {
+  "symbol": "EURUSD",
+  "regime": "trending/mid-vol",
+  "train": {
+   "n": 3,
+   "exp": -1.1951187739463889
+  },
+  "validation": {
+   "n": 0,
+   "exp": null
+  },
+  "test": {
+   "n": 3,
+   "exp": -1.1083903133903033
+  }
+ },
+ {
+  "symbol": "XAUUSD",
+  "regime": "range-bound/high-vol",
+  "train": {
+   "n": 6,
+   "exp": -0.25710943700515354
+  },
+  "validation": {
+   "n": 2,
+   "exp": 1.9619958505749482
+  },
+  "test": {
+   "n": 1,
+   "exp": -1.0080705705705293
+  }
+ },
+ {
+  "symbol": "XAUUSD",
+  "regime": "range-bound/low-vol",
+  "train": {
+   "n": 9,
+   "exp": -0.05709215916465918
+  },
+  "validation": {
+   "n": 2,
+   "exp": 1.7804981997205716
+  },
+  "test": {
+   "n": 5,
+   "exp": -1.0098545604002322
+  }
+ },
+ {
+  "symbol": "XAUUSD",
+  "regime": "range-bound/mid-vol",
+  "train": {
+   "n": 9,
+   "exp": -1.0314302717123562
+  },
+  "validation": {
+   "n": 0,
+   "exp": null
+  },
+  "test": {
+   "n": 3,
+   "exp": -1.0117634020877984
+  }
+ },
+ {
+  "symbol": "XAUUSD",
+  "regime": "trending/high-vol",
+  "train": {
+   "n": 1,
+   "exp": -1.013888888888864
+  },
+  "validation": {
+   "n": 0,
+   "exp": null
+  },
+  "test": {
+   "n": 0,
+   "exp": null
+  }
+ },
+ {
+  "symbol": "XAUUSD",
+  "regime": "trending/low-vol",
+  "train": {
+   "n": 2,
+   "exp": 4.293572847681949
+  },
+  "validation": {
+   "n": 0,
+   "exp": null
+  },
+  "test": {
+   "n": 1,
+   "exp": -1.0083139984531673
+  }
+ },
+ {
+  "symbol": "XAUUSD",
+  "regime": "trending/mid-vol",
+  "train": {
+   "n": 2,
+   "exp": 0.08163862787964848
+  },
+  "validation": {
+   "n": 2,
+   "exp": -1.0103294980274395
+  },
+  "test": {
+   "n": 0,
+   "exp": null
+  }
+ }
+]

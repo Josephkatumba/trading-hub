@@ -1,0 +1,29 @@
+{
+ "status": "PENDING_CEO_REVIEW",
+ "category": "research_observations",
+ "what_it_sends": "Real-time setups from non-approved models, labelled RESEARCH OBSERVATION: NOT A QUALIFIED TRADING SIGNAL; no entry/stop/target.",
+ "recommended_scope_reason": "Unscoped, all 14 research models would send about 6 observations/day, mostly from rejected (Category D) models; the six Trend Reclaim variants overlap 73-95%.",
+ "approval_file_to_use": {
+  "approved_by": "CEO Joseph Katumba",
+  "directive": "<directive reference>",
+  "production": false,
+  "scope": [
+   {
+    "lab": "codex",
+    "key": "trend_reclaim_r4"
+   },
+   {
+    "lab": "claude",
+    "key": "index_turn_of_month"
+   },
+   {
+    "lab": "codex",
+    "key": "range_sweep_reversion"
+   }
+  ]
+ },
+ "commands": [
+  "python -m quant_live --store data/quant_live approve-category --category research_observations --approval <file>",
+  "set TRADEDEN_RESEARCH_OBSERVATIONS_TELEGRAM_ENABLED=1 in backend/.env and restart the engine"
+ ]
+}

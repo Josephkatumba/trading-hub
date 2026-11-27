@@ -1,0 +1,2 @@
+{"job": "7ac71521060544adb9e870e68636faf3", "strategy": "index_orb_m5", "version": "0.1.0", "state": "QUEUED", "at": "2026-10-19T23:45:51.471785+00:00", "duplicate_of": null}
+{"job": "7ac71521060544adb9e870e68636faf3", "state": "COMPLETE", "at": "2026-10-19T23:45:59.947383+00:00", "resources": {"cpu_cap_percent": 20.0, "cpu_limit_seconds": 20.0, "cpu_seconds_used": 3.25, "enforced": true, "max_processes": 1, "memory_limit_mb": 384.0, "peak_committed_mb": 150.83203125, "wall_seconds": 3.2926647000131197}}

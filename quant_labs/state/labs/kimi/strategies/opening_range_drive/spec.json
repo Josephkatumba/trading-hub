@@ -1,0 +1,15 @@
+{
+ "id": "opening_range_drive",
+ "version": "0.2.0",
+ "name": "Opening Range Drive",
+ "hypothesis": "The first hour of the London session builds an informative opening range; when a later London bar closes beyond a tight version of that range on elevated tick volume, with a decisive body and the last H1 bar aligned, institutional participation drives continuation proportional to the range height.",
+ "entry_conditions": "Opening range from the four M15 bars 07:00-08:00 UTC, all present, width <= 3 ATR(14) and > 0; trigger M15 closing 08:00-11:00 UTC beyond the range with body >= 0.35 ATR, close in the directional 30% of the bar, tick volume >= 1.4x median of prior 20 bars, and last H1 bar agreeing; no earlier close beyond the range that day; planned 2.5R. DST-aware London window; tick volume >= 1.8x median; opening-range cap 2.5 ATR; body >= 0.4 ATR.",
+ "exit_conditions": "Fixed stop-loss and take-profit; take-profit at 2.5x planned risk; time exit after 12 hours if neither barrier trades.",
+ "stop_loss_method": "Opening-range midpoint when that distance is at least 0.6 ATR, else a 0.8 ATR floor stop from the reference close; risk between 0.6 and 5 ATR.",
+ "take_profit_method": "Entry plus 2.5 times the planned risk in the breakout direction.",
+ "risk_model": "One planned risk unit per opportunity; one trigger per day enforced by model state; per-symbol overlap lock enforced by the common evaluator.",
+ "intended_conditions": "FX majors, gold and crypto on London days with a tight opening range and genuine midday participation.",
+ "limitations": "UTC-fixed windows ignore daylight-saving shifts; false breakouts cluster around news; excludes indices (shared evaluator cannot finance modes 2/3); spread/risk gate 0.1 not always met; historical partitions already exposed to prior research. Prior version 0.1.0 preserved with negative results; parameters in 0.2.0 changed for stated a-priori reasons (session alignment, selectivity), not fitted to validation/test outcomes.",
+ "timeframe": "M15",
+ "declared_trials": 2
+}

@@ -132,6 +132,12 @@ def sync() -> int:
             transition(spec["key"], status, "T-034 strategy bank baseline (CEO-approved bank)", name=spec["name"],
                        at=T034_COMMITTED_AT)
             added += 1
+        elif spec["status"] == rules.RESEARCH:
+            # ICT family / audited upgrades: scanned in shadow (recorded, never alerted) while their
+            # historical evaluation and forward record accumulate. Promotion stays evidence-gated.
+            transition(spec["key"], RESEARCHING, f"{spec.get('family', 'research')} strategy registered in shadow "
+                       f"({spec.get('version', '')}); not alerted", name=spec["name"])
+            added += 1
     reg_path = data_directory() / "research" / "registry.json"
     if reg_path.exists():
         try:

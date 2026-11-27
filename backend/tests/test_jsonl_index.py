@@ -167,6 +167,19 @@ class JsonlIndexRecoveryTests(unittest.TestCase):
 
 
 class GenericLookupTests(unittest.TestCase):
+    def test_streamed_rows_match_eager_load_and_close_releases_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'stream.jsonl'
+            append(path,*({'sid':str(i%3),'n':i,'payload':'x'*1000} for i in range(40)))
+            index=JsonlIndex(path,summarize,('sid',),schema='stream',persist=False)
+            positions=index.lookup('sid','1')
+            self.assertEqual(list(index.iter_load(positions)),index.load(positions))
+            stream=index.iter_load(positions)
+            self.assertEqual(next(stream)['n'],1)
+            stream.close()
+            append(path,{'sid':'1','n':41})
+            self.assertEqual(index.load(index.lookup('sid','1'))[-1]['n'],41)
+
     def test_indexed_jsonl_records_equals_linear_scan(self):
         rng = random.Random(7)
         with tempfile.TemporaryDirectory() as tmp:

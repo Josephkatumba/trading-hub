@@ -1,0 +1,32 @@
+{
+ "lab": "kimi",
+ "key": "vol_exhaustion_fade",
+ "version": "0.2.0",
+ "name": "Volatility Exhaustion Fade",
+ "timeframe": "M15",
+ "requirements": {
+  "M15": 1200,
+  "H1": 350,
+  "M1": 90
+ },
+ "instruments": [
+  "EURUSD",
+  "GBPUSD",
+  "GBPJPY",
+  "XAUUSD",
+  "BTCUSD",
+  "ETHUSD"
+ ],
+ "classification": "EXPERIMENTAL",
+ "entry_type": "MARKET_PAPER_QUOTE",
+ "hypothesis": "In non-trending regimes, an M15 volatility climax (range > 1.6 ATR, elevated tick volume, extreme close) that breaks the 20-bar extreme after a six-bar run exhausts locally and reverts toward the recent mean.",
+ "risk_model": "One planned risk unit; stop at climax extreme plus 0.15 M15 ATR buffer; risk 0.6-5 ATR; no broker execution",
+ "planned_rr": "12-bar mean target or 2.2R structural fallback; admitted only at planned RR >= 2",
+ "known_limitations": "No verified positive edge; H1 efficiency-ratio regime filter is coarse; fades can run in trending regimes despite the filter; CFD spread proxies; missing histories remain unresolved; tick volume is not centralized volume. Version history: 0.2.0: H1 efficiency cap 0.35->0.28; volume confirmation 1.3x->1.6x median; horizon 24h->18h.",
+ "authorship": {
+  "lab": "kimi",
+  "session_reference": "Kimi Code session 2026-10-20 on Windows host katjo under the TradeDen CEO directive of 20 Oct 2026",
+  "statement": "Authored by this actual Kimi Code session; not attributed to Codex or Claude."
+ },
+ "declared_trials_in_phase": 2
+}

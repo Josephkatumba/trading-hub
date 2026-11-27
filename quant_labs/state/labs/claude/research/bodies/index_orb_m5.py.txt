@@ -1,0 +1,59 @@
+"""Claude-authored experimental model: Index 5-Minute Opening-Range Drive (M5). No verified edge.
+
+Mechanism: canonical specification of Zarattini & Aziz (2023): trade in the direction
+of the first 5-minute cash-session candle (dojis skipped), stop at that candle's
+opposite extreme, 10R objective, otherwise flat at the end of the session (here 15
+minutes before the cash close). Entry at the close of the first M5 candle.
+
+M5 history exists only where shared M1 history exists (July-October 2026), so this
+is exploratory, data-limited evidence without an independent out-of-sample split.
+Uses only closed candles from the supplied snapshot. Pure functions only.
+"""
+
+TARGET_R = 10.0
+MIN_BODY = 0.25
+EXIT_BEFORE_CLOSE = 900
+SESSIONS = {'NAS100': ('US', 570, 960), 'US500': ('US', 570, 960), 'GER40': ('EU', 540, 1050)}
+
+@@HELPERS@@
+
+def detect(snapshot):
+    symbol = snapshot['symbol']
+    if symbol not in SESSIONS:
+        return []
+    zone, open_min, close_min = SESSIONS[symbol]
+    bars = snapshot['frames'].get('M5', ())
+    if len(bars) < 20:
+        return []
+    first = bars[-1]
+    now = first['utc'] + 300
+    offset = utc_offset(zone, now)
+    day = (now + offset) // 86400
+    if weekday(day) in (0, 6):
+        return []
+    session_open = day * 86400 + open_min * 60 - offset
+    session_close = day * 86400 + close_min * 60 - offset
+    if first['utc'] != session_open:
+        return []
+    rng = first['high'] - first['low']
+    atr = atr_of(bars, 14)
+    if rng <= 0 or atr <= 0:
+        return []
+    body = first['close'] - first['open']
+    if abs(body) < MIN_BODY * rng:
+        return []
+    quote = snapshot['quote']
+    if body > 0:
+        direction, entry, stop = 'LONG', quote['ask'], first['low']
+    else:
+        direction, entry, stop = 'SHORT', quote['bid'], first['high']
+    long = direction == 'LONG'
+    risk = entry - stop if long else stop - entry
+    if risk <= 0:
+        return []
+    horizon = min(session_close - EXIT_BEFORE_CLOSE - now, seconds_to_cutoff(symbol, now))
+    if horizon < 3600:
+        return []
+    target = entry + TARGET_R * risk if long else entry - TARGET_R * risk
+    return [{'direction': direction, 'stop_loss': stop, 'take_profit': target, 'horizon_seconds': horizon, 'atr': atr,
+             'rationale': 'First 5-minute cash candle closed %s; stop at its opposite extreme, 10R objective, flat before the cash close.' % ('up' if long else 'down')}]

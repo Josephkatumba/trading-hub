@@ -1,0 +1,437 @@
+{
+ "base": -0.0839635589316854,
+ "counts": {
+  "adx": {
+   "18-25": 27876,
+   "25-35": 24528,
+   "<18": 27303,
+   ">=35": 15949,
+   "unknown": 3
+  },
+  "atr_ratio": {
+   "0.75-1": 39306,
+   "1-1.35": 36418,
+   "<0.75": 9637,
+   ">=1.35": 10295,
+   "unknown": 3
+  },
+  "bb_width": {
+   "20-50%": 29196,
+   "50-80%": 26825,
+   "<20%": 22578,
+   ">=80%": 17057,
+   "unknown": 3
+  },
+  "di": {
+   "against": 27484,
+   "unknown": 3,
+   "with": 68172
+  },
+  "extension": {
+   "0.5-1.5": 27126,
+   "1.5-2.5": 24191,
+   ">=2.5": 8848,
+   "at_mean": 22365,
+   "pullback": 13126,
+   "unknown": 3
+  },
+  "family_regime": {
+   "breakout:BREAKOUT": 13412,
+   "breakout:HIGH_VOLATILITY": 2764,
+   "breakout:LOW_VOLATILITY": 1226,
+   "breakout:RANGING": 12235,
+   "breakout:REVERSAL": 2193,
+   "breakout:TRENDING": 10647,
+   "breakout:UNKNOWN": 3,
+   "reversal:BREAKOUT": 171,
+   "reversal:HIGH_VOLATILITY": 79,
+   "reversal:LOW_VOLATILITY": 159,
+   "reversal:RANGING": 1004,
+   "reversal:REVERSAL": 103,
+   "reversal:TRENDING": 505,
+   "reversion:BREAKOUT": 265,
+   "reversion:HIGH_VOLATILITY": 1307,
+   "reversion:LOW_VOLATILITY": 961,
+   "reversion:RANGING": 6753,
+   "reversion:REVERSAL": 1182,
+   "reversion:TRENDING": 6727,
+   "trend:BREAKOUT": 3026,
+   "trend:HIGH_VOLATILITY": 1730,
+   "trend:LOW_VOLATILITY": 2612,
+   "trend:RANGING": 18792,
+   "trend:REVERSAL": 1938,
+   "trend:TRENDING": 5865
+  },
+  "htf_d1": {
+   "against": 41900,
+   "unknown": 502,
+   "with": 53257
+  },
+  "htf_h4": {
+   "against": 23075,
+   "mixed": 31289,
+   "unknown": 223,
+   "with": 41072
+  },
+  "macd": {
+   "against": 33430,
+   "unknown": 3,
+   "with": 10773,
+   "with_rising": 51453
+  },
+  "planned_rr": {
+   "1.2-1.8": 3026,
+   "1.8-2.5": 84513,
+   "2.5-3.5": 3069,
+   "<1.2": 620,
+   ">=3.5": 4428,
+   "unknown": 3
+  },
+  "regime_trend": {
+   "against": 14194,
+   "flat": 38787,
+   "with": 42678
+  },
+  "room": {
+   "0.5-1R": 13324,
+   "1-2R": 10721,
+   "<0.5R": 43613,
+   ">=2R": 14713,
+   "clear": 13285,
+   "unknown": 3
+  },
+  "rsi": {
+   "35-50": 15642,
+   "50-65": 48277,
+   "65-75": 23436,
+   "<35": 4185,
+   ">=75": 4116,
+   "unknown": 3
+  },
+  "session": {
+   "ASIA": 24214,
+   "LATE_US": 8049,
+   "LONDON": 23715,
+   "LONDON_NY_OVERLAP": 20279,
+   "NEW_YORK": 19402
+  },
+  "stop_atr": {
+   "0.5-1": 11670,
+   "1-2": 56277,
+   "<0.5": 7545,
+   ">=2": 20164,
+   "unknown": 3
+  },
+  "strategy": {
+   "atr_breakout": 8460,
+   "bollinger_reversion": 799,
+   "breakout": 2235,
+   "donchian": 14575,
+   "ema_crossover": 2406,
+   "ema_pullback": 15112,
+   "fair_value_gap": 925,
+   "ichimoku": 9156,
+   "inside_bar_breakout": 9194,
+   "liquidity_sweep": 3490,
+   "london_breakout": 4208,
+   "macd_momentum": 5279,
+   "market_structure_break": 2021,
+   "opening_range_breakout": 1341,
+   "order_block_retest": 757,
+   "rsi_divergence": 1181,
+   "smc": 197,
+   "support_resistance": 836,
+   "trend_momentum": 131,
+   "trendline_bounce": 10889,
+   "trendline_break_retest": 2467
+  },
+  "strategy_form": {
+   "-0.2-0": 19472,
+   "0-0.2": 17674,
+   "<-0.2": 37734,
+   ">=0.2": 20271,
+   "insufficient": 508
+  },
+  "structure": {
+   "against": 25138,
+   "mixed": 39173,
+   "unknown": 3,
+   "with": 31345
+  },
+  "symbol": {
+   "AUDUSD": 5685,
+   "BTCUSD": 7904,
+   "ETHUSD": 7378,
+   "EURJPY": 5831,
+   "EURUSD": 5917,
+   "GBPJPY": 5811,
+   "GBPUSD": 5908,
+   "GER40": 5999,
+   "NAS100": 5776,
+   "NZDUSD": 5770,
+   "US500": 5828,
+   "USDCAD": 4927,
+   "USDCHF": 5875,
+   "USDJPY": 5796,
+   "XAGUSD": 5538,
+   "XAUUSD": 5716
+  },
+  "target_vs_level": {
+   "before_level": 17250,
+   "beyond_level": 65121,
+   "clear": 13285,
+   "unknown": 3
+  },
+  "tick_activity": {
+   "high": 33655,
+   "low": 26630,
+   "normal": 35371,
+   "unknown": 3
+  }
+ },
+ "effects": {
+  "adx": {
+   "18-25": 0.004378793904937834,
+   "25-35": 0.019364490066009727,
+   "<18": -0.01124578898231971,
+   ">=35": -0.017825799881397698,
+   "unknown": 0.008055510071122839
+  },
+  "atr_ratio": {
+   "0.75-1": -0.001118171384068519,
+   "1-1.35": -0.006201896097930815,
+   "<0.75": 0.016561369851572836,
+   ">=1.35": 0.008908467862812077,
+   "unknown": 0.008053405053991013
+  },
+  "bb_width": {
+   "20-50%": -0.010975007279988935,
+   "50-80%": 0.007524728929179065,
+   "<20%": 0.014451364016702587,
+   ">=80%": -0.011371668729345556,
+   "unknown": 0.008052922345082482
+  },
+  "di": {
+   "against": 0.020345467895354376,
+   "unknown": 0.008054960495006315,
+   "with": -0.00836830682128605
+  },
+  "extension": {
+   "0.5-1.5": 0.003101595805649067,
+   "1.5-2.5": -0.007610929495049713,
+   ">=2.5": 0.0017084373573764192,
+   "at_mean": 0.006432054597491542,
+   "pullback": -0.00460318703550792,
+   "unknown": 0.008052458669826366
+  },
+  "family_regime": {
+   "breakout:BREAKOUT": -0.0007377285003483154,
+   "breakout:HIGH_VOLATILITY": 0.014056330939787254,
+   "breakout:LOW_VOLATILITY": 0.0327281047723605,
+   "breakout:RANGING": 0.02316474386006484,
+   "breakout:REVERSAL": -0.020104064389806622,
+   "breakout:TRENDING": -0.03389455035945591,
+   "breakout:UNKNOWN": 0.008074094691842915,
+   "reversal:BREAKOUT": -0.059411236750679094,
+   "reversal:HIGH_VOLATILITY": 0.008535884438640853,
+   "reversal:LOW_VOLATILITY": 0.0258211648616269,
+   "reversal:RANGING": 0.06615402089520067,
+   "reversal:REVERSAL": -0.04271828332355029,
+   "reversal:TRENDING": -0.012494971577991615,
+   "reversion:BREAKOUT": -0.007111166367358657,
+   "reversion:HIGH_VOLATILITY": 0.07684348515418589,
+   "reversion:LOW_VOLATILITY": -0.0005753221074810352,
+   "reversion:RANGING": -0.0012946259748759256,
+   "reversion:REVERSAL": -0.0156513659072439,
+   "reversion:TRENDING": -0.0337426460323295,
+   "trend:BREAKOUT": 0.0021351489915946422,
+   "trend:HIGH_VOLATILITY": 0.028227798650949973,
+   "trend:LOW_VOLATILITY": 0.08097775825270344,
+   "trend:RANGING": -0.003042112176192709,
+   "trend:REVERSAL": 0.02496630696690352,
+   "trend:TRENDING": -0.03341559173435863
+  },
+  "htf_d1": {
+   "against": -0.027835478159194144,
+   "unknown": -0.07086496036910629,
+   "with": 0.022716491637138205
+  },
+  "htf_h4": {
+   "against": 0.01671008485569205,
+   "mixed": -0.0072504815482084106,
+   "unknown": -0.04994940808753037,
+   "with": -0.0029771482626843393
+  },
+  "macd": {
+   "against": -0.014261315926926546,
+   "unknown": 0.008053906337741982,
+   "with": -0.0012759027674898442,
+   "with_rising": 0.010603989201978034
+  },
+  "planned_rr": {
+   "1.2-1.8": 0.009195730331978822,
+   "1.8-2.5": 0.0003811891740054872,
+   "2.5-3.5": 0.03294472740104264,
+   "<1.2": 0.03610948613913115,
+   ">=3.5": -0.04927387084583694,
+   "unknown": 0.008051180143289568
+  },
+  "regime_trend": {
+   "against": -0.00619876968388955,
+   "flat": 0.0017418087066606554,
+   "with": 0.0029243279534796308
+  },
+  "room": {
+   "0.5-1R": 0.02033828940252267,
+   "1-2R": -0.0037452568470884226,
+   "<0.5R": 0.0006076733211983541,
+   ">=2R": -0.020123406322895245,
+   "clear": -0.0011058895765884297,
+   "unknown": 0.00805158813433117
+  },
+  "rsi": {
+   "35-50": -0.005705836576554642,
+   "50-65": -0.007688273708886292,
+   "65-75": 0.004739121026224333,
+   "<35": -0.008838502237891175,
+   ">=75": 0.08350944613155985,
+   "unknown": 0.008054425282905274
+  },
+  "session": {
+   "ASIA": 0.06143875299586931,
+   "LATE_US": -0.006598625246582407,
+   "LONDON": 0.015410248918298402,
+   "LONDON_NY_OVERLAP": 0.0052555886867009325,
+   "NEW_YORK": -0.09714971334546259
+  },
+  "stop_atr": {
+   "0.5-1": -0.027713973485620855,
+   "1-2": 0.010118065099239381,
+   "<0.5": -0.10196717197054529,
+   ">=2": 0.02855429792518322,
+   "unknown": 0.008052014057886392
+  },
+  "strategy": {
+   "atr_breakout": 0.00582305010516914,
+   "bollinger_reversion": 0.06210440719947305,
+   "breakout": 0.022491024078326757,
+   "donchian": 0.00024131230188299862,
+   "ema_crossover": -0.02177533772791108,
+   "ema_pullback": 0.008777894897426612,
+   "fair_value_gap": 0.06333667539348396,
+   "ichimoku": 0.030374600831228345,
+   "inside_bar_breakout": -0.016293535480906136,
+   "liquidity_sweep": -0.01250476150980053,
+   "london_breakout": 0.061776635552056654,
+   "macd_momentum": 0.03100275536085971,
+   "market_structure_break": 0.008680187288778245,
+   "opening_range_breakout": 0.03752972755698553,
+   "order_block_retest": 0.08880240021058143,
+   "rsi_divergence": -0.01616080198783275,
+   "smc": 0.03982886951507057,
+   "support_resistance": -0.024501400171596858,
+   "trend_momentum": -0.0673283736382818,
+   "trendline_bounce": -0.0900548662012814,
+   "trendline_break_retest": -0.056036745605364
+  },
+  "strategy_form": {
+   "-0.2-0": 0.0003317690761792989,
+   "0-0.2": -0.010369386985701421,
+   "<-0.2": 0.022278543811417553,
+   ">=0.2": -0.026535918787295543,
+   "insufficient": -0.08678009505363017
+  },
+  "structure": {
+   "against": 0.015910891033207364,
+   "mixed": 0.0001885738294402733,
+   "unknown": 0.008056071571473634,
+   "with": -0.015013801495706075
+  },
+  "symbol": {
+   "AUDUSD": -0.10184085581883998,
+   "BTCUSD": 0.0896587913815216,
+   "ETHUSD": -0.060143877490596756,
+   "EURJPY": 0.0035110728737060832,
+   "EURUSD": -0.013619526334997748,
+   "GBPJPY": -0.035274976273517826,
+   "GBPUSD": -0.042334029545765754,
+   "GER40": 0.04242473959502266,
+   "NAS100": 0.00654581770875917,
+   "NZDUSD": -0.03307552797850899,
+   "US500": 0.00834778432242689,
+   "USDCAD": 0.05661667301903241,
+   "USDCHF": -0.11222412508479991,
+   "USDJPY": 0.054851790971005454,
+   "XAGUSD": -0.0030770385187280066,
+   "XAUUSD": 0.15964838733761055
+  },
+  "target_vs_level": {
+   "before_level": 0.0315554913481614,
+   "beyond_level": -0.007893275042493196,
+   "clear": -0.0004890708837549574,
+   "unknown": 0.008050788970736637
+  },
+  "tick_activity": {
+   "high": 0.013464259647274638,
+   "low": -0.043828402099401746,
+   "normal": 0.02075187177512803,
+   "unknown": 0.008050413166435667
+  }
+ },
+ "exits": {
+  "atr_breakout": "base",
+  "bollinger_reversion": "base",
+  "breakout": "base",
+  "donchian": "base",
+  "ema_crossover": "t3",
+  "ema_pullback": "base",
+  "fair_value_gap": "t3",
+  "ichimoku": "wide",
+  "inside_bar_breakout": "wide",
+  "liquidity_sweep": "atr",
+  "london_breakout": "base",
+  "macd_momentum": "base",
+  "market_structure_break": "t1.5",
+  "opening_range_breakout": "atr",
+  "order_block_retest": "base",
+  "rsi_divergence": "t1",
+  "smc": "base",
+  "support_resistance": "wide",
+  "trend_momentum": "base",
+  "trendline_bounce": "atr",
+  "trendline_break_retest": "atr"
+ },
+ "meta": {
+  "evidence": "research/quality_research.py walk-forward; see docs/SIGNAL_QUALITY_REPORT.md",
+  "passes": 4,
+  "shrink": 200.0,
+  "signals": 95659,
+  "trades": 95659,
+  "trained_from": "2024-10-15",
+  "trained_to": "2026-10-12",
+  "version": "quality-scorecard-v1"
+ },
+ "strategy_trades": {
+  "atr_breakout": 8460,
+  "bollinger_reversion": 799,
+  "breakout": 2235,
+  "donchian": 14575,
+  "ema_crossover": 2406,
+  "ema_pullback": 15112,
+  "fair_value_gap": 925,
+  "ichimoku": 9156,
+  "inside_bar_breakout": 9194,
+  "liquidity_sweep": 3490,
+  "london_breakout": 4208,
+  "macd_momentum": 5279,
+  "market_structure_break": 2021,
+  "opening_range_breakout": 1341,
+  "order_block_retest": 757,
+  "rsi_divergence": 1181,
+  "smc": 197,
+  "support_resistance": 836,
+  "trend_momentum": 131,
+  "trendline_bounce": 10889,
+  "trendline_break_retest": 2467
+ }
+}

@@ -1,0 +1,104 @@
+{
+ "BTCUSD": {
+  "train": {
+   "mean_ER": 0.304,
+   "frac_ER<0.3": 0.53,
+   "n": 351
+  },
+  "validation": {
+   "mean_ER": 0.307,
+   "frac_ER<0.3": 0.549,
+   "n": 182
+  },
+  "test": {
+   "mean_ER": 0.339,
+   "frac_ER<0.3": 0.503,
+   "n": 183
+  }
+ },
+ "ETHUSD": {
+  "train": {
+   "mean_ER": 0.309,
+   "frac_ER<0.3": 0.547,
+   "n": 351
+  },
+  "validation": {
+   "mean_ER": 0.297,
+   "frac_ER<0.3": 0.577,
+   "n": 182
+  },
+  "test": {
+   "mean_ER": 0.323,
+   "frac_ER<0.3": 0.486,
+   "n": 183
+  }
+ },
+ "EURUSD": {
+  "train": {
+   "mean_ER": 0.342,
+   "frac_ER<0.3": 0.498,
+   "n": 249
+  },
+  "validation": {
+   "mean_ER": 0.308,
+   "frac_ER<0.3": 0.578,
+   "n": 128
+  },
+  "test": {
+   "mean_ER": 0.324,
+   "frac_ER<0.3": 0.504,
+   "n": 131
+  }
+ },
+ "GBPJPY": {
+  "train": {
+   "mean_ER": 0.319,
+   "frac_ER<0.3": 0.542,
+   "n": 249
+  },
+  "validation": {
+   "mean_ER": 0.29,
+   "frac_ER<0.3": 0.562,
+   "n": 128
+  },
+  "test": {
+   "mean_ER": 0.248,
+   "frac_ER<0.3": 0.656,
+   "n": 131
+  }
+ },
+ "GBPUSD": {
+  "train": {
+   "mean_ER": 0.315,
+   "frac_ER<0.3": 0.538,
+   "n": 249
+  },
+  "validation": {
+   "mean_ER": 0.326,
+   "frac_ER<0.3": 0.516,
+   "n": 128
+  },
+  "test": {
+   "mean_ER": 0.302,
+   "frac_ER<0.3": 0.565,
+   "n": 131
+  }
+ },
+ "XAUUSD": {
+  "train": {
+   "mean_ER": 0.344,
+   "frac_ER<0.3": 0.506,
+   "n": 237
+  },
+  "validation": {
+   "mean_ER": 0.327,
+   "frac_ER<0.3": 0.528,
+   "n": 123
+  },
+  "test": {
+   "mean_ER": 0.318,
+   "frac_ER<0.3": 0.528,
+   "n": 125
+  }
+ }
+}

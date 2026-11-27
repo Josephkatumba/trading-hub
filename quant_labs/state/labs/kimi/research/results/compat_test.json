@@ -1,0 +1,224 @@
+{
+ "models": {
+  "london_sweep_reversal": {
+   "validate_source": "PASS",
+   "samples": [
+    {
+     "symbol": "EURUSD",
+     "asof": 1729063800.0,
+     "n_decisions": 1,
+     "agree": true
+    },
+    {
+     "symbol": "EURUSD",
+     "asof": 1730361600.0,
+     "n_decisions": 1,
+     "agree": true
+    },
+    {
+     "symbol": "EURUSD",
+     "asof": 1754106000.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "EURUSD",
+     "asof": 1761286800.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "XAUUSD",
+     "asof": 1729063800.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "XAUUSD",
+     "asof": 1745312400.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "XAUUSD",
+     "asof": 1761286800.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "BTCUSD",
+     "asof": 1730361600.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "BTCUSD",
+     "asof": 1751504400.0,
+     "n_decisions": 0,
+     "agree": true
+    }
+   ],
+   "bounded_worker": {
+    "status": "COMPLETE",
+    "wall_s": 0.15,
+    "resources": {
+     "enforced": true,
+     "memory_limit_mb": 192.0,
+     "peak_committed_mb": 14.62109375,
+     "cpu_cap_percent": 15.0,
+     "cpu_limit_seconds": 4.0,
+     "cpu_seconds_used": 0.109375,
+     "max_processes": 1
+    },
+    "decisions": 0
+   }
+  },
+  "vol_exhaustion_fade": {
+   "validate_source": "PASS",
+   "samples": [
+    {
+     "symbol": "EURUSD",
+     "asof": 1729063800.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "EURUSD",
+     "asof": 1730361600.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "EURUSD",
+     "asof": 1754106000.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "EURUSD",
+     "asof": 1761286800.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "XAUUSD",
+     "asof": 1729063800.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "XAUUSD",
+     "asof": 1745312400.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "XAUUSD",
+     "asof": 1761286800.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "BTCUSD",
+     "asof": 1730361600.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "BTCUSD",
+     "asof": 1751504400.0,
+     "n_decisions": 0,
+     "agree": true
+    }
+   ],
+   "bounded_worker": {
+    "status": "COMPLETE",
+    "wall_s": 0.14,
+    "resources": {
+     "enforced": true,
+     "memory_limit_mb": 192.0,
+     "peak_committed_mb": 15.19921875,
+     "cpu_cap_percent": 15.0,
+     "cpu_limit_seconds": 4.0,
+     "cpu_seconds_used": 0.078125,
+     "max_processes": 1
+    },
+    "decisions": 0
+   }
+  },
+  "opening_range_drive": {
+   "validate_source": "PASS",
+   "samples": [
+    {
+     "symbol": "EURUSD",
+     "asof": 1729063800.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "EURUSD",
+     "asof": 1730361600.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "EURUSD",
+     "asof": 1754106000.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "EURUSD",
+     "asof": 1761286800.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "XAUUSD",
+     "asof": 1729063800.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "XAUUSD",
+     "asof": 1745312400.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "XAUUSD",
+     "asof": 1761286800.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "BTCUSD",
+     "asof": 1730361600.0,
+     "n_decisions": 0,
+     "agree": true
+    },
+    {
+     "symbol": "BTCUSD",
+     "asof": 1751504400.0,
+     "n_decisions": 0,
+     "agree": true
+    }
+   ],
+   "bounded_worker": {
+    "status": "COMPLETE",
+    "wall_s": 0.14,
+    "resources": {
+     "enforced": true,
+     "memory_limit_mb": 192.0,
+     "peak_committed_mb": 15.296875,
+     "cpu_cap_percent": 15.0,
+     "cpu_limit_seconds": 4.0,
+     "cpu_seconds_used": 0.0625,
+     "max_processes": 1
+    },
+    "decisions": 0
+   }
+  }
+ },
+ "agreement_failures": 0
+}

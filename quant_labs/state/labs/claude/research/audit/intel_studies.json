@@ -1,0 +1,225 @@
+{
+ "gold": {
+  "G1_sign_agreement": {
+   "train": {
+    "n": 239,
+    "mean": 0.5397489539748954,
+    "ci95": [
+     0.47280334728033474,
+     0.602510460251046
+    ]
+   },
+   "validation": {
+    "n": 123,
+    "mean": 0.5121951219512195,
+    "ci95": [
+     0.42276422764227645,
+     0.6016260162601627
+    ]
+   },
+   "test (exposed)": {
+    "n": 126,
+    "mean": 0.4523809523809524,
+    "ci95": [
+     0.36507936507936506,
+     0.5396825396825397
+    ]
+   }
+  },
+  "G1_regression": {
+   "train": {
+    "n": 239,
+    "slope_N_on_L": 0.04102669992434366,
+    "correlation": 0.03992265707366996
+   },
+   "validation": {
+    "n": 123,
+    "slope_N_on_L": 0.09356898823869092,
+    "correlation": 0.08385280389600609
+   },
+   "test (exposed)": {
+    "n": 126,
+    "slope_N_on_L": 0.0030134641960710075,
+    "correlation": 0.00282515641203952
+   }
+  },
+  "G2_strong_london_followthrough_datr": {
+   "train": {
+    "n": 33,
+    "mean": 0.11697674507543601,
+    "ci95": [
+     -0.033502135574232116,
+     0.2527500187642349
+    ]
+   },
+   "validation": {
+    "n": 17,
+    "mean": 0.11983104894793038,
+    "ci95": [
+     -0.16974250665444993,
+     0.43685792115664673
+    ]
+   },
+   "test (exposed)": {
+    "n": 17,
+    "mean": 0.04483622781138325,
+    "ci95": [
+     -0.08158973951388064,
+     0.18107891972003243
+    ]
+   }
+  },
+  "G3_sweep_direction_followthrough_datr": {
+   "train": {
+    "n": 60,
+    "mean": -0.014304872091475955,
+    "ci95": [
+     -0.11834705685166905,
+     0.0868015300761079
+    ]
+   },
+   "validation": {
+    "n": 46,
+    "mean": 0.0362307243562878,
+    "ci95": [
+     -0.09031536646889284,
+     0.16650823656274233
+    ]
+   },
+   "test (exposed)": {
+    "n": 29,
+    "mean": 0.11241734735788551,
+    "ci95": [
+     0.014548073080268082,
+     0.21123607032778524
+    ]
+   }
+  }
+ },
+ "bitcoin": {
+  "B1_volatility_clustering": {
+   "train": {
+    "n": 8403,
+    "lag1": 0.2652958789421783,
+    "lag24": 0.15015103977632088
+   },
+   "validation": {
+    "n": 4352,
+    "lag1": 0.2745884684224724,
+    "lag24": 0.16420573292824758
+   },
+   "test (exposed)": {
+    "n": 4371,
+    "lag1": 0.23576693903947282,
+    "lag24": 0.15125487836141915
+   }
+  },
+  "B2_mean_h1_range_pct": {
+   "weekend": {
+    "train": {
+     "n": 2386,
+     "mean": 0.44177458127712205,
+     "ci95": [
+      0.4272017703016127,
+      0.45583538938526064
+     ]
+    },
+    "validation": {
+     "n": 1237,
+     "mean": 0.537633505489521,
+     "ci95": [
+      0.5127376489585522,
+      0.5622519552530139
+     ]
+    },
+    "test (exposed)": {
+     "n": 1234,
+     "mean": 0.38690923820263484,
+     "ci95": [
+      0.3701827426549327,
+      0.405120092603262
+     ]
+    }
+   },
+   "weekday_us_cash": {
+    "train": {
+     "n": 1506,
+     "mean": 0.9656559342209697,
+     "ci95": [
+      0.9354261834973878,
+      0.997349054124238
+     ]
+    },
+    "validation": {
+     "n": 780,
+     "mean": 1.0972426637294408,
+     "ci95": [
+      1.0539760934865439,
+      1.1407500933883081
+     ]
+    },
+    "test (exposed)": {
+     "n": 786,
+     "mean": 0.7903620711390544,
+     "ci95": [
+      0.7592047969786959,
+      0.8238015572788608
+     ]
+    }
+   },
+   "weekday_other": {
+    "train": {
+     "n": 4516,
+     "mean": 0.6674749017468905,
+     "ci95": [
+      0.6530047441395258,
+      0.6826390768853092
+     ]
+    },
+    "validation": {
+     "n": 2339,
+     "mean": 0.7410752654215619,
+     "ci95": [
+      0.720968022766519,
+      0.7620389060023993
+     ]
+    },
+    "test (exposed)": {
+     "n": 2356,
+     "mean": 0.6006052936358482,
+     "ci95": [
+      0.5839052947888325,
+      0.6173609471787241
+     ]
+    }
+   }
+  },
+  "B3_post_shock_next4h_in_shock_direction_atr": {
+   "train": {
+    "n": 307,
+    "mean": -0.048220227251680965,
+    "ci95": [
+     -0.22221309016063123,
+     0.12895634386648075
+    ]
+   },
+   "validation": {
+    "n": 161,
+    "mean": 0.11317433502261223,
+    "ci95": [
+     -0.07646939159840477,
+     0.30993471678957524
+    ]
+   },
+   "test (exposed)": {
+    "n": 174,
+    "mean": -0.08062569570718484,
+    "ci95": [
+     -0.29014585268939797,
+     0.13725259054012368
+    ]
+   }
+  }
+ },
+ "rules": "Overnight statistical studies (rules fixed before running; descriptive, not strategies).\n\nGOLD (XAUUSD M15, shared snapshot, DST-aware sessions):\n  L = London move: close at the New York 09:30 open minus open at London 08:00, in daily ATR (14, broker days).\n  N = New York move: close of the candle ending at 16:00 New York minus close at the New York open, in daily ATR.\n  G1 sign agreement P(sign N = sign L) and the slope of N on L.\n  G2 strong London (|L| >= 0.5): mean N in the direction of L (continuation > 0, reversal < 0).\n  G3 London sweep: London traded beyond the Asian (00-06 UTC) high or low and the price at the New York open is\n     back inside the Asian range: mean N in the sweep direction (positive = continuation of the sweep, negative = reversal).\nBITCOIN (BTCUSD H1):\n  B1 volatility clustering: correlation of |r_t| with |r_t-1| and |r_t-24|.\n  B2 weekend vs weekday mean H1 range; US cash session (09:30-16:00 NY, weekdays) vs other weekday hours.\n  B3 post-shock: after an H1 candle whose range >= 3x the median same-hour range of the prior 20 days, mean return of the\n     next 4 H1 candles in the shock direction, in H1 ATR(24) (positive = continuation, negative = reversal).\nEach statistic is reported per split (train / validation / test-exposed) with a bootstrap 95% CI.\n"
+}

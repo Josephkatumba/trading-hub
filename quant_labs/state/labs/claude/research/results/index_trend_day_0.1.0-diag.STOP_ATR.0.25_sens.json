@@ -1,0 +1,219 @@
+{
+ "model": "index_trend_day",
+ "version": "0.1.0-diag.STOP_ATR.0.25",
+ "source_sha256": "103200642b3d38e379ce3fe603e95056f498278f1aa2dd2512376c94514edfdc",
+ "dataset": "bf130602dca4f955f64160bc9b85f0bc4246195f9685afbde91d1856c2c62cd3",
+ "evaluator_version": "tradeden-shared-eval-1.0.0",
+ "symbols": [
+  "NAS100",
+  "US500",
+  "GER40"
+ ],
+ "splits_examined": [
+  "train",
+  "validation"
+ ],
+ "intents": 172,
+ "replay": {
+  "raw_decisions": 172,
+  "live_gate_rejections": {}
+ },
+ "evaluator_rejections": {},
+ "periods": {
+  "train": {
+   "normal": {
+    "attempted": 106,
+    "resolved": 103,
+    "unknown": 3,
+    "statuses": {
+     "SL": 43,
+     "TP": 13,
+     "TIME_EXIT": 47,
+     "INCOMPLETE": 3
+    },
+    "win_rate": 0.5242718446601942,
+    "net_expectancy_r": 0.0833400913379999,
+    "total_r": 8.58402940781399,
+    "profit_factor": 1.1861670051391064,
+    "max_realized_drawdown_r": 6.751813684470791,
+    "longest_losing_streak": 6,
+    "planned_rr_mean": 2.1995240676175865,
+    "realized_win_loss_ratio": 1.0763367268854855,
+    "opportunities_per_month": 9.191951566951568,
+    "weekly_bootstrap_expectancy_ci95": [
+     -0.08798559429643872,
+     0.25543468757600507
+    ],
+    "weekly_sign_flip_p": 0.179
+   },
+   "stress": {
+    "attempted": 106,
+    "resolved": 103,
+    "unknown": 3,
+    "statuses": {
+     "SL": 43,
+     "TP": 13,
+     "TIME_EXIT": 47,
+     "INCOMPLETE": 3
+    },
+    "win_rate": 0.5242718446601942,
+    "net_expectancy_r": 0.06864133889152077,
+    "total_r": 7.07005790582664,
+    "profit_factor": 1.1511723396058495,
+    "max_realized_drawdown_r": 6.8979456255383,
+    "longest_losing_streak": 6,
+    "planned_rr_mean": 2.1995240676175865,
+    "realized_win_loss_ratio": 1.0445823081608636,
+    "opportunities_per_month": 9.191951566951568,
+    "weekly_bootstrap_expectancy_ci95": [
+     -0.10252391496169702,
+     0.23897789827351665
+    ],
+    "weekly_sign_flip_p": 0.2255
+   }
+  },
+  "validation": {
+   "normal": {
+    "attempted": 66,
+    "resolved": 66,
+    "unknown": 0,
+    "statuses": {
+     "TIME_EXIT": 29,
+     "SL": 26,
+     "TP": 11
+    },
+    "win_rate": 0.48484848484848486,
+    "net_expectancy_r": 0.14850958366658626,
+    "total_r": 9.801632521994692,
+    "profit_factor": 1.345428384130457,
+    "max_realized_drawdown_r": 7.82076934856305,
+    "longest_losing_streak": 5,
+    "planned_rr_mean": 2.1996291817753817,
+    "realized_win_loss_ratio": 1.4295176581386106,
+    "opportunities_per_month": 11.037774725274726,
+    "weekly_bootstrap_expectancy_ci95": [
+     -0.19072393524612083,
+     0.4755908875295461
+    ],
+    "weekly_sign_flip_p": 0.2075
+   },
+   "stress": {
+    "attempted": 66,
+    "resolved": 66,
+    "unknown": 0,
+    "statuses": {
+     "TIME_EXIT": 29,
+     "SL": 26,
+     "TP": 11
+    },
+    "win_rate": 0.4696969696969697,
+    "net_expectancy_r": 0.1346270861286708,
+    "total_r": 8.885387684492272,
+    "profit_factor": 1.3077847533739517,
+    "max_realized_drawdown_r": 8.054961151183782,
+    "longest_losing_streak": 6,
+    "planned_rr_mean": 2.1996291817753817,
+    "realized_win_loss_ratio": 1.4765311731641393,
+    "opportunities_per_month": 11.037774725274726,
+    "weekly_bootstrap_expectancy_ci95": [
+     -0.20456584102794784,
+     0.4601720372826226
+    ],
+    "weekly_sign_flip_p": 0.227
+   }
+  }
+ },
+ "by_symbol": {
+  "GER40": {
+   "train": {
+    "n": 37,
+    "unknown": 0,
+    "win": 0.4864864864864865,
+    "exp": 0.2280671119913735,
+    "stress_exp": 0.22058705570524645,
+    "pf": 1.5019502604695156,
+    "dd": 4.9326055150635995
+   },
+   "validation": {
+    "n": 14,
+    "unknown": 0,
+    "win": 0.42857142857142855,
+    "exp": 0.2442930047119449,
+    "stress_exp": 0.2369660579468314,
+    "pf": 1.4818272265555443,
+    "dd": 2.066107136204676
+   },
+   "test": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   }
+  },
+  "NAS100": {
+   "train": {
+    "n": 36,
+    "unknown": 1,
+    "win": 0.6111111111111112,
+    "exp": 0.17740437150393795,
+    "stress_exp": 0.16344443600874797,
+    "pf": 1.4887952207065691,
+    "dd": 3.899190885405295
+   },
+   "validation": {
+    "n": 30,
+    "unknown": 0,
+    "win": 0.5666666666666667,
+    "exp": 0.07125615067442227,
+    "stress_exp": 0.058833263437839865,
+    "pf": 1.1701869801572844,
+    "dd": 4.598857673898368
+   },
+   "test": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   }
+  },
+  "US500": {
+   "train": {
+    "n": 30,
+    "unknown": 2,
+    "win": 0.4666666666666667,
+    "exp": -0.20803370366695317,
+    "stress_exp": -0.23252209505274685,
+    "pf": 0.6155115517546011,
+    "dd": 7.827645546271297
+   },
+   "validation": {
+    "n": 22,
+    "unknown": 0,
+    "win": 0.4090909090909091,
+    "exp": 0.19290208799067254,
+    "stress_exp": 0.17285749864097438,
+    "pf": 1.486885923764142,
+    "dd": 4.378126603460707
+   },
+   "test": {
+    "n": 0,
+    "unknown": 0,
+    "win": null,
+    "exp": null,
+    "stress_exp": null,
+    "pf": null,
+    "dd": null
+   }
+  }
+ },
+ "seconds": {
+  "replay": 1.4,
+  "evaluate": 2.1
+ }
+}

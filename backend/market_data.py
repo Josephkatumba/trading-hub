@@ -46,7 +46,7 @@ def _field(rate: Any, name: str) -> Any:
     return rate.get(name) if isinstance(rate, Mapping) else None
 
 
-def bars_from_rates(rates: Iterable[Any]) -> list[dict[str, Any]]:
+def bars_from_rates(rates: Iterable[Any], include_spread: bool = False) -> list[dict[str, Any]]:
     """MT5 rates -> bars; tick_volume is kept only when the broker provides it."""
     bars = []
     for rate in rates:
@@ -54,6 +54,8 @@ def bars_from_rates(rates: Iterable[Any]) -> list[dict[str, Any]]:
         tick_volume = _field(rate, "tick_volume")
         if tick_volume is not None:
             bar["tick_volume"] = int(tick_volume)
+        if include_spread and _field(rate, "spread") is not None:
+            bar["spread_points"] = int(_field(rate, "spread"))
         bars.append(bar)
     return bars
 
@@ -63,7 +65,8 @@ def ohlc_rows(bars: Iterable[Mapping[str, Any]]) -> list[dict[str, float]]:
 
 
 def fetch_timeframes(mt5: Any, symbol: str, plan: Mapping[str, int],
-                     fetched: Mapping[str, list[dict[str, Any]]] | None = None
+                     fetched: Mapping[str, list[dict[str, Any]]] | None = None,
+                     include_spread: bool = False
                      ) -> tuple[dict[str, list[dict[str, Any]]], dict[str, str]]:
     """Bars per planned timeframe for one symbol, and why any timeframe is unavailable.
 
@@ -91,7 +94,7 @@ def fetch_timeframes(mt5: Any, symbol: str, plan: Mapping[str, int],
             except Exception:
                 reason = "FETCH_FAILED"
         if reason is None:
-            bars[timeframe] = bars_from_rates(rates)
+            bars[timeframe] = bars_from_rates(rates, include_spread=include_spread)
         elif previous is not None:
             bars[timeframe] = previous
         else:

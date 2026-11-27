@@ -1,0 +1,158 @@
+{
+  "audit_date_eat": "2026-10-23",
+  "observed_at_utc": "2026-10-22T23:52:52.252585+00:00",
+  "health": {
+    "ok": true,
+    "mt5_connected": true,
+    "uptime_started": "2026-10-19T21:44:24.868848+00:00",
+    "execution_enabled": false
+  },
+  "lab": {
+    "id": "codex",
+    "name": "Codex Quant Lab",
+    "status": "READY",
+    "models": [
+      {
+        "key": "compression_escape",
+        "version": "0.1.0",
+        "status": "EXPERIMENTAL",
+        "scan_enabled": 1,
+        "alert_enabled": 1,
+        "sha": "e1544089d460ed90050b1db223143581cb907963b9f3446f20fb1023690d54f9",
+        "name": "Compression Escape",
+        "classification": "EXPERIMENTAL",
+        "authorship": {
+          "lab": "codex",
+          "session_reference": "Codex current task 01a155be-ad08-7922-bb69-2762009efd16",
+          "statement": "Created by this actual Codex session; not attributed to Claude or Kimi."
+        }
+      }
+    ],
+    "performance": {
+      "detected": 0,
+      "confirmed": 0,
+      "resolved": 0,
+      "unresolved": 0,
+      "win_rate": null,
+      "net_paper_r": null,
+      "net_expectancy_r": null,
+      "profit_factor": null,
+      "max_realized_paper_drawdown_r": null,
+      "actual_realized_r": null,
+      "basis": "simulated net paper outcomes; no broker fills; unknown paths excluded and counted separately"
+    }
+  },
+  "runtime": {
+    "enabled": true,
+    "running": true,
+    "last_processed": 1792713170.09024,
+    "last_error": null,
+    "telegram_mode": "DRY_RUN",
+    "outbound_activation_approved": false
+  },
+  "retained_codex_runs": {
+    "COMPLETE": 269
+  },
+  "retained_run_decisions": 0,
+  "last_codex_run_utc": "2026-10-22T23:45:35.292318+00:00",
+  "codex_signals_total": 0,
+  "latest_inputs": {
+    "XAUUSD": {
+      "asof": 1792713165.684415,
+      "source": "MT5_SHARED_COLLECTOR",
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": 1792712723.154165
+    },
+    "BTCUSD": {
+      "asof": 1792713165.706204,
+      "source": "MT5_SHARED_COLLECTOR",
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": 1792712723.196805
+    },
+    "ETHUSD": {
+      "asof": 1792713165.728097,
+      "source": "MT5_SHARED_COLLECTOR",
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": 1792712723.250203
+    },
+    "EURUSD": {
+      "asof": 1792713165.761744,
+      "source": "MT5_SHARED_COLLECTOR",
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": 1792712723.295571
+    },
+    "GBPUSD": {
+      "asof": 1792713165.786164,
+      "source": "MT5_SHARED_COLLECTOR",
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": 1792712723.342592
+    },
+    "GBPJPY": {
+      "asof": 1792713165.808796,
+      "source": "MT5_SHARED_COLLECTOR",
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": 1792712724.588895
+    },
+    "USDJPY": {
+      "asof": 1792713165.831153,
+      "source": "MT5_SHARED_COLLECTOR",
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": 1792712114.359825
+    },
+    "NAS100": {
+      "asof": 1792713165.854698,
+      "source": "MT5_SHARED_COLLECTOR",
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": 1792712724.681343
+    },
+    "US500": {
+      "asof": 1792713165.873764,
+      "source": "MT5_SHARED_COLLECTOR",
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": 1792712724.736028
+    },
+    "GER40": {
+      "asof": 1792713165.896275,
+      "source": "MT5_SHARED_COLLECTOR",
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": 1792712724.776929
+    },
+    "USDCHF": {
+      "asof": 1792713165.915748,
+      "source": "MT5_SHARED_COLLECTOR",
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": null
+    },
+    "USDCAD": {
+      "asof": 1792713165.940715,
+      "source": "MT5_SHARED_COLLECTOR",
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": null
+    },
+    "AUDUSD": {
+      "asof": 1792713165.96234,
+      "source": "MT5_SHARED_COLLECTOR",
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": 1792712114.566875
+    },
+    "NZDUSD": {
+      "asof": 1792713165.986327,
+      "source": "MT5_SHARED_COLLECTOR",
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": null
+    },
+    "XAGUSD": {
+      "asof": 1792713166.008952,
+      "source": "MT5_SHARED_COLLECTOR",
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": null
+    },
+    "EURJPY": {
+      "asof": 1792713166.03147,
+      "source": "MT5_SHARED_COLLECTOR",
+      "cycle_status": "COMPLETE",
+      "last_model_run_at": null
+    }
+  },
+  "audit_mutations": "Only new audit documents/evidence; no model, registry, permission or runtime changes."
+}

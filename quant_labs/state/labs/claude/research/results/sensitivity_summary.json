@@ -1,0 +1,200 @@
+[
+ {
+  "model": "index_trend_day",
+  "param": "BASE",
+  "value": "-",
+  "train_n": 103,
+  "train_exp": 0.15862253945489926,
+  "val_n": 66,
+  "val_exp": 0.11726097507622382
+ },
+ {
+  "model": "index_trend_day",
+  "param": "DECISION_DELAY",
+  "value": 3600,
+  "train_n": 72,
+  "train_exp": -0.03415682085506108,
+  "val_n": 52,
+  "val_exp": -0.11666017531997284
+ },
+ {
+  "model": "index_trend_day",
+  "param": "DECISION_DELAY",
+  "value": 5400,
+  "train_n": 100,
+  "train_exp": -0.13182132032582267,
+  "val_n": 58,
+  "val_exp": 0.0048337613370432134
+ },
+ {
+  "model": "index_trend_day",
+  "param": "DECISION_DELAY",
+  "value": 9000,
+  "train_n": 116,
+  "train_exp": 0.020325763857736566,
+  "val_n": 80,
+  "val_exp": 0.135775169295175
+ },
+ {
+  "model": "index_trend_day",
+  "param": "DECISION_DELAY",
+  "value": 10800,
+  "train_n": 124,
+  "train_exp": 0.15733647508388732,
+  "val_n": 90,
+  "val_exp": 0.027673141243443763
+ },
+ {
+  "model": "index_trend_day",
+  "param": "MOVE_ATR",
+  "value": 0.35,
+  "train_n": 155,
+  "train_exp": 0.10477334943286547,
+  "val_n": 99,
+  "val_exp": 0.21266954879159336
+ },
+ {
+  "model": "index_trend_day",
+  "param": "MOVE_ATR",
+  "value": 0.55,
+  "train_n": 66,
+  "train_exp": 0.17119737677952773,
+  "val_n": 42,
+  "val_exp": 0.14535992902928868
+ },
+ {
+  "model": "index_trend_day",
+  "param": "EXTREME_FRAC",
+  "value": 0.65,
+  "train_n": 119,
+  "train_exp": 0.1424323657061851,
+  "val_n": 78,
+  "val_exp": 0.12088577332579878
+ },
+ {
+  "model": "index_trend_day",
+  "param": "EXTREME_FRAC",
+  "value": 0.85,
+  "train_n": 73,
+  "train_exp": 0.07900861860054911,
+  "val_n": 48,
+  "val_exp": 0.2135882055163386
+ },
+ {
+  "model": "index_trend_day",
+  "param": "STOP_ATR",
+  "value": 0.25,
+  "train_n": 103,
+  "train_exp": 0.0833400913379999,
+  "val_n": 66,
+  "val_exp": 0.14850958366658626
+ },
+ {
+  "model": "index_trend_day",
+  "param": "STOP_ATR",
+  "value": 0.4,
+  "train_n": 103,
+  "train_exp": 0.14880809354399252,
+  "val_n": 66,
+  "val_exp": 0.06686409933921784
+ },
+ {
+  "model": "index_trend_day",
+  "param": "TARGET_R",
+  "value": 2.0,
+  "train_n": 0,
+  "train_exp": null,
+  "val_n": 0,
+  "val_exp": null
+ },
+ {
+  "model": "index_trend_day",
+  "param": "TARGET_R",
+  "value": 3.0,
+  "train_n": 103,
+  "train_exp": 0.160091287517824,
+  "val_n": 66,
+  "val_exp": 0.03520866002474835
+ },
+ {
+  "model": "crypto_trend_breakout",
+  "param": "BASE",
+  "value": "-",
+  "train_n": 40,
+  "train_exp": 0.20470431256835808,
+  "val_n": 12,
+  "val_exp": 0.3699479331589513
+ },
+ {
+  "model": "crypto_trend_breakout",
+  "param": "CHANNEL",
+  "value": 60,
+  "train_n": 49,
+  "train_exp": 0.03323079571409332,
+  "val_n": 18,
+  "val_exp": 0.028697913323724226
+ },
+ {
+  "model": "crypto_trend_breakout",
+  "param": "CHANNEL",
+  "value": 180,
+  "train_n": 35,
+  "train_exp": 0.018377271026914666,
+  "val_n": 11,
+  "val_exp": 0.4954467745893975
+ },
+ {
+  "model": "crypto_trend_breakout",
+  "param": "BASELINE",
+  "value": 200,
+  "train_n": 42,
+  "train_exp": 0.06832682177577436,
+  "val_n": 16,
+  "val_exp": 0.06674970117733461
+ },
+ {
+  "model": "crypto_trend_breakout",
+  "param": "BASELINE",
+  "value": 400,
+  "train_n": 38,
+  "train_exp": 0.17979067877216462,
+  "val_n": 11,
+  "val_exp": 0.137364275237006
+ },
+ {
+  "model": "crypto_trend_breakout",
+  "param": "STOP_ATR",
+  "value": 2.0,
+  "train_n": 44,
+  "train_exp": 0.14026463804873346,
+  "val_n": 13,
+  "val_exp": 0.4008327113530354
+ },
+ {
+  "model": "crypto_trend_breakout",
+  "param": "STOP_ATR",
+  "value": 4.0,
+  "train_n": 36,
+  "train_exp": 0.18426555750599738,
+  "val_n": 11,
+  "val_exp": 0.35469210607053925
+ },
+ {
+  "model": "crypto_trend_breakout",
+  "param": "TARGET_R",
+  "value": 2.0,
+  "train_n": 14,
+  "train_exp": 0.1637793279873295,
+  "val_n": 1,
+  "val_exp": 2.0000000000000027
+ },
+ {
+  "model": "crypto_trend_breakout",
+  "param": "TARGET_R",
+  "value": 4.0,
+  "train_n": 38,
+  "train_exp": 0.2174230530970369,
+  "val_n": 12,
+  "val_exp": 0.3428198678333203
+ }
+]

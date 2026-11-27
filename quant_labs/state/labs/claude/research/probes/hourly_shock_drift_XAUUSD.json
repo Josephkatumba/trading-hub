@@ -1,0 +1,22 @@
+{
+  "status": "COMPLETE",
+  "lab": "claude",
+  "source_sha256": "edbd63ab4980c826058c2550214b15d091925a621aaf9b4e355b992e62f2d7d1",
+  "source": "MT5_SHARED_CACHE_PROBE",
+  "input_sha256": "b2400c869ac6bdd7d5fbfe7e9154d904cfda7f7702094eee095326ea65cee28c",
+  "asof": 1792451012.497738,
+  "symbol": "XAUUSD",
+  "resources": {
+    "enforced": true,
+    "memory_limit_mb": 192.0,
+    "peak_committed_mb": 13.7265625,
+    "cpu_cap_percent": 15.0,
+    "cpu_limit_seconds": 4.0,
+    "cpu_seconds_used": 0.109375,
+    "max_processes": 1
+  },
+  "decisions": [],
+  "scope": "read-only real-data capability probe, not live model admission or a committed signal",
+  "live_writes": 0,
+  "outbound_calls": 0
+}

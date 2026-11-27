@@ -1,0 +1,67 @@
+"""Claude-authored experimental model: Gold Session Drift (pre-registered 2026-10-23, commit 862075e, H5).
+
+Intraday momentum for XAUUSD: at the close of the M15 candle 60 minutes after the New York 09:30
+open, if gold has moved >= 0.5 daily ATR from the London 08:00 open price and closes in the outer 25%
+of the range since the London open, follow the move. Stop 0.35 daily ATR; 2.2R; exit 20:45 UTC.
+BASELINE = True gives the pre-registered baseline B5: same timing and risk, always LONG, no condition.
+Pure functions only.
+"""
+
+BASELINE = False
+MOVE_ATR = 0.5
+EXTREME_FRAC = 0.75
+STOP_ATR = 0.35
+TARGET_R = 2.2
+
+@@HELPERS@@
+
+def detect(snapshot):
+    if snapshot['symbol'] != 'XAUUSD':
+        return []
+    bars = snapshot['frames'].get('M15', ())
+    h4 = snapshot['frames'].get('H4', ())
+    if len(bars) < 80 or len(h4) < 100:
+        return []
+    now = bars[-1]['utc'] + 900
+    day = now // 86400
+    if weekday(day) in (0, 6):
+        return []
+    ny_open = day * 86400 + 9 * 3600 + 1800 - utc_offset('US', now)
+    if now != ny_open + 3600:
+        return []
+    lo_open = day * 86400 + 8 * 3600 - utc_offset('UK', now)
+    session = [b for b in bars if lo_open <= b['utc'] < now]
+    if not session or session[0]['utc'] != lo_open or len(session) != (now - lo_open) // 900:
+        return []
+    days = [d for d in broker_days(h4, 14400, lo_open) if d['bars'] >= 4]
+    if len(days) < 15:
+        return []
+    trs = [max(d['high'] - d['low'], abs(d['high'] - p['close']), abs(d['low'] - p['close'])) for p, d in zip(days[-15:-1], days[-14:])]
+    atr_d = sum(trs) / len(trs)
+    atr = atr_of(bars, 14)
+    if atr_d <= 0 or atr <= 0:
+        return []
+    move = session[-1]['close'] - session[0]['open']
+    hi = max(b['high'] for b in session)
+    lo = min(b['low'] for b in session)
+    location = (session[-1]['close'] - lo) / (hi - lo) if hi > lo else 0.5
+    if BASELINE:
+        direction = 'LONG'
+    elif move >= MOVE_ATR * atr_d and location >= EXTREME_FRAC:
+        direction = 'LONG'
+    elif -move >= MOVE_ATR * atr_d and location <= 1 - EXTREME_FRAC:
+        direction = 'SHORT'
+    else:
+        return []
+    horizon = seconds_to_cutoff('XAUUSD', now)
+    if horizon < 3600 or horizon > 12 * 3600:
+        return []
+    quote = snapshot['quote']
+    long = direction == 'LONG'
+    entry = quote['ask'] if long else quote['bid']
+    risk = STOP_ATR * atr_d
+    stop = entry - risk if long else entry + risk
+    target = entry + TARGET_R * risk if long else entry - TARGET_R * risk
+    why = 'Baseline B5: always long at the same time and risk.' if BASELINE else \
+        'Gold moved %.2f daily ATR from the London open into the first New York hour, closing in the outer quarter of its range; following the session drift to 20:45 UTC.' % (abs(move) / atr_d)
+    return [{'direction': direction, 'stop_loss': stop, 'take_profit': target, 'horizon_seconds': horizon, 'atr': atr, 'rationale': why}]

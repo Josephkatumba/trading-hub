@@ -1,0 +1,72 @@
+const esc=value=>String(value??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=(value,digits=2)=>value==null?'—':Number(value).toFixed(digits);
+const date=value=>value==null?'—':new Date(value*1000).toISOString().replace('T',' ').replace('.000Z',' UTC');
+export const localLabsAvailable=hostname=>['127.0.0.1','localhost','[::1]','::1'].includes(hostname);
+export function renderQuantLabs(){return `<section class="ql-workspace"><div class="kicker">PRIVATE RESEARCH</div><h1>Quant Labs</h1><p class="sub">Independent experimental models · paper outcomes · Telegram only for CEO-approved paper candidates</p><div id="quantLabsData" aria-live="polite">Connecting to the local research engine…</div></section>`;}
+const pct=v=>v==null?'—':num(v*100,1)+'%';
+const sign=v=>v==null?'—':(v>=0?'+':'')+num(v);
+const small=x=>x&&x.insufficient_sample?' <span class="ql-tag" title="Fewer than 30 trades: cannot separate skill from luck">⚠ small sample</span>':'';
+const split=h=>h?`${sign(h.net_expectancy_r)}R <small>n=${esc(h.n)}</small>${small(h)}`:'—';
+export function leaderboardContent(board){
+ if(!board||!(board.rows||[]).length)return '';
+ const rows=board.rows.map(r=>{const h=r.historical||{},f=r.forward||{};return `<tr><td>${esc(r.researcher)}</td><td>${esc(r.strategy)} <small>v${esc(r.version)}</small>${r.family?`<details><summary>Correlated family</summary><p>${esc(r.family)}</p></details>`:''}${r.historical_source?`<p class="sub">${esc(r.historical_source)}</p>`:''}</td><td>${esc((r.instruments||[]).join(', '))}<br><small>${esc(r.timeframe)}</small></td><td><b>${esc(r.category)}</b> ${esc(r.category_label)}<br><small>${esc(r.status)} · Telegram ${r.telegram_enabled?'on':'off'}</small></td><td>${split(h.train)}</td><td>${split(h.validation)}</td><td>${split(h.test)}<br><small>stress ${sign(h.test?.stress_expectancy_r)}R</small>${r.test_by_instrument?`<details><summary>By instrument</summary><p>${Object.entries(r.test_by_instrument).map(([k,v])=>`${esc(k)} ${sign(v.net_expectancy_r)}R (n=${esc(v.n)})`).join(' · ')}</p></details>`:''}</td><td>${esc(f.confirmed)} / ${esc(f.resolved)}${small(f)}<br><small>WR ${pct(f.win_rate)} · avg ${sign(f.average_r)}R · net ${sign(f.net_paper_r)}R · DD ${num(f.max_realized_paper_drawdown_r)}R · costs ${num(f.estimated_costs_r)}R</small></td><td>${date(r.last_successful_evaluation)}<br><small>hist ${num(r.frequency?.historical_trades_per_month,1)}/mo · fwd ${num(r.frequency?.forward_signals_per_week,1)}/wk</small>${r.forward_by_regime&&Object.keys(r.forward_by_regime).length?`<details><summary>Forward by entry regime</summary><p>${Object.entries(r.forward_by_regime).map(([k,v])=>`${esc(k)}: ${esc(v.resolved)} resolved · avg ${sign(v.average_r)}R`).join('<br>')}</p></details>`:''}</td></tr>`;}).join('');
+ return `<section class="panel ql-section"><h2>Unified Quant Labs leaderboard</h2><p class="sub">Categories: A promising · B inconclusive · C underperforming · D rejected. ${esc(board.historical_note)}</p><div class="ql-table"><table><thead><tr><th>Researcher</th><th>Strategy</th><th>Instruments</th><th>Category / status</th><th>Train</th><th>Validation</th><th>Test</th><th>Forward signals / resolved</th><th>Last evaluation / frequency</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+}
+export function intelContent(i){
+ if(!i||!i.symbol)return '';
+ const st=i.structure||{},rg=i.regime||{},sc=i.scenarios||{},sess=i.sessions||{};
+ const lvl=l=>l?`${esc(l.name)} ${num(l.price)} <small>(${esc(l.event)} · ${esc(l.rule)})</small>`:'none';
+ const unavailable=Object.entries({...(i.macro||{}),...(i.crypto||{})}).filter(([k,v])=>v&&v.state==='UNAVAILABLE').map(([k,v])=>`<li><b>${esc(k)}</b>: ${esc(v.reason)}</li>`).join('');
+ const explain=(i.explanations||[]).map(e=>`<details><summary>${esc(e.conclusion)} <small>rules ${esc((e.rules||[]).join(', '))}</small></summary><p class="sub">Data to ${esc(e.data_timestamp)}${(e.missing||[]).length?' · missing: '+esc(e.missing.join('; ')):''}${(e.conflicts||[]).length?' · conflicts: '+esc(e.conflicts.join('; ')):''}</p><pre>${esc(JSON.stringify(e.observations,null,1))}</pre></details>`).join('');
+ return `<article class="panel"><h2>${esc(i.symbol)} intelligence <small>${esc(i.name)}</small></h2>${i.stale?'<p class="ql-notice"><b>STALE DATA</b> · conclusions withheld from trading use.</p>':''}
+ <p>Price ${num(i.price)} <small>(${esc(i.price_source)}; data to ${esc(i.data_timestamp)})</small></p>
+ <dl class="ql-stats"><div><dt>Structure D1 / H4 / H1</dt><dd>${esc(st.D1?.state)} / ${esc(st.H4?.state)} / ${esc(st.H1?.state)}</dd></div><div><dt>Regime</dt><dd>${esc(rg.trend?.state)} · vol ${esc(rg.volatility?.state)}</dd></div><div><dt>Range</dt><dd>${esc(rg.expansion?.state)}${rg.shock?.state==='SHOCK'?' · SHOCK':''}</dd></div><div><dt>Session</dt><dd>${esc(sess.current)}</dd></div></dl>
+ <p>Above: ${lvl(i.nearest_resistance)}<br>Below: ${lvl(i.nearest_support)}</p>
+ <h3>Scenarios <small>conditions, not trades</small></h3><ul><li>Bullish (${esc(sc.bullish?.rule)}): ${esc(sc.bullish?.requires)}${sc.bullish?.currently_met?' · <b>met</b>':''}</li><li>Bearish (${esc(sc.bearish?.rule)}): ${esc(sc.bearish?.requires)}${sc.bearish?.currently_met?' · <b>met</b>':''}</li><li>Caution (${esc(sc.neutral?.rule)}): ${esc((sc.neutral?.reasons||[]).join('; ')||'no avoid-conditions active')}</li></ul>
+ ${i.strategy_readiness?`<h3>What our strategies are waiting for</h3><p>${esc(i.strategy_readiness.summary)}</p><ul>${(i.strategy_readiness.items||[]).map(x=>`<li><b>${esc(x.strategy)}</b> <small>(${esc(x.category)} · ${esc(x.state)})</small>: ${esc(x.statement||'')}</li>`).join('')}</ul>`:''}
+ <details><summary>Explainability: observations, rules, timestamps</summary>${explain}</details>
+ <details><summary>Unavailable data (not estimated)</summary><ul>${unavailable||'<li>none</li>'}</ul></details>
+ <p class="sub">${esc(i.not_a_signal)}</p></article>`;
+}
+export function centerContent(c){
+ if(!c||!c.categories)return '';
+ const ts=v=>v==null?'never':date(v);
+ const card=(k,v)=>`<article class="panel"><h3>${esc(v.label)}</h3><p><span class="ql-tag">${esc(v.mode)}</span> Approval ${v.approved?'recorded':'<b>not approved</b>'} · flag ${v.flag?'on':'off'}${v.preview_generation===false?' · preview generation off':''}</p>
+ ${v.strategies?`<details><summary>${esc(v.strategies.length)} strategies</summary><p>${v.strategies.map(esc).join('<br>')}</p></details>`:''}
+ ${v.schedule?`<p class="sub">${esc(v.schedule)}</p><p>Next: ${(v.next||[]).map(n=>`${esc(n.briefing)} ${ts(n.at)}`).join(' · ')}</p>`:''}
+ <p>Last successful delivery: ${ts(v.last_sent)} · failures 24h: ${esc(v.failures_24h||0)}${v.previews!=null?` · previews: ${esc(v.previews)}`:''}</p>
+ ${v.latest?`<details><summary>Latest ${esc(v.latest.state)} · ${esc(v.latest.id)}</summary><pre>${esc(v.latest.message)}</pre></details>`:''}
+ ${(v.skipped_7d||[]).length?`<details><summary>Skipped briefings (7 days): ${esc(v.skipped_7d.length)}</summary><p>${v.skipped_7d.map(x=>esc(x.id+' · '+x.state)).join('<br>')}</p></details>`:''}
+ <details><summary>Controls (owner CLI, recorded approval)</summary><p><code>${esc(v.controls?.approve)}</code></p><p><code>${esc(v.controls?.revoke)}</code></p><p>${esc(v.controls?.flag)}</p></details></article>`;
+ const intel=Object.entries(c.intelligence||{}).map(([k,v])=>`${esc(k)}: ${v.status?esc(v.status):(v.stale?'<b>STALE</b>':'current')+' · data to '+esc(v.data_timestamp)+' · '+esc(v.regime)+' / vol '+esc(v.volatility)}`).join('<br>');
+ return `<section class="ql-section"><h2>Telegram Intelligence Center</h2><p class="sub">${esc(c.note)} Broker execution ${esc(c.broker_execution)}.</p>
+ <dl class="ql-stats"><div><dt>Engine health</dt><dd>${esc(c.health?.status)}</dd></div><div><dt>Last market data</dt><dd>${ts(c.last_market_data_update)}</dd></div><div><dt>Latest Telegram delivery</dt><dd>${ts(c.latest_successful_delivery)}</dd></div></dl>
+ <p>${intel}</p><div class="ql-labs">${Object.entries(c.categories).map(([k,v])=>card(k,v)).join('')}</div></section>`;
+}
+export function labsContent(data){
+ const p=data.performance||{},signals=data.signals||[],runtime=data.runtime||{};
+ const summary=(p)=>`<dl class="ql-stats"><div><dt>Resolved / unresolved</dt><dd>${esc(p.resolved||0)} / ${esc(p.unresolved||0)}</dd></div><div><dt>Win rate</dt><dd>${p.win_rate==null?'—':num(p.win_rate*100,1)+'%'}</dd></div><div><dt>Net paper R</dt><dd>${num(p.net_paper_r)}</dd></div><div><dt>Profit factor</dt><dd>${num(p.profit_factor)}</dd></div><div><dt>Paper drawdown R</dt><dd>${num(p.max_realized_paper_drawdown_r)}</dd></div></dl>`;
+ return `${runtime.source==='SYNTHETIC_BROWSER_TEST'?'<p class="ql-notice"><b>SYNTHETIC TEST DATA</b> · Pipeline demonstration only. These numbers are not observed market performance.</p>':''}<p class="ql-notice"><b>${runtime.telegram_mode==='EXPERIMENTAL_APPROVED'?'EXPERIMENTAL · TELEGRAM DELIVERY APPROVED FOR PAPER CANDIDATES ONLY':'EXPERIMENTAL · NO OUTBOUND DELIVERY'}</b><br>${runtime.enabled?'Collector consumer enabled':'Collector consumer disabled'} · ${runtime.running?'Running':'Stopped'}${data.health?` · Engine health <b>${esc(data.health.status)}</b>${(data.health.reasons||[]).length?' ('+esc(data.health.reasons.join('; '))+')':''}`:''} · Actual executed R unavailable. Paper outcomes use assumed costs and do not establish profitability.</p>
+ ${centerContent(data.center)}
+ ${leaderboardContent(data.leaderboard)}
+ ${(data.intelligence||[]).length?`<section class="ql-section"><h2>Gold & Bitcoin intelligence</h2><p class="sub">Explainable market analysis from closed MT5 candles. Internal view only: not trade signals and not sent to Telegram.</p><div class="ql-labs">${data.intelligence.map(intelContent).join('')}</div></section>`:''}
+ <div class="ql-labs">${(data.labs||[]).map(lab=>`<article class="panel"><h2>${esc(lab.name)}</h2><span class="ql-tag">${esc(lab.status)}</span>${(lab.models||[]).map(m=>`<h3>${esc(m.name)} <small>v${esc(m.version)}</small></h3><p>${esc(m.status)} · Scan ${m.scan_enabled?'enabled':'disabled'} · Alerts ${m.alert_enabled?'enabled':'disabled'}</p><details><summary>Authorship & version evidence</summary><p>${esc(m.authorship?.session_reference)}</p><code>${esc(m.sha)}</code></details>`).join('')||'<p>Awaiting a model authored and registered by this actual AI session.</p>'}${summary(lab.performance||{})}</article>`).join('')}</div>
+ <section class="panel ql-section"><h2>Experimental performance</h2>${summary(p)}<p class="sub">${esc(data.scope)} · Unknown outcomes are excluded from wins and counted separately. A dash means unavailable.</p><details><summary>Performance by model, market, UTC session, timeframe and planned RR</summary>${Object.entries(data.breakdown||{}).map(([dimension,groups])=>`<h3>${esc(dimension)}</h3>${Object.entries(groups).map(([key,value])=>`<h4>${esc(key)}</h4>${summary(value)}`).join('')}`).join('')}</details></section>
+ <section class="panel ql-section"><h2>Latest signals & outcomes</h2><div class="ql-table"><table><thead><tr><th>Lab / model</th><th>Market / direction</th><th>Entry / SL / TP</th><th>Planned RR</th><th>State / paper R</th><th>Input time</th></tr></thead><tbody>${signals.map(s=>`<tr><td>${esc(s.lab_name||s.lab)}<br>${esc(s.model_name)} v${esc(s.model_version)}</td><td>${esc(s.symbol)}<br>${esc(s.direction)} · ${esc(s.timeframe)}</td><td>${num(s.entry,5)}<br>${num(s.stop_loss,5)} / ${num(s.take_profit,5)}</td><td>${s.planned_rr==null?'—':'1:'+num(s.planned_rr)}<br>Net ${num(s.net_planned_rr)}</td><td>${esc(s.state)}<br>${esc(s.outcome?.status||s.qualification_reason||'Pending')} · ${num(s.outcome?.simulated_net_r)}R</td><td>${esc(date(s.input_data_timestamp||s.signal_bar_closed_at))}<details><summary>Signal evidence</summary><p>${esc(s.signal_id)}</p><p>${esc(s.input_sha256)}</p><p>${esc(s.rationale)}</p><p>${esc(s.outcome?.reason)}</p></details></td></tr>`).join('')||'<tr><td colspan="6">No experimental signals recorded.</td></tr>'}</tbody></table></div></section>
+ <section class="panel ql-section"><h2>Verified models</h2><p>No independently verified live models registered. Experimental results remain separate.</p></section>
+ <section class="panel ql-section"><h2>Telegram messages</h2><p class="sub">${runtime.telegram_mode==='EXPERIMENTAL_APPROVED'?'Delivery is approved only for paper candidates; research-only models stay in dry run. States: SENT, DRY_RUN, EXPIRED, SUPPRESSED, FAILED, DELIVERY_UNKNOWN (never replayed).':'No experimental messages are sent. CEO review and explicit activation approval are required.'}</p>${(data.outbox||[]).map(row=>`<details><summary>${esc(row.state)} · ${esc(row.signal)}</summary><pre>${esc(row.message)}</pre></details>`).join('')||'<p>No previews yet.</p>'}</section>`;
+}
+let timer=null,controller=null,generation=0;
+export function stopQuantLabs(){generation++;clearTimeout(timer);timer=null;controller?.abort();controller=null;}
+export function initQuantLabs(){
+ stopQuantLabs();const current=generation;
+ const refresh=async()=>{
+  const root=document.getElementById('quantLabsData');if(!root||current!==generation)return;
+  controller=new AbortController();const timeout=setTimeout(()=>controller?.abort(),8000);
+  try{const {engineFetch}=await import('./engine.js');const data=await engineFetch('/api/quant-labs/live',{signal:controller.signal});
+   data.center=await engineFetch('/api/quant-labs/intelligence-center',{signal:controller.signal}).catch(()=>null);
+   data.intelligence=(await Promise.all(['XAUUSD','BTCUSD'].map(sym=>engineFetch('/api/quant-labs/intelligence/'+sym,{signal:controller.signal}).catch(()=>null)))).filter(Boolean);if(current===generation&&root.isConnected)root.innerHTML=labsContent(data);}
+  catch(error){if(current===generation&&root.isConnected)root.textContent='Local Quant Labs unavailable. Start the updated local engine to view its status.';}
+  finally{clearTimeout(timeout);if(current===generation)timer=setTimeout(refresh,15000);}
+ };refresh();
+}

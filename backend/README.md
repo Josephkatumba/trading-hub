@@ -15,7 +15,7 @@ This folder is the backend foundation for the Market Radar.
 2. Log into the MT5 account and keep the terminal running.
 3. From this folder, install requirements and run (or double-click `start_engine.bat`):
    python -m pip install -r requirements.txt
-   python -m uvicorn main:app --host 127.0.0.1 --port 8000
+   python -m ops.control start
 
 4. The endpoint will be available at http://127.0.0.1:8000/api/market/radar
 
@@ -44,7 +44,7 @@ The GitHub Pages dashboard cannot run MetaTrader 5 itself. Run this backend on t
 2. From this folder install dependencies:
    `python -m pip install -r requirements.txt`
 3. Start the engine:
-   `python -m uvicorn main:app --host 127.0.0.1 --port 8000`
+   `python -m ops.control start`
 4. For a first local test, open:
    `http://127.0.0.1:8000/api/health`
 5. Open Trading Hub → Market Radar. With the engine running it shows **LIVE MT5 ENGINE**;
@@ -269,3 +269,5 @@ Setup (the token is never printed; keep it only in `backend/.env` or the protect
 
 Live alerts start with the engine only with `TRADEDEN_TELEGRAM_ALERTS_ENABLED=1` (default off).
 `/api/health` → `telegram_alerts` shows enabled/configured/running, never the token or chat id.
+
+Use `python -m ops.control pause`, `resume`, `stop`, or `status` to control saved owner intent. Closing MT5 pauses automatic recovery until explicit resume. See [process controls](../docs/mt5-process-control.md).

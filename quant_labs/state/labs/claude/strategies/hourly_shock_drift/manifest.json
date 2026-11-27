@@ -1,0 +1,17 @@
+{
+  "lab": "claude",
+  "key": "hourly_shock_drift",
+  "version": "0.1.0",
+  "name": "Hour-Adjusted Shock Drift",
+  "timeframe": "H1",
+  "requirements": {"H1": 600},
+  "instruments": ["EURUSD", "GBPUSD", "GBPJPY", "USDJPY", "AUDUSD", "XAUUSD", "BTCUSD", "ETHUSD"],
+  "classification": "EXPERIMENTAL",
+  "entry_type": "MARKET_PAPER_QUOTE",
+  "hypothesis": "An H1 candle >=2.5x the median range of the same UTC hour over 20 days, with a dominant body closing at its extreme, signals an information shock that drifts further in its direction.",
+  "risk_model": "One planned risk unit; stop at the shock-candle midpoint; 2.5R objective; exit by min(24h, next broker data gap).",
+  "planned_rr": "2.5R fixed target",
+  "known_limitations": "No verified edge. Shock candles coincide with scheduled news where real spreads/slippage exceed recorded H1 spreads; correlated USD pairs; same-hour baseline unaware of DST shifts.",
+  "declared_trials_in_phase": 1,
+  "authorship": {"lab": "claude", "session_reference": "Claude Code (claude-opus-5-5) desktop session 14e835e0-e7e8-43cf-b286-855a18365bd7, 2026-10-20", "statement": "Created by this actual Claude Code session; not attributed to Codex or Kimi."}
+}

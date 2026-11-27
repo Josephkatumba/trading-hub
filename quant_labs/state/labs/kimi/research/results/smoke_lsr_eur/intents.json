@@ -1,0 +1,29 @@
+[
+ {
+  "symbol": "EURUSD",
+  "direction": "LONG",
+  "signal_bar_closed_at": 1729063800.0,
+  "entry_at": 1729063800.0,
+  "stop_loss": 1.0879398928571429,
+  "take_profit": 1.08957,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1730361600.0,
+  "entry_at": 1730361600.0,
+  "stop_loss": 1.0863995714285715,
+  "take_profit": 1.08442,
+  "horizon_seconds": 64800
+ },
+ {
+  "symbol": "EURUSD",
+  "direction": "SHORT",
+  "signal_bar_closed_at": 1731919500.0,
+  "entry_at": 1731919500.0,
+  "stop_loss": 1.0554939642857142,
+  "take_profit": 1.05303,
+  "horizon_seconds": 64800
+ }
+]

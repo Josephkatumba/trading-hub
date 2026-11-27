@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "trade_plans_checked": 11188,
+  "fill_accounting_checks": 18905,
+  "checks": [
+    "48 cached data file hashes",
+    "entry prices independently reconstructed",
+    "entry/SL risk denominators",
+    "same-strategy/symbol nonoverlap",
+    "completed-exit timestamps",
+    "net-R fill accounting",
+    "per-experiment final-test totals"
+  ],
+  "limits": "Does not establish feed accuracy, historical financing, tick-level sequencing, or profitability."
+}

@@ -1,0 +1,51 @@
+[
+  {
+    "key": "trend_reclaim_r2",
+    "version": "0.1.0",
+    "sha": "4ee1a3da7d17b11b2dcddd9b7caddec5eb64e5a3ba0fa830ca043454221de165",
+    "raw_source_sha256": "a7eaae237065d95f4328ef3692dbebc84aa733d626b33efdc2928d6d37e59e54",
+    "raw_manifest_sha256": "8b0b691b628996ae242fcab7851a2ba566d744fcc97576fb4ca94fa3f3164714"
+  },
+  {
+    "key": "trend_reclaim_r3",
+    "version": "0.1.0",
+    "sha": "d8e5ff85cc2d76ca9855794d7b38d4a7f9393df233a1c27d2fce97cf88fa9f93",
+    "raw_source_sha256": "3ace8c9ea23de009f5b56c0ababa8729faba7121f5e6d51f6be9aaba5365d945",
+    "raw_manifest_sha256": "4b14280ae2305746529a98f80f98c37b9a10a3f25c91d72b9e347fd1d5c9123e"
+  },
+  {
+    "key": "trend_reclaim_r4",
+    "version": "0.1.0",
+    "sha": "2d1dc3166601a34b37af6264b6cf1570d2a7715217c69280448c3790663b1195",
+    "raw_source_sha256": "168c42d29cfb2a9ddb7ecb60e0eca466dc01c0fca5bf03c7c68c9bd380ff9ff4",
+    "raw_manifest_sha256": "7187c3fe0f6c6d7310b42954f7d52568aa5a02b59be134604367773f2860bd83"
+  },
+  {
+    "key": "trend_reclaim_r5",
+    "version": "0.1.0",
+    "sha": "053fcadbc08a100c4e4b951da873bc33853c647713ba4c2043bfb5b2e13ef48f",
+    "raw_source_sha256": "3979846a1f4607963859d54c169950962d8e182a7a904a81a67bb17cffb3b39a",
+    "raw_manifest_sha256": "3e821e741c9a0dce87574cc1e6aacbef4612633256a034905be0caa432ac0bfb"
+  },
+  {
+    "key": "trend_reclaim_r7",
+    "version": "0.1.0",
+    "sha": "7407e6466adcd1d44ae2d6a6cd5644ff37fed505bd557df4bdbc61559e2e667e",
+    "raw_source_sha256": "a21287a439aabad308aac6632d87ac971b3d14e534ebd188a294f3c08e674580",
+    "raw_manifest_sha256": "4677efaa2a8090039266bd0b200a2753036d04e5449aadeefa7c0eeb78bb6a07"
+  },
+  {
+    "key": "trend_reclaim_r9",
+    "version": "0.1.0",
+    "sha": "182f3823d0a8e977436a02d556a73f3900013ec623dbc7a590bee303eff9f5ca",
+    "raw_source_sha256": "0af01cc484117bc997e0d25d3edb2ffc7daf7cde5d06cbc89794800282344933",
+    "raw_manifest_sha256": "22efdbd232f1c3910487d51d4011e47b40fe41ee7c795a353d1409950f1befd8"
+  },
+  {
+    "key": "range_sweep_reversion",
+    "version": "0.1.0",
+    "sha": "a98503aa2235fccdeb89a378019c01770fb15d94290a640001c168228a94809c",
+    "raw_source_sha256": "a98503aa2235fccdeb89a378019c01770fb15d94290a640001c168228a94809c",
+    "raw_manifest_sha256": "05207a6638ac2b8d52f30dd30482f621804965b3e6eb120576416f532304c65f"
+  }
+]

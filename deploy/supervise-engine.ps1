@@ -6,6 +6,10 @@ $taskRepo = Split-Path $PSScriptRoot -Parent
 if (-not $env:TRADEDEN_LOG_DIR) { throw 'Set protected TRADEDEN_LOG_DIR' }
 New-Item -ItemType Directory -Force -Path $env:TRADEDEN_LOG_DIR | Out-Null
 while ($true) {
+    Push-Location (Join-Path $taskRepo 'backend')
+    $taskIntent = & (Join-Path $taskRepo '.venv/Scripts/python.exe') -m ops.control status
+    Pop-Location
+    if (($taskIntent | ConvertFrom-Json).state -ne 'RUNNING') { break }
     # Never stop or replace a listener that this supervisor did not start.
     if (Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue) { throw 'An engine already owns port 8000' }
     $taskStamp = Get-Date -Format 'yyyyMMdd-HHmmss-fff'
@@ -17,6 +21,13 @@ while ($true) {
     $taskFailures = 0
     while (-not $taskChild.HasExited) {
         Start-Sleep -Seconds 30
+        Push-Location (Join-Path $taskRepo 'backend')
+        $taskIntent = & (Join-Path $taskRepo '.venv/Scripts/python.exe') -m ops.control status
+        Pop-Location
+        if (($taskIntent | ConvertFrom-Json).state -ne 'RUNNING') {
+            $taskChild.Refresh()
+            continue
+        }
         if (((Get-Date) - $taskStarted).TotalSeconds -lt $WarmupSeconds) { continue }
         try {
             $taskReady = Invoke-RestMethod 'http://127.0.0.1:8000/api/ready' -TimeoutSec 10

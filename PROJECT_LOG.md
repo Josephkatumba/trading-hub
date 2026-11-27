@@ -1,5 +1,38 @@
 # PROJECT_LOG — TradeDen (trading-hub)
 
+## Edge discovery program edge-discovery-v1 — 2026-11-22
+
+- Pre-registered the plan, then locked it with fingerprint `640635d5…`:
+  [plan](docs/EDGE_DISCOVERY_PLAN.md), [results](docs/EDGE_DISCOVERY_REPORT.md).
+  The test covered 14 new families, the 21 existing strategies and 3 quant designs
+  on six instruments: 1,962 trials, with train-only selection, Holm across 153
+  pairs, 20-seed random controls and one-shot tests.
+- Result: no CREDIBLE strategy, and no pair passed validation. Validation p-values
+  are no better than chance, and train winners decay to −0.055R. The best
+  out-of-sample result (+0.36R) is below the no-edge noise ceiling (+0.46R).
+  Return-structure diagnostics show near-random-walk behaviour that does not persist.
+- Lead only: existing MACD momentum on XAUUSD (+0.22/+0.29/+0.29R across
+  train/validation/test). It fails Holm and its peer instruments and stays in shadow
+  mode. Nothing was promoted or activated. M5 was excluded (only 3 months of data).
+
+## Signal quality audit and engine — 2026-11-22
+
+- Audited every recorded live signal (1,632 resolved, 30.8% win rate, −0.076R) and
+  95,659 historical signals under 10 cost-aware entry/exit variants. Five causes are
+  in [the report](docs/SIGNAL_QUALITY_REPORT.md): unprofitable core strategies
+  (trendline_v5 −80R live), stops that are too tight with targets too far, live R
+  without costs plus lifecycle churn, missing session/regime filters, and indicator
+  agreement with little value (the apparent confluence edge is mostly hindsight).
+- Added `backend/signal_quality/` with regime detection, causal features, a
+  shrinkage scorecard (A+…REJECTED) and a strict lifecycle (only A/A+ become
+  CONFIRMED). Added walk-forward research tools, `GET /api/signal-quality` and the
+  Market Radar "Signal Quality" panel. The gate defaults to `shadow`; no alert,
+  execution permission or historical record changed.
+- Out of sample (six quarters, net of costs), the A/A+ gate moves expectancy from
+  −0.096R to −0.001R (CI −0.054 to +0.052) and beats 20/20 random selections.
+  REJECTED signals average −0.148R. Positive expectancy was not demonstrated, and
+  no strategy was promoted.
+
 ## Final integrity follow-up — 2026-10-12
 
 - Continued from `3bca4b216c08f4d0fce873f6e5e22ccd53b8a8d2` with a clean working tree.

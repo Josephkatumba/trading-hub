@@ -1,0 +1,29 @@
+{
+  "lab": "claude",
+  "key": "crypto_pullback_continuation",
+  "version": "0.1.0",
+  "name": "Crypto D1-Trend H4 Pullback Continuation",
+  "timeframe": "H4",
+  "requirements": {
+    "H4": 400,
+    "H1": 600,
+    "D1": 80
+  },
+  "instruments": [
+    "BTCUSD",
+    "ETHUSD"
+  ],
+  "classification": "EXPERIMENTAL",
+  "entry_type": "MARKET_PAPER_QUOTE",
+  "hypothesis": "D1 trend with an H4 pullback below EMA20 followed by a close beyond the previous H4 extreme: trend resumption.",
+  "risk_model": "One planned risk unit; exit by min(72h, Friday 20:45 UTC); see model docstring.",
+  "planned_rr": "2.5R",
+  "known_limitations": "No verified edge. Pre-registered (commit 34bd776); single pass; all splits previously exposed; BTC/ETH correlated.",
+  "declared_trials_in_phase": 1,
+  "preregistration": "research/preregistration/2026-10-23c_overnight_crypto.md",
+  "authorship": {
+    "lab": "claude",
+    "session_reference": "Claude Code (claude-opus-5-5) desktop session 14e835e0-e7e8-43cf-b286-855a18365bd7, 2026-10-23 overnight",
+    "statement": "Created by this actual Claude Code session; not attributed to Codex or Kimi."
+  }
+}

@@ -1,0 +1,571 @@
+{
+  "cohorts": {
+    "Current strategy families": {
+      "original": {
+        "signals": 152,
+        "resolved": 95,
+        "statuses": {
+          "SL": 71,
+          "TP": 24,
+          "GAP_UNKNOWN": 34,
+          "ENTRY_MINUTE_UNKNOWN": 4,
+          "MISSING_START": 1,
+          "TRUNCATED": 18
+        },
+        "total_r": -33.624261086404914,
+        "expectancy_r": -0.3539395903832096,
+        "profit_factor": 0.5728758207296515,
+        "win_rate": 0.25263157894736843,
+        "max_drawdown_realized_r": 38.8440947948979,
+        "day_block_bootstrap_95": [
+          -0.541182468591611,
+          -0.14863252702962296
+        ]
+      },
+      "experimental": {
+        "signals": 32,
+        "resolved": 18,
+        "statuses": {
+          "TP": 6,
+          "GAP_UNKNOWN": 10,
+          "SL": 12,
+          "ENTRY_MINUTE_UNKNOWN": 1,
+          "TRUNCATED": 3
+        },
+        "total_r": -3.1661150264193134,
+        "expectancy_r": -0.1758952792455174,
+        "profit_factor": 0.750624385287728,
+        "win_rate": 0.3333333333333333,
+        "max_drawdown_realized_r": 5.469950853022565,
+        "day_block_bootstrap_95": [
+          -0.5921212115132015,
+          0.23668850299524877
+        ]
+      }
+    },
+    "Retired trendline": {
+      "original": {
+        "signals": 231,
+        "resolved": 169,
+        "statuses": {
+          "SL": 102,
+          "TP": 67,
+          "GAP_UNKNOWN": 62
+        },
+        "total_r": 14.424077547845407,
+        "expectancy_r": 0.08534957128902608,
+        "profit_factor": 1.1312440232735985,
+        "win_rate": 0.39644970414201186,
+        "max_drawdown_realized_r": 23.225993532711787,
+        "day_block_bootstrap_95": [
+          -0.33458205674933267,
+          0.1385409108405515
+        ]
+      },
+      "experimental": {
+        "signals": 32,
+        "resolved": 25,
+        "statuses": {
+          "SL": 15,
+          "TP": 10,
+          "GAP_UNKNOWN": 7
+        },
+        "total_r": 2.5768687199979796,
+        "expectancy_r": 0.10307474879991918,
+        "profit_factor": 1.1627894338257085,
+        "win_rate": 0.4,
+        "max_drawdown_realized_r": 8.484037725221839,
+        "day_block_bootstrap_95": [
+          -0.07029176817108537,
+          1.013248962897693
+        ]
+      }
+    },
+    "Strategy Bank": {
+      "original": {
+        "signals": 49,
+        "resolved": 0,
+        "statuses": {
+          "TRUNCATED": 49
+        },
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      },
+      "experimental": {
+        "signals": 0,
+        "resolved": 0,
+        "statuses": {},
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    },
+    "Training before Oct 1": {
+      "original": {
+        "signals": 69,
+        "resolved": 51,
+        "statuses": {
+          "SL": 37,
+          "TP": 14,
+          "GAP_UNKNOWN": 17,
+          "ENTRY_MINUTE_UNKNOWN": 1
+        },
+        "total_r": -13.618238879639655,
+        "expectancy_r": -0.2670242917576403,
+        "profit_factor": 0.6693260999745403,
+        "win_rate": 0.27450980392156865,
+        "max_drawdown_realized_r": 19.938240546862087,
+        "day_block_bootstrap_95": [
+          -0.3919826813825322,
+          -0.06001257912021579
+        ]
+      },
+      "experimental": {
+        "signals": 16,
+        "resolved": 10,
+        "statuses": {
+          "TP": 4,
+          "GAP_UNKNOWN": 5,
+          "SL": 6,
+          "ENTRY_MINUTE_UNKNOWN": 1
+        },
+        "total_r": 0.20209491174561545,
+        "expectancy_r": 0.020209491174561545,
+        "profit_factor": 1.0319186121640112,
+        "win_rate": 0.4,
+        "max_drawdown_realized_r": 2.5423072874841246,
+        "day_block_bootstrap_95": [
+          -0.49316609305381454,
+          0.8415007255259814
+        ]
+      }
+    },
+    "Test Oct 8 onward": {
+      "original": {
+        "signals": 24,
+        "resolved": 6,
+        "statuses": {
+          "TP": 3,
+          "SL": 3,
+          "TRUNCATED": 18
+        },
+        "total_r": 1.9655716395737741,
+        "expectancy_r": 0.3275952732622957,
+        "profit_factor": 1.6163991904069015,
+        "win_rate": 0.5,
+        "max_drawdown_realized_r": 2.1285727903910026,
+        "day_block_bootstrap_95": [
+          -1.0642863951955013,
+          1.5807560137460979
+        ]
+      },
+      "experimental": {
+        "signals": 3,
+        "resolved": 0,
+        "statuses": {
+          "TRUNCATED": 3
+        },
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    }
+  },
+  "rolling": {
+    "2026-09-23": {
+      "original": {
+        "signals": 62,
+        "resolved": 46,
+        "statuses": {
+          "SL": 33,
+          "TP": 13,
+          "GAP_UNKNOWN": 15,
+          "ENTRY_MINUTE_UNKNOWN": 1
+        },
+        "total_r": -11.204966942976116,
+        "expectancy_r": -0.24358623789078512,
+        "profit_factor": 0.696148302705463,
+        "win_rate": 0.2826086956521739,
+        "max_drawdown_realized_r": 19.938240546862087,
+        "day_block_bootstrap_95": [
+          -0.3738483401924971,
+          -0.00016315145630012572
+        ]
+      },
+      "experimental": {
+        "signals": 15,
+        "resolved": 9,
+        "statuses": {
+          "TP": 4,
+          "GAP_UNKNOWN": 5,
+          "SL": 5,
+          "ENTRY_MINUTE_UNKNOWN": 1
+        },
+        "total_r": 1.2127109304990291,
+        "expectancy_r": 0.13474565894433657,
+        "profit_factor": 1.2279123340028322,
+        "win_rate": 0.4444444444444444,
+        "max_drawdown_realized_r": 2.5423072874841246,
+        "day_block_bootstrap_95": [
+          -0.36380361162891467,
+          1.611289850833591
+        ]
+      }
+    },
+    "2026-09-30": {
+      "original": {
+        "signals": 56,
+        "resolved": 37,
+        "statuses": {
+          "SL": 29,
+          "TP": 8,
+          "GAP_UNKNOWN": 15,
+          "ENTRY_MINUTE_UNKNOWN": 3,
+          "MISSING_START": 1
+        },
+        "total_r": -17.39158113384544,
+        "expectancy_r": -0.470042733347174,
+        "profit_factor": 0.45074476587242707,
+        "win_rate": 0.21621621621621623,
+        "max_drawdown_realized_r": 19.285164858414955,
+        "day_block_bootstrap_95": [
+          -0.6231755501240605,
+          -0.3922835077635239
+        ]
+      },
+      "experimental": {
+        "signals": 10,
+        "resolved": 8,
+        "statuses": {
+          "SL": 6,
+          "TP": 2,
+          "GAP_UNKNOWN": 2
+        },
+        "total_r": -3.3591798451368993,
+        "expectancy_r": -0.4198974806421124,
+        "profit_factor": 0.47145889318393286,
+        "win_rate": 0.25,
+        "max_drawdown_realized_r": 3.3591798451368993,
+        "day_block_bootstrap_95": [
+          -1.0362958819146584,
+          0.03879346041325503
+        ]
+      }
+    },
+    "2026-10-07": {
+      "original": {
+        "signals": 14,
+        "resolved": 10,
+        "statuses": {
+          "GAP_UNKNOWN": 4,
+          "SL": 7,
+          "TP": 3
+        },
+        "total_r": -2.8991402191923585,
+        "expectancy_r": -0.2899140219192359,
+        "profit_factor": 0.6400152510163184,
+        "win_rate": 0.3,
+        "max_drawdown_realized_r": 8.053508453836688,
+        "day_block_bootstrap_95": [
+          -1.165547441526189,
+          1.5807560137460979
+        ]
+      },
+      "experimental": {
+        "signals": 4,
+        "resolved": 1,
+        "statuses": {
+          "GAP_UNKNOWN": 3,
+          "SL": 1
+        },
+        "total_r": -1.0196461117814435,
+        "expectancy_r": -1.0196461117814435,
+        "profit_factor": 0.0,
+        "win_rate": 0.0,
+        "max_drawdown_realized_r": 1.0196461117814435,
+        "day_block_bootstrap_95": [
+          -1.0196461117814435,
+          -1.0196461117814435
+        ]
+      }
+    },
+    "2026-10-14": {
+      "original": {
+        "signals": 20,
+        "resolved": 2,
+        "statuses": {
+          "SL": 2,
+          "TRUNCATED": 18
+        },
+        "total_r": -2.1285727903910026,
+        "expectancy_r": -1.0642863951955013,
+        "profit_factor": 0.0,
+        "win_rate": 0.0,
+        "max_drawdown_realized_r": 2.1285727903910026,
+        "day_block_bootstrap_95": [
+          -1.0642863951955013,
+          -1.0642863951955013
+        ]
+      },
+      "experimental": {
+        "signals": 3,
+        "resolved": 0,
+        "statuses": {
+          "TRUNCATED": 3
+        },
+        "total_r": 0,
+        "expectancy_r": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "max_drawdown_realized_r": 0,
+        "day_block_bootstrap_95": null
+      }
+    }
+  },
+  "by_version": {
+    "smc-confluence-v1": {
+      "signals": 2,
+      "resolved": 1,
+      "statuses": {
+        "SL": 1,
+        "TRUNCATED": 1
+      },
+      "total_r": -1.0599315068493118,
+      "expectancy_r": -1.0599315068493118,
+      "profit_factor": 0.0,
+      "win_rate": 0.0,
+      "max_drawdown_realized_r": 1.0599315068493118,
+      "day_block_bootstrap_95": [
+        -1.0599315068493118,
+        -1.0599315068493118
+      ]
+    },
+    "sr-levels-v1": {
+      "signals": 21,
+      "resolved": 17,
+      "statuses": {
+        "TP": 9,
+        "SL": 8,
+        "GAP_UNKNOWN": 4
+      },
+      "total_r": 5.364090424394243,
+      "expectancy_r": 0.3155347308467202,
+      "profit_factor": 1.5841981291444358,
+      "win_rate": 0.5294117647058824,
+      "max_drawdown_realized_r": 3.5855513249923665,
+      "day_block_bootstrap_95": [
+        -0.47229420729716354,
+        1.224749488295068
+      ]
+    },
+    "sr-levels-v2": {
+      "signals": 9,
+      "resolved": 5,
+      "statuses": {
+        "SL": 4,
+        "TP": 1,
+        "GAP_UNKNOWN": 1,
+        "TRUNCATED": 3
+      },
+      "total_r": -2.6717239954837932,
+      "expectancy_r": -0.5343447990967587,
+      "profit_factor": 0.3683270836680794,
+      "win_rate": 0.2,
+      "max_drawdown_realized_r": 2.671723995483793,
+      "day_block_bootstrap_95": [
+        -1.005443694756948,
+        -0.41657007518171124
+      ]
+    },
+    "tm-pullback-v1": {
+      "signals": 1,
+      "resolved": 1,
+      "statuses": {
+        "SL": 1
+      },
+      "total_r": -1.0042767679853368,
+      "expectancy_r": -1.0042767679853368,
+      "profit_factor": 0.0,
+      "win_rate": 0.0,
+      "max_drawdown_realized_r": 1.0042767679853368,
+      "day_block_bootstrap_95": [
+        -1.0042767679853368,
+        -1.0042767679853368
+      ]
+    },
+    "tm-pullback-v2": {
+      "signals": 12,
+      "resolved": 3,
+      "statuses": {
+        "SL": 3,
+        "GAP_UNKNOWN": 8,
+        "MISSING_START": 1
+      },
+      "total_r": -3.113194937526787,
+      "expectancy_r": -1.0377316458422623,
+      "profit_factor": 0.0,
+      "win_rate": 0.0,
+      "max_drawdown_realized_r": 3.113194937526787,
+      "day_block_bootstrap_95": [
+        -1.059188275084552,
+        -1.0180631451123248
+      ]
+    },
+    "trendline-first-v5": {
+      "signals": 63,
+      "resolved": 46,
+      "statuses": {
+        "GAP_UNKNOWN": 15,
+        "SL": 37,
+        "TP": 9,
+        "ENTRY_MINUTE_UNKNOWN": 2
+      },
+      "total_r": -21.582371291136223,
+      "expectancy_r": -0.4691819845899179,
+      "profit_factor": 0.4788022601855526,
+      "win_rate": 0.1956521739130435,
+      "max_drawdown_realized_r": 21.58237129113622,
+      "day_block_bootstrap_95": [
+        -0.8158032894445248,
+        -0.2842972130223214
+      ]
+    },
+    "trendline-first-v5.1": {
+      "signals": 44,
+      "resolved": 22,
+      "statuses": {
+        "ENTRY_MINUTE_UNKNOWN": 2,
+        "SL": 17,
+        "TP": 5,
+        "GAP_UNKNOWN": 6,
+        "TRUNCATED": 14
+      },
+      "total_r": -9.556853011817704,
+      "expectancy_r": -0.43440240962807747,
+      "profit_factor": 0.489601392694023,
+      "win_rate": 0.22727272727272727,
+      "max_drawdown_realized_r": 13.446336897154328,
+      "day_block_bootstrap_95": [
+        -0.9940094146693469,
+        0.43309700759643355
+      ]
+    }
+  },
+  "double_cost_reserve": {
+    "original": {
+      "signals": 152,
+      "resolved": 95,
+      "statuses": {
+        "SL": 71,
+        "TP": 24,
+        "GAP_UNKNOWN": 34,
+        "ENTRY_MINUTE_UNKNOWN": 4,
+        "MISSING_START": 1,
+        "TRUNCATED": 18
+      },
+      "total_r": -43.08507610137188,
+      "expectancy_r": -0.4535271168565461,
+      "profit_factor": 0.5013300693530285,
+      "win_rate": 0.25263157894736843,
+      "max_drawdown_realized_r": 47.89560514465772,
+      "day_block_bootstrap_95": [
+        -0.6504378934840399,
+        -0.2363318394576082
+      ]
+    },
+    "experimental": {
+      "signals": 32,
+      "resolved": 18,
+      "statuses": {
+        "TP": 6,
+        "GAP_UNKNOWN": 10,
+        "SL": 12,
+        "ENTRY_MINUTE_UNKNOWN": 1,
+        "TRUNCATED": 3
+      },
+      "total_r": -4.110313590539384,
+      "expectancy_r": -0.2283507550299658,
+      "profit_factor": 0.6930847026378844,
+      "win_rate": 0.3333333333333333,
+      "max_drawdown_realized_r": 6.144118560914316,
+      "day_block_bootstrap_95": [
+        -0.6570318227053558,
+        0.1744192999953699
+      ]
+    }
+  },
+  "live_ablations": {
+    "htf": {
+      "signals": 65,
+      "resolved": 33,
+      "statuses": {
+        "SL": 27,
+        "TP": 6,
+        "GAP_UNKNOWN": 23,
+        "ENTRY_MINUTE_UNKNOWN": 1,
+        "MISSING_START": 1,
+        "TRUNCATED": 7
+      },
+      "total_r": -19.51090208945358,
+      "expectancy_r": -0.5912394572561691,
+      "profit_factor": 0.32815910612004257,
+      "win_rate": 0.18181818181818182,
+      "max_drawdown_realized_r": 20.11791517230183,
+      "day_block_bootstrap_95": [
+        -0.8879910090449941,
+        -0.19867854361222378
+      ]
+    },
+    "location": {
+      "signals": 106,
+      "resolved": 76,
+      "statuses": {
+        "TP": 21,
+        "GAP_UNKNOWN": 20,
+        "SL": 55,
+        "ENTRY_MINUTE_UNKNOWN": 3,
+        "TRUNCATED": 7
+      },
+      "total_r": -23.055207848623166,
+      "expectancy_r": -0.30335799800819957,
+      "profit_factor": 0.6256434616267017,
+      "win_rate": 0.27631578947368424,
+      "max_drawdown_realized_r": 30.38993779412803,
+      "day_block_bootstrap_95": [
+        -0.5278898805892899,
+        0.015177963013810861
+      ]
+    },
+    "cost": {
+      "signals": 128,
+      "resolved": 78,
+      "statuses": {
+        "SL": 56,
+        "TP": 22,
+        "GAP_UNKNOWN": 30,
+        "ENTRY_MINUTE_UNKNOWN": 2,
+        "MISSING_START": 1,
+        "TRUNCATED": 17
+      },
+      "total_r": -19.419460429693075,
+      "expectancy_r": -0.24896744140632146,
+      "profit_factor": 0.6789731621909229,
+      "win_rate": 0.28205128205128205,
+      "max_drawdown_realized_r": 24.016404948348107,
+      "day_block_bootstrap_95": [
+        -0.4086607311507971,
+        -0.09010017550760215
+      ]
+    }
+  }
+}
